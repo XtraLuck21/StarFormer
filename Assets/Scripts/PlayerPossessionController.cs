@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PlayerPossessionController : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private float horizontalInput;
     private bool actionRequested;
+    private bool restartRequested;
 
     private void Start()
     {
@@ -36,12 +38,24 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void Update()
     {
+        if (restartRequested)
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(gameObject.scene.buildIndex);
+            return;
+        }
         horizontalInput = 0f;
         Keyboard keyboard = Keyboard.current;
 
         if (keyboard == null)
         {
             actionRequested = false;
+            return;
+        }
+
+        if (keyboard.rKey.wasPressedThisFrame)
+        {
+            RequestRestart();
             return;
         }
 
@@ -63,8 +77,17 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (currentBody == null)
+        if (currentBody == null || restartRequested)
         {
+            return;
+        }
+
+        Bounds bodyBounds = currentBody.BodyCollider.bounds;
+
+        if (bodyBounds.max.y < minimumHeight ||
+            bodyBounds.min.y > maximumHeight)
+        {
+            RequestRestart();
             return;
         }
 
@@ -89,15 +112,6 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         Rigidbody2D body = currentBody.Body;
-
-        if (body.position.y < minimumHeight ||
-            body.position.y > maximumHeight)
-        {
-            currentBody.ResetToSpawn();
-            blockedPreviousBody = null;
-            actionRequested = false;
-            return;
-        }
 
         Vector2 velocity = body.linearVelocity;
 
@@ -133,11 +147,44 @@ public class PlayerPossessionController : MonoBehaviour
         actionRequested = false;
     }
 
+    public void RequestRestart()
+    {
+        if (restartRequested)
+        {
+            return;
+        }
+
+        if (gameObject.scene.buildIndex < 0)
+        {
+            Debug.LogError(
+                "Add the current scene to the enabled build scene list before restarting.",
+                this
+            );
+            return;
+        }
+
+        restartRequested = true;
+        pendingTarget = null;
+        horizontalInput = 0f;
+        actionRequested = false;
+    }
+
+    public void KillControlledBody(PossessableBody hitBody)
+    {
+        if (hitBody == null || hitBody != currentBody)
+        {
+            return;
+        }
+
+        RequestRestart();
+    }
+
     public void RequestPossession(
         PossessableBody source,
         PossessableBody target)
     {
         if (!isActiveAndEnabled ||
+            restartRequested ||
             source != currentBody ||
             target == currentBody ||
             target == blockedPreviousBody ||
