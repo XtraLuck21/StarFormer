@@ -18,6 +18,7 @@ public class PossessableBody : MonoBehaviour
     public BodyForm Form => form;
     public float MoveSpeed => moveSpeed;
     public float JumpSpeed => jumpSpeed;
+    public bool IsControlled => owner != null;
 
     public Rigidbody2D Body { get; private set; }
     public Collider2D BodyCollider { get; private set; }
@@ -79,6 +80,11 @@ public class PossessableBody : MonoBehaviour
 
     public void ResetToSpawn()
     {
+        if (TryGetComponent(out BoxResizeAbility resizeAbility))
+        {
+            resizeAbility.ResetSize();
+        }
+
         Body.position = spawnPosition;
         Body.rotation = spawnRotation;
         Body.linearVelocity = Vector2.zero;
