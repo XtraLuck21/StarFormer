@@ -233,7 +233,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -371,7 +371,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6803133, g: 0.9811321, b: 0.69119895, a: 1}
+  m_Color: {r: 0.6117647, g: 0.5019608, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -509,7 +509,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.47058824, g: 0.5921569, b: 0.5529412, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -647,7 +647,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.47058824, g: 0.5921569, b: 0.5529412, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -785,7 +785,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -953,7 +953,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8980392, g: 0.6392157, b: 0.30588236, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1090,7 +1090,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.6627451, g: 0.8666667, b: 0.9607843, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1214,7 +1214,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.79607844, g: 0.39607844, b: 0.4509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1482,7 +1482,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -1551,7 +1551,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3622afd3514304693b07d9819a326107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StarVisual
-  starColor: {r: 1, g: 0.82, b: 0.15, a: 1}
+  starColor: {r: 1, g: 0.827451, b: 0.3019608, a: 1}
 --- !u!212 &802610030
 SpriteRenderer:
   serializedVersion: 2
@@ -1656,7 +1656,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3622afd3514304693b07d9819a326107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StarVisual
-  starColor: {r: 1, g: 0.82, b: 0.15, a: 1}
+  starColor: {r: 1, g: 0.827451, b: 0.3019608, a: 1}
 --- !u!212 &853607191
 SpriteRenderer:
   serializedVersion: 2
@@ -1849,7 +1849,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.4999555, g: 0.7177841, b: 0.990566, a: 1}
+  m_Color: {r: 0.63529414, g: 0.54509807, b: 0.8666667, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2119,7 +2119,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2257,7 +2257,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2395,7 +2395,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2464,7 +2464,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3622afd3514304693b07d9819a326107, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StarVisual
-  starColor: {r: 1, g: 0.82, b: 0.15, a: 1}
+  starColor: {r: 1, g: 0.827451, b: 0.3019608, a: 1}
 --- !u!212 &1502329482
 SpriteRenderer:
   serializedVersion: 2
@@ -2638,7 +2638,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2824,7 +2824,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2962,7 +2962,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.40784314, g: 0.6784314, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3100,7 +3100,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6803133, g: 0.9811321, b: 0.69119895, a: 1}
+  m_Color: {r: 0.6117647, g: 0.5019608, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3157,8 +3157,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HeavyPressurePlate
   door: {fileID: 526189850}
   requiredMass: 3
-  inactiveColor: {r: 0.9, g: 0.3, b: 0.3, a: 1}
-  activatedColor: {r: 0.3, g: 1, b: 0.5, a: 1}
+  inactiveColor: {r: 0.79607844, g: 0.39607844, b: 0.4509804, a: 1}
+  activatedColor: {r: 0.4, g: 0.89411765, b: 0.85490197, a: 1}
 --- !u!61 &2038423936
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3393,7 +3393,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.6745098, g: 0.98039216, b: 0.6901961, a: 1}
+  m_Color: {r: 0.6117647, g: 0.5019608, b: 0.40784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
