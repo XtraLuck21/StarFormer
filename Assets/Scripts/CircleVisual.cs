@@ -92,18 +92,18 @@ public class CircleVisual : MonoBehaviour
     {
         if (generatedSprite != null)
         {
-            DestroyObject(generatedSprite);
+            DestroyGenerated(generatedSprite);
             generatedSprite = null;
         }
 
         if (generatedTexture != null)
         {
-            DestroyObject(generatedTexture);
+            DestroyGenerated(generatedTexture);
             generatedTexture = null;
         }
     }
 
-    private static void DestroyObject(Object target)
+    private static void DestroyGenerated(Object target)
     {
         if (Application.isPlaying)
         {
