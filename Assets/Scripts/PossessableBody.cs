@@ -19,6 +19,10 @@ public class PossessableBody : MonoBehaviour
     public float MoveSpeed => moveSpeed;
     public float JumpSpeed => jumpSpeed;
     public bool IsControlled => owner != null;
+    public bool IsInWater =>
+        isActiveAndEnabled &&
+        Body != null &&
+        WaterZone.Contains(Body.position);
 
     public Rigidbody2D Body { get; private set; }
     public Collider2D BodyCollider { get; private set; }
@@ -34,6 +38,8 @@ public class PossessableBody : MonoBehaviour
     private float spawnRotation;
 
     private readonly ContactPoint2D[] contacts = new ContactPoint2D[16];
+
+    private bool wasInWater;
 
     private void Awake()
     {
@@ -61,6 +67,11 @@ public class PossessableBody : MonoBehaviour
     {
         owner = newOwner;
         controlVisual.SetActive(owner != null);
+
+        if (TryGetComponent(out BodyWaterPhysics waterPhysics))
+        {
+            waterPhysics.RefreshWaterPhysics();
+        }
     }
 
     public bool IsGrounded()
@@ -105,5 +116,34 @@ public class PossessableBody : MonoBehaviour
         {
             owner.RequestPossession(this, target);
         }
+    }
+
+    private void FixedUpdate()
+    {
+        if (!IsReady)
+        {
+            return;
+        }
+
+        bool inWater = IsInWater;
+
+        if (inWater == wasInWater)
+        {
+            return;
+        }
+
+        wasInWater = inWater;
+        LogWaterState(inWater);
+    }
+
+    private void LogWaterState(bool inWater)
+    {
+        string state = inWater ? "entered water" : "left water";
+        Debug.Log($"{name} ({form}) {state}.", this);
+    }
+
+    private void OnDisable()
+    {
+        wasInWater = false;
     }
 }

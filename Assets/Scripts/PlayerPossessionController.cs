@@ -10,6 +10,14 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
 
+    [Header("Water Movement")]
+    [SerializeField, Min(0f)] private float starWaterSpeedMultiplier = 0.6f;
+    [SerializeField, Min(0f)] private float boxWaterSpeedMultiplier = 0.7f;
+    [SerializeField, Min(0f)] private float bubbleWaterSpeedMultiplier = 1.3f;
+    [SerializeField, Min(0.01f)] private float swimAcceleration = 12f;
+    [SerializeField, Min(0.01f)] private float swimBraking = 10f;
+    [SerializeField, Range(0f, 1f)] private float starWaterJumpMultiplier = 0.75f;
+
     private bool isDead;
     private float deathRestartTime;
 
@@ -20,6 +28,7 @@ public class PlayerPossessionController : MonoBehaviour
     private PossessableBody blockedPreviousBody;
 
     private float horizontalInput;
+    private float verticalInput;
     private bool actionRequested;
     private bool restartRequested;
 
@@ -52,6 +61,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         horizontalInput = 0f;
+        verticalInput = 0f;
         Keyboard keyboard = Keyboard.current;
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
@@ -86,6 +96,16 @@ public class PlayerPossessionController : MonoBehaviour
         if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
         {
             horizontalInput += 1f;
+        }
+
+        if (keyboard.wKey.isPressed)
+        {
+            verticalInput += 1f;
+        }
+
+        if (keyboard.sKey.isPressed)
+        {
+            verticalInput -= 1f;
         }
 
         if (keyboard.spaceKey.wasPressedThisFrame)
@@ -131,35 +151,82 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         Rigidbody2D body = currentBody.Body;
-
         Vector2 velocity = body.linearVelocity;
+        bool inWater = currentBody.IsInWater;
 
         switch (currentBody.Form)
         {
             case BodyForm.Star:
-                velocity.x = horizontalInput * currentBody.MoveSpeed;
+            {
+                float speed = currentBody.MoveSpeed;
+
+                if (inWater)
+                {
+                    speed *= starWaterSpeedMultiplier;
+                }
+
+                velocity.x = horizontalInput * speed;
 
                 if (actionRequested &&
                     velocity.y <= 0.1f &&
                     currentBody.IsGrounded())
                 {
-                    velocity.y = currentBody.JumpSpeed;
+                    velocity.y = currentBody.JumpSpeed * 
+                        (inWater ? starWaterJumpMultiplier : 1f);
                 }
 
                 break;
+            }
 
             case BodyForm.Box:
+            {
                 if (currentBody.IsGrounded())
                 {
-                    velocity.x = horizontalInput * currentBody.MoveSpeed;
+                    float speed = currentBody.MoveSpeed;
+
+                    if (inWater)
+                    {
+                        speed *= boxWaterSpeedMultiplier;
+                    }
+
+                    velocity.x = horizontalInput * speed;
                 }
 
                 break;
+            }
 
             case BodyForm.Bubble:
-                velocity.x = horizontalInput * currentBody.MoveSpeed;
-                velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
+            {
+                if (inWater)
+                {
+                    Vector2 swimInput = Vector2.ClampMagnitude(
+                        new Vector2(horizontalInput, verticalInput),
+                        1f
+                    );
+
+                    Vector2 targetVelocity =
+                        swimInput *
+                        currentBody.MoveSpeed *
+                        bubbleWaterSpeedMultiplier;
+
+                    float acceleration = swimInput.sqrMagnitude > 0f
+                        ? swimAcceleration
+                        : swimBraking;
+
+                    velocity = Vector2.MoveTowards(
+                        velocity,
+                        targetVelocity,
+                        acceleration * Time.fixedDeltaTime
+                    );
+                }
+                else
+                {
+                    velocity.x = horizontalInput * currentBody.MoveSpeed;
+                    velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
+                }
+
                 break;
+            }
         }
 
         body.linearVelocity = velocity;
