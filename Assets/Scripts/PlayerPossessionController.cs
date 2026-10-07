@@ -227,6 +227,18 @@ public class PlayerPossessionController : MonoBehaviour
 
                 break;
             }
+            case BodyForm.SpikeWall:
+                {
+                    if (currentBody.IsGrounded())
+                    {
+                        velocity.x = horizontalInput * currentBody.MoveSpeed;
+                    }
+                    if (actionRequested && currentBody.TryGetComponent(out SpikeShooterAbility shooter))
+                    {
+                        shooter.TryFire();
+                    }
+                    break;
+                }
         }
 
         body.linearVelocity = velocity;
