@@ -4,16 +4,34 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class SpikeProjectile : MonoBehaviour
 {
-    // Seconds before an unhit spike removes itself.
+    // Maximum seconds of flight. Stuck spikes stay until reload.
     [SerializeField] private float lifetime = 3f;
 
+    // Fraction of normal speed while inside a WaterZone.
+    [SerializeField, Range(0.05f, 1f)]
+    private float waterSpeedMultiplier = 0.4f;
+
+    // When true, a stuck spike becomes solid so bodies can stand on it.
+    [SerializeField] private bool solidWhenStuck = false;
+
     private Rigidbody2D body;
+    private Collider2D spikeCollider;
     private Rigidbody2D shooter;
-    private bool hasHit;
+
+    private Vector2 direction;
+    private float baseSpeed;
+    private float flightTime;
+
+    private bool launched;
+    private bool isStuck;
+    private bool isFinished;
+
+    public bool IsStuck => isStuck;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        spikeCollider = GetComponent<Collider2D>();
 
         // Fly in a straight line without falling or spinning.
         body.bodyType = RigidbodyType2D.Dynamic;
@@ -22,29 +40,90 @@ public class SpikeProjectile : MonoBehaviour
         body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
         // Detect hits without pushing objects around.
-        GetComponent<Collider2D>().isTrigger = true;
+        spikeCollider.isTrigger = true;
     }
 
     public void Launch(Vector2 velocity, Rigidbody2D shooterBody)
     {
         shooter = shooterBody;
-        body.linearVelocity = velocity;
-        Destroy(gameObject, lifetime);
+        direction = velocity.normalized;
+        baseSpeed = velocity.magnitude;
+        flightTime = 0f;
+        launched = true;
+
+        UpdateSpeed();
+    }
+
+    private void FixedUpdate()
+    {
+        if (!launched || isFinished)
+        {
+            return;
+        }
+
+        // Only flying spikes time out.
+        flightTime += Time.fixedDeltaTime;
+
+        if (flightTime >= lifetime)
+        {
+            isFinished = true;
+            Destroy(gameObject);
+            return;
+        }
+
+        UpdateSpeed();
+    }
+
+    // Slow down inside water and recover full speed after leaving it.
+    private void UpdateSpeed()
+    {
+        float speed = WaterZone.Contains(body.position)
+            ? baseSpeed * waterSpeedMultiplier
+            : baseSpeed;
+
+        body.linearVelocity = direction * speed;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        // Ignore sensors (like pressure plates) and the wall that fired it.
-        if (hasHit ||
+        // Ignore sensors (water, pressure plates) and the wall that fired it.
+        if (!launched ||
+            isFinished ||
             other.isTrigger ||
             other.attachedRigidbody == shooter)
         {
             return;
         }
 
-        hasHit = true;
-        Debug.Log($"Spike hit {other.name}.", this);
-        Destroy(gameObject);
+        isFinished = true;
+        Rigidbody2D otherBody = other.attachedRigidbody;
+
+        // Moving physics bodies (boxes, bubbles) do not hold spikes.
+        if (otherBody != null &&
+            otherBody.bodyType == RigidbodyType2D.Dynamic)
+        {
+            Debug.Log($"Spike hit {other.name} and broke.", this);
+            Destroy(gameObject);
+            return;
+        }
+
+        StickInto(other);
+    }
+
+    // Freeze in place where the spike entered the surface.
+    private void StickInto(Collider2D surface)
+    {
+        isStuck = true;
+
+        body.linearVelocity = Vector2.zero;
+        body.bodyType = RigidbodyType2D.Kinematic;
+
+        if (solidWhenStuck)
+        {
+            spikeCollider.isTrigger = false;
+        }
+
+        Debug.Log($"Spike stuck in {surface.name}.", this);
     }
 
     private void OnValidate()

@@ -229,14 +229,25 @@ public class PlayerPossessionController : MonoBehaviour
             }
             case BodyForm.SpikeWall:
                 {
+                    bool hasShooter = currentBody.TryGetComponent(
+                        out SpikeShooterAbility shooter);
+
+                    // Pressing left or right turns the spikes to that side.
+                    if (hasShooter && horizontalInput != 0f)
+                    {
+                        shooter.SetFacing(horizontalInput > 0f);
+                    }
+
                     if (currentBody.IsGrounded())
                     {
                         velocity.x = horizontalInput * currentBody.MoveSpeed;
                     }
-                    if (actionRequested && currentBody.TryGetComponent(out SpikeShooterAbility shooter))
+
+                    if (hasShooter && actionRequested)
                     {
                         shooter.TryFire();
                     }
+
                     break;
                 }
         }
