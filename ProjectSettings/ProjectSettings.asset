@@ -4,7 +4,7 @@
 PlayerSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 28
-  productGUID: 2187deb2a9d2c400b8fe65d48d1d0b31
+  productGUID: 2b156167c89004051ad67c8173dac083
   AndroidProfiler: 0
   AndroidFilterTouchesWhenObscured: 0
   AndroidEnableSustainedPerformanceMode: 0
@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: StarFormer
+  productName: StarFormer-RollingPrototype-Jingyi
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -520,7 +520,7 @@ PlayerSettings:
   ps4GarlicHeapSize: 2048
   ps4ProGarlicHeapSize: 2560
   playerPrefsMaxSize: 32768
-  ps4Passcode: tjJRDOjCH4YiE7fDRdkN4SDXJb7vZ07S
+  ps4Passcode: FKGBtgYfkvgfRT2av7E2tj7flkUYuxRf
   ps4pnSessions: 1
   ps4pnPresence: 1
   ps4pnFriends: 1
@@ -609,14 +609,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: StarFormer
+  metroPackageName: StarFormer-RollingPrototype-Jingyi
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: StarFormer
+  metroApplicationDescription: StarFormer-RollingPrototype-Jingyi
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -687,11 +687,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 1
   windowsGamepadBackendHint: 0
-  cloudProjectId: 1f3718b0-8d52-47b0-9092-c93dd6d9ed64
+  cloudProjectId: 90134fcb-358d-4e89-aede-5bcd6820fa43
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: StarFormer
-  organizationId: unity_a60b1724ab63aeeb27d0
+  projectName: StarFormer-RollingPrototype-Jingyi
+  organizationId: wujingyi_unity
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}
