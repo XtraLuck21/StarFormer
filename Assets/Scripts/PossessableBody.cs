@@ -34,8 +34,6 @@ public class PossessableBody : MonoBehaviour
         controlVisual != gameObject;
 
     private PlayerPossessionController owner;
-    private Vector2 spawnPosition;
-    private float spawnRotation;
 
     private readonly ContactPoint2D[] contacts = new ContactPoint2D[16];
 
@@ -45,9 +43,6 @@ public class PossessableBody : MonoBehaviour
     {
         Body = GetComponent<Rigidbody2D>();
         BodyCollider = GetComponent<Collider2D>();
-
-        spawnPosition = Body.position;
-        spawnRotation = Body.rotation;
 
         if (!IsReady)
         {
@@ -87,19 +82,6 @@ public class PossessableBody : MonoBehaviour
         }
 
         return false;
-    }
-
-    public void ResetToSpawn()
-    {
-        if (TryGetComponent(out BoxResizeAbility resizeAbility))
-        {
-            resizeAbility.ResetSize();
-        }
-
-        Body.position = spawnPosition;
-        Body.rotation = spawnRotation;
-        Body.linearVelocity = Vector2.zero;
-        Body.angularVelocity = 0f;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

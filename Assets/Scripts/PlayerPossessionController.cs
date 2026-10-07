@@ -11,7 +11,7 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float deathDelay = 2f;
 
     [Header("Water Movement")]
-    [SerializeField, Min(0f)] private float starWaterSpeedMultiplier = 0.6f;
+    [SerializeField, Min(0f)] private float starWaterSpeedMultiplier = 0.3f;
     [SerializeField, Min(0f)] private float boxWaterSpeedMultiplier = 0.7f;
     [SerializeField, Min(0f)] private float bubbleWaterSpeedMultiplier = 1.3f;
     [SerializeField, Min(0.01f)] private float swimAcceleration = 12f;

@@ -199,7 +199,7 @@ public class BoxResizeAbility : MonoBehaviour
 
             return false;
         }
-        
+
         return true;
     }
 
@@ -240,13 +240,6 @@ public class BoxResizeAbility : MonoBehaviour
 
         Physics2D.SyncTransforms();
         body.WakeUp();
-    }
-
-    public void ResetSize()
-    {
-        currentSize = 1f;
-        resizeInput = 0f;
-        transform.localScale = originalScale;
     }
 
     private void OnValidate()
