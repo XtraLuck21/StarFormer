@@ -53,7 +53,7 @@ public class TutorialIntroUI : MonoBehaviour
 
             return;
         }
-        
+
         if (isCompleted ||
             possessionIntroduced ||
             !tutorialBox.IsControlled)
@@ -76,7 +76,9 @@ public class TutorialIntroUI : MonoBehaviour
     {
         isCompleted = true;
 
-        titleText.text = "Tutorial complete!";
-        instructionsText.text = "Press R to restart.";
+        titleText.text = "Now get ready to transform!";
+        instructionsText.text =
+            "More forms. More possibilities.\n\n" +
+            "Press R to restart.";
     }
 }
