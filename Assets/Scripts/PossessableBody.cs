@@ -4,7 +4,8 @@ public enum BodyForm
 {
     Star,
     Box,
-    Bubble
+    Bubble,
+    Fan
 }
 
 [RequireComponent(typeof(Rigidbody2D))]

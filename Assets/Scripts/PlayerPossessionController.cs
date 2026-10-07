@@ -141,6 +141,14 @@ public class PlayerPossessionController : MonoBehaviour
                 velocity.x = horizontalInput * currentBody.MoveSpeed;
                 velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
                 break;
+
+            case BodyForm.Fan:
+                if (currentBody.IsGrounded())
+                {
+                    velocity.x = horizontalInput * currentBody.MoveSpeed;
+                }
+
+                break;
         }
 
         body.linearVelocity = velocity;
