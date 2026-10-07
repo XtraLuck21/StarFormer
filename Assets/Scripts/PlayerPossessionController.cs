@@ -8,6 +8,12 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float minimumHeight = -10f;
     [SerializeField] private float maximumHeight = 8f;
     [SerializeField] private float maximumRiseSpeed = 3f;
+    [SerializeField] private float deathDelay = 2f;
+
+    private bool isDead;
+    private float deathRestartTime;
+
+    public bool IsDead => isDead;
 
     private PossessableBody currentBody;
     private PossessableBody pendingTarget;
@@ -44,18 +50,31 @@ public class PlayerPossessionController : MonoBehaviour
             SceneManager.LoadScene(gameObject.scene.buildIndex);
             return;
         }
+
         horizontalInput = 0f;
         Keyboard keyboard = Keyboard.current;
+
+        if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
+        {
+            RequestRestart();
+            return;
+        }
+
+        if (isDead)
+        {
+            actionRequested = false;
+
+            if (Time.unscaledTime >= deathRestartTime)
+            {
+                RequestRestart();
+            }
+
+            return;
+        }
 
         if (keyboard == null)
         {
             actionRequested = false;
-            return;
-        }
-
-        if (keyboard.rKey.wasPressedThisFrame)
-        {
-            RequestRestart();
             return;
         }
 
@@ -77,7 +96,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (currentBody == null || restartRequested)
+        if (currentBody == null || restartRequested || isDead)
         {
             return;
         }
@@ -87,7 +106,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (bodyBounds.max.y < minimumHeight ||
             bodyBounds.min.y > maximumHeight)
         {
-            RequestRestart();
+            KillControlledBody(currentBody);
             return;
         }
 
@@ -171,12 +190,23 @@ public class PlayerPossessionController : MonoBehaviour
 
     public void KillControlledBody(PossessableBody hitBody)
     {
-        if (hitBody == null || hitBody != currentBody)
+        if (!isActiveAndEnabled ||
+            isDead ||
+            restartRequested ||
+            hitBody == null ||
+            hitBody != currentBody ||
+            Time.timeScale == 0f)
         {
             return;
         }
 
-        RequestRestart();
+        isDead = true;
+        pendingTarget = null;
+        horizontalInput = 0f;
+        actionRequested = false;
+
+        deathRestartTime = Time.unscaledTime + deathDelay;
+        Time.timeScale = 0f;
     }
 
     public void RequestPossession(
@@ -185,6 +215,7 @@ public class PlayerPossessionController : MonoBehaviour
     {
         if (!isActiveAndEnabled ||
             restartRequested ||
+            isDead ||
             source != currentBody ||
             target == currentBody ||
             target == blockedPreviousBody ||
@@ -196,6 +227,14 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         pendingTarget = target;
+    }
+
+    private void OnDisable()
+    {
+        if (isDead)
+        {
+            Time.timeScale = 1f;
+        }
     }
 
     private void PopBubble()
