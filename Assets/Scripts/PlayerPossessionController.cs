@@ -240,12 +240,6 @@ public class PlayerPossessionController : MonoBehaviour
                     }
 
                     break;
-                }
-                else
-                {
-                    velocity.x = horizontalInput * currentBody.MoveSpeed;
-                    velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
-                }
 
                 break;
             }
