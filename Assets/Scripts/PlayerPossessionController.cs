@@ -241,7 +241,6 @@ public class PlayerPossessionController : MonoBehaviour
 
                     break;
 
-                break;
             }
             case BodyForm.SpikeWall:
                 {
