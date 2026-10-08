@@ -131,7 +131,9 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         // Give the intentional pop action priority over a pending transfer.
-        if (currentBody.Form == BodyForm.Bubble && actionRequested)
+        if (actionRequested &&
+            (currentBody.Form == BodyForm.Bubble ||
+             currentBody.Form == BodyForm.Spider))
         {
             PopBubble();
             return;
@@ -150,6 +152,18 @@ public class PlayerPossessionController : MonoBehaviour
             }
         }
 
+        if (currentBody.Form == BodyForm.Spider)
+        {
+            if (currentBody.TryGetComponent(
+                out HexagonSurfaceMovement hexagon))
+            {
+                hexagon.Tick(horizontalInput);
+            }
+
+            actionRequested = false;
+            return;
+        }
+
         Rigidbody2D body = currentBody.Body;
         Vector2 velocity = body.linearVelocity;
         bool inWater = currentBody.IsInWater;
@@ -157,76 +171,76 @@ public class PlayerPossessionController : MonoBehaviour
         switch (currentBody.Form)
         {
             case BodyForm.Star:
-            {
-                float speed = currentBody.MoveSpeed;
-
-                if (inWater)
-                {
-                    speed *= starWaterSpeedMultiplier;
-                }
-
-                velocity.x = horizontalInput * speed;
-
-                if (actionRequested &&
-                    velocity.y <= 0.1f &&
-                    currentBody.IsGrounded())
-                {
-                    velocity.y = currentBody.JumpSpeed * 
-                        (inWater ? starWaterJumpMultiplier : 1f);
-                }
-
-                break;
-            }
-
-            case BodyForm.Box:
-            {
-                if (currentBody.IsGrounded())
                 {
                     float speed = currentBody.MoveSpeed;
 
                     if (inWater)
                     {
-                        speed *= boxWaterSpeedMultiplier;
+                        speed *= starWaterSpeedMultiplier;
                     }
 
                     velocity.x = horizontalInput * speed;
+
+                    if (actionRequested &&
+                        velocity.y <= 0.1f &&
+                        currentBody.IsGrounded())
+                    {
+                        velocity.y = currentBody.JumpSpeed *
+                            (inWater ? starWaterJumpMultiplier : 1f);
+                    }
+
+                    break;
                 }
 
-                break;
-            }
+            case BodyForm.Box:
+                {
+                    if (currentBody.IsGrounded())
+                    {
+                        float speed = currentBody.MoveSpeed;
+
+                        if (inWater)
+                        {
+                            speed *= boxWaterSpeedMultiplier;
+                        }
+
+                        velocity.x = horizontalInput * speed;
+                    }
+
+                    break;
+                }
 
             case BodyForm.Bubble:
-            {
-                if (inWater)
                 {
-                    Vector2 swimInput = Vector2.ClampMagnitude(
-                        new Vector2(horizontalInput, verticalInput),
-                        1f
-                    );
+                    if (inWater)
+                    {
+                        Vector2 swimInput = Vector2.ClampMagnitude(
+                            new Vector2(horizontalInput, verticalInput),
+                            1f
+                        );
 
-                    Vector2 targetVelocity =
-                        swimInput *
-                        currentBody.MoveSpeed *
-                        bubbleWaterSpeedMultiplier;
+                        Vector2 targetVelocity =
+                            swimInput *
+                            currentBody.MoveSpeed *
+                            bubbleWaterSpeedMultiplier;
 
-                    float acceleration = swimInput.sqrMagnitude > 0f
-                        ? swimAcceleration
-                        : swimBraking;
+                        float acceleration = swimInput.sqrMagnitude > 0f
+                            ? swimAcceleration
+                            : swimBraking;
 
-                    velocity = Vector2.MoveTowards(
-                        velocity,
-                        targetVelocity,
-                        acceleration * Time.fixedDeltaTime
-                    );
+                        velocity = Vector2.MoveTowards(
+                            velocity,
+                            targetVelocity,
+                            acceleration * Time.fixedDeltaTime
+                        );
+                    }
+                    else
+                    {
+                        velocity.x = horizontalInput * currentBody.MoveSpeed;
+                        velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
+                    }
+
+                    break;
                 }
-                else
-                {
-                    velocity.x = horizontalInput * currentBody.MoveSpeed;
-                    velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
-                }
-
-                break;
-            }
         }
 
         body.linearVelocity = velocity;
@@ -355,7 +369,11 @@ public class PlayerPossessionController : MonoBehaviour
     private void TransferTo(PossessableBody target)
     {
         PossessableBody previousBody = currentBody;
-
+        if (previousBody.TryGetComponent(
+    out HexagonSurfaceMovement previousHexagon))
+        {
+            previousHexagon.Release();
+        }
         previousBody.SetOwner(null);
         currentBody = target;
         currentBody.SetOwner(this);
