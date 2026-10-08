@@ -467,10 +467,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 470202025}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b6674b375885d4eb158b86a4fbdbcf, type: 3}
+  m_Script: {fileID: 11500000, guid: f69bbe0df591aae48af6f644a63acaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath2D
-  isDead: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1362,10 +1361,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 934574708}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b6674b375885d4eb158b86a4fbdbcf, type: 3}
+  m_Script: {fileID: 11500000, guid: f69bbe0df591aae48af6f644a63acaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath2D
-  isDead: 0
 --- !u!1 &1066985092
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,10 +1489,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1066985092}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f7b6674b375885d4eb158b86a4fbdbcf, type: 3}
+  m_Script: {fileID: 11500000, guid: f69bbe0df591aae48af6f644a63acaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDeath2D
-  isDead: 0
 --- !u!1 &1502329479
 GameObject:
   m_ObjectHideFlags: 0
@@ -1881,7 +1878,7 @@ Transform:
   m_GameObject: {fileID: 2017524181}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.15, y: -2.7, z: 0}
+  m_LocalPosition: {x: -0.65, y: -2.71, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1969,7 +1966,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2017524181}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b87a59d2ff68a274fa40a784fadc7b98, type: 3}
+  m_Script: {fileID: 11500000, guid: ff258c2a2a0ba8f45928c267cde24d2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKill
 --- !u!1 &2038423934
