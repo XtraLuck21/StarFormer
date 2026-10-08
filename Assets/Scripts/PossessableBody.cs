@@ -5,6 +5,7 @@ public enum BodyForm
     Star,
     Box,
     Bubble,
+    Spider
     Fan
 }
 
