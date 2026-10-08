@@ -5,8 +5,8 @@ public enum BodyForm
     Star,
     Box,
     Bubble,
-    SpikeWall,
-    Spider
+    Spider,
+    SpikeWall
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
