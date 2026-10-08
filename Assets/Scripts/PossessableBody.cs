@@ -6,6 +6,7 @@ public enum BodyForm
     Box,
     Bubble,
     Spider
+    Fan
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
