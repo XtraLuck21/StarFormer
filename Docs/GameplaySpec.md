@@ -4,7 +4,7 @@ Last updated: 2026-10-07.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Baseline: commit `d5c8970` on `level-1`, checked against source and saved scenes. The developer has reported successful manual testing of Tutorial, the three-form water sandbox and the implemented Level01 segments. Level01 has not been validated as a complete route with bouncing balls. This document does not claim a new automated test or Unity playtest was performed during drafting.
+Baseline: commit `af9e0aa` on `core-form-prefabs`, checked against source and saved scenes. The developer has reported successful manual testing of Tutorial, the three-form water sandbox, implemented Level01 segments, and newly instantiated core-form and hazard prefabs. Prefab extraction reuses the existing gameplay scripts and does not add new controls. Level01 has not been validated as a complete route with bouncing balls. This document does not claim a new automated test or Unity playtest was performed during drafting.
 
 ## 1. Current scope
 
@@ -16,6 +16,7 @@ Baseline: commit `d5c8970` on `level-1`, checked against source and saved scenes
 | Water behavior for all three current forms | Implemented and manually tested in WaterPlayground |
 | Tutorial instructions, lethal spikes, death feedback and completion | Implemented and manually tested in Tutorial |
 | R restart; automatic restart after death / vertical out-of-bounds | Implemented |
+| Reusable StarPlayer, BoxBody, BubbleBody, SpikeHazard and WaterPopHazard prefabs | Available in `Assets/Form`; developer-reported instance tests passed |
 | Level01 held plate, overhead height switch, bubble-pop hazards and completion UI | Implemented; developer-reported segment tests passed |
 | Level01 complete route, including bouncing-ball traversal | In progress; ball integration and full-route testing remain |
 | Fan-generated wind and form-specific wind response | Not integrated into the current shared controller |
@@ -55,13 +56,15 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 ### Death and restart
 
 - A hazard using `SpikeHazard` kills the currently controlled body in any implemented form.
-- A hazard using `BubblePopHazard` instead pops only the controlled bubble and leaves the star at that position. It does not kill the star or box and does not pop idle bubbles. Level01 currently uses purple markers for these hazards.
+- A hazard using `BubblePopHazard` instead pops only the controlled bubble and leaves the star at that position. It does not kill the star or box and does not pop idle bubbles. Level01 currently uses purple markers for these hazards. The reusable asset is named `WaterPopHazard.prefab`, but its script is `BubblePopHazard`; the behavior is not restricted to water.
 - Contact by an unpossessed body does not itself kill the player.
 - Death pauses gameplay, then reloads the whole current scene after the configured delay. Tutorial, WaterPlayground and Level01 currently save a delay of **2 seconds**. R bypasses the wait.
 - Tutorial displays `You died.` and restart instructions. The sandbox scenes and Level01 do not currently contain this death-feedback UI; Level01 has completion text only.
 - Automatic vertical failure occurs when the entire controlled collider is below `minimumHeight` or above `maximumHeight`; Tutorial and WaterPlayground save **-10 / 8**, while Level01 saves **-12 / 16**. This is not a general left/right map-boundary system.
 - Restart restores the scene's initial bodies, sizes, switches and consumed bubbles. Checkpoints are not implemented.
 - A stranded box or a route blocked by an abandoned body does not trigger automatic soft-lock detection. The current recovery is R restart.
+
+Reusable hazards require the current scene's player controller to be assigned on each instance. Their prefab assets deliberately leave that scene reference empty; see [ScriptGuide.md](ScriptGuide.md) for setup.
 
 ## 4. Star — Xiao
 

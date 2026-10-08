@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-07.
 
-Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefab follow-up: `core-form-prefabs`. Design reference: Level 1 Revision 08.
+Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
 **Status: the graybox and implemented non-ball interactions have passed developer-reported segment tests. Bouncing-ball integration and complete-route validation remain outstanding.** This is a working handoff baseline, not a finished level.
 
@@ -35,12 +35,12 @@ The receiver roof is intended to limit R1's bounce height while the player steer
 | `PlayerControl` | `PlayerPossessionController.initialBody` | `StarPlayer` |
 | `PressurePlate_P` | `HeldPressurePlate.targetBox` / `door` | `Box_C` / `Gate_G` |
 | `Switch_H` | `BoxHeightSwitch.targetBox` / `door` | `Box_D` / `Gate_G2` |
-| `WaterPopHazard01`, `WaterPopHazard02` | `BubblePopHazard.playerController` | `PlayerControl` |
+| `WaterPopHazard_01`, `WaterPopHazard_02`, `WaterPopHazard_03` | `BubblePopHazard.playerController` | `PlayerControl` |
 | `LevelGoal` | Player controller / required gate / status text | `PlayerControl` / `Gate_G2` / `LevelStatusText` |
 
 - **P → G is continuous:** only the assigned grounded C can hold it open. Control can transfer away from C while it remains on P. Moving C away closes G.
 - **H → G2 is latched:** assigned grounded D touches the overhead trigger once; G2 then remains open until restart. H has no explicit size threshold; its height creates the growth requirement.
-- **Purple hazards only pop bubbles:** they release the star and consume the controlled bubble. They do not implement the lethal spikes planned for the ball sections.
+- **Purple hazards only pop bubbles:** they release the star and consume the controlled bubble. The saved scene has WaterPopHazard prefab instances `_01` and `_03`; `_02` retains its existing scene setup. All three have scene controller references. The reusable lethal SpikeHazard asset is available, but the planned ball-section spike layout is still unfinished.
 - **The goal requires the star:** it checks that the player is alive, the entering star is controlled, and G2 is inactive. It does not independently verify every earlier puzzle.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
 
@@ -72,7 +72,7 @@ The developer reported successful manual tests of:
 
 - Star, box and bubble behavior in the level's water regions, including possession and bubble popping.
 - First-pool geometry, alternate exit routes and box resizing passages.
-- Bubble-only hazards and the nearby spare bubble.
+- Bubble-only hazards and the nearby spare bubble, including a newly placed WaterPopHazard prefab instance that pops the bubble without killing the released star.
 - C holding P, G opening while held, and G closing when the condition is no longer met.
 - D growing into H and G2 remaining open after activation.
 - Goal activation as the star, completion feedback, flag visibility and text placement.
@@ -85,10 +85,10 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 ## 5. Remaining work and handoff
 
 1. **Integrate R1 and R2 with the ball owner.** Replace markers with the actual bodies, connect possession/input, and verify bounce activation, steering, ceiling collisions and stopping after transfer. Confirm R1 can reach the receiver and transfer to C without requiring C to jump.
-2. **Build and tune the ball hazards.** Add the well's lethal spike arrangement and the upper corridor's staggered floor/ceiling hazards or openings. Preserve safe activation and transfer areas. The current continuous upper floor allows movement that would bypass the intended R2 challenge.
+2. **Build and tune the ball hazards.** Use the reusable SpikeHazard prefab to add the well's lethal spike arrangement and the upper corridor's staggered floor/ceiling hazards or openings. Preserve safe activation and transfer areas. The current continuous upper floor allows movement that would bypass the intended R2 challenge.
 3. **Run the complete route.** Check puzzle order, alternate paths, accidental shortcuts, C staying on P after transfer, recoverability after losing a bubble, and restart after failure. Revise geometry against the actual ball physics.
 4. **Finish presentation and integration.** Revisit the overview camera for readable gameplay, provide Level01 death feedback if needed, connect Tutorial → Level01 → Level02, and validate the intended build target.
 
-The Level 1 baseline has merged into `main` through PR #2. The follow-up branch `core-form-prefabs` now contains reusable StarPlayer, BoxBody and BubbleBody assets. Level01 uses these for StarPlayer, Box_A and Bubble_U1; the other boxes and bubbles retain their existing scene setup. WaterPlayground also has saved instances of all three prefabs and an updated initial-body reference.
+The Level 1 baseline merged into `main` through PR #2; reusable StarPlayer, BoxBody and BubbleBody assets merged through PR #3. Level01 uses these for StarPlayer, Box_A and Bubble_U1; the other boxes and bubbles retain their existing scene setup. WaterPlayground also has saved instances of all three prefabs and an updated initial-body reference.
 
-Prefab extraction and developer-reported cross-scene testing are complete. See [ScriptGuide.md](ScriptGuide.md) for setup requirements. Review this follow-up through its own PR; it does not complete the remaining bouncing-ball work.
+The current `core-form-prefabs` follow-up adds SpikeHazard and WaterPopHazard to the same `Assets/Form` folder. Tutorial now uses three SpikeHazard instances; Level01 uses the water hazard instances listed above. Developer-reported hazard instance tests passed. See [ScriptGuide.md](ScriptGuide.md) for controller assignment requirements. Review this hazard follow-up through a new PR; reusable assets do not complete the remaining bouncing-ball mechanics or hazard layouts.
