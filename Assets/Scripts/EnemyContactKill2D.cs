@@ -2,9 +2,10 @@ using UnityEngine;
 
 public class EnemyContactKill2D : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        PlayerDeath2D player = other.GetComponentInParent<PlayerDeath2D>();
+        PlayerDeath2D player =
+            collision.collider.GetComponentInParent<PlayerDeath2D>();
 
         if (player != null)
         {
