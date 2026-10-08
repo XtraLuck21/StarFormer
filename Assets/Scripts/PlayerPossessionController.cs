@@ -304,6 +304,24 @@ public class PlayerPossessionController : MonoBehaviour
         }
     }
 
+    public void RequestBubblePop(PossessableBody hitBody)
+    {
+        if (!isActiveAndEnabled ||
+            isDead ||
+            restartRequested ||
+            Time.timeScale == 0f ||
+            hitBody == null ||
+            hitBody != currentBody ||
+            hitBody.Form != BodyForm.Bubble)
+        {
+            return;
+        }
+
+        // Reuse the existing queued pop action.
+        // FixedUpdate processes it before a pending possession.
+        actionRequested = true;
+    }
+
     private void PopBubble()
     {
         actionRequested = false;

@@ -110,3 +110,5 @@ InitTestScene*.unity*
 
 # Local editor settings
 /.vscode/
+
+.DS_Store
