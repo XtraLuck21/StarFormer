@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-07.
 
-Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Branch: `level-1`. Implementation baseline: `d5c8970` (`Add Level 1 goal flag and completion feedback`). Design reference: Level 1 Revision 08.
+Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefab follow-up: `core-form-prefabs`. Design reference: Level 1 Revision 08.
 
 **Status: the graybox and implemented non-ball interactions have passed developer-reported segment tests. Bouncing-ball integration and complete-route validation remain outstanding.** This is a working handoff baseline, not a finished level.
 
@@ -76,6 +76,7 @@ The developer reported successful manual tests of:
 - C holding P, G opening while held, and G closing when the condition is no longer met.
 - D growing into H and G2 remaining open after activation.
 - Goal activation as the star, completion feedback, flag visibility and text placement.
+- New StarPlayer, BoxBody and BubbleBody prefab instances in WaterPlayground: movement, possession, box resizing/sinking, bubble swimming and popping, with no reported new Console errors.
 
 Later segments were tested independently while the ball connection was unavailable. These results do not establish that the full intended route is traversable or that puzzles cannot be skipped. This documentation update checked source and saved scene configuration; it did not run a new Unity playtest.
 
@@ -86,7 +87,8 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 1. **Integrate R1 and R2 with the ball owner.** Replace markers with the actual bodies, connect possession/input, and verify bounce activation, steering, ceiling collisions and stopping after transfer. Confirm R1 can reach the receiver and transfer to C without requiring C to jump.
 2. **Build and tune the ball hazards.** Add the well's lethal spike arrangement and the upper corridor's staggered floor/ceiling hazards or openings. Preserve safe activation and transfer areas. The current continuous upper floor allows movement that would bypass the intended R2 challenge.
 3. **Run the complete route.** Check puzzle order, alternate paths, accidental shortcuts, C staying on P after transfer, recoverability after losing a bubble, and restart after failure. Revise geometry against the actual ball physics.
-4. **Create reusable character prefabs.** This checkout currently has no character prefabs. Extract and test Star, Box and Bubble separately, preserving required visual children and components. Reconnect scene-specific controller and interaction references when instantiating them in another scene.
-5. **Finish presentation and integration.** Revisit the overview camera for readable gameplay, provide Level01 death feedback if needed, connect Tutorial → Level01 → Level02, and validate the intended build target.
+4. **Finish presentation and integration.** Revisit the overview camera for readable gameplay, provide Level01 death feedback if needed, connect Tutorial → Level01 → Level02, and validate the intended build target.
 
-Keep the current tested work on `level-1` for review through a PR. This document does not imply that the branch has merged into `main`. Character-prefab work can be reviewed separately after the level baseline is available to the team.
+The Level 1 baseline has merged into `main` through PR #2. The follow-up branch `core-form-prefabs` now contains reusable StarPlayer, BoxBody and BubbleBody assets. Level01 uses these for StarPlayer, Box_A and Bubble_U1; the other boxes and bubbles retain their existing scene setup. WaterPlayground also has saved instances of all three prefabs and an updated initial-body reference.
+
+Prefab extraction and developer-reported cross-scene testing are complete. See [ScriptGuide.md](ScriptGuide.md) for setup requirements. Review this follow-up through its own PR; it does not complete the remaining bouncing-ball work.

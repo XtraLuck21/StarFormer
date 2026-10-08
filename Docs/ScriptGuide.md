@@ -11,7 +11,7 @@ Current test scenes and gameplay scripts. For controls and gameplay behavior, se
 | [Playground](../Assets/Scenes/Playground.unity) | Existing mechanics sandbox | Star, box, bubble, resizing, pressure plate and door |
 | [Level01_Reference](../Assets/Scenes/Level01_Reference.unity) | Earlier level layout retained as a reference | Traversal and transformation layout; not the new Alpha Level 1 |
 | [Tutorial](../Assets/Scenes/Tutorial.unity) | Current playable tutorial | Movement, jump, lethal spikes, box possession and resizing, pressure plate, goal and feedback |
-| [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble |
+| [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
 | [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, bubble-pop hazards and star-specific completion; bouncing ball is not integrated |
 | [EnemyScene](../Assets/Scenes/EnemyScene.unity) | Teammate test scene present in this checkout | Not reviewed or playtested as part of the Level 1 work |
 
@@ -36,6 +36,14 @@ The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset]
 | [StarVisual.cs](../Assets/Scripts/StarVisual.cs) | Star `Visual` or host `StarMark` child; `SpriteRenderer` | Generates a star sprite at runtime; applies `starColor` and sorting order 10; disposes generated assets on destruction | Changing the star/possession marker's appearance, not its controls or collider |
 
 `BoxResizeAbility` currently requires an upright, unparented box with positive scale and a collider edge radius of zero. The intended box setup uses uniform X/Y scaling. It ignores triggers during clearance checks and does not change mass. Do not parent a box under a level-group object without first updating this constraint.
+
+**Reusable core prefabs:** [StarPlayer](../Assets/Form/StarPlayer.prefab), [BoxBody](../Assets/Form/BoxBody.prefab), and [BubbleBody](../Assets/Form/BubbleBody.prefab) are available in `Assets/Form`. Each includes its physics components, `PossessableBody`, `BodyWaterPhysics`, and its internally assigned control-visual child; BoxBody also includes `BoxResizeAbility`.
+
+- Drag the required prefabs into a scene and set their positions. Keep boxes at the scene root to satisfy the resizing constraint above.
+- Keep one scene `PlayerControl` with `PlayerPossessionController`; assign the **scene instance** of StarPlayer to `Initial Body`. The controller is not included in these prefabs.
+- Water requires scene objects with `WaterZone`. Canopies, platforms, switches, gates, hazards and goal UI remain scene objects; assign their controller/body references separately where required.
+- When replacing an existing body, check references to that body, especially `Initial Body` and assigned-box switches. Internal `Control Visual` references are already included in the prefab.
+- The star sprite is generated in Play Mode by `StarVisual`; an absent edit-time star preview does not by itself indicate a broken prefab. Change a scene instance's placement locally; apply changes to the prefab asset only when they should become shared defaults.
 
 ### Interactions, hazards and level feedback
 
