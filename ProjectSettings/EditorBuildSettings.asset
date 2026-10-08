@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/WaterPlayground.unity
     guid: ec498edd16847481fb4eb5fea2488c6b
+  - enabled: 1
+    path: Assets/Scenes/Level01.unity
+    guid: 70ab1147f083646d6981b3a8ff31dc97
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
