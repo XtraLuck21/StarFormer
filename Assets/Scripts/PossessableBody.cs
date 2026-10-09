@@ -2,11 +2,11 @@ using UnityEngine;
 
 public enum BodyForm
 {
-    Star,
-    Box,
-    Bubble,
-    Spider
-    Fan
+    Star = 0,
+    Box = 1,
+    Bubble = 2,
+    Fan = 3,
+    Spider = 4
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
