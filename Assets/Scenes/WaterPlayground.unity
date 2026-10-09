@@ -1043,6 +1043,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &713580986
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -3.356239
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.6350663
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2436929897956205123, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6556267895878842766, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
+      propertyPath: m_Name
+      value: SpikeWall
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 4f676d01cf10fbe46822a538df1fd872, type: 3}
 --- !u!1001 &779045478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1749,6 +1806,7 @@ MonoBehaviour:
   waitTime: 0.5
   startMovingToEnd: 1
   flipSpriteOnTurn: 0
+  restartImmediately: 1
 --- !u!50 &2129494774
 Rigidbody2D:
   serializedVersion: 5
@@ -1915,3 +1973,4 @@ SceneRoots:
   - {fileID: 779045478}
   - {fileID: 879248811}
   - {fileID: 2129494777}
+  - {fileID: 713580986}
