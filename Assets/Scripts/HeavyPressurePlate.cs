@@ -56,6 +56,13 @@ public class HeavyPressurePlate : MonoBehaviour
             return;
         }
 
+        // Only possessable bodies can press the plate. Wind-blown
+        // obstacles are ignored so they cannot cheese the puzzle.
+        if (!incomingBody.TryGetComponent(out PossessableBody _))
+        {
+            return;
+        }
+
         // Require a supporting contact beneath the body inside the plate area.
         // A heavy object passing through the sensor in midair is not enough.
         Bounds area = sensor.bounds;
