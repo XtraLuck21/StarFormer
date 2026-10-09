@@ -19,6 +19,10 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
 
+    [Header("Fan Repossess Cooldown")]
+    [Tooltip("Seconds after leaving a fan before the star can possess a fan again.")]
+    [SerializeField] private float fanRepossessCooldown = 2f;
+
     [Header("Water Movement")]
     [SerializeField, Min(0f)] private float starWaterSpeedMultiplier = 0.3f;
     [SerializeField, Min(0f)] private float boxWaterSpeedMultiplier = 0.7f;
@@ -31,6 +35,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float deathRestartTime;
 
     public bool IsDead => isDead;
+    public PossessableBody CurrentBody => currentBody;
 
     private PossessableBody currentBody;
     private PossessableBody pendingTarget;
@@ -39,6 +44,8 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
+    private bool leaveRequested;
+    private float fanRepossessBlockedUntil;
     private bool restartRequested;
 
     private void Start()
@@ -121,6 +128,11 @@ public class PlayerPossessionController : MonoBehaviour
         {
             actionRequested = true;
         }
+
+        if (keyboard.wKey.wasPressedThisFrame)
+        {
+            leaveRequested = true;
+        }
     }
 
     private void FixedUpdate()
@@ -147,6 +159,17 @@ public class PlayerPossessionController : MonoBehaviour
         {
             PopBubble();
             return;
+        }
+
+        if (leaveRequested)
+        {
+            leaveRequested = false;
+
+            if (currentBody.Form == BodyForm.Fan)
+            {
+                LeaveFan();
+                return;
+            }
         }
 
         UpdateContactLock();
@@ -349,6 +372,13 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
+        // Block re-entering a fan right after leaving one.
+        if (target.Form == BodyForm.Fan &&
+            Time.time < fanRepossessBlockedUntil)
+        {
+            return;
+        }
+
         pendingTarget = target;
     }
 
@@ -426,6 +456,57 @@ public class PlayerPossessionController : MonoBehaviour
         Debug.Log("Bubble popped. Returned to star form.", currentBody);
     }
 
+    private void LeaveFan()
+    {
+        if (initialBody == null ||
+            !initialBody.IsReady ||
+            initialBody.Form != BodyForm.Star)
+        {
+            Debug.LogError(
+                "Leaving a fan requires a valid initial star body.",
+                this
+            );
+
+            return;
+        }
+
+        PossessableBody fan = currentBody;
+        Vector2 releasePosition = fan.Body.position;
+        Vector2 releaseVelocity = fan.Body.linearVelocity;
+
+        pendingTarget = null;
+
+        if (fan.TryGetComponent(out HexagonSurfaceMovement hexagon))
+        {
+            hexagon.Release();
+        }
+
+        // Fan stays in the world and keeps blowing its last direction.
+        fan.SetOwner(null);
+        blockedPreviousBody = fan;
+
+        if (fanRepossessCooldown > 0f)
+        {
+            fanRepossessBlockedUntil = Time.time + fanRepossessCooldown;
+        }
+
+        Transform starTransform = initialBody.transform;
+        starTransform.position = new Vector3(
+            releasePosition.x,
+            releasePosition.y,
+            starTransform.position.z
+        );
+
+        initialBody.gameObject.SetActive(true);
+        initialBody.Body.position = releasePosition;
+        initialBody.Body.linearVelocity = releaseVelocity;
+        initialBody.Body.angularVelocity = 0f;
+
+        currentBody = initialBody;
+        currentBody.SetOwner(this);
+        actionRequested = false;
+    }
+
     private void TransferTo(PossessableBody target)
     {
         PossessableBody previousBody = currentBody;
@@ -442,6 +523,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         // Do not carry a jump press into a newly possessed body.
         actionRequested = false;
+        leaveRequested = false;
 
         // The original star merges into its first host.
         // Other bodies remain in the world with their existing physics.

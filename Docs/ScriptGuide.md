@@ -14,6 +14,7 @@ Current test scenes and gameplay scripts. For controls and gameplay behavior, se
 | [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
 | [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, bubble-pop hazards and star-specific completion; bouncing ball is not integrated |
 | [EnemyScene](../Assets/Scenes/EnemyScene.unity) | Teammate test scene present in this checkout | Not reviewed or playtested as part of the Level 1 work |
+| [FanScene](../Assets/Scenes/FanScene.unity) | Fan sandbox | Star, fan possession, space toggles airflow, W leaves the fan (2s repossess cooldown), red blowable obstacles and a box body |
 
 The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset). The saved list currently begins with Playground; do not assume Tutorial is the launch scene. Full-scene restart requires the current scene to be included in the enabled build scene list. Check the active build profile when preparing a build.
 
@@ -34,6 +35,9 @@ The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset]
 | --- | --- | --- | --- |
 | [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | Box root; `PossessableBody`, `Rigidbody2D`, `BoxCollider2D` | Reads W/S only while controlled; resizes within limits; checks solid obstacles; preserves the bottom while grounded and the collider center otherwise | Changing box resizing, size limits or clearance checks |
 | [StarVisual.cs](../Assets/Scripts/StarVisual.cs) | Star `Visual` or host `StarMark` child; `SpriteRenderer` | Generates a star sprite at runtime; applies `starColor` and sorting order 10; disposes generated assets on destruction | Changing the star/possession marker's appearance, not its controls or collider |
+| [FanBlower.cs](../Assets/Scripts/FanBlower.cs) | Fan root; `Rigidbody2D`, `PossessableBody` | While controlled, A/D set facing and Space toggles wind; pushes non-possessable bodies in range with distance falloff; state persists after the player leaves | Changing fan wind rules, range or force |
+| [FanVisual.cs](../Assets/Scripts/FanVisual.cs) | Fan `Face` child; `SpriteRenderer` | Generates a ring-and-blades sprite at runtime; spins while blowing and mirrors with facing | Changing the fan face look or spin |
+| [FanAirflowVisual.cs](../Assets/Scripts/FanAirflowVisual.cs) | Fan `Airflow` child; optional `FanBlower` | Emits white dots outward while blowing; they fade out at max range | Changing airflow particle look or density |
 
 `BoxResizeAbility` currently requires an upright, unparented box with positive scale and a collider edge radius of zero. The intended box setup uses uniform X/Y scaling. It ignores triggers during clearance checks and does not change mass. Do not parent a box under a level-group object without first updating this constraint.
 

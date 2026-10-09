@@ -2,7 +2,7 @@ using UnityEngine;
 
 public enum BodyForm
 {
-    ////Spider只能是4，不要修改，其他按照Player...Controller顺序即可
+    // Spider must stay 4. Others follow PlayerPossessionController order.
     Star = 0,
     Box = 1,
     Bubble = 2,

@@ -19,7 +19,7 @@ Baseline: commit `af9e0aa` on `core-form-prefabs`, checked against source and sa
 | Reusable StarPlayer, BoxBody, BubbleBody, SpikeHazard and WaterPopHazard prefabs | Available in `Assets/Form`; developer-reported instance tests passed |
 | Level01 held plate, overhead height switch, bubble-pop hazards and completion UI | Implemented; developer-reported segment tests passed |
 | Level01 complete route, including bouncing-ball traversal | In progress; ball integration and full-route testing remain |
-| Fan-generated wind and form-specific wind response | Not integrated into the current shared controller |
+| Fan-generated wind and form-specific wind response | Implemented and manually tested |
 | Rolling/bouncing ball, possessable spike wall, enemies and spider | Not integrated into the current shared controller |
 
 `Playground` remains a mechanics sandbox. `Level01_Reference` preserves an earlier level layout; it is not the final Alpha Level 1. `Tutorial` is the current teaching scene, and `WaterPlayground` isolates water behavior. `Level01` is the current Alpha Level 1 graybox; see [level-1.md](level-1.md) for its progress and handoff. An `EnemyScene` also exists in this checkout, but its presence does not establish that enemy gameplay is integrated or tested.
@@ -36,6 +36,7 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 | Box, underwater | Slower left/right movement while grounded | Grow | Shrink | No action | Restart scene |
 | Bubble, in air | Move left/right | No action | No action | Pop and return to star | Restart scene |
 | Bubble, underwater | Swim left/right | Swim up | Swim down | Pop and return to star | Restart scene |
+| Fan | Move left/right | Leave Fan | No action | Air blowing | Restart scene |
 
 - Left/Right Arrow also work as alternatives to A/D in the current controller. Up/Down Arrow are not implemented as W/S alternatives.
 - There is no manual possession key. Contact with an eligible body automatically requests a transfer.

@@ -1047,17 +1047,17 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.82, b: 0.15, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 0
+  m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
 --- !u!1 &853607188
 GameObject:
@@ -1588,9 +1588,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPossessionController
   initialBody: {fileID: 1066985097}
+  useHeightLimit: 1
   minimumHeight: -10
   maximumHeight: 8
   maximumRiseSpeed: 3
+  deathDelay: 2
+  starWaterSpeedMultiplier: 0.3
+  boxWaterSpeedMultiplier: 0.7
+  bubbleWaterSpeedMultiplier: 1.3
+  swimAcceleration: 12
+  swimBraking: 10
+  starWaterJumpMultiplier: 0.75
 --- !u!4 &1643171617
 Transform:
   m_ObjectHideFlags: 0
