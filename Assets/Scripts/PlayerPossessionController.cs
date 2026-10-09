@@ -5,7 +5,16 @@ using UnityEngine.SceneManagement;
 public class PlayerPossessionController : MonoBehaviour
 {
     [SerializeField] private PossessableBody initialBody;
+
+    [Header("Height Limit")]
+    [Tooltip("When enabled, leaving the Y range below restarts the level. " +
+             "Turn this off for large maps that have no ceiling/floor kill.")]
+    [SerializeField] private bool useHeightLimit = true;
+
+    [Tooltip("Falling below this Y restarts (only if Height Limit is on).")]
     [SerializeField] private float minimumHeight = -10f;
+
+    [Tooltip("Rising above this Y restarts (only if Height Limit is on).")]
     [SerializeField] private float maximumHeight = 8f;
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
@@ -123,8 +132,9 @@ public class PlayerPossessionController : MonoBehaviour
 
         Bounds bodyBounds = currentBody.BodyCollider.bounds;
 
-        if (bodyBounds.max.y < minimumHeight ||
-            bodyBounds.min.y > maximumHeight)
+        if (useHeightLimit &&
+            (bodyBounds.max.y < minimumHeight ||
+             bodyBounds.min.y > maximumHeight))
         {
             KillControlledBody(currentBody);
             return;
