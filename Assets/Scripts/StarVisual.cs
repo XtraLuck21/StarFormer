@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
+[ExecuteAlways]
 public class StarVisual : MonoBehaviour
 {
     [SerializeField] private Color starColor =
@@ -12,8 +13,35 @@ public class StarVisual : MonoBehaviour
     private Texture2D generatedTexture;
     private Sprite generatedSprite;
 
-    private void Awake()
+    private void OnEnable()
     {
+        BuildSprite();
+    }
+
+    private void OnValidate()
+    {
+        if (!isActiveAndEnabled)
+        {
+            return;
+        }
+
+        SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (spriteRenderer != null && generatedSprite != null)
+        {
+            spriteRenderer.color = starColor;
+        }
+    }
+
+    private void OnDisable()
+    {
+        ReleaseSprite();
+    }
+
+    private void BuildSprite()
+    {
+        ReleaseSprite();
+
         Vector2[] outline = CreateOutline();
         Color32[] pixels = new Color32[Resolution * Resolution];
 
@@ -45,6 +73,7 @@ public class StarVisual : MonoBehaviour
         generatedTexture.name = "RuntimeStarTexture";
         generatedTexture.filterMode = FilterMode.Bilinear;
         generatedTexture.wrapMode = TextureWrapMode.Clamp;
+        generatedTexture.hideFlags = HideFlags.HideAndDontSave;
         generatedTexture.SetPixels32(pixels);
         generatedTexture.Apply();
 
@@ -58,6 +87,7 @@ public class StarVisual : MonoBehaviour
         );
 
         generatedSprite.name = "RuntimeStarSprite";
+        generatedSprite.hideFlags = HideFlags.HideAndDontSave;
 
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         spriteRenderer.drawMode = SpriteDrawMode.Simple;
@@ -129,16 +159,30 @@ public class StarVisual : MonoBehaviour
         return inside;
     }
 
-    private void OnDestroy()
+    private void ReleaseSprite()
     {
         if (generatedSprite != null)
         {
-            Destroy(generatedSprite);
+            DestroyGenerated(generatedSprite);
+            generatedSprite = null;
         }
 
         if (generatedTexture != null)
         {
-            Destroy(generatedTexture);
+            DestroyGenerated(generatedTexture);
+            generatedTexture = null;
+        }
+    }
+
+    private static void DestroyGenerated(Object target)
+    {
+        if (Application.isPlaying)
+        {
+            Destroy(target);
+        }
+        else
+        {
+            DestroyImmediate(target);
         }
     }
 }

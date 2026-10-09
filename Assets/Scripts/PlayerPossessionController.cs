@@ -264,7 +264,16 @@ public class PlayerPossessionController : MonoBehaviour
                     }
 
                     break;
+                break;
+            }
+
+            case BodyForm.Fan:
+                if (currentBody.IsGrounded())
+                {
+                    velocity.x = horizontalInput * currentBody.MoveSpeed;
                 }
+
+                break;
         }
 
         body.linearVelocity = velocity;
