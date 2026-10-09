@@ -2,12 +2,13 @@ using UnityEngine;
 
 public enum BodyForm
 {
+    ////Spider只能是4，不要修改，其他按照Player...Controller顺序即可
     Star = 0,
     Box = 1,
     Bubble = 2,
-    Fan = 3,
-    Spider = 4,
-    SpikeWall = 5
+    SpikeWall = 3,
+    Fan = 5,
+    Spider = 4
 }
 
 [RequireComponent(typeof(Rigidbody2D))]

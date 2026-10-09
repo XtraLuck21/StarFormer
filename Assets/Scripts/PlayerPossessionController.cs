@@ -264,7 +264,6 @@ public class PlayerPossessionController : MonoBehaviour
                     }
 
                     break;
-                break;
             }
 
             case BodyForm.Fan:
