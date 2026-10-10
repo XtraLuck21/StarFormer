@@ -20,8 +20,10 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private bool carryRiders = true;
 
     // 接触面法线至少要多向上，才算"站在平台上"。
-    // 0.5 约等于 60 度，侧面贴着的物体不会被带走。
     [SerializeField, Range(0f, 1f)] private float riderNormalThreshold = 0.5f;
+
+    // 带动乘客时，顺便抵消它的下坠速度，减少上下抖动。
+    [SerializeField] private bool dampRiderFalling = true;
 
     private Rigidbody2D body;
     private Collider2D bodyCollider;
@@ -31,7 +33,6 @@ public class MovingPlatform : MonoBehaviour
     private bool movingToEnd;
     private float waitTimer;
 
-    private Vector2 lastPosition;
     private bool isConfigured;
 
     // 本帧站在平台上的物体。
@@ -55,11 +56,13 @@ public class MovingPlatform : MonoBehaviour
             return;
         }
 
-        // 位置由脚本控制，不受重力，也不会被踩下去。
         body.bodyType = RigidbodyType2D.Kinematic;
         body.gravityScale = 0f;
         body.simulated = true;
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        // 画面平滑，必须和玩家设成一样。
+        body.interpolation = RigidbodyInterpolation2D.Interpolate;
 
         // 实心碰撞体才能站上去。
         bodyCollider.isTrigger = false;
@@ -67,7 +70,6 @@ public class MovingPlatform : MonoBehaviour
         startPoint = body.position;
         endPoint = startPoint + patrolOffset;
         movingToEnd = startMovingToEnd;
-        lastPosition = startPoint;
 
         if (patrolOffset == Vector2.zero)
         {
@@ -93,39 +95,52 @@ public class MovingPlatform : MonoBehaviour
         {
             waitTimer -= Time.fixedDeltaTime;
             riders.Clear();
-            lastPosition = body.position;
             return;
         }
 
+        Vector2 current = body.position;
         Vector2 target = movingToEnd ? endPoint : startPoint;
 
         Vector2 nextPosition = Vector2.MoveTowards(
-            body.position,
+            current,
             target,
             moveSpeed * Time.fixedDeltaTime
         );
 
-        Vector2 delta = nextPosition - lastPosition;
+        Vector2 delta = nextPosition - current;
 
-        body.MovePosition(nextPosition);
+        // 直接赋值而不是 MovePosition，
+        // 这样平台和乘客在同一瞬间移动，不会错开一帧。
+        body.position = nextPosition;
 
-        // 把这一帧的位移同样加到乘客身上。
         if (carryRiders && delta != Vector2.zero)
         {
             foreach (Rigidbody2D rider in riders)
             {
-                if (rider != null)
+                if (rider == null)
                 {
-                    rider.position += delta;
+                    continue;
+                }
+
+                rider.position += delta;
+
+                // 抵消站立时累积的下坠速度。
+                if (dampRiderFalling)
+                {
+                    Vector2 riderVelocity = rider.linearVelocity;
+
+                    if (riderVelocity.y < 0f)
+                    {
+                        riderVelocity.y = 0f;
+                        rider.linearVelocity = riderVelocity;
+                    }
                 }
             }
         }
 
-        // 乘客名单每帧重建，离开平台的会自动移除。
+        // 乘客名单每帧重建，离开平台的自动移除。
         riders.Clear();
-        lastPosition = nextPosition;
 
-        // 到达端点就换方向。
         if (Vector2.Distance(nextPosition, target) < 0.001f)
         {
             movingToEnd = !movingToEnd;
@@ -161,7 +176,6 @@ public class MovingPlatform : MonoBehaviour
         }
     }
 
-    // 在 Scene 窗口里画出巡逻路线。
     private void OnDrawGizmosSelected()
     {
         Vector2 from = Application.isPlaying
