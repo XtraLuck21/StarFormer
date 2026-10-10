@@ -87,15 +87,6 @@ public class MovingSpikeHazard : MonoBehaviour
         endPoint = startPoint + patrolOffset;
         movingToEnd = startMovingToEnd;
 
-        if (patrolOffset == Vector2.zero)
-        {
-            Debug.LogWarning(
-                "Patrol Offset 是 (0,0)，这个刺不会移动。" +
-                "请在 Inspector 里填一个位移，例如 X = 4。",
-                this
-            );
-        }
-
         isConfigured = true;
         ApplyFacing();
     }
