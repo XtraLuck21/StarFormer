@@ -1,5 +1,11 @@
 using UnityEngine;
 
+public enum SpikeMoveMode
+{
+    Patrol,
+    Straight
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class MovingSpikeHazard : MonoBehaviour
 {
@@ -7,16 +13,25 @@ public class MovingSpikeHazard : MonoBehaviour
     // 留空也可以，Start 时会自动在场景里找。
     [SerializeField] private PlayerPossessionController playerController;
 
-    [Header("Patrol")]
+    [Header("Movement")]
+    // Patrol = 在两点之间来回；Straight = 朝一个方向一直走，不折返。
+    [SerializeField] private SpikeMoveMode moveMode = SpikeMoveMode.Patrol;
+
+    // 两种模式共用的速度，单位是米/秒。
+    [SerializeField, Min(0.01f)] private float moveSpeed = 2f;
+
+    [Header("Patrol Mode")]
     // 相对起点的位移。(4, 0) = 向右来回 4 米；(0, 3) = 上下来回 3 米。
     [SerializeField] private Vector2 patrolOffset = new Vector2(4f, 0f);
-
-    [SerializeField, Min(0.01f)] private float moveSpeed = 2f;
 
     // 到达两端后停顿几秒，0 表示立刻折返。
     [SerializeField, Min(0f)] private float waitTime = 0.5f;
 
     [SerializeField] private bool startMovingToEnd = true;
+
+    [Header("Straight Mode")]
+    // 勾上 = 一直往右走，取消勾选 = 一直往左走。
+    [SerializeField] private bool straightMovesRight = true;
 
     // 勾上后，折返时左右翻转贴图。
     [SerializeField] private bool flipSpriteOnTurn = false;
@@ -98,6 +113,15 @@ public class MovingSpikeHazard : MonoBehaviour
             return;
         }
 
+        if (moveMode == SpikeMoveMode.Straight)
+        {
+            Vector2 step = (straightMovesRight ? Vector2.right : Vector2.left)
+                * (moveSpeed * Time.fixedDeltaTime);
+
+            body.MovePosition(body.position + step);
+            return;
+        }
+
         // 在端点停顿。
         if (waitTimer > 0f)
         {
@@ -132,7 +156,20 @@ public class MovingSpikeHazard : MonoBehaviour
             return;
         }
 
-        spriteRenderer.flipX = !movingToEnd;
+        spriteRenderer.flipX = moveMode == SpikeMoveMode.Straight
+            ? !straightMovesRight
+            : !movingToEnd;
+    }
+
+    // 被射出的刺打中时调用：先掉碎片，再销毁自己。
+    public void Shatter()
+    {
+        if (TryGetComponent(out ShatterEffect effect))
+        {
+            effect.Play();
+        }
+
+        Destroy(gameObject);
     }
 
     // ── 杀伤逻辑 ──
@@ -187,7 +224,10 @@ public class MovingSpikeHazard : MonoBehaviour
             ? startPoint
             : (Vector2)transform.position;
 
-        Vector2 to = from + patrolOffset;
+        // Straight 模式只画一条表示方向的短线。
+        Vector2 to = moveMode == SpikeMoveMode.Straight
+            ? from + (straightMovesRight ? Vector2.right : Vector2.left) * 2f
+            : from + patrolOffset;
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(from, to);
