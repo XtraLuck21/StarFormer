@@ -98,6 +98,15 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
+        if (currentBody != null &&
+            currentBody.Form == BodyForm.gravityBall)
+        {
+            horizontalInput = 0f;
+            verticalInput = 0f;
+            actionRequested = false;
+            leaveRequested = false;
+            return;
+        }
         if (keyboard == null)
         {
             actionRequested = false;
@@ -274,7 +283,7 @@ public class PlayerPossessionController : MonoBehaviour
 
                     break;
 
-            }
+                }
             case BodyForm.SpikeWall:
                 {
                     bool hasShooter = currentBody.TryGetComponent(
@@ -297,7 +306,14 @@ public class PlayerPossessionController : MonoBehaviour
                     }
 
                     break;
-            }
+                }
+            case BodyForm.gravityBall:
+                {
+                    // keep the small ball rolling/player don control
+                    actionRequested = false;
+                    leaveRequested = false;
+                    return;
+                }
 
             case BodyForm.Fan:
                 if (currentBody.IsGrounded())
@@ -510,26 +526,37 @@ public class PlayerPossessionController : MonoBehaviour
     private void TransferTo(PossessableBody target)
     {
         PossessableBody previousBody = currentBody;
+
         if (previousBody.TryGetComponent(
-    out HexagonSurfaceMovement previousHexagon))
+            out HexagonSurfaceMovement previousHexagon))
         {
             previousHexagon.Release();
         }
+
         previousBody.SetOwner(null);
+
+        // 先成功转移控制权。
         currentBody = target;
         currentBody.SetOwner(this);
 
         blockedPreviousBody = previousBody;
 
-        // Do not carry a jump press into a newly possessed body.
+        horizontalInput = 0f;
+        verticalInput = 0f;
         actionRequested = false;
         leaveRequested = false;
 
-        // The original star merges into its first host.
-        // Other bodies remain in the world with their existing physics.
         if (previousBody.Form == BodyForm.Star)
         {
+            // 星星保留，泡泡爆裂时还能恢复。
             previousBody.gameObject.SetActive(false);
+        }
+        else if (previousBody.Form == BodyForm.gravityBall)
+        {
+            // 小球转移到任何其他身体后销毁。
+            blockedPreviousBody = null;
+            previousBody.gameObject.SetActive(false);
+            Destroy(previousBody.gameObject);
         }
 
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);

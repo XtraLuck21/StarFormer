@@ -8,7 +8,8 @@ public enum BodyForm
     Bubble = 2,
     SpikeWall = 3,
     Fan = 5,
-    Spider = 4
+    Spider = 4,
+    gravityBall=6
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
