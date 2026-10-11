@@ -3948,7 +3948,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b639305e15034c14ca7c425fceb75eea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraRoom
-  mode: 1
+  mode: 0
   padding: 0.5
   followViewSize: 5
   gizmoColor: {r: 0.3, g: 0.8, b: 1, a: 0.15}
@@ -5389,9 +5389,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b639305e15034c14ca7c425fceb75eea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraRoom
-  mode: 0
+  mode: 1
   padding: 0.5
-  followViewSize: 4
+  followViewSize: 6
   gizmoColor: {r: 0.3, g: 0.8, b: 1, a: 0.15}
 --- !u!61 &609797320
 BoxCollider2D:
