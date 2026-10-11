@@ -1,10 +1,10 @@
 # Gameplay Specification
 
-Last updated: 2026-10-07.
+Last updated: 2026-10-11.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Baseline: commit `af9e0aa` on `core-form-prefabs`, checked against source and saved scenes. The developer has reported successful manual testing of Tutorial, the three-form water sandbox, implemented Level01 segments, and newly instantiated core-form and hazard prefabs. Prefab extraction reuses the existing gameplay scripts and does not add new controls. Level01 has not been validated as a complete route with bouncing balls. This document does not claim a new automated test or Unity playtest was performed during drafting.
+Baseline: the `af9e0aa` core-form/hazard work plus the 2026-10-09 local Level01 bouncing-ball and regional-camera integration, checked against source, prefab assets and the saved scene. The developer has reported successful manual segment tests for the existing forms, the reusable BouncyBall, both Level01 ball instances, water-surface behavior, possession stability, lethal spike contact and all three camera regions. Level01 has not yet been validated as one complete start-to-finish route.
 
 ## 1. Current scope
 
@@ -13,14 +13,16 @@ Baseline: commit `af9e0aa` on `core-form-prefabs`, checked against source and sa
 | Star, box and bubble; automatic contact possession | Implemented and manually tested |
 | Box resizing; pressure plate opening a door | Implemented and manually tested |
 | Bubble popping and return to the star | Implemented and manually tested |
-| Water behavior for all three current forms | Implemented and manually tested in WaterPlayground |
+| Water behavior for star, box and bubble | Implemented and manually tested in WaterPlayground |
 | Tutorial instructions, lethal spikes, death feedback and completion | Implemented and manually tested in Tutorial |
 | R restart; automatic restart after death / vertical out-of-bounds | Implemented |
 | Reusable StarPlayer, BoxBody, BubbleBody, SpikeHazard and WaterPopHazard prefabs | Available in `Assets/Form`; developer-reported instance tests passed |
 | Level01 held plate, overhead height switch, bubble-pop hazards and completion UI | Implemented; developer-reported segment tests passed |
-| Level01 complete route, including bouncing-ball traversal | In progress; ball integration and full-route testing remain |
+| Reusable BouncyBall prefab; automatic land bounce, A/D steering, ceiling compression and water-surface floating | Implemented; two Level01 instances and developer-reported segment tests passed |
+| Level01 three-region camera with bounded follow and smooth position/zoom transitions | Implemented and tested for lower-left, lower-right, upper and possession changes |
+| Level01 complete route, including final bouncing-ball traversal | Route layout implemented; full start-to-finish testing remains |
 | Fan-generated wind and form-specific wind response | Not integrated into the current shared controller |
-| Rolling/bouncing ball, possessable spike wall, enemies and spider | Not integrated into the current shared controller |
+| Possessable spike wall, enemies and spider | Not integrated into the current shared controller |
 
 `Playground` remains a mechanics sandbox. `Level01_Reference` preserves an earlier level layout; it is not the final Alpha Level 1. `Tutorial` is the current teaching scene, and `WaterPlayground` isolates water behavior. `Level01` is the current Alpha Level 1 graybox; see [level-1.md](level-1.md) for its progress and handoff. An `EnemyScene` also exists in this checkout, but its presence does not establish that enemy gameplay is integrated or tested.
 
@@ -36,6 +38,8 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 | Box, underwater | Slower left/right movement while grounded | Grow | Shrink | No action | Restart scene |
 | Bubble, in air | Move left/right | No action | No action | Pop and return to star | Restart scene |
 | Bubble, underwater | Swim left/right | Swim up | Swim down | Pop and return to star | Restart scene |
+| Bouncing ball, on land | Accelerated steering left/right while automatically bouncing | No action | No action | No action | Restart scene |
+| Bouncing ball, touching water | Reduced left/right movement while locked to the water surface | No action | No action | No action; vertical bouncing is disabled | Restart scene |
 
 - Left/Right Arrow also work as alternatives to A/D in the current controller. Up/Down Arrow are not implemented as W/S alternatives.
 - There is no manual possession key. Contact with an eligible body automatically requests a transfer.
@@ -48,9 +52,9 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 
 - Only eligible possessable bodies can be taken over. Ground, ordinary platforms, doors, water regions and environmental spikes are not possessable.
 - Touching another eligible body transfers control to that existing body at its position; it does not create a copy at the player's previous position.
-- The original star is hidden after entering a host. A star marker identifies the controlled host.
-- An abandoned box or bubble remains in the scene with its physical behavior and can obstruct a route or participate in interactions.
-- The previous body is temporarily blocked as a possession target until the bodies separate, preventing immediate back-and-forth transfers.
+- The star is the only player identity. When it enters a host, the original `StarPlayer` object is fully inactive, including its collider and rigidbody; a centered star marker identifies the controlled host, including the bouncing ball.
+- Transferring between non-star hosts moves the star's control to the touched body without consuming the previous host. Boxes retain gravity, abandoned bubbles retain their environmental physics, and an abandoned bouncing ball freezes in place until possessed again.
+- A contact can cause at most one transfer. Every possessable body already touching or immediately surrounding the new host is blocked until it remains safely separated for several physics frames; only a new collision after separation can transfer control again. The queued transfer also verifies that the source and target are still touching before it executes.
 - Contact possession remains active underwater. Popping above a box can therefore lead to automatic box possession when the released star lands on it.
 
 ### Death and restart
@@ -60,7 +64,7 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 - Contact by an unpossessed body does not itself kill the player.
 - Death pauses gameplay, then reloads the whole current scene after the configured delay. Tutorial, WaterPlayground and Level01 currently save a delay of **2 seconds**. R bypasses the wait.
 - Tutorial displays `You died.` and restart instructions. The sandbox scenes and Level01 do not currently contain this death-feedback UI; Level01 has completion text only.
-- Automatic vertical failure occurs when the entire controlled collider is below `minimumHeight` or above `maximumHeight`; Tutorial and WaterPlayground save **-10 / 8**, while Level01 saves **-12 / 16**. This is not a general left/right map-boundary system.
+- Automatic vertical failure occurs when the entire controlled collider is below `minimumHeight` or above the active form's upper limit. Tutorial and WaterPlayground save **-10 / 8**. Level01 uses **-12 / 16** for the star, box and bubble, while the bouncing ball uses a separate upper limit of **40** so its 20.25-unit open-air bounce does not cause an unintended death. These values are not a general left/right map-boundary system.
 - Restart restores the scene's initial bodies, sizes, switches and consumed bubbles. Checkpoints are not implemented.
 - A stranded box or a route blocked by an abandoned body does not trigger automatic soft-lock detection. The current recovery is R restart.
 
@@ -108,13 +112,39 @@ Reusable hazards require the current scene's player controller to be assigned on
 
 ### Popping
 
-- Space pops the bubble in both environments and restores the original star at the bubble's current position. `BubblePopHazard` requests the same queued action through `RequestBubblePop`; a requested pop is processed before a pending possession transfer.
+- Space pops the controlled bubble in both environments and restores the original star at the bubble's current position. `BubblePopHazard` requests the same queued action through `RequestBubblePop`; a requested pop is processed before a pending possession transfer. If control leaves a bubble by touching another form instead, the abandoned bubble remains in the scene and continues its unpossessed environmental physics.
 - The star retains horizontal and downward velocity, while upward velocity is removed so it can begin falling.
 - A star released underwater immediately receives its water physics through the ownership refresh.
 - The popped bubble is inactive until the scene restarts; it does not respawn automatically at its original location.
 - **Wind: planned.** Fan airflow should push bubbles away; force strength and player resistance are **Undecided**.
 
-## 7. Water rules and current tuning
+## 7. Bouncing Ball — Xiao
+
+### Waiting and possession
+
+- Both Level01 balls are instances of the same reusable `BouncyBall` prefab.
+- An unpossessed ball is kinematic, frozen and motionless. Touching it with the controlled star, box or bubble transfers control to the ball and starts its land behavior.
+- The centered star marker appears only while the ball is controlled; it is not placed above the ball.
+- Transferring from the ball into another eligible body immediately stops and freezes the abandoned ball. Ordinary terrain collision does not deactivate a controlled ball.
+
+### Land bouncing and steering
+
+- A controlled ball bounces automatically whenever it reaches supporting ground; Space is not required.
+- The default unobstructed bounce height is **20.25 world units** with **2.4 seconds to the apex**.
+- A/D or Left/Right Arrow steers the ball horizontally. Acceleration and braking are used instead of replacing horizontal velocity instantly; Level01 currently saves acceleration **35** and braking **28**.
+- Before launching, the ball checks the solid space above it. A low ceiling reduces the available bounce height.
+- When the rising ball strikes the underside of a solid obstacle, it reverses vertically and adopts the compressed height. Shorter bounces use a faster rhythm, reproducing the effect of a real ball bouncing beneath a low board.
+- Returning to open space restores the default bounce target after the next grounded launch.
+
+### Water and hazards
+
+- When the ball overlaps a registered water zone, it is positioned at the highest overlapping water surface and cannot sink.
+- Vertical velocity is removed at the surface, so the ball cannot bounce while touching water. A/D remains available at **75%** of its land target speed.
+- Reaching land restores automatic bouncing without requiring a new possession.
+- `SpikeHazard` kills the controlled bouncing ball using the same death/restart flow as the other forms.
+- The ball-specific Level01 upper death limit is **40**. This is a survival boundary, not a bounce-height setting.
+
+## 8. Water rules and current tuning
 
 Water entry/exit uses the body's root rigidbody position, centered in the current setups. Edge contact alone is insufficient. Detection checks enabled water-region colliders and supports multiple zones. There is no partial-submersion buoyancy simulation.
 
@@ -134,6 +164,10 @@ Water physics affects both controlled and unpossessed bodies when they have `Bod
 | Bubble water speed multiplier | 1.3 | Maximum swimming target speed becomes 3.25 |
 | Swim acceleration / braking | 12 / 10 | Rate of change of swimming velocity |
 | Controlled bubble maximum rise speed | 3 | Air upward-velocity cap |
+| Ball base move speed | 7.5 | Land horizontal target speed before acceleration |
+| Ball water speed multiplier | 0.75 | Water-surface target speed becomes 5.625 |
+| Ball acceleration / braking | 35 / 28 | Horizontal velocity change rates |
+| Ball default height / seconds to apex | 20.25 / 2.4 | Unobstructed bounce target and timing |
 | Box minimum / maximum size | 0.5 / 2 | Multipliers relative to the initial scale |
 | Box resize speed | 1 | Size multiplier change per second |
 
@@ -146,10 +180,11 @@ These are target values: damping and collisions can change achieved motion. Insp
 | Star | 1 | 3 | 0 | 3 | 2 |
 | Box | 5 | 3 | 0 | 3 | 2 |
 | Bubble | 0.2 | -0.3 | 2 | 0 | 0 controlled; 2 unpossessed |
+| Bouncing ball | 1.2 | 3 | 0 | 0 while surface-locked | 3 while surface-locked |
 
 The controlled bubble uses controller acceleration/braking instead of rigidbody damping while swimming. These are current prototype values, not final balance commitments.
 
-## 8. Tutorial interactions
+## 9. Tutorial interactions
 
 - Opening message: `You are a star.` with Move A/D, Jump Space and Restart R.
 - A thin green platform teaches jumping and is visually distinct from the orange possessable box.
@@ -160,7 +195,7 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 - Completion pauses gameplay and displays `Now get ready to transform!`, `More forms. More possibilities.`, and `Press R to restart.`
 - Transition into a new Alpha Level 1 is not implemented yet. The tutorial does not introduce every planned form.
 
-## 9. Level01 interactions and completion
+## 10. Level01 interactions and completion
 
 | Object / script | Activation | Persistence |
 | --- | --- | --- |
@@ -173,15 +208,16 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 - H has ordinary solid support above it. It detects grounded contact, not a particular key press or explicit size value. G2 is near the final goal, separate from G.
 - The goal displays `Level 1 complete!` and `Press R to restart.`. It checks G2's current inactive state, not a recorded history of every puzzle or G's state.
 - Restart resets both switch types and restores consumed bubbles. There is no automatic Tutorial → Level01 → Level02 transition yet.
-- R1/R2 are placement markers, not working bouncing-ball actors. The current upper return floor is continuous; the planned ball hazards and staggered gaps remain unfinished. Passing segment tests is not proof that the final intended route is complete.
+- `BouncyBall_Lower` and `BouncyBall_Upper` are working instances of the shared BouncyBall prefab. The old R1/R2 marker transforms remain as inert references only. The upper return route, canopy obstacles, lethal spikes and landing areas are implemented. Passing segment tests is not proof that the whole level has completed start-to-finish validation.
+- Level01 camera regions use `X = 16` to divide the lower-left and lower-right views and `Y = 8.5` to enter the upper view. Lower view sizes are **10**, keeping the green upper floor visible; the upper view size is **5.25**. The camera follows the current controlled form within a bounded range and smooths movement and zoom during transitions.
 
-## 10. Planned features and unresolved decisions
+## 11. Planned features and unresolved decisions
 
 - **Wind:** fans are the only planned wind source; there is no separate ambient wind system. Form-specific wind response remains unimplemented.
 - **Fan controls, agreed design:** A/D moves and sets facing; Space activates airflow; the fan should not enter water. The intended unattended fan retains its last blowing direction. Hold versus toggle activation and the exact unattended activation rule still need confirmation before implementation.
-- **Other planned forms:** bouncing ball and a possessable spike wall; spider wall/ceiling movement and its possible time limit remain tentative. Enemies are planned as lethal, non-possessable actors. Their scripts are absent from this baseline.
-- **Ball clarification:** bouncing should stop after transferring into another possessable body, not after every ordinary terrain collision.
-- **Level scope:** planned Alpha Level 1 uses Star, Box, Bubble and Bouncing Ball. Level 2 is intended to use all approved forms; spider inclusion depends on its confirmed implementation.
+- **Other planned forms:** a possessable spike wall remains planned; spider wall/ceiling movement and its possible time limit remain tentative. Enemies are planned as lethal, non-possessable actors.
+- **Ball route:** the shared ball behavior and both Level01 ball-route layouts are implemented; complete start-to-finish validation remains.
+- **Level scope:** the current Alpha Level 1 uses Star, Box, Bubble and Bouncing Ball. Level 2 is intended to use all approved forms; spider inclusion depends on its confirmed implementation.
 - **Future work:** checkpoints and scene-to-scene progression are not implemented; final full-route validation remains pending. Oxygen is not part of the current star water behavior.
 
 Update this document alongside changes to controls, form/environment rules or accepted tuning. Keep proposals marked as planned or Undecided until implemented and verified.

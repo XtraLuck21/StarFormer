@@ -1,6 +1,6 @@
 # Script Guide
 
-Last updated: 2026-10-07. Unity version: `6000.3.22f1`.
+Last updated: 2026-10-11. Unity version: `6000.3.22f1`.
 
 Current test scenes and gameplay scripts. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
 
@@ -12,7 +12,7 @@ Current test scenes and gameplay scripts. For controls and gameplay behavior, se
 | [Level01_Reference](../Assets/Scenes/Level01_Reference.unity) | Earlier level layout retained as a reference | Traversal and transformation layout; not the new Alpha Level 1 |
 | [Tutorial](../Assets/Scenes/Tutorial.unity) | Current playable tutorial | Movement, jump, three SpikeHazard prefab instances, box possession and resizing, pressure plate, goal and feedback |
 | [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
-| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, bubble-pop hazards and star-specific completion; bouncing ball is not integrated |
+| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, bubble-pop hazards, two completed bouncing-ball route sections, three-region camera and star-specific completion; complete start-to-finish validation remains |
 | [EnemyScene](../Assets/Scenes/EnemyScene.unity) | Teammate test scene present in this checkout | Not reviewed or playtested as part of the Level 1 work |
 
 The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset). The saved list currently begins with Playground; do not assume Tutorial is the launch scene. Full-scene restart requires the current scene to be included in the enabled build scene list. Check the active build profile when preparing a build.
@@ -23,24 +23,28 @@ The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset]
 
 | Script | Attach to / dependencies | Current responsibility | Change here when... |
 | --- | --- | --- | --- |
-| [PossessableBody.cs](../Assets/Scripts/PossessableBody.cs) | Each body root; `Rigidbody2D`, a root `Collider2D`, and an assigned separate control-visual child | Defines `BodyForm`; holds movement settings and ownership; exposes grounded/water state; forwards eligible collision contacts to the player controller; logs water transitions | Adding a form identifier or a capability common to bodies |
-| [PlayerPossessionController.cs](../Assets/Scripts/PlayerPossessionController.cs) | One `PlayerControl` object; assign an active, configured initial star body | Reads keyboard input; controls the current body; dispatches movement by form; transfers possession; queues Space/hazard bubble pops through the same flow (`RequestBubblePop`); handles death, vertical bounds and full-scene restart | Adding a form's movement/input integration, changing transfer rules, or changing restart behavior |
+| [PossessableBody.cs](../Assets/Scripts/PossessableBody.cs) | Each body root; `Rigidbody2D`, a root `Collider2D`, and an assigned separate control-visual child | Defines `BodyForm`, including `BouncyBall`; holds movement settings and ownership; exposes grounded/water state; forwards eligible collision contacts to the player controller; logs water transitions | Adding a form identifier or a capability common to bodies |
+| [PlayerPossessionController.cs](../Assets/Scripts/PlayerPossessionController.cs) | One `PlayerControl` object; assign an active, configured initial star body | Reads keyboard input; controls the current body; dispatches movement by form; provides accelerated A/D ball steering; deactivates the original star while it inhabits a host; validates live contact before transfer; maintains multi-body separation locks; queues Space/hazard bubble pops; handles death, form-specific vertical bounds and full-scene restart; exposes the current body to the camera | Adding a form's movement/input integration, changing transfer rules, camera target access or restart behavior |
 | [BodyWaterPhysics.cs](../Assets/Scripts/BodyWaterPhysics.cs) | Each water-enabled body root; `Rigidbody2D` and `PossessableBody` | Caches original gravity/damping; applies water gravity/damping to controlled and unpossessed bodies; restores original settings outside water or on disable | Adding a special water-physics rule or changing damping; swimming input belongs in the controller |
-| [WaterZone.cs](../Assets/Scripts/WaterZone.cs) | Each water-region object with `BoxCollider2D` | Makes the collider a trigger, registers enabled water zones, and exposes point-in-water queries | Changing water-region detection; do not put individual character movement here |
+| [WaterZone.cs](../Assets/Scripts/WaterZone.cs) | Each water-region object with `BoxCollider2D` | Makes the collider a trigger, registers enabled water zones, and exposes point-in-water and overlapping-surface queries | Changing water-region detection or shared surface lookup; do not put individual character movement here |
 
 ### Abilities and visuals
 
 | Script | Attach to / dependencies | Current responsibility | Change here when... |
 | --- | --- | --- | --- |
 | [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | Box root; `PossessableBody`, `Rigidbody2D`, `BoxCollider2D` | Reads W/S only while controlled; resizes within limits; checks solid obstacles; preserves the bottom while grounded and the collider center otherwise | Changing box resizing, size limits or clearance checks |
+| [BouncyBallAbility.cs](../Assets/Scripts/BouncyBallAbility.cs) | Bouncy-ball root; `PossessableBody`, `Rigidbody2D`, root `Collider2D` | Keeps an unpossessed ball frozen; starts automatic bouncing when controlled; calculates the available height below solid ceilings; shortens and accelerates compressed bounces; floats the ball at water surfaces and disables vertical bouncing there | Changing bounce height/rhythm, ceiling response, waiting behavior or water-surface behavior |
 | [StarVisual.cs](../Assets/Scripts/StarVisual.cs) | Star `Visual` or host `StarMark` child; `SpriteRenderer` | Generates a star sprite at runtime; applies `starColor` and sorting order 10; disposes generated assets on destruction | Changing the star/possession marker's appearance, not its controls or collider |
+| [RegionalCameraFollow2D.cs](../Assets/Scripts/RegionalCameraFollow2D.cs) | Level01 Main Camera; assign the scene `PlayerControl` | Follows the controller's current body; selects lower-left, lower-right or upper view from world-space boundaries; clamps local follow range and smooths position/zoom during region changes | Changing Level01 camera framing, split boundaries, regional zoom or transition timing |
 
 `BoxResizeAbility` currently requires an upright, unparented box with positive scale and a collider edge radius of zero. The intended box setup uses uniform X/Y scaling. It ignores triggers during clearance checks and does not change mass. Do not parent a box under a level-group object without first updating this constraint.
 
-**Reusable core prefabs:** [StarPlayer](../Assets/Form/StarPlayer.prefab), [BoxBody](../Assets/Form/BoxBody.prefab), and [BubbleBody](../Assets/Form/BubbleBody.prefab) are available in `Assets/Form`. Each includes its physics components, `PossessableBody`, `BodyWaterPhysics`, and its internally assigned control-visual child; BoxBody also includes `BoxResizeAbility`.
+**Reusable core prefabs:** [StarPlayer](../Assets/Form/StarPlayer.prefab), [BoxBody](../Assets/Form/BoxBody.prefab), [BubbleBody](../Assets/Form/BubbleBody.prefab), and [BouncyBall](../Assets/Form/BouncyBall.prefab) are available in `Assets/Form`. Each includes its physics components, `PossessableBody`, `BodyWaterPhysics`, and its internally assigned control-visual child. BoxBody also includes `BoxResizeAbility`; BouncyBall includes `BouncyBallAbility` and a shared bouncy physics material.
 
 - Drag the required prefabs into a scene and set their positions. Keep boxes at the scene root to satisfy the resizing constraint above.
 - Keep one scene `PlayerControl` with `PlayerPossessionController`; assign the **scene instance** of StarPlayer to `Initial Body`. The controller is not included in these prefabs.
+- A BouncyBall instance waits motionless until the controlled body touches it. Once possessed, it bounces automatically on land and uses A/D steering. Do not duplicate or reimplement this behavior in a scene-specific script.
+- Level01 uses two instances of the same BouncyBall prefab. `BouncyBall_Lower` is near the original R1 location; `BouncyBall_Upper` is beside D on the upper-right platform.
 - Water requires scene objects with `WaterZone`. Canopies, platforms, switches, gates and goal UI remain scene objects. Place hazard prefab instances separately and assign their scene controller references as described below.
 - When replacing an existing body, check references to that body, especially `Initial Body` and assigned-box switches. Internal `Control Visual` references are already included in the prefab.
 - The star sprite is generated in Play Mode by `StarVisual`; an absent edit-time star preview does not by itself indicate a broken prefab. Change a scene instance's placement locally; apply changes to the prefab asset only when they should become shared defaults.

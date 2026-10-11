@@ -5,7 +5,8 @@ public enum BodyForm
     Star,
     Box,
     Bubble,
-    Spider
+    Spider,
+    BouncyBall
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -20,10 +21,26 @@ public class PossessableBody : MonoBehaviour
     public float MoveSpeed => moveSpeed;
     public float JumpSpeed => jumpSpeed;
     public bool IsControlled => owner != null;
-    public bool IsInWater =>
-        isActiveAndEnabled &&
-        Body != null &&
-        WaterZone.Contains(Body.position);
+    public bool IsInWater
+    {
+        get
+        {
+            if (!isActiveAndEnabled || Body == null)
+            {
+                return false;
+            }
+
+            if (form == BodyForm.BouncyBall && BodyCollider != null)
+            {
+                return WaterZone.TryGetSurfaceY(
+                    BodyCollider.bounds,
+                    out _
+                );
+            }
+
+            return WaterZone.Contains(Body.position);
+        }
+    }
 
     public Rigidbody2D Body { get; private set; }
     public Collider2D BodyCollider { get; private set; }
