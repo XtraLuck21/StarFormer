@@ -1,10 +1,10 @@
 # Gameplay Specification
 
-Last updated: 2026-10-11.
+Last updated: 2026-10-12.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Baseline: Level 1 polish merged into `main` in PR #8 (`c63a17c`), followed by navigation merged through PR #9 (`9fc0f95`). The current Web test release is live on GitHub Pages, and the developer reported successful localhost and online playtests on 2026-10-11. The menu links Tutorial and Level01, both scenes have return buttons, and the menu includes a playable star. Level 1 includes any-form completion, removal of the final U3 bubble and canopy, revised hazards, and death feedback. The developer reported successful manual tests of the latest changes, including upper bouncing-ball traversal, goal completion and death/restart feedback. These reports cover the tested interactions and route segments; they do not establish exhaustive start-to-finish regression coverage.
+Baseline: Level 1 polish (PR #8) and navigation (PR #9) are merged into `main`, followed by Level 2 integration and menu/return wiring. Source commit `773912d` resets checkpoint sessions when entering a level from the menu. All-Level V1 includes Mainmenu, Tutorial, Level01 and Level02. The developer reported successful editor retesting and localhost testing on 2026-10-12, then committed and pushed deployment `6f1737a`. GitHub Pages reports that deployment as built. The team is retaining this release as an interim baseline and collecting feedback before further changes. These reports do not establish exhaustive route, browser or resolution coverage.
 
 ## 1. Current scope
 
@@ -17,22 +17,18 @@ Baseline: Level 1 polish merged into `main` in PR #8 (`c63a17c`), followed by na
 | Tutorial instructions, lethal spikes, death feedback and completion | Implemented and manually tested in Tutorial |
 | R restart; automatic restart after death / vertical out-of-bounds | Implemented |
 | Reusable StarPlayer, BoxBody, BubbleBody, SpikeHazard and WaterPopHazard prefabs | Available in `Assets/Form`; developer-reported instance tests passed |
-| Level01 held plate, overhead height switch, bubble-pop hazards and completion UI | Implemented; developer-reported segment tests passed |
-| Level01 complete route, including bouncing-ball traversal | In progress; ball integration and full-route testing remain |
-| Fan-generated wind and form-specific wind response | Implemented and manually tested |
-| Rolling/bouncing ball, possessable spike wall, enemies and spider | Not integrated into the current shared controller |
 | Level01 held plate, overhead height switch, purple water hazards, any-form completion and death UI | Implemented; developer-reported tests passed |
 | Reusable BouncyBall prefab; automatic land bounce, A/D steering, ceiling compression and water-surface floating | Implemented; two Level01 instances and developer-reported segment tests passed |
 | Level01 three-region camera with bounded follow and smooth position/zoom transitions | Implemented and tested for lower-left, lower-right, upper and possession changes |
 | Level01 complete route, including final bouncing-ball traversal | Upper traversal, completion and subsequent localhost/online playtests passed. Broader regression remains |
-| Main menu, Tutorial/Level01 selection and return-to-menu buttons | Implemented; developer-reported navigation tests passed |
+| Main menu, Tutorial/Level01/Level02 selection and return-to-menu buttons | Connected and included in All-Level V1; developer-reported local tests passed |
 | Playable menu star and one-way title/button platforms | Implemented; movement, jumping, foreground rendering and button clicks passed developer tests |
-| Web test release on GitHub Pages | Published from `gh-pages`, developer-reported localhost and online tests passed |
-| Level 2 menu entry | Coming Soon placeholder with no click action; no Level 2 scene is connected |
-| Fan-generated wind and form-specific wind response | Not integrated into the current shared controller |
-| Possessable spike wall, enemies and spider | Not integrated into the current shared controller |
+| All-Level V1 on GitHub Pages | Localhost test passed; publishing commit `6f1737a` deployed successfully |
+| Level02 gameplay, camera stages and checkpoints | Integrated into main and All-Level V1 |
+| Fan, possessable spike wall and spider | Shared controller integration exists, with associated Level02 gameplay sections |
+| Fan airflow | Implemented for movable non-possessable obstacles; possessable bodies are excluded |
 
-`Playground` remains a mechanics sandbox. `Level01_Reference` preserves an earlier level layout; it is not the final Alpha Level 1. `Tutorial` is the current teaching scene, and `WaterPlayground` isolates water behavior. `Level01` is the current Alpha Level 1 graybox; see [level-1.md](level-1.md) for its progress and handoff. An `EnemyScene` also exists in this checkout, but its presence does not establish that enemy gameplay is integrated or tested.
+`Playground` remains a mechanics sandbox. `Level01_Reference` preserves an earlier level layout; it is not the final Alpha Level 1. `Tutorial` is the current teaching scene, and `WaterPlayground` isolates water behavior. `Level01` is the current Alpha Level 1 graybox; see [level-1.md](level-1.md) for its progress and handoff. `Level02` is the integrated second level, including staged camera behavior, checkpoint recovery and additional forms. EnemyScene and FanScene remain separate test scenes.
 
 ## 2. Controls
 
@@ -46,14 +42,16 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 | Box, underwater | Slower left/right movement while grounded | Grow | Shrink | No action | Restart scene |
 | Bubble, in air | Move left/right | No action | No action | Pop and return to star | Restart scene |
 | Bubble, underwater | Swim left/right | Swim up | Swim down | Pop and return to star | Restart scene |
-| Fan | Move left/right | Leave Fan | No action | Air blowing | Restart scene |
+| Fan | Move while grounded and set facing | Toggle airflow | No action | Leave fan and return to star | Restart from beginning |
+| Spike wall | Move while grounded and set firing direction | No action | No action | Fire projectile | Restart from beginning |
+| Spider | Move along connected surfaces | No action | No action | No jump/action in the shared controller | Restart from beginning |
 | Bouncing ball, on land | Accelerated steering left/right while automatically bouncing | No action | No action | No action | Restart scene |
 | Bouncing ball, touching water | Reduced left/right movement while locked to the water surface | No action | No action | No action; vertical bouncing is disabled | Restart scene |
 
 - Left/Right Arrow also work as alternatives to A/D in the current controller. Up/Down Arrow are not implemented as W/S alternatives.
 - There is no manual possession key. Contact with an eligible body automatically requests a transfer.
-- There is no general key for exiting a box. Returning directly to the star is currently the bubble's pop action.
-- R can restart during gameplay, the death pause and the Tutorial and Level01 completion screens.
+- There is no general key for exiting a box. Bubbles return to the star by popping, and fans release the star with Space without consuming the fan.
+- R clears the current checkpoint session and restarts from the beginning, including during the death pause and the Tutorial and Level01 completion screens.
 
 ## 3. Shared possession and failure rules
 
@@ -74,7 +72,7 @@ Keys below describe the currently controlled form. W/S are held inputs; Space an
 - Death pauses gameplay, then reloads the whole current scene after the configured delay. Tutorial, WaterPlayground and Level01 currently save a delay of **2 seconds**. R bypasses the wait.
 - Tutorial and Level01 display `You died.`, `Restarting...`, and `Press R to restart now.` during the death pause. Level01 uses `LevelDeathUI` and the existing `LevelStatusText`; the controller still owns death timing and scene reload. The text is blank before play and during normal gameplay. The sandbox scenes do not currently contain this death-feedback UI.
 - Automatic vertical failure occurs when the entire controlled collider is below `minimumHeight` or above the active form's upper limit. Tutorial and WaterPlayground save **-10 / 8**. Level01 uses **-12 / 16** for the star, box and bubble, while the bouncing ball uses a separate upper limit of **40** so its 20.25-unit open-air bounce does not cause an unintended death. These values are not a general left/right map-boundary system.
-- Restart restores the scene's initial bodies, sizes, switches and consumed bubbles. Checkpoints are not implemented.
+- Scene reload restores bodies and puzzle objects. Level02 has scene-specific checkpoints: automatic death reload retains the checkpoint and places the initial star at its saved position, with checkpoint events restoring the relevant stage setup. R clears checkpoints and restarts from the beginning. Entering any level from Mainmenu also clears the checkpoint session. This is session state, not a saved game across browser launches.
 - A stranded box or a route blocked by an abandoned body does not trigger automatic soft-lock detection. The current recovery is R restart.
 
 Reusable hazards require the current scene's player controller to be assigned on each instance. Their prefab assets deliberately leave that scene reference empty; see [ScriptGuide.md](ScriptGuide.md) for setup.
@@ -222,9 +220,9 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 
 ## 11. Main menu and navigation
 
-- `Mainmenu` is the startup scene. Its title is `Star Former`, with Tutorial, Level 1 and `Level 2 (Coming Soon)` buttons. The Main Camera supplies the solid blue background.
-- Mouse clicks on Tutorial and Level 1 load `Tutorial` and `Level01`. The Level 2 button currently has Interactable enabled but no OnClick listeners, so clicking it does not load a scene.
-- Tutorial and Level01 each have a top-right `Return to Main Menu` button. `MainMenuUI` and `LevelNavigationUI` restore `Time.timeScale` to 1 before loading the destination. Return navigation is available during gameplay and on completion screens. Loading a scene starts it again rather than resuming prior progress.
+- `Mainmenu` is the startup scene. Its title is `Star Former`, with Tutorial, Level 1 and Level 2 buttons. The Main Camera supplies the solid blue background.
+- Mouse clicks on Tutorial, Level 1 and Level 2 load `Tutorial`, `Level01` and `Level02`, respectively. Level 2 is now a working entry.
+- Tutorial, Level01 and Level02 each have a `Return to Main Menu` button. `MainMenuUI` and `LevelNavigationUI` restore `Time.timeScale` to 1 before loading the destination. Return navigation is available during gameplay and on completion screens. Entering a level through MainMenuUI clears its checkpoint session and starts a fresh run. Automatic death reload can still resume a Level02 checkpoint.
 - The menu reuses StarPlayer and the shared possession controller. A/D or Left/Right Arrow moves the star, Space jumps when grounded, and R restarts the menu. The star starts above the title and lands on its platform.
 - Tutorial, Level 1 and Level 2 buttons become progressively wider toward the bottom. Separate physical platforms align with the top edges of the title and button rectangles, with a ground platform beneath them.
 - These are one-way platforms: the star can jump straight up through them and land on top while falling. It does not need to go around a button's edge to ascend. Walking off an edge allows descent.
@@ -233,22 +231,21 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 - The menu Canvas uses Screen Space - Camera with Main Camera. The star renders in front of the buttons, so they do not hide it while it passes through them.
 - No additional movement hint or attention animation has been added. The team will test whether new players discover the star interaction before deciding on further guidance.
 
-The enabled build scenes are `Mainmenu` (0), `Tutorial` (1) and `Level01` (2). Reference and sandbox scenes are excluded from the saved build list. There is no automatic level progression or connected Level 2 entry yet.
+The enabled build scenes are `Mainmenu` (0), `Tutorial` (1), `Level01` (2) and `Level02` (3). Reference and sandbox scenes are excluded from the saved build list. Level selection is manual through the menu, with no automatic level-to-level progression.
 
-The developer reported successful tests of menu scene selection, return buttons, star movement and jumping, and the final foreground-rendering change. After restoring Unity script imports and rebuilding, localhost playtesting passed. The build was then published at [Play StarFormer](https://xtraluck21.github.io/StarFormer/), and the developer reported that online playtesting passed as well. The published scope is Mainmenu, Tutorial and Level01. Level 2 remains a placeholder.
+The October 11 release passed developer-reported localhost and online tests for Mainmenu, Tutorial and Level01. On October 12, the developer retested the integrated version in the editor and tested `Builds/WebGL-All-Level-V1` on localhost successfully. Deployment `6f1737a` now serves all four scenes at [Play StarFormer](https://xtraluck21.github.io/StarFormer/). GitHub Pages deployment success is verified separately from gameplay testing. The team has chosen this as the interim baseline for collecting feedback.
 
 The initial Web build had missing navigation scripts, causing inactive menu buttons and unaligned platforms. The same issue was confirmed in the editor. Restarting Unity and reimporting the navigation scripts restored editor behavior, and a fresh build passed the browser test. This recovery did not require a gameplay change. The precise cause of the stale import/compilation state was not established.
 
 Navigation is now merged into `main`. The website is served from the separate `gh-pages` branch. This release closes the initial Web publishing and playability check, while teammate usability testing and broader browser/resolution coverage remain open.
 
-## 12. Planned features and unresolved decisions
+## 12. Level02 integration and release follow-up
 
-- **Wind:** fans are the only planned wind source; there is no separate ambient wind system. Form-specific wind response remains unimplemented.
-- **Fan controls, agreed design:** A/D moves and sets facing; Space activates airflow; the fan should not enter water. The intended unattended fan retains its last blowing direction. Hold versus toggle activation and the exact unattended activation rule still need confirmation before implementation.
-- **Other planned forms:** a possessable spike wall remains planned; spider wall/ceiling movement and its possible time limit remain tentative. Enemies are planned as lethal, non-possessable actors.
-- **Ball route:** the shared ball behavior and both Level01 ball-route layouts are implemented. The revised upper floor-spike section, completion and subsequent local/online playtests passed developer tests. Continue broader route and browser regression with teammates.
-- **Button/gate feedback:** a button and its gate may be outside the same camera view. The team deferred additional visual links or camera feedback for this pass.
-- **Level scope:** the current Alpha Level 1 uses Star, Box, Bubble and Bouncing Ball. Level 2 is intended to use all approved forms; spider inclusion depends on its confirmed implementation.
-- **Navigation follow-up:** connect the Level 2 placeholder after the team finishes that scene and resolves its camera conflicts. Teammate testing will assess the optional menu star interaction. Checkpoints and automatic scene-to-scene progression are not implemented. Oxygen is not part of the current star water behavior.
+- **Integrated gameplay:** Level02 includes spider surface traversal, a spike-wall chase, projectile/button interactions and fan obstacles. The shared controller now dispatches fan, spike-wall and spider behavior. These are no longer future-only forms.
+- **Camera and checkpoints:** `level2Camera` coordinates follow, fixed, chase and falling sections. `level2Checkpoint` records scene-specific respawn positions and invokes stage events on arrival or respawn. Mainmenu entry and R restart reset the checkpoint session.
+- **Fan behavior:** W toggles airflow and Space releases the star. An abandoned fan retains its airflow state and facing. Current wind targets non-possessable rigidbody obstacles, not the star, box or bubble. Broader form-specific wind behavior remains a separate design decision.
+- **Level-specific rules:** Level01 retains its any-form flag completion after G2 opens. Evaluate Level02 stage behavior against its own scene wiring rather than assuming it uses Level01's goal script or camera.
+- **Release baseline:** All-Level V1 is the October 12 interim release. Collect teammate/playtest feedback before changing this baseline. Continue broader route, checkpoint, navigation and browser/resolution regression checks.
+- **Deferred usability work:** revisit off-screen button/gate feedback and whether players discover the optional menu star interaction. Automatic level-to-level progression remains unimplemented.
 
-Update this document alongside changes to controls, form/environment rules or accepted tuning. Keep proposals marked as planned or Undecided until implemented and verified.
+Update this document alongside changes to controls, form/environment rules or accepted tuning. Keep proposals distinct from implemented behavior and recorded test results.
