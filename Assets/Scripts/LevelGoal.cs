@@ -56,8 +56,7 @@ public class LevelGoal : MonoBehaviour
 
         if (body == null ||
             !body.TryGetComponent(out PossessableBody playerBody) ||
-            !playerBody.IsControlled ||
-            playerBody.Form != BodyForm.Star)
+            !playerBody.IsControlled)
         {
             return;
         }
