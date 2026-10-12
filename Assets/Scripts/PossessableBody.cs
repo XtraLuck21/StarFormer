@@ -9,7 +9,7 @@ public enum BodyForm
     Spider = 4,
     Fan = 5,
     gravityBall = 6,
-    BouncyBall
+    BouncyBall = 7
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -25,10 +25,6 @@ public class PossessableBody : MonoBehaviour
     public float JumpSpeed => jumpSpeed;
     public bool IsControlled => owner != null;
 
-    public bool IsInWater =>
-        isActiveAndEnabled &&
-        Body != null &&
-        WaterZone.Contains(Body.position);
     public bool IsInWater
     {
         get

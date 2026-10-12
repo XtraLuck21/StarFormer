@@ -42,6 +42,10 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField, Min(0f)] private float possessionSeparationDistance = 0.35f;
     [SerializeField, Min(1)] private int possessionSeparationFrames = 3;
 
+    [Tooltip("Spider hovers slightly off surfaces, so allow a small gap to " +
+             "still count as touching when completing a possession.")]
+    [SerializeField, Min(0f)] private float possessionTouchTolerance = 0.1f;
+
     private bool isDead;
     private float deathRestartTime;
 
@@ -176,6 +180,7 @@ public class PlayerPossessionController : MonoBehaviour
             leaveRequested = false;
             return;
         }
+
         if (keyboard == null)
         {
             actionRequested = false;
@@ -219,18 +224,19 @@ public class PlayerPossessionController : MonoBehaviour
 
         Bounds bodyBounds = currentBody.BodyCollider.bounds;
 
-        if (useHeightLimit &&
-            (bodyBounds.max.y < minimumHeight ||
-             bodyBounds.min.y > maximumHeight))
-        float activeMaximumHeight = currentBody.Form == BodyForm.BouncyBall
-            ? ballMaximumHeight
-            : maximumHeight;
-
-        if (bodyBounds.max.y < minimumHeight ||
-            bodyBounds.min.y > activeMaximumHeight)
+        if (useHeightLimit)
         {
-            KillControlledBody(currentBody);
-            return;
+            float activeMaximumHeight =
+                currentBody.Form == BodyForm.BouncyBall
+                    ? ballMaximumHeight
+                    : maximumHeight;
+
+            if (bodyBounds.max.y < minimumHeight ||
+                bodyBounds.min.y > activeMaximumHeight)
+            {
+                KillControlledBody(currentBody);
+                return;
+            }
         }
 
         // Give the intentional pop action priority over a pending transfer.
@@ -253,7 +259,6 @@ public class PlayerPossessionController : MonoBehaviour
             }
         }
 
-        UpdateContactLock();
         UpdateContactLocks();
 
         if (pendingTarget != null)
@@ -357,8 +362,8 @@ public class PlayerPossessionController : MonoBehaviour
                     }
 
                     break;
-
                 }
+
             case BodyForm.SpikeWall:
                 {
                     bool hasShooter = currentBody.TryGetComponent(
@@ -382,6 +387,7 @@ public class PlayerPossessionController : MonoBehaviour
 
                     break;
                 }
+
             case BodyForm.gravityBall:
                 {
                     // keep the small ball rolling/player don control
@@ -391,12 +397,14 @@ public class PlayerPossessionController : MonoBehaviour
                 }
 
             case BodyForm.Fan:
-                if (currentBody.IsGrounded())
                 {
-                    velocity.x = horizontalInput * currentBody.MoveSpeed;
-                }
+                    if (currentBody.IsGrounded())
+                    {
+                        velocity.x = horizontalInput * currentBody.MoveSpeed;
+                    }
 
-                break;
+                    break;
+                }
 
             case BodyForm.BouncyBall:
                 {
@@ -601,7 +609,6 @@ public class PlayerPossessionController : MonoBehaviour
 
         // Fan stays in the world and keeps blowing its last direction.
         fan.SetOwner(null);
-        blockedPreviousBody = fan;
 
         if (fanRepossessCooldown > 0f)
         {
@@ -622,6 +629,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        BlockTarget(fan);
         actionRequested = false;
     }
 
@@ -641,34 +649,30 @@ public class PlayerPossessionController : MonoBehaviour
         currentBody = target;
         currentBody.SetOwner(this);
 
-        blockedPreviousBody = previousBody;
-
         horizontalInput = 0f;
         verticalInput = 0f;
         actionRequested = false;
         leaveRequested = false;
 
-        if (previousBody.Form == BodyForm.Star)
-
         bool starEnteredHost = previousBody == initialBody;
+        bool destroyedPreviousBody = false;
+
         if (starEnteredHost)
         {
             // 星星保留，泡泡爆裂时还能恢复。
             previousBody.gameObject.SetActive(false);
         }
         else if (previousBody.Form == BodyForm.gravityBall ||
-        (previousBody.Form == BodyForm.Spider && target.Form == BodyForm.Bubble))
+            previousBody.Form == BodyForm.Spider)
         {
-            // 小球转移到任何其他身体后销毁。
-            blockedPreviousBody = null;
+            // 小球和蜘蛛转移到任何其他身体后销毁。
+            UnblockTarget(previousBody);
             previousBody.gameObject.SetActive(false);
             Destroy(previousBody.gameObject);
+            destroyedPreviousBody = true;
         }
 
-        currentBody = target;
-        currentBody.SetOwner(this);
-
-        if (!starEnteredHost)
+        if (!starEnteredHost && !destroyedPreviousBody)
         {
             BlockTarget(previousBody);
         }
@@ -698,7 +702,27 @@ public class PlayerPossessionController : MonoBehaviour
             target.isActiveAndEnabled &&
             target.IsReady &&
             !blockedTargets.Contains(target) &&
-            source.BodyCollider.IsTouching(target.BodyCollider);
+            AreCollidersClose(source.BodyCollider, target.BodyCollider);
+    }
+
+    // Spider hovers a small gap off every surface, so a strict IsTouching
+    // check would never pass for it. Allow a small measured gap as well.
+    private bool AreCollidersClose(Collider2D a, Collider2D b)
+    {
+        if (a == null || b == null)
+        {
+            return false;
+        }
+
+        if (a.IsTouching(b))
+        {
+            return true;
+        }
+
+        ColliderDistance2D separation = Physics2D.Distance(a, b);
+
+        return separation.isValid &&
+            separation.distance <= possessionTouchTolerance;
     }
 
     private void BlockCurrentContacts()
@@ -775,6 +799,7 @@ public class PlayerPossessionController : MonoBehaviour
             }
 
             int frames = separationFrames[target] + 1;
+
             if (frames >= possessionSeparationFrames)
             {
                 UnblockTarget(target);
