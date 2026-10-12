@@ -4,7 +4,7 @@ Last updated: 2026-10-11.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
-**Status: the reusable bouncing-ball form, both Level01 ball instances, adaptive bounce behavior, water-surface behavior, the completed upper ball challenge and the three-region camera are integrated. Existing non-ball interactions and the newly added systems have passed developer-reported segment tests. Complete start-to-finish route validation remains outstanding.** This is a working handoff baseline, not a finished level.
+**Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. Final full-route regression, merge and navigation integration remain separate handoff steps.**
 
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
@@ -12,19 +12,19 @@ For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script resp
 
 ![Level 1 map — Revision 08](Level1_Map.png)
 
-*Design reference; implementation status is listed below.*
+*Historical Revision 08 design reference. The saved scene now differs at the finish: U3 and its canopy are removed, any controlled form can complete, and the former ceiling spike group is on the upper floor. The table below describes current behavior; the map image has not been redrawn.*
 
 | Area | Intended play sequence | Current state |
 | --- | --- | --- |
 | Start and first pool | Possess A, shrink through the low entrance, sink, then resize to reach U1 | Geometry and existing star/box/bubble behavior tested |
-| Underwater traversal | Swim around the central block and purple bubble-pop hazards; recover using spare U1b if needed | Water, obstacles, pop-only hazards and spare bubble placed and tested |
+| Underwater traversal | Navigate the central block and purple hazards; recover using spare U1b if a bubble pops | Purple hazards pop controlled bubbles and kill controlled boxes, including contact during growth. Black X markers distinguish them from bodies; developer tests passed |
 | First pool exit | Choose the upper star route or land beside B and shrink through the lower passage toward R1 | Both route geometries placed; B's route does not require a jump |
 | Deep well and receiver | R1 bounces through the well, reaches the receiver beneath its low roof, then transfers to C | `BouncyBall_Lower` is placed near the original R1 marker. Possession, steering, adaptive low-roof bouncing and stopping after transfer work in segment tests; the complete approach to C still needs route validation |
 | Second pool | Bring C underwater, deliberately leave it on P, and transfer to U2 | Held plate and possession tested; P is offset from U2 |
 | Right ascent | U2 swims/rises through G while C keeps P pressed | G is positioned across the local ascent exit and tested |
 | Upper box puzzle | Possess D and grow upward to touch H, opening G2 near the goal | Height switch, solid support and latched gate tested |
-| Upper return | Transfer to R2 and steer its vertical bouncing through the upper floor/ceiling obstacle sequence toward U3 | `BouncyBall_Upper` is placed beside D at the right side of the upper floor. The return floor, canopy obstacles, lethal spikes, landing areas and route to U3 are implemented; full start-to-finish validation remains pending |
-| Finish | Use U3, pass G2, pop back to the star and reach the flag | Goal detection, completion pause, visible flag and raised completion text tested |
+| Upper return | Transfer to R2 beside D and steer across the upper return floor toward G2 and the flag | Spikes `(13)`, `(14)` and `(15)` moved from ceiling to floor and now point upward. Revised ball traversal and completion passed developer tests |
+| Finish | Pass opened G2 and reach the flag in any controlled form | Star-only restriction removed; `Bubble_U3` and `U3_Canopy` removed. Completion and restart tested, including the bouncing ball |
 
 The receiver roof limits R1's bounce height while the player steers toward C. A controlled ball normally targets a 20.25-unit bounce with 2.4 seconds to its apex. When a low solid ceiling compresses the available height, the ball strikes it and automatically uses a shorter, faster bounce rhythm. Ordinary terrain contact does not deactivate the ball. Transferring possession to another body freezes the abandoned ball in place until it is possessed again.
 
@@ -39,12 +39,14 @@ The ball floats at the surface of any registered water zone. While floating it c
 | `Switch_H` | `BoxHeightSwitch.targetBox` / `door` | `Box_D` / `Gate_G2` |
 | `WaterPopHazard_01`, `WaterPopHazard_02`, `WaterPopHazard_03` | `BubblePopHazard.playerController` | `PlayerControl` |
 | `LevelGoal` | Player controller / required gate / status text | `PlayerControl` / `Gate_G2` / `LevelStatusText` |
+| `LevelCanvas` | `LevelDeathUI.playerController` / `statusText` | `PlayerControl` / `LevelStatusText` |
 
 - **P → G is continuous:** only the assigned grounded C can hold it open. Control can transfer away from C while it remains on P. Moving C away closes G.
 - **H → G2 is latched:** assigned grounded D touches the overhead trigger once; G2 then remains open until restart. H has no explicit size threshold; its height creates the growth requirement.
-- **Purple hazards only pop bubbles:** they release the star and consume the controlled bubble. The saved scene has WaterPopHazard prefab instances `_01` and `_03`; `_02` retains its existing scene setup. All three have scene controller references. The upper ball route uses the reusable lethal `SpikeHazard` for its completed hazard layout.
-- **The goal requires the star:** it checks that the player is alive, the entering star is controlled, and G2 is inactive. It does not independently verify every earlier puzzle.
+- **Purple hazards react by controlled form:** a bubble pops and releases the star; a box dies through the normal restart flow, including when growing into the trigger. Stars, bouncing balls and idle bodies are ignored. All three saved hazards use `WaterPopHazard` prefab instances with scene controller references and black X visual children.
+- **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
+- **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.`, `Restarting...`, and `Press R to restart now.` into the shared status text. The controller handles the two-second death pause and R restart. The text remains blank during normal play.
 - **Ball spikes remain lethal:** `SpikeHazard` kills the currently controlled star, box, bubble or bouncing ball and reloads the scene after the configured death delay.
 - **The camera follows the controlled form:** possession changes do not break camera tracking. Level01 uses lower-left, lower-right and upper camera regions with bounded follow, smooth movement and smooth zoom transitions.
 
@@ -59,13 +61,14 @@ These are current prototype coordinates, not final balance requirements. Positio
 | `Gate_G` position / scale | `(45, 8.75)` / `(2.1, 0.5)` | Horizontal gate across the right ascent exit |
 | `Switch_H` position / scale | `(41, 11)` / `(1, 0.4)` | Growth target above D |
 | H support position / scale | `(41, 12.1)` / `(1, 1.8)` | Ordinary solid support connecting the switch to the ceiling |
-| `Gate_G2` position / scale | `(-4, 11)` / `(0.3, 4)` | Final gate near U3 and the goal |
+| `Gate_G2` position / scale | `(-4, 11)` / `(0.3, 4)` | Final gate before the goal |
 | `BouncyBall_Lower` / `BouncyBall_Upper` positions | `(20.75, 0.55)` / `(39.5, 9.55)` | Two scene instances of the same reusable ball prefab; the upper ball was deliberately moved beside D |
 | Legacy `R1_SpawnMarker` / `R2_SpawnMarker` positions | `(21, 0.5)` / `(33, 9.5)` | Empty reference transforms retained temporarily; they no longer drive gameplay |
 | Well floor / receiver-bank surface | `Y = -8` / `Y = 3` | Approximately 11 units of rise; validate against R1's actual bounce capability |
 | Upper floor / ceiling underside | `Y = 9` / `Y = 13` | Vertical bounds used by the implemented upper R2 challenge |
 | `BubbleRouteBlocker` position / scale | `(19, 7.125)` / `(0.6, 2.75)` | Ordinary solid wall hanging from the upper platform to block the bubble route without extending to the lower floor |
-| `LevelGoal` position | `(-10.5, 9)` | Final star-only goal |
+| `LevelGoal` position | `(-10.5, 9)` | Final goal for any living controlled form after G2 opens |
+| `LevelStatusText` anchored position / size | `(0, -40)` / `(1000, 200)` | Top-center anchor and pivot; saved text empty; space for death and completion messages |
 | General vertical death limits / death delay | `-12` and `16` / `2 seconds` | Level01 settings for the star, box and bubble |
 | Bouncing-ball upper death limit | `40` | Ball-specific exception required by its 20.25-unit open-air bounce; this changes survival bounds, not bounce height |
 | Ball default bounce height / seconds to apex | `20.25` / `2.4` | Open-air bounce target before ceiling compression |
@@ -82,10 +85,13 @@ The developer reported successful manual tests of:
 
 - Star, box and bubble behavior in the level's water regions, including possession and bubble popping.
 - First-pool geometry, alternate exit routes and box resizing passages.
-- Bubble-only hazards and the nearby spare bubble, including a newly placed WaterPopHazard prefab instance that pops the bubble without killing the released star.
+- Purple hazard contact: controlled boxes die, including when growing into the hazard; controlled bubbles still pop and release the star. The nearby spare bubble remains available.
+- Centered black X markers on all three purple hazards, checked at Full HD with Game view scale 1x.
 - C holding P, G opening while held, and G closing when the condition is no longer met.
 - D growing into H and G2 remaining open after activation.
-- Goal activation as the star, completion feedback, flag visibility and text placement.
+- Any-form goal completion, including the bouncing ball, after G2 opens; completion feedback and restart after removal of U3 and its canopy.
+- Upper return traversal after moving spikes `(13)`, `(14)` and `(15)` to the floor.
+- Death text, automatic restart and R restart, with the enlarged/repositioned status text showing all three lines and its default `New Text` placeholder removed.
 - New StarPlayer, BoxBody and BubbleBody prefab instances in WaterPlayground: movement, possession, box resizing/sinking, bubble swimming and popping, with no reported new Console errors.
 - A single reusable `BouncyBall` prefab instantiated as `BouncyBall_Lower` and `BouncyBall_Upper`, including centered star marker, waiting state before possession, A/D steering and automatic land bouncing.
 - Ball bounce-height compression beneath a low solid roof, with a faster rhythm at shorter heights and restoration of the default height in open space.
@@ -94,17 +100,24 @@ The developer reported successful manual tests of:
 - Lethal spike contact for controlled forms and full-scene restart behavior.
 - Three camera regions: enlarged lower-left and lower-right views, centered upper view, bounded local following, smooth position movement, smooth zoom and tracking across possession transfers.
 
-The ball mechanics and camera regions were tested as individual segments in Unity with no reported Console warnings or errors. These results still do not establish that the complete intended route is traversable, that every ball landing is recoverable or that puzzles cannot be skipped.
+Earlier ball and camera segment tests reported no Console warnings or errors. The latest developer reports also confirm the revised upper traversal, completion and death UI. They do not establish exhaustive coverage of the whole route, every possible ball landing or puzzle shortcuts. Keep a final start-to-finish regression in the handoff checklist.
 
 For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Moving its `Visual` child only moves the sprite, leaving physics and possession at the root. Keep the saved `Visual` local position at `(0, 0, 0)` and restore the intended starting setup before committing the scene.
 
-## 5. Remaining work and handoff
+## 5. Decisions in this polish pass
 
-1. **Run the complete route.** Play from the initial star through the final flag. Check puzzle order, alternate paths, accidental shortcuts, C staying on P after transfer, recoverability after losing a bubble, both completed ball sections, recovery after missed landings and restart after failure. Revise geometry against the actual ball physics only if the complete run exposes a problem.
-2. **Confirm the lower receiver approach.** Verify that the lower ball can traverse the well, reach the receiver and transfer to C without requiring C to jump.
-3. **Tune ball safety bounds.** The ball currently uses an upper death limit of 40 while other Level01 forms use 16. Retain the exception while the 20.25-unit bounce requires it, then reduce it only if complete-route testing proves a lower value safe.
-4. **Clean up and finish integration.** Remove the unused R1/R2 marker transforms after their reference value is no longer needed, provide Level01 death feedback if desired, connect Tutorial → Level01 → Level02, and validate the intended build target.
+- The bouncing ball could not conveniently reach the former final bubble to return to star form. Remove the star-only goal condition and the now-unnecessary `Bubble_U3` and `U3_Canopy`.
+- Controlled boxes could grow through purple water hazards without a consequence. Make contact lethal to controlled boxes while preserving bubble popping; do not turn these triggers into solid platforms.
+- Purple circles resembled possessable bubbles. Add a centered black X to the shared hazard prefab to identify danger.
+- Ceiling spikes made the upper ball route too difficult. Move spikes `(13)`, `(14)` and `(15)` onto the upper floor, pointing upward, and verify traversal and completion.
+- Death paused and restarted the level without explaining what happened. Add `LevelDeathUI`, reuse the completion text object, enlarge/reposition it for three lines and remove its edit-time placeholder.
+- A button and its gate can fall outside the same camera view. The team deferred additional visual or camera feedback for this pass.
 
-The Level 1 baseline merged into `main` through PR #2; reusable StarPlayer, BoxBody and BubbleBody assets merged through PR #3. Level01 uses these for StarPlayer, Box_A and Bubble_U1; the other boxes and bubbles retain their existing scene setup. WaterPlayground also has saved instances of all three prefabs and an updated initial-body reference.
+## 6. Remaining work and handoff
 
-The current work adds `BouncyBall` to the reusable forms in `Assets/Form` and keeps both Level01 ball instances linked to that one prefab. `SpikeHazard` and `WaterPopHazard` remain in the same folder by team convention. See [ScriptGuide.md](ScriptGuide.md) for setup responsibilities. The reusable ball asset, completed upper hazard layout and regional camera complete the shared mechanics needed for this pass, but they do not replace complete-route validation.
+1. **Final route regression.** Play from the initial star to the flag with the saved starting positions. Check both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion. The latest changes have passed developer tests; this final pass checks them together.
+2. **Merge the Level 1 pass.** Keep gameplay and documentation commits separate and merge the reviewed branch into `main`. Do not treat these docs as evidence that this merge has already happened.
+3. **Navigation on a separate branch.** Build a simple navigation page linking Tutorial and Level 1 after the merge. Add Level 2 later once the team finishes its remaining content and resolves its camera conflicts. No navigation page or automatic level transition is implemented in this pass.
+4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Validate the intended web build before submission.
+
+The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. The current branch contains additional Level 1 changes beyond those baselines. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.
