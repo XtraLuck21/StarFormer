@@ -4,7 +4,7 @@ Last updated: 2026-10-11.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Baseline: current `level-1` implementation through `5f134cd`, including any-form completion, removal of the final U3 bubble and canopy, revised hazards, and death feedback. The developer reported successful manual tests of the latest changes, including upper bouncing-ball traversal, goal completion and death/restart feedback. These reports cover the tested interactions and route segments; they do not establish exhaustive start-to-finish regression coverage.
+Baseline: Level 1 polish merged into `main` in PR #8 (`c63a17c`), followed by the `navigation` implementation through `1e330f0`. The menu links Tutorial and Level01, both scenes have return buttons, and the menu includes a playable star. Level 1 includes any-form completion, removal of the final U3 bubble and canopy, revised hazards, and death feedback. The developer reported successful manual tests of the latest changes, including upper bouncing-ball traversal, goal completion and death/restart feedback. These reports cover the tested interactions and route segments; they do not establish exhaustive start-to-finish regression coverage.
 
 ## 1. Current scope
 
@@ -21,6 +21,9 @@ Baseline: current `level-1` implementation through `5f134cd`, including any-form
 | Reusable BouncyBall prefab; automatic land bounce, A/D steering, ceiling compression and water-surface floating | Implemented; two Level01 instances and developer-reported segment tests passed |
 | Level01 three-region camera with bounded follow and smooth position/zoom transitions | Implemented and tested for lower-left, lower-right, upper and possession changes |
 | Level01 complete route, including final bouncing-ball traversal | Upper floor-spike traversal and completion tested; final full-route regression remains |
+| Main menu, Tutorial/Level01 selection and return-to-menu buttons | Implemented; developer-reported navigation tests passed |
+| Playable menu star and one-way title/button platforms | Implemented; movement, jumping, foreground rendering and button clicks passed developer tests |
+| Level 2 menu entry | Coming Soon placeholder with no click action; no Level 2 scene is connected |
 | Fan-generated wind and form-specific wind response | Not integrated into the current shared controller |
 | Possessable spike wall, enemies and spider | Not integrated into the current shared controller |
 
@@ -193,7 +196,7 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 - The current pressure plate requires mass **3** or greater and a supporting contact within its area. A heavy object merely passing through the trigger in midair is insufficient. Activation disables the assigned door and remains latched until restart.
 - Completion requires the assigned controlled box to enter the goal trigger while the door is inactive and the player is alive. This is a tutorial-specific condition, not a rule that every future level must end as a box.
 - Completion pauses gameplay and displays `Now get ready to transform!`, `More forms. More possibilities.`, and `Press R to restart.`
-- Transition into a new Alpha Level 1 is not implemented yet. The tutorial does not introduce every planned form.
+- `Return to Main Menu` loads `Mainmenu`, where the player can choose Level 1. Completion does not automatically advance to Level01. The tutorial does not introduce every planned form.
 
 ## 10. Level01 interactions and completion
 
@@ -211,7 +214,24 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 - `BouncyBall_Lower` and `BouncyBall_Upper` are working instances of the shared BouncyBall prefab. The old R1/R2 marker transforms remain as inert references only. Upper-route ceiling spikes `(13)`, `(14)` and `(15)` were moved to the upper return floor and rotated upward because the overhead placement made ball traversal too difficult. The developer tested the revised traversal and completion successfully. Passing segment tests is not proof of exhaustive full-route validation.
 - Level01 camera regions use `X = 16` to divide the lower-left and lower-right views and `Y = 8.5` to enter the upper view. Lower view sizes are **10**, keeping the green upper floor visible; the upper view size is **5.25**. The camera follows the current controlled form within a bounded range and smooths movement and zoom during transitions.
 
-## 11. Planned features and unresolved decisions
+## 11. Main menu and navigation
+
+- `Mainmenu` is the startup scene. Its title is `Star Former`, with Tutorial, Level 1 and `Level 2 (Coming Soon)` buttons. The Main Camera supplies the solid blue background.
+- Mouse clicks on Tutorial and Level 1 load `Tutorial` and `Level01`. The Level 2 button currently has Interactable enabled but no OnClick listeners, so clicking it does not load a scene.
+- Tutorial and Level01 each have a top-right `Return to Main Menu` button. `MainMenuUI` and `LevelNavigationUI` restore `Time.timeScale` to 1 before loading the destination. Return navigation is available during gameplay and on completion screens. Loading a scene starts it again rather than resuming prior progress.
+- The menu reuses StarPlayer and the shared possession controller. A/D or Left/Right Arrow moves the star, Space jumps when grounded, and R restarts the menu. The star starts above the title and lands on its platform.
+- Tutorial, Level 1 and Level 2 buttons become progressively wider toward the bottom. Separate physical platforms align with the top edges of the title and button rectangles, with a ground platform beneath them.
+- These are one-way platforms: the star can jump straight up through them and land on top while falling. It does not need to go around a button's edge to ascend. Walking off an edge allows descent.
+- The current title spacing is accepted even though the star cannot jump back to the title from Tutorial. Returning to the title is not a menu objective or a requirement for entering a level.
+- Landing on a button does not launch its level. Level selection remains a mouse action, independent of the optional star interaction. EventSystem navigation events are disabled so jumping does not submit a selected button.
+- The menu Canvas uses Screen Space - Camera with Main Camera. The star renders in front of the buttons, so they do not hide it while it passes through them.
+- No additional movement hint or attention animation has been added. The team will test whether new players discover the star interaction before deciding on further guidance.
+
+The enabled build scenes are `Mainmenu` (0), `Tutorial` (1) and `Level01` (2). Reference and sandbox scenes are excluded from the saved build list. There is no automatic level progression or connected Level 2 entry yet.
+
+The developer reported successful tests of menu scene selection, return buttons, star movement and jumping, and the final foreground-rendering change. Teammate usability testing and web-build verification remain separate from these editor tests.
+
+## 12. Planned features and unresolved decisions
 
 - **Wind:** fans are the only planned wind source; there is no separate ambient wind system. Form-specific wind response remains unimplemented.
 - **Fan controls, agreed design:** A/D moves and sets facing; Space activates airflow; the fan should not enter water. The intended unattended fan retains its last blowing direction. Hold versus toggle activation and the exact unattended activation rule still need confirmation before implementation.
@@ -219,6 +239,6 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 - **Ball route:** the shared ball behavior and both Level01 ball-route layouts are implemented. The revised upper floor-spike section and completion passed developer tests; a final start-to-finish regression remains.
 - **Button/gate feedback:** a button and its gate may be outside the same camera view. The team deferred additional visual links or camera feedback for this pass.
 - **Level scope:** the current Alpha Level 1 uses Star, Box, Bubble and Bouncing Ball. Level 2 is intended to use all approved forms; spider inclusion depends on its confirmed implementation.
-- **Future work:** after the Level 1 changes are merged into `main`, create a separate navigation branch for a simple page linking Tutorial and Level 1. Level 2 can be connected after its remaining work and camera conflicts are resolved. Navigation, checkpoints and automatic scene-to-scene progression are not implemented. Oxygen is not part of the current star water behavior.
+- **Navigation follow-up:** connect the Level 2 placeholder after the team finishes that scene and resolves its camera conflicts. Teammate testing will assess the optional menu star interaction. Checkpoints and automatic scene-to-scene progression are not implemented. Oxygen is not part of the current star water behavior.
 
 Update this document alongside changes to controls, form/environment rules or accepted tuning. Keep proposals marked as planned or Undecided until implemented and verified.

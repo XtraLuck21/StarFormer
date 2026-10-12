@@ -4,7 +4,7 @@ Last updated: 2026-10-11.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
-**Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. Final full-route regression, merge and navigation integration remain separate handoff steps.**
+**Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. This polish pass is now merged into `main` through PR #8 (`c63a17c`). The separate `navigation` branch adds a menu entry for Level01 and a return-to-menu button, with developer-reported tests passed through `1e330f0`. Final full-route regression and web-build verification remain separate checks.**
 
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
@@ -40,6 +40,7 @@ The ball floats at the surface of any registered water zone. While floating it c
 | `WaterPopHazard_01`, `WaterPopHazard_02`, `WaterPopHazard_03` | `BubblePopHazard.playerController` | `PlayerControl` |
 | `LevelGoal` | Player controller / required gate / status text | `PlayerControl` / `Gate_G2` / `LevelStatusText` |
 | `LevelCanvas` | `LevelDeathUI.playerController` / `statusText` | `PlayerControl` / `LevelStatusText` |
+| `ReturnToMenuButton` | OnClick | Local `LevelCanvas` → `LevelNavigationUI.ReturnToMainMenu` |
 
 - **P → G is continuous:** only the assigned grounded C can hold it open. Control can transfer away from C while it remains on P. Moving C away closes G.
 - **H → G2 is latched:** assigned grounded D touches the overhead trigger once; G2 then remains open until restart. H has no explicit size threshold; its height creates the growth requirement.
@@ -47,6 +48,7 @@ The ball floats at the surface of any registered water zone. While floating it c
 - **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
 - **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.`, `Restarting...`, and `Press R to restart now.` into the shared status text. The controller handles the two-second death pause and R restart. The text remains blank during normal play.
+- **Menu navigation:** `Mainmenu` provides the Level 1 entry. The top-right return button loads `Mainmenu` and restores time scale to 1, including when leaving the completion pause. R still restarts Level01. Re-entering Level 1 starts the scene again.
 - **Ball spikes remain lethal:** `SpikeHazard` kills the currently controlled star, box, bubble or bouncing ball and reloads the scene after the configured death delay.
 - **The camera follows the controlled form:** possession changes do not break camera tracking. Level01 uses lower-left, lower-right and upper camera regions with bounded follow, smooth movement and smooth zoom transitions.
 
@@ -92,6 +94,7 @@ The developer reported successful manual tests of:
 - Any-form goal completion, including the bouncing ball, after G2 opens; completion feedback and restart after removal of U3 and its canopy.
 - Upper return traversal after moving spikes `(13)`, `(14)` and `(15)` to the floor.
 - Death text, automatic restart and R restart, with the enlarged/repositioned status text showing all three lines and its default `New Text` placeholder removed.
+- Main menu entry into Level01 and return to the menu, including the completion screen, in the subsequent navigation pass.
 - New StarPlayer, BoxBody and BubbleBody prefab instances in WaterPlayground: movement, possession, box resizing/sinking, bubble swimming and popping, with no reported new Console errors.
 - A single reusable `BouncyBall` prefab instantiated as `BouncyBall_Lower` and `BouncyBall_Upper`, including centered star marker, waiting state before possession, A/D steering and automatic land bouncing.
 - Ball bounce-height compression beneath a low solid roof, with a faster rhythm at shorter heights and restoration of the default height in open space.
@@ -116,8 +119,8 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 ## 6. Remaining work and handoff
 
 1. **Final route regression.** Play from the initial star to the flag with the saved starting positions. Check both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion. The latest changes have passed developer tests; this final pass checks them together.
-2. **Merge the Level 1 pass.** Keep gameplay and documentation commits separate and merge the reviewed branch into `main`. Do not treat these docs as evidence that this merge has already happened.
-3. **Navigation on a separate branch.** Build a simple navigation page linking Tutorial and Level 1 after the merge. Add Level 2 later once the team finishes its remaining content and resolves its camera conflicts. No navigation page or automatic level transition is implemented in this pass.
+2. **Level 1 merge completed.** PR #8 (`c63a17c`) integrated the Level 1 gameplay and polish into `main`.
+3. **Navigation implemented on its own branch.** Through `1e330f0`, `Mainmenu` links Tutorial and Level01, both scenes have return buttons, and the menu includes an optional playable star on title/button platforms. The Level 2 entry remains a Coming Soon placeholder with no loading action. Teammate usability testing and navigation review/merge remain follow-up work. Automatic level progression is not implemented.
 4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Validate the intended web build before submission.
 
-The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. The current branch contains additional Level 1 changes beyond those baselines. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.
+The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. PR #8 merged the later Level 1 polish. Navigation is a subsequent change on the separate `navigation` branch. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.
