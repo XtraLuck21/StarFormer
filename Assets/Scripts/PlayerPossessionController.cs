@@ -136,10 +136,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (keyboard.spaceKey.wasPressedThisFrame)
         {
             actionRequested = true;
-        }
-
-        if (keyboard.wKey.wasPressedThisFrame)
-        {
+            // Fan form uses Space to leave; other forms use it as action/jump.
             leaveRequested = true;
         }
     }

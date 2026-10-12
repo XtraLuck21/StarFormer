@@ -55,7 +55,7 @@ public class FanBlower : MonoBehaviour
             facing = 1;
         }
 
-        if (keyboard.spaceKey.wasPressedThisFrame)
+        if (keyboard.wKey.wasPressedThisFrame)
         {
             isBlowing = !isBlowing;
         }
