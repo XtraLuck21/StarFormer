@@ -20,6 +20,15 @@ public class SpikeAngryText : MonoBehaviour
     private void Awake()
     {
         text = GetComponent<TMP_Text>();
+
+        Renderer textRenderer = text.GetComponent<Renderer>();
+
+        if (textRenderer != null)
+        {
+            textRenderer.sortingLayerName = "Default";
+            textRenderer.sortingOrder = 6;
+        }
+
         originalPosition = transform.localPosition;
         originalAlpha = text.alpha;
 

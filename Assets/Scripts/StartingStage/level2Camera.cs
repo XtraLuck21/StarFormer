@@ -18,6 +18,9 @@ public class level2Camera : MonoBehaviour
     [SerializeField]
     private Vector2 firstXRange =
         new Vector2(-90f, -75f);
+    [SerializeField]
+    private Vector2 firstFollowOffset =
+    new Vector2(0f, 0.5f);
 
     [SerializeField, Min(0.01f)] private float followSize = 2f;
     [SerializeField] private float cameraZ = -10f;
@@ -90,6 +93,15 @@ public class level2Camera : MonoBehaviour
     private UnityEvent onChaseStarted =
         new UnityEvent();
 
+
+    [Header("Remaining Area - Follow Player")]
+    [SerializeField] private float remainingFollowSize = 6f;
+
+    [SerializeField]
+    private Vector2 remainingFollowOffset =
+        new Vector2(0f, 1f);
+
+    private bool remainingFollowStarted;
     private Camera cam;
     private bool cutsceneTriggered;
     private bool playingCutscene;
@@ -108,6 +120,12 @@ public class level2Camera : MonoBehaviour
         {
             player = FindFirstObjectByType<PlayerPossessionController>();
         }
+    }
+
+    public void BeginRemainingFollow()
+    {
+        remainingFollowStarted = true;
+        playingCutscene = false;
     }
 
     private void LateUpdate()
@@ -144,6 +162,22 @@ public class level2Camera : MonoBehaviour
         }
 
         Vector3 position = currentBody.transform.position;
+
+        if (remainingFollowStarted)
+        {
+            TakeCamera();
+
+            SetCamera(
+                new Vector3(
+                    position.x + remainingFollowOffset.x,
+                    position.y + remainingFollowOffset.y,
+                    cameraZ
+                ),
+                remainingFollowSize
+            );
+
+            return;
+        }
         // 进入下落区域后，接管镜头。
         // 触发后即使玩家离开这个 X 范围，也继续播放下落镜头。
         if (!droppingStarted &&
@@ -230,7 +264,11 @@ public class level2Camera : MonoBehaviour
             TakeCamera();
 
             SetCamera(
-                new Vector3(position.x, position.y, cameraZ),
+                new Vector3(
+                    position.x + firstFollowOffset.x,
+                    position.y + firstFollowOffset.y,
+                    cameraZ
+                ),
                 followSize
             );
         }

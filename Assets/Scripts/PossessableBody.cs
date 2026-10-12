@@ -2,14 +2,13 @@ using UnityEngine;
 
 public enum BodyForm
 {
-    // Spider must stay 4. Others follow PlayerPossessionController order.
     Star = 0,
     Box = 1,
     Bubble = 2,
     SpikeWall = 3,
-    Fan = 5,
     Spider = 4,
-    gravityBall=6
+    Fan = 5,
+    gravityBall = 6
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -24,6 +23,7 @@ public class PossessableBody : MonoBehaviour
     public float MoveSpeed => moveSpeed;
     public float JumpSpeed => jumpSpeed;
     public bool IsControlled => owner != null;
+
     public bool IsInWater =>
         isActiveAndEnabled &&
         Body != null &&
@@ -40,7 +40,8 @@ public class PossessableBody : MonoBehaviour
 
     private PlayerPossessionController owner;
 
-    private readonly ContactPoint2D[] contacts = new ContactPoint2D[16];
+    private readonly ContactPoint2D[] contacts =
+        new ContactPoint2D[16];
 
     private bool wasInWater;
 
@@ -76,6 +77,11 @@ public class PossessableBody : MonoBehaviour
 
     public bool IsGrounded()
     {
+        if (Body == null)
+        {
+            return false;
+        }
+
         int count = Body.GetContacts(contacts);
 
         for (int i = 0; i < count; i++)
@@ -91,18 +97,48 @@ public class PossessableBody : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!isActiveAndEnabled || owner == null)
+        RequestPossessionFromBody(collision.rigidbody);
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        RequestPossessionFromBody(collision.rigidbody);
+    }
+
+    // Spider 的表面检测调用此方法。
+    public void RequestSurfacePossession(Collider2D surface)
+    {
+        if (surface == null)
         {
             return;
         }
 
-        Rigidbody2D incomingBody = collision.rigidbody;
+        RequestPossessionFromBody(surface.attachedRigidbody);
+    }
 
-        if (incomingBody != null &&
-            incomingBody.TryGetComponent(out PossessableBody target))
+    private void RequestPossessionFromBody(Rigidbody2D targetBody)
+    {
+        if (!isActiveAndEnabled ||
+            !IsReady ||
+            owner == null ||
+            targetBody == null ||
+            targetBody == Body)
         {
-            owner.RequestPossession(this, target);
+            return;
         }
+
+        // 普通地面、障碍没有 PossessableBody，不会触发附身。
+        if (!targetBody.TryGetComponent<PossessableBody>(
+                out var target) ||
+            target == this ||
+            !target.isActiveAndEnabled ||
+            !target.IsReady)
+        {
+            return;
+        }
+
+        // 切换和接触锁仍由控制器统一处理。
+        owner.RequestPossession(this, target);
     }
 
     private void FixedUpdate()

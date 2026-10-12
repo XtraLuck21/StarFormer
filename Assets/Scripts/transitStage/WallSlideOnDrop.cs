@@ -48,6 +48,12 @@ public class WallSlideOnDrop : MonoBehaviour
             SetWallVisible(true);
         }
     }
+
+    public void ShowWall()
+    {
+        shown = true;
+        SetWallVisible(true);
+    }
     private void SetWallVisible(bool visible)
     {
         foreach (SpriteRenderer wallRenderer in wallRenderers)

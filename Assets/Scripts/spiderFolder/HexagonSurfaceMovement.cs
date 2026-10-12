@@ -75,16 +75,8 @@ public class HexagonSurfaceMovement : MonoBehaviour
             ResetRollingVisual();
             return;
         }
-        //         if (!IsAttached ||
-        //     Vector2.Dot(surfaceNormal, hit.normal.normalized) < 0.5f)
-        // {
-        //     Debug.Log(
-        //         $"Surface: {hit.collider.name}, " +
-        //         $"normal: {hit.normal}, distance: {hit.distance:F4}",
-        //         this
-        //     );
-        // }
-        // 先保留旧表面的切线，不能提前覆盖 surfaceNormal。
+        possessable.RequestSurfacePossession(hit.collider);
+
         surfaceNormal = hit.normal.normalized;
 
         Vector2 tangent = new Vector2(

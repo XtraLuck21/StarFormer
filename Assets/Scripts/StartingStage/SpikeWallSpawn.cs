@@ -9,11 +9,13 @@ public class spikeWallSpawn : MonoBehaviour
     [SerializeField, Min(0.01f)] private float emergeDuration = 1f;
 
     [Header("Emergence")]
-    // 从初始位置向右移动多少距离。
     [SerializeField, Min(0f)] private float emergeDistance = 2f;
 
     [Header("Expression")]
     [SerializeField] private SpikeAngryText angryText;
+
+    // 重新加载场景时保留，重新开始游戏运行时清除。
+    private static bool expressionPlayed;
 
     private Rigidbody2D body;
     private SpikeWallEnemyChase chase;
@@ -26,8 +28,15 @@ public class spikeWallSpawn : MonoBehaviour
     private bool chaseRequested;
     private bool chaseStarted;
 
-    // 0 = 静止，1 = 显示表情，2 = 出墙，3 = 出墙完成。
+    // 0 = 静止，1 = 表情等待，2 = 出墙，3 = 出墙完成。
     private int stage;
+
+    [RuntimeInitializeOnLoadMethod(
+        RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetSessionState()
+    {
+        expressionPlayed = false;
+    }
 
     private void Awake()
     {
@@ -35,7 +44,6 @@ public class spikeWallSpawn : MonoBehaviour
         chase = GetComponent<SpikeWallEnemyChase>();
     }
 
-    // 连接镜头的 On Enemy Shot Started。
     public void BeginEmergence()
     {
         if (sequenceStarted)
@@ -48,16 +56,26 @@ public class spikeWallSpawn : MonoBehaviour
 
         startPosition = body.position;
         timer = 0f;
-        stage = 1;
 
-        if (angryText != null)
+        if (!expressionPlayed && angryText != null)
         {
+            expressionPlayed = true;
             angryText.ShowAngry();
+
+            stage = expressionDuration > 0f ? 1 : 2;
+        }
+        else
+        {
+            // 死亡或按 R 重开后，不再显示表情。
+            if (angryText != null)
+            {
+                angryText.HideAngry();
+            }
+
+            stage = 2;
         }
     }
 
-    // 连接镜头的 On Chase Started。
-    // 如果还没出墙完成，就先记住请求。
     public void RequestChase()
     {
         chaseRequested = true;
@@ -100,7 +118,6 @@ public class spikeWallSpawn : MonoBehaviour
 
             if (progress >= 1f)
             {
-                // 下一次物理更新再交给追逐脚本。
                 stage = 3;
             }
 

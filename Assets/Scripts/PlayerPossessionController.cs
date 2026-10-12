@@ -47,6 +47,44 @@ public class PlayerPossessionController : MonoBehaviour
     private bool leaveRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
+    private static bool hasCheckpoint;
+    private static string checkpointScene;
+    private static string checkpointId;
+    private static Vector3 checkpointPosition;
+
+    public bool HasCheckpointInCurrentScene =>
+        hasCheckpoint &&
+        checkpointScene == gameObject.scene.path;
+
+    public bool IsCurrentCheckpoint(string id)
+    {
+        return HasCheckpointInCurrentScene && checkpointId == id;
+    }
+
+    [RuntimeInitializeOnLoadMethod(
+        RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetCheckpointSession()
+    {
+        hasCheckpoint = false;
+        checkpointScene = null;
+        checkpointId = null;
+        checkpointPosition = Vector3.zero;
+    }
+
+    public void SetCheckpoint(string id, Vector3 position)
+    {
+        if (isDead || restartRequested || string.IsNullOrWhiteSpace(id))
+        {
+            return;
+        }
+
+        hasCheckpoint = true;
+        checkpointScene = gameObject.scene.path;
+        checkpointId = id;
+        checkpointPosition = position;
+
+        Debug.Log($"check point activated:{id}", this);
+    }
 
     private void Start()
     {
@@ -61,6 +99,16 @@ public class PlayerPossessionController : MonoBehaviour
 
             enabled = false;
             return;
+        }
+
+        if (HasCheckpointInCurrentScene)
+        {
+            initialBody.transform.position = checkpointPosition;
+            initialBody.Body.position = (Vector2)checkpointPosition;
+            initialBody.Body.linearVelocity = Vector2.zero;
+            initialBody.Body.angularVelocity = 0f;
+
+            Physics2D.SyncTransforms();
         }
 
         currentBody = initialBody;
@@ -82,6 +130,9 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
+            // R：清除检查点，整个关卡从头开始。
+            ResetCheckpointSession();
+
             RequestRestart();
             return;
         }
@@ -548,7 +599,8 @@ public class PlayerPossessionController : MonoBehaviour
             // 星星保留，泡泡爆裂时还能恢复。
             previousBody.gameObject.SetActive(false);
         }
-        else if (previousBody.Form == BodyForm.gravityBall)
+        else if (previousBody.Form == BodyForm.gravityBall ||
+        (previousBody.Form == BodyForm.Spider && target.Form == BodyForm.Bubble))
         {
             // 小球转移到任何其他身体后销毁。
             blockedPreviousBody = null;
