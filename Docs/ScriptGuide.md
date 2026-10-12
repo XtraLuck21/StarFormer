@@ -2,20 +2,21 @@
 
 Last updated: 2026-10-11. Unity version: `6000.3.22f1`.
 
-Current test scenes and gameplay scripts. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
+Current playable scenes, test scenes and gameplay scripts. Navigation baseline: `1e330f0` on `navigation`. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
 
-## 1. Test scenes
+## 1. Playable and test scenes
 
 | Scene | Purpose | Relevant features |
 | --- | --- | --- |
+| [Mainmenu](../Assets/Scenes/Mainmenu.unity) | Startup menu | Tutorial/Level01 selection, Level 2 placeholder, playable star and one-way UI-aligned platforms |
 | [Playground](../Assets/Scenes/Playground.unity) | Existing mechanics sandbox | Star, box, bubble, resizing, pressure plate and door |
 | [Level01_Reference](../Assets/Scenes/Level01_Reference.unity) | Earlier level layout retained as a reference | Traversal and transformation layout; not the new Alpha Level 1 |
-| [Tutorial](../Assets/Scenes/Tutorial.unity) | Current playable tutorial | Movement, jump, three SpikeHazard prefab instances, box possession and resizing, pressure plate, goal and feedback |
+| [Tutorial](../Assets/Scenes/Tutorial.unity) | Current playable tutorial | Movement, jump, three SpikeHazard prefab instances, box possession and resizing, pressure plate, goal, feedback and return-to-menu button |
 | [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
-| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, purple hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form completion and death feedback; final full-route regression remains |
+| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, purple hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form completion, death feedback and return-to-menu button; final full-route regression remains |
 | [EnemyScene](../Assets/Scenes/EnemyScene.unity) | Teammate test scene present in this checkout | Not reviewed or playtested as part of the Level 1 work |
 
-The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset). The saved list currently begins with Playground; do not assume Tutorial is the launch scene. Full-scene restart requires the current scene to be included in the enabled build scene list. Check the active build profile when preparing a build.
+The enabled scenes in [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) are `Mainmenu` (index 0), `Tutorial` (1) and `Level01` (2). `Level01_Reference`, `WaterPlayground` and `Playground` remain in the list but are unchecked. Level 2 is not connected. Full-scene restart requires the current scene to be included in the enabled build scene list, so temporarily enable a sandbox when testing its reload behavior. Check the active build profile when preparing a build.
 
 ## 2. Script map
 
@@ -77,3 +78,40 @@ The five scenes other than EnemyScene are enabled in [EditorBuildSettings.asset]
 - Developer-reported tests passed for spike death/restart, controlled box contact and growth into purple hazards, preserved bubble popping, and black-X readability in Level01.
 
 **Level01 feedback setup:** keep `LevelCanvas` and `LevelStatusText` active. Both `LevelGoal.statusText` and `LevelDeathUI.statusText` reference the same TMP object. Keep its saved text empty. Its top-center anchor/pivot, position `(0, -40)` and size `(1000, 200)` provide space for the three-line death message. The developer confirmed death and completion text display after the layout adjustment. Full HD preview helped verify the small hazard markers; fit the Game view to the available panel when checking text near the screen edge.
+
+## 3. Navigation and interactive menu
+
+| Script | Attach to / dependencies | Current responsibility |
+| --- | --- | --- |
+| [MainMenuUI.cs](../Assets/Scripts/MainMenuUI.cs) | `Mainmenu` scene's `MainMenuCanvas` | `OpenTutorial()` loads `Tutorial`; `OpenLevel1()` loads `Level01`; restores time scale to 1 before loading |
+| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Tutorial's `TutorialCanvas` and Level01's `LevelCanvas` | `ReturnToMainMenu()` restores time scale to 1 and loads `Mainmenu` |
+| [MenuUIPlatform.cs](../Assets/Scripts/MenuUIPlatform.cs) | Each menu platform root; requires `BoxCollider2D` and `PlatformEffector2D`; assign target UI rectangle and Main Camera | Converts the target's upper corners to world coordinates, aligns a thin collider with its top edge, and configures one-way collision |
+
+### Button wiring and scene names
+
+- `TutorialButton.OnClick` calls the local `MainMenuCanvas` component's `MainMenuUI.OpenTutorial`.
+- `Level1Button.OnClick` calls `MainMenuUI.OpenLevel1` on the same scene object.
+- `Level2Button` displays `Level 2 (Coming Soon)`. Its saved Interactable setting is enabled, but its OnClick list is empty. It is a placeholder, not a working scene link. Add the actual scene to the build list and wire a loading method when Level 2 is ready.
+- `ReturnToMenuButton` in Tutorial and Level01 calls `LevelNavigationUI.ReturnToMainMenu` on that scene's own canvas. Preserve the local reference when copying UI between scenes.
+- Keep the scene string `Mainmenu` consistent with the asset name. No goal script automatically advances to another scene. Return buttons remain available during gameplay and completion, and loading a level starts a fresh scene.
+
+### Menu star and platform setup
+
+- Keep the scene StarPlayer and `PlayerControl` at the scene root. Assign the scene StarPlayer to `PlayerPossessionController.initialBody`. Reuse existing star movement and jump behavior rather than adding a second movement controller.
+- `TitlePlatform`, `TutorialPlatform`, `Level1Platform` and `Level2Platform` each use `MenuUIPlatform`. Their `targetUI` references are `TitleText`, `TutorialButton`, `Level1Button` and `Level2Button`, respectively. All reference Main Camera and use thickness `0.12`.
+- Keep platform roots at identity rotation and unit scale. The script positions them during Start and LateUpdate, after forcing the initial Canvas layout update. Edit-mode positions do not represent their aligned runtime positions.
+- The collider follows the top of the UI rectangle, not the visible text glyphs. It is a non-trigger collider with Used By Effector enabled. The script sets Use One Way and Use One Way Grouping, a surface arc of 180 degrees, and disables side friction/bounce.
+- The star may pass upward through buttons and land on their tops while falling. `MenuTestGround` is a separate solid ground platform below the button stack. Contact with these platforms does not select a level.
+- The star initially lands above the title. The accepted layout does not require it to jump back from Tutorial to the title. Lower buttons get progressively wider.
+- Keep the menu EventSystem's `InputSystemUIInputModule` for mouse input, with **Send Navigation Events disabled**. This prevents movement/jump keys from navigating or submitting UI buttons.
+
+### Rendering and coordinate conversion
+
+- `MainMenuCanvas` uses **Screen Space - Camera**, assigned Main Camera, plane distance **10**, Default sorting layer and order **0**. Canvas Scaler uses Scale With Screen Size, reference **1920 x 1080** and width/height match **0.5**.
+- The menu camera is orthographic and faces the XY plane from Z = -10. `MenuUIPlatform` projects onto world Z = 0 and passes `worldCamera` to `RectTransformUtility.WorldToScreenPoint`. It is configured for this camera-backed Canvas, not an Overlay Canvas with a null camera.
+- StarPlayer's menu visual uses an unlit sprite material. `StarVisual` sets its sorting order to **10**, above the Canvas on the same Default sorting layer. This allows the star to remain visible while crossing button graphics. Increasing sprite order alone would not put it above a Screen Space - Overlay Canvas.
+- Preserve the Canvas camera and the platform conversion together when changing rendering modes. Verify collision alignment and mouse clicks after changing layout or aspect ratio. GraphicRaycaster currently has Blocking Objects set to None.
+
+### Verification and follow-up
+
+Developer-reported tests passed for loading Tutorial and Level01, returning to the menu, moving/jumping across menu platforms, and keeping the star visible in front of buttons while clicks still work. No new movement hint or attention animation is included. Teammate usability testing is pending, as are Level 2 integration and web-build verification. These editor tests do not establish behavior across every resolution or browser.
