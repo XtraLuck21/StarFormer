@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-11. Unity version: `6000.3.22f1`.
 
-Current playable scenes, test scenes and gameplay scripts. Navigation baseline: `1e330f0` on `navigation`. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
+Current playable scenes, test scenes and gameplay scripts. Navigation is merged into `main` through PR #9 (`9fc0f95`). The first playable Web release is published on GitHub Pages. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
 
 ## 1. Playable and test scenes
 
@@ -13,7 +13,7 @@ Current playable scenes, test scenes and gameplay scripts. Navigation baseline: 
 | [Level01_Reference](../Assets/Scenes/Level01_Reference.unity) | Earlier level layout retained as a reference | Traversal and transformation layout; not the new Alpha Level 1 |
 | [Tutorial](../Assets/Scenes/Tutorial.unity) | Current playable tutorial | Movement, jump, three SpikeHazard prefab instances, box possession and resizing, pressure plate, goal, feedback and return-to-menu button |
 | [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
-| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, purple hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form completion, death feedback and return-to-menu button; final full-route regression remains |
+| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, purple hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form completion, death feedback and return-to-menu button; local/online playtests passed, broader regression remains |
 | [EnemyScene](../Assets/Scenes/EnemyScene.unity) | Teammate test scene present in this checkout | Not reviewed or playtested as part of the Level 1 work |
 
 The enabled scenes in [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) are `Mainmenu` (index 0), `Tutorial` (1) and `Level01` (2). `Level01_Reference`, `WaterPlayground` and `Playground` remain in the list but are unchecked. Level 2 is not connected. Full-scene restart requires the current scene to be included in the enabled build scene list, so temporarily enable a sandbox when testing its reload behavior. Check the active build profile when preparing a build.
@@ -114,4 +114,50 @@ The enabled scenes in [EditorBuildSettings.asset](../ProjectSettings/EditorBuild
 
 ### Verification and follow-up
 
-Developer-reported tests passed for loading Tutorial and Level01, returning to the menu, moving/jumping across menu platforms, and keeping the star visible in front of buttons while clicks still work. No new movement hint or attention animation is included. Teammate usability testing is pending, as are Level 2 integration and web-build verification. These editor tests do not establish behavior across every resolution or browser.
+Developer-reported tests passed for loading Tutorial and Level01, returning to the menu, moving/jumping across menu platforms, and keeping the star visible in front of buttons while clicks still work. The rebuilt localhost version and the published GitHub Pages version subsequently passed developer playtests. No new movement hint or attention animation is included. Teammate usability testing, Level 2 integration and broader resolution/browser coverage remain pending.
+
+## 4. Web build and GitHub Pages release
+
+### Current published version
+
+- Play URL: [StarFormer](https://xtraluck21.github.io/StarFormer/).
+- Release date: October 11, 2026, local project time.
+- Source baseline: `main` at `9fc0f95`, plus the local Web build settings described below. Those configuration edits were still uncommitted at the time of this documentation update.
+- Publishing branch: `gh-pages`, root directory. Initial deployment commit: `73877e9` (`Deploy playable Tutorial and Level 1 web build`). Pages reports the deployment as built, and the site responds with HTTP 200. Playability verification is the developer's reported manual test, not an automated browser test.
+- Included scenes: Mainmenu, Tutorial and Level01. Level 2 has no loading action yet.
+- The tested output was `Builds/WebGL-Test2`. The earlier `Builds/WebGL` output had missing-script problems and is not the release to reuse.
+
+### Build configuration
+
+Use Unity `6000.3.22f1` with Web Build Support. Select Web in Build Profiles and confirm Mainmenu (0), Tutorial (1) and Level01 (2) are the only enabled scenes. Use the Default Web template, Gzip compression, Decompression Fallback enabled, and a normal build with Development Build unchecked. Thread support remains disabled.
+
+Use Build And Run to test the generated site through localhost. Do not test by directly opening `index.html` as a local file. Keep outputs under the ignored `Builds` directory and outside Assets. Preserve `index.html`, `Build`, `TemplateData` and any other generated runtime files as one set.
+
+### Publishing and updating
+
+1. Build the intended source revision and test it locally before publishing. Record any local configuration changes required to reproduce it.
+2. Use a separate publishing checkout, currently the sibling folder `StarFormer-Pages`, on `gh-pages`. Copy the contents of the tested output into its root, so `index.html` is directly at the publishing root. Keep `.nojekyll` present. Do not overwrite the checkout's `.git` directory or copy Unity source/cache folders into it.
+3. Commit and push the build files to `gh-pages`. For later releases, reuse that checkout and replace the previous generated files as a complete set. Check the staged changes before committing and avoid leaving obsolete build payloads behind.
+4. GitHub Settings → Pages uses Deploy from a branch, `gh-pages`, `/ (root)`. Wait for the Pages deployment to succeed, then open the published URL.
+5. Test menu star movement and jumping, Tutorial and Level 1 selection, return navigation, restart and completion. Keep online checks separate from local checks, and ask teammates to test on their own computers.
+
+`main` contains Unity source, maintained configuration and documentation. `gh-pages` contains the exported website. Do not merge `gh-pages` into `main`. Updating source alone does not update the hosted game: publish a new tested build for each release. GitHub hosts the site without requiring the local editor or localhost server to remain running.
+
+### Missing navigation scripts during the first build
+
+The initial build log reported missing or invalid scripts on MainMenuCanvas, the four menu platforms, TutorialCanvas and LevelCanvas. MainMenuUI, MenuUIPlatform and LevelNavigationUI were absent from the editor/player compilation inputs even though their source files and scene references existed. Comparison with the navigation branch showed no missing source merge. Editor Play Mode also reproduced the fault.
+
+Closing and reopening Unity, reimporting the three scripts, and waiting for compilation restored editor behavior. A new Build And Run output then passed localhost testing and was used for publication. The exact cause of the import/compilation inconsistency is unresolved. If this recurs, check the Console and component references, refresh imports and verify editor play before rebuilding. Do not remove and recreate serialized components as the first recovery step. Edit-mode platform placement and effector warnings alone are not proof of failure, because MenuUIPlatform configures its collider in Awake and aligns it in Start/LateUpdate.
+
+### Configuration review before committing
+
+The following review applies to the current four modified configuration files. They were inspected but left unchanged during the documentation update.
+
+| File | Current change | Recommended source control treatment |
+| --- | --- | --- |
+| `ProjectSettings/ProjectSettings.asset` | Gzip, decompression fallback, explicit Web batching/texture settings, and an input-action preloaded asset | Keep the Web settings. Review and remove the build-added preloaded-assets entry before committing, because the Input System build processor adds and removes it around a build |
+| `Assets/Settings/DefaultVolumeProfile.asset` | Adds the default Bloom `filter` override, Gaussian (`0`) | Keep the default-profile completion. URP's build validator explicitly fills missing overrides and asks that they be saved |
+| `Assets/Settings/UniversalRP.asset` | Changes only shader prefilter fields | Exclude these generated build-time selections from the source configuration commit. URP recalculates them during builds |
+| `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset` | Populates `m_RuntimeSettings.m_List` | Exclude the generated runtime list from the source configuration commit. The rendering package derives it while building and clears it on editor deserialization |
+
+The package source in this project confirms these generation paths. No render-quality or gameplay retuning was requested in this release. Commit maintained configuration separately from the release documentation, then integrate those source changes into `main` through the team's normal workflow. The deployed build is already published and is unaffected by whether these local edits have been committed.

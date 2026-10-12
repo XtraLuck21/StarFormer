@@ -4,7 +4,7 @@ Last updated: 2026-10-11.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
-**Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. This polish pass is now merged into `main` through PR #8 (`c63a17c`). The separate `navigation` branch adds a menu entry for Level01 and a return-to-menu button, with developer-reported tests passed through `1e330f0`. Final full-route regression and web-build verification remain separate checks.**
+**Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. This polish pass is now merged into `main` through PR #8 (`c63a17c`). Navigation is merged into `main` through PR #9 (`9fc0f95`), including the Level01 menu entry and return button. The rebuilt localhost version and the GitHub Pages release passed developer-reported playtests. Teammate testing and broader route/browser coverage remain follow-up checks.**
 
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
@@ -95,6 +95,7 @@ The developer reported successful manual tests of:
 - Upper return traversal after moving spikes `(13)`, `(14)` and `(15)` to the floor.
 - Death text, automatic restart and R restart, with the enlarged/repositioned status text showing all three lines and its default `New Text` placeholder removed.
 - Main menu entry into Level01 and return to the menu, including the completion screen, in the subsequent navigation pass.
+- Successful playtests of the rebuilt localhost version and the published GitHub Pages version. The online release includes Tutorial and Level01.
 - New StarPlayer, BoxBody and BubbleBody prefab instances in WaterPlayground: movement, possession, box resizing/sinking, bubble swimming and popping, with no reported new Console errors.
 - A single reusable `BouncyBall` prefab instantiated as `BouncyBall_Lower` and `BouncyBall_Upper`, including centered star marker, waiting state before possession, A/D steering and automatic land bouncing.
 - Ball bounce-height compression beneath a low solid roof, with a faster rhythm at shorter heights and restoration of the default height in open space.
@@ -103,7 +104,7 @@ The developer reported successful manual tests of:
 - Lethal spike contact for controlled forms and full-scene restart behavior.
 - Three camera regions: enlarged lower-left and lower-right views, centered upper view, bounded local following, smooth position movement, smooth zoom and tracking across possession transfers.
 
-Earlier ball and camera segment tests reported no Console warnings or errors. The latest developer reports also confirm the revised upper traversal, completion and death UI. They do not establish exhaustive coverage of the whole route, every possible ball landing or puzzle shortcuts. Keep a final start-to-finish regression in the handoff checklist.
+Earlier ball and camera segment tests reported no Console warnings or errors. The latest developer reports also confirm the revised upper traversal, completion and death UI. They do not establish exhaustive coverage of the whole route, every possible ball landing or puzzle shortcuts. The later localhost and online release playtests also passed. These reports do not enumerate every alternate route, browser or resolution, so keep broader regression coverage as follow-up rather than describing the initial Web test as unfinished.
 
 For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Moving its `Visual` child only moves the sprite, leaving physics and possession at the root. Keep the saved `Visual` local position at `(0, 0, 0)` and restore the intended starting setup before committing the scene.
 
@@ -118,9 +119,9 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 
 ## 6. Remaining work and handoff
 
-1. **Final route regression.** Play from the initial star to the flag with the saved starting positions. Check both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion. The latest changes have passed developer tests; this final pass checks them together.
+1. **Broader regression coverage.** The developer reports successful localhost and online playtests. Continue testing alternate routes, both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion on teammates' computers. Do not treat this initial release as exhaustive coverage of every route or browser.
 2. **Level 1 merge completed.** PR #8 (`c63a17c`) integrated the Level 1 gameplay and polish into `main`.
-3. **Navigation implemented on its own branch.** Through `1e330f0`, `Mainmenu` links Tutorial and Level01, both scenes have return buttons, and the menu includes an optional playable star on title/button platforms. The Level 2 entry remains a Coming Soon placeholder with no loading action. Teammate usability testing and navigation review/merge remain follow-up work. Automatic level progression is not implemented.
-4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Validate the intended web build before submission.
+3. **Navigation merged and Web release published.** PR #9 (`9fc0f95`) integrates Mainmenu, Tutorial/Level01 links, return buttons and the optional menu star interaction. [Play the current build](https://xtraluck21.github.io/StarFormer/). GitHub Pages publishes `gh-pages` from its root, with initial deployment commit `73877e9`. Localhost and online testing passed after restoring missing script imports and rebuilding. Level 2 remains a Coming Soon placeholder. Automatic level progression is not implemented.
+4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Keep the published build updated after future source changes and repeat browser testing for each release. Review and commit the maintained Web configuration separately from generated rendering data, as documented in ScriptGuide.
 
-The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. PR #8 merged the later Level 1 polish. Navigation is a subsequent change on the separate `navigation` branch. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.
+The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. PR #8 merged the later Level 1 polish. PR #9 merged navigation into `main`. The exported Web build is maintained separately on `gh-pages`, which must not be merged into `main`. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.

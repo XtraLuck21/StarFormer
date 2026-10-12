@@ -4,7 +4,7 @@ Last updated: 2026-10-11.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Baseline: Level 1 polish merged into `main` in PR #8 (`c63a17c`), followed by the `navigation` implementation through `1e330f0`. The menu links Tutorial and Level01, both scenes have return buttons, and the menu includes a playable star. Level 1 includes any-form completion, removal of the final U3 bubble and canopy, revised hazards, and death feedback. The developer reported successful manual tests of the latest changes, including upper bouncing-ball traversal, goal completion and death/restart feedback. These reports cover the tested interactions and route segments; they do not establish exhaustive start-to-finish regression coverage.
+Baseline: Level 1 polish merged into `main` in PR #8 (`c63a17c`), followed by navigation merged through PR #9 (`9fc0f95`). The current Web test release is live on GitHub Pages, and the developer reported successful localhost and online playtests on 2026-10-11. The menu links Tutorial and Level01, both scenes have return buttons, and the menu includes a playable star. Level 1 includes any-form completion, removal of the final U3 bubble and canopy, revised hazards, and death feedback. The developer reported successful manual tests of the latest changes, including upper bouncing-ball traversal, goal completion and death/restart feedback. These reports cover the tested interactions and route segments; they do not establish exhaustive start-to-finish regression coverage.
 
 ## 1. Current scope
 
@@ -20,9 +20,10 @@ Baseline: Level 1 polish merged into `main` in PR #8 (`c63a17c`), followed by th
 | Level01 held plate, overhead height switch, purple water hazards, any-form completion and death UI | Implemented; developer-reported tests passed |
 | Reusable BouncyBall prefab; automatic land bounce, A/D steering, ceiling compression and water-surface floating | Implemented; two Level01 instances and developer-reported segment tests passed |
 | Level01 three-region camera with bounded follow and smooth position/zoom transitions | Implemented and tested for lower-left, lower-right, upper and possession changes |
-| Level01 complete route, including final bouncing-ball traversal | Upper floor-spike traversal and completion tested; final full-route regression remains |
+| Level01 complete route, including final bouncing-ball traversal | Upper traversal, completion and subsequent localhost/online playtests passed. Broader regression remains |
 | Main menu, Tutorial/Level01 selection and return-to-menu buttons | Implemented; developer-reported navigation tests passed |
 | Playable menu star and one-way title/button platforms | Implemented; movement, jumping, foreground rendering and button clicks passed developer tests |
+| Web test release on GitHub Pages | Published from `gh-pages`, developer-reported localhost and online tests passed |
 | Level 2 menu entry | Coming Soon placeholder with no click action; no Level 2 scene is connected |
 | Fan-generated wind and form-specific wind response | Not integrated into the current shared controller |
 | Possessable spike wall, enemies and spider | Not integrated into the current shared controller |
@@ -229,14 +230,18 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 
 The enabled build scenes are `Mainmenu` (0), `Tutorial` (1) and `Level01` (2). Reference and sandbox scenes are excluded from the saved build list. There is no automatic level progression or connected Level 2 entry yet.
 
-The developer reported successful tests of menu scene selection, return buttons, star movement and jumping, and the final foreground-rendering change. Teammate usability testing and web-build verification remain separate from these editor tests.
+The developer reported successful tests of menu scene selection, return buttons, star movement and jumping, and the final foreground-rendering change. After restoring Unity script imports and rebuilding, localhost playtesting passed. The build was then published at [Play StarFormer](https://xtraluck21.github.io/StarFormer/), and the developer reported that online playtesting passed as well. The published scope is Mainmenu, Tutorial and Level01. Level 2 remains a placeholder.
+
+The initial Web build had missing navigation scripts, causing inactive menu buttons and unaligned platforms. The same issue was confirmed in the editor. Restarting Unity and reimporting the navigation scripts restored editor behavior, and a fresh build passed the browser test. This recovery did not require a gameplay change. The precise cause of the stale import/compilation state was not established.
+
+Navigation is now merged into `main`. The website is served from the separate `gh-pages` branch. This release closes the initial Web publishing and playability check, while teammate usability testing and broader browser/resolution coverage remain open.
 
 ## 12. Planned features and unresolved decisions
 
 - **Wind:** fans are the only planned wind source; there is no separate ambient wind system. Form-specific wind response remains unimplemented.
 - **Fan controls, agreed design:** A/D moves and sets facing; Space activates airflow; the fan should not enter water. The intended unattended fan retains its last blowing direction. Hold versus toggle activation and the exact unattended activation rule still need confirmation before implementation.
 - **Other planned forms:** a possessable spike wall remains planned; spider wall/ceiling movement and its possible time limit remain tentative. Enemies are planned as lethal, non-possessable actors.
-- **Ball route:** the shared ball behavior and both Level01 ball-route layouts are implemented. The revised upper floor-spike section and completion passed developer tests; a final start-to-finish regression remains.
+- **Ball route:** the shared ball behavior and both Level01 ball-route layouts are implemented. The revised upper floor-spike section, completion and subsequent local/online playtests passed developer tests. Continue broader route and browser regression with teammates.
 - **Button/gate feedback:** a button and its gate may be outside the same camera view. The team deferred additional visual links or camera feedback for this pass.
 - **Level scope:** the current Alpha Level 1 uses Star, Box, Bubble and Bouncing Ball. Level 2 is intended to use all approved forms; spider inclusion depends on its confirmed implementation.
 - **Navigation follow-up:** connect the Level 2 placeholder after the team finishes that scene and resolves its camera conflicts. Teammate testing will assess the optional menu star interaction. Checkpoints and automatic scene-to-scene progression are not implemented. Oxygen is not part of the current star water behavior.
