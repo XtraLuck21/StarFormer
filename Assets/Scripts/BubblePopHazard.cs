@@ -40,12 +40,22 @@ public class BubblePopHazard : MonoBehaviour
 
         Rigidbody2D body = other.attachedRigidbody;
 
-        if (body != null &&
-            body.TryGetComponent(out PossessableBody hitBody) &&
-            hitBody.IsControlled &&
-            hitBody.Form == BodyForm.Bubble)
+        if (body == null ||
+            !body.TryGetComponent(out PossessableBody hitBody) ||
+            !hitBody.IsControlled)
         {
-            playerController.RequestBubblePop(hitBody);
+            return;
+        }
+
+        switch (hitBody.Form)
+        {
+            case BodyForm.Bubble:
+                playerController.RequestBubblePop(hitBody);
+                break;
+
+            case BodyForm.Box:
+                playerController.KillControlledBody(hitBody);
+                break;
         }
     }
 }
