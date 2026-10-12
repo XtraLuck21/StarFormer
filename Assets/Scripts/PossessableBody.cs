@@ -8,7 +8,8 @@ public enum BodyForm
     SpikeWall = 3,
     Spider = 4,
     Fan = 5,
-    gravityBall = 6
+    gravityBall = 6,
+    BouncyBall
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -28,6 +29,26 @@ public class PossessableBody : MonoBehaviour
         isActiveAndEnabled &&
         Body != null &&
         WaterZone.Contains(Body.position);
+    public bool IsInWater
+    {
+        get
+        {
+            if (!isActiveAndEnabled || Body == null)
+            {
+                return false;
+            }
+
+            if (form == BodyForm.BouncyBall && BodyCollider != null)
+            {
+                return WaterZone.TryGetSurfaceY(
+                    BodyCollider.bounds,
+                    out _
+                );
+            }
+
+            return WaterZone.Contains(Body.position);
+        }
+    }
 
     public Rigidbody2D Body { get; private set; }
     public Collider2D BodyCollider { get; private set; }

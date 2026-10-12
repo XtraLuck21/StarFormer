@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -31,6 +32,16 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField, Min(0.01f)] private float swimBraking = 10f;
     [SerializeField, Range(0f, 1f)] private float starWaterJumpMultiplier = 0.75f;
 
+    [Header("Bouncy Ball Movement")]
+    [SerializeField, Min(0.01f)] private float ballAcceleration = 35f;
+    [SerializeField, Min(0.01f)] private float ballBraking = 28f;
+    [SerializeField, Range(0f, 1f)] private float ballWaterSpeedMultiplier = 0.75f;
+    [SerializeField] private float ballMaximumHeight = 40f;
+
+    [Header("Possession Stability")]
+    [SerializeField, Min(0f)] private float possessionSeparationDistance = 0.35f;
+    [SerializeField, Min(1)] private int possessionSeparationFrames = 3;
+
     private bool isDead;
     private float deathRestartTime;
 
@@ -38,8 +49,15 @@ public class PlayerPossessionController : MonoBehaviour
     public PossessableBody CurrentBody => currentBody;
 
     private PossessableBody currentBody;
+    private PossessableBody pendingSource;
     private PossessableBody pendingTarget;
-    private PossessableBody blockedPreviousBody;
+
+    private readonly HashSet<PossessableBody> blockedTargets =
+        new HashSet<PossessableBody>();
+    private readonly Dictionary<PossessableBody, int> separationFrames =
+        new Dictionary<PossessableBody, int>();
+    private readonly List<PossessableBody> blockedTargetBuffer =
+        new List<PossessableBody>();
 
     private float horizontalInput;
     private float verticalInput;
@@ -204,6 +222,12 @@ public class PlayerPossessionController : MonoBehaviour
         if (useHeightLimit &&
             (bodyBounds.max.y < minimumHeight ||
              bodyBounds.min.y > maximumHeight))
+        float activeMaximumHeight = currentBody.Form == BodyForm.BouncyBall
+            ? ballMaximumHeight
+            : maximumHeight;
+
+        if (bodyBounds.max.y < minimumHeight ||
+            bodyBounds.min.y > activeMaximumHeight)
         {
             KillControlledBody(currentBody);
             return;
@@ -230,13 +254,16 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         UpdateContactLock();
+        UpdateContactLocks();
 
         if (pendingTarget != null)
         {
+            PossessableBody source = pendingSource;
             PossessableBody target = pendingTarget;
+            pendingSource = null;
             pendingTarget = null;
 
-            if (target.isActiveAndEnabled && target.IsReady)
+            if (CanCompletePossession(source, target))
             {
                 TransferTo(target);
             }
@@ -370,6 +397,26 @@ public class PlayerPossessionController : MonoBehaviour
                 }
 
                 break;
+
+            case BodyForm.BouncyBall:
+                {
+                    float targetSpeed =
+                        horizontalInput *
+                        currentBody.MoveSpeed *
+                        (inWater ? ballWaterSpeedMultiplier : 1f);
+
+                    float acceleration = Mathf.Abs(horizontalInput) > 0f
+                        ? ballAcceleration
+                        : ballBraking;
+
+                    velocity.x = Mathf.MoveTowards(
+                        velocity.x,
+                        targetSpeed,
+                        acceleration * Time.fixedDeltaTime
+                    );
+
+                    break;
+                }
         }
 
         body.linearVelocity = velocity;
@@ -393,6 +440,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         restartRequested = true;
+        pendingSource = null;
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
@@ -411,6 +459,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         isDead = true;
+        pendingSource = null;
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
@@ -428,7 +477,7 @@ public class PlayerPossessionController : MonoBehaviour
             isDead ||
             source != currentBody ||
             target == currentBody ||
-            target == blockedPreviousBody ||
+            blockedTargets.Contains(target) ||
             pendingTarget != null ||
             !target.isActiveAndEnabled ||
             !target.IsReady)
@@ -443,11 +492,14 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
+        pendingSource = source;
         pendingTarget = target;
     }
 
     private void OnDisable()
     {
+        ClearPossessionContacts();
+
         if (isDead)
         {
             Time.timeScale = 1f;
@@ -492,6 +544,8 @@ public class PlayerPossessionController : MonoBehaviour
         Vector2 releasePosition = bubble.Body.position;
         Vector2 releaseVelocity = bubble.Body.linearVelocity;
 
+        ClearPossessionContacts();
+
         // Remove upward momentum so the released star starts falling.
         releaseVelocity.y = Mathf.Min(releaseVelocity.y, 0f);
 
@@ -515,8 +569,8 @@ public class PlayerPossessionController : MonoBehaviour
 
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        BlockCurrentContacts();
 
-        // Preserve the previous-body lock until actual separation.
         Debug.Log("Bubble popped. Returned to star form.", currentBody);
     }
 
@@ -595,6 +649,9 @@ public class PlayerPossessionController : MonoBehaviour
         leaveRequested = false;
 
         if (previousBody.Form == BodyForm.Star)
+
+        bool starEnteredHost = previousBody == initialBody;
+        if (starEnteredHost)
         {
             // 星星保留，泡泡爆裂时还能恢复。
             previousBody.gameObject.SetActive(false);
@@ -608,22 +665,139 @@ public class PlayerPossessionController : MonoBehaviour
             Destroy(previousBody.gameObject);
         }
 
+        currentBody = target;
+        currentBody.SetOwner(this);
+
+        if (!starEnteredHost)
+        {
+            BlockTarget(previousBody);
+        }
+
+        // A newly possessed body can already be touching several forms. Those
+        // contacts must end before any of them can start another transfer.
+        BlockCurrentContacts();
+
+        // Do not carry a jump press into a newly possessed body.
+        actionRequested = false;
+
+        // Non-star hosts remain in the world. Their own ability/physics decides
+        // how they behave while unpossessed.
+
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
     }
 
-    private void UpdateContactLock()
+    private bool CanCompletePossession(
+        PossessableBody source,
+        PossessableBody target)
     {
-        if (blockedPreviousBody == null)
+        return source != null &&
+            target != null &&
+            source == currentBody &&
+            source.isActiveAndEnabled &&
+            source.IsReady &&
+            target.isActiveAndEnabled &&
+            target.IsReady &&
+            !blockedTargets.Contains(target) &&
+            source.BodyCollider.IsTouching(target.BodyCollider);
+    }
+
+    private void BlockCurrentContacts()
+    {
+        if (currentBody == null ||
+            !currentBody.isActiveAndEnabled ||
+            currentBody.BodyCollider == null)
         {
             return;
         }
 
-        // Re-entry is allowed only after the two bodies separate.
-        if (!blockedPreviousBody.gameObject.activeInHierarchy ||
-            !currentBody.BodyCollider.IsTouching(
-                blockedPreviousBody.BodyCollider))
+        Bounds contactBounds = currentBody.BodyCollider.bounds;
+        contactBounds.Expand(possessionSeparationDistance * 2f);
+
+        Collider2D[] nearbyColliders = Physics2D.OverlapBoxAll(
+            contactBounds.center,
+            contactBounds.size,
+            0f
+        );
+
+        foreach (Collider2D contactCollider in nearbyColliders)
         {
-            blockedPreviousBody = null;
+            if (contactCollider == null ||
+                !contactCollider.TryGetComponent(
+                    out PossessableBody touchingBody) ||
+                touchingBody == currentBody)
+            {
+                continue;
+            }
+
+            BlockTarget(touchingBody);
         }
+    }
+
+    private void BlockTarget(PossessableBody target)
+    {
+        if (target == null || target == currentBody)
+        {
+            return;
+        }
+
+        blockedTargets.Add(target);
+        separationFrames[target] = 0;
+    }
+
+    private void UpdateContactLocks()
+    {
+        if (blockedTargets.Count == 0 || currentBody == null)
+        {
+            return;
+        }
+
+        blockedTargetBuffer.Clear();
+        blockedTargetBuffer.AddRange(blockedTargets);
+
+        foreach (PossessableBody target in blockedTargetBuffer)
+        {
+            if (target == null ||
+                !target.gameObject.activeInHierarchy ||
+                target.BodyCollider == null ||
+                !target.BodyCollider.enabled)
+            {
+                UnblockTarget(target);
+                continue;
+            }
+
+            Bounds separationBounds = currentBody.BodyCollider.bounds;
+            separationBounds.Expand(possessionSeparationDistance * 2f);
+
+            if (separationBounds.Intersects(target.BodyCollider.bounds))
+            {
+                separationFrames[target] = 0;
+                continue;
+            }
+
+            int frames = separationFrames[target] + 1;
+            if (frames >= possessionSeparationFrames)
+            {
+                UnblockTarget(target);
+            }
+            else
+            {
+                separationFrames[target] = frames;
+            }
+        }
+    }
+
+    private void UnblockTarget(PossessableBody target)
+    {
+        blockedTargets.Remove(target);
+        separationFrames.Remove(target);
+    }
+
+    private void ClearPossessionContacts()
+    {
+        pendingSource = null;
+        pendingTarget = null;
+        blockedTargets.Clear();
+        separationFrames.Clear();
+        blockedTargetBuffer.Clear();
     }
 }
