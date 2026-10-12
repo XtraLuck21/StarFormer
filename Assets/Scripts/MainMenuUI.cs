@@ -20,6 +20,9 @@ public class MainMenuUI : MonoBehaviour
 
     private void LoadLevel(string sceneName)
     {
+        // 从主菜单进关卡一律是全新一局，清掉上一局残留的检查点。
+        PlayerPossessionController.ResetCheckpointSession();
+
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneName);
     }

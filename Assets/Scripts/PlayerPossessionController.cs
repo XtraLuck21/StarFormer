@@ -83,9 +83,10 @@ public class PlayerPossessionController : MonoBehaviour
         return HasCheckpointInCurrentScene && checkpointId == id;
     }
 
+    // public：主菜单进入关卡时也要调用，保证是全新的一局。
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.SubsystemRegistration)]
-    private static void ResetCheckpointSession()
+    public static void ResetCheckpointSession()
     {
         hasCheckpoint = false;
         checkpointScene = null;
