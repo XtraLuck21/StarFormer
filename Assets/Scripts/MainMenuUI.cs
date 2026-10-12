@@ -13,6 +13,11 @@ public class MainMenuUI : MonoBehaviour
         LoadLevel("Level01");
     }
 
+    public void OpenLevel2()
+    {
+        LoadLevel("Level02");
+    }
+
     private void LoadLevel(string sceneName)
     {
         Time.timeScale = 1f;
