@@ -8,6 +8,8 @@ Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged in
 
 **October 12 release follow-up:** Level01 is retained in All-Level V1 alongside Tutorial and the newly integrated Level02. An Input System exception occurred during editor regression testing. After the reload/restart diagnostic steps, the developer reported successful retesting and a successful localhost test of the new build. This update records release and integration progress, with no new Level01 layout or gameplay changes.
 
+**Current publication:** All-Level V2 (`8c48475`) replaces V1 with a build from `d161538`, including the Level02 fan-hint fix. Level01 remains included, with no new Level01 gameplay edits in this documentation pass. See [publish_instructions.md](publish_instructions.md) for the deployment procedure.
+
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
 ## 1. Current route and progress

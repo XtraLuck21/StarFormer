@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-12. Unity version: `6000.3.22f1`.
 
-Current playable scenes, test scenes and gameplay scripts. Navigation is merged into `main` through PR #9 (`9fc0f95`). Level02 is integrated, and All-Level V1 is published on GitHub Pages as the October 12 interim baseline. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
+Current playable scenes, test scenes and gameplay scripts. Navigation is merged into `main` through PR #9 (`9fc0f95`). Level02 is integrated. All-Level V2 is now published on GitHub Pages with the fan-hint fix; All-Level V1 is retained as the earlier baseline. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
 
 ## 1. Playable and test scenes
 
@@ -135,7 +135,18 @@ Developer-reported tests passed for loading Tutorial and Level01, returning to t
 
 ## 4. Web build and GitHub Pages release
 
-### Current published version
+For the repeatable publishing procedure, follow [publish_instructions.md](publish_instructions.md). This section records release history and troubleshooting.
+
+### Current published version: All-Level V2
+
+- Date: October 12, 2026 (America/Los_Angeles).
+- Source revision: `d161538cdbbe3affba9094de12facaa637e71c5f`, including the teammate fan-hint fix. Local build-generated configuration/asset changes were also present.
+- Output: `Builds/WebGL-All-Level-V2`. The copied publishing files were verified against this output.
+- Published commit: [`8c48475`](https://github.com/XtraLuck21/StarFormer/commit/8c48475a6381a21dd67def33446de64466a8bcc0). GitHub Pages reports `built` for that exact commit.
+- Scope: Mainmenu, Tutorial, Level01 and Level02. The developer reports the build works. A separate detailed online gameplay test report is not recorded here.
+- The old `Local build settings before teammate hint fix` stash was deleted at the developer's request after the new build worked. It was not reapplied. Four current build-generated file modifications remain separate from the documentation changes.
+
+### Previous version: All-Level V1
 
 - Play URL: [StarFormer](https://xtraluck21.github.io/StarFormer/).
 - Release: **All-Level V1**, October 12, 2026 (America/Los_Angeles). Retain as the interim baseline while feedback is collected.
@@ -173,7 +184,7 @@ The editor log recorded `Map index out of range`, control/binding index errors a
 
 ### Configuration state at the All-Level V1 documentation update
 
-The source checkout has five existing non-document changes, left untouched by this documentation update:
+At the All-Level V1 documentation update, the source checkout had the following five non-document changes. That historical set was later stashed before pulling the hint fix, and the stash has now been discarded. It is not the current working-tree inventory:
 
 | File | Observed change / handling |
 | --- | --- |
@@ -181,9 +192,9 @@ The source checkout has five existing non-document changes, left untouched by th
 | `ProjectSettings/ProjectSettings.asset` | Build-added input-action entry in `preloadedAssets`. Review separately from maintained Web settings; the Input System build processor temporarily adds this entry |
 | `Assets/Settings/UniversalRP.asset` | Shader prefilter changes generated during build. Review separately from source configuration |
 | `Assets/Settings/UniversalRenderPipelineGlobalSettings.asset` | Generated runtime settings list populated during build. Review separately from source configuration |
-| `Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset` | Git reports a modification with no textual line diff. Do not include it in the documentation commit without a separate review |
+| `Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset` | Only file mode changed from 100755 to 100644, with no content change |
 
-Gzip and decompression fallback are already present in the source baseline. The previous default Bloom filter completion is no longer an outstanding local change. Stage the four documentation files explicitly so unrelated configuration or generated asset changes are not included. These local source changes do not alter the already published build unless a new build is exported and deployed.
+Gzip and decompression fallback are already present in the source baseline. The previous default Bloom filter completion is no longer an outstanding local change. Stage documentation files explicitly so unrelated configuration or generated asset changes are not included. These local source changes do not alter the already published build unless a new build is exported and deployed.
 
 ### Why the publishing checkout is separate
 

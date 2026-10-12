@@ -4,7 +4,7 @@ Last updated: 2026-10-12.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Baseline: Level 1 polish (PR #8) and navigation (PR #9) are merged into `main`, followed by Level 2 integration and menu/return wiring. Source commit `773912d` resets checkpoint sessions when entering a level from the menu. All-Level V1 includes Mainmenu, Tutorial, Level01 and Level02. The developer reported successful editor retesting and localhost testing on 2026-10-12, then committed and pushed deployment `6f1737a`. GitHub Pages reports that deployment as built. The team is retaining this release as an interim baseline and collecting feedback before further changes. These reports do not establish exhaustive route, browser or resolution coverage.
+Baseline: Level 1 polish (PR #8), navigation (PR #9), and Level 2 are integrated into `main`. All-Level V1 established the combined release, including checkpoint reset on menu entry (`773912d`). The current publication is **All-Level V2**, built from source `d161538` with the fan-hint fix and local build-generated settings, then published as `8c48475`. GitHub Pages reports deployment success, and the developer reports the build works. Retain release-specific test records and collect feedback before further changes. This does not establish exhaustive route, browser or resolution coverage.
 
 ## 1. Current scope
 
@@ -23,7 +23,7 @@ Baseline: Level 1 polish (PR #8) and navigation (PR #9) are merged into `main`, 
 | Level01 complete route, including final bouncing-ball traversal | Upper traversal, completion and subsequent localhost/online playtests passed. Broader regression remains |
 | Main menu, Tutorial/Level01/Level02 selection and return-to-menu buttons | Connected and included in All-Level V1; developer-reported local tests passed |
 | Playable menu star and one-way title/button platforms | Implemented; movement, jumping, foreground rendering and button clicks passed developer tests |
-| All-Level V1 on GitHub Pages | Localhost test passed; publishing commit `6f1737a` deployed successfully |
+| All-Level V2 on GitHub Pages | Fan-hint fix included; developer reports the build works; publishing commit `8c48475` deployed successfully |
 | Level02 gameplay, camera stages and checkpoints | Integrated into main and All-Level V1 |
 | Fan, possessable spike wall and spider | Shared controller integration exists, with associated Level02 gameplay sections |
 | Fan airflow | Implemented for movable non-possessable obstacles; possessable bodies are excluded |
@@ -233,7 +233,7 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 
 The enabled build scenes are `Mainmenu` (0), `Tutorial` (1), `Level01` (2) and `Level02` (3). Reference and sandbox scenes are excluded from the saved build list. Level selection is manual through the menu, with no automatic level-to-level progression.
 
-The October 11 release passed developer-reported localhost and online tests for Mainmenu, Tutorial and Level01. On October 12, the developer retested the integrated version in the editor and tested `Builds/WebGL-All-Level-V1` on localhost successfully. Deployment `6f1737a` now serves all four scenes at [Play StarFormer](https://xtraluck21.github.io/StarFormer/). GitHub Pages deployment success is verified separately from gameplay testing. The team has chosen this as the interim baseline for collecting feedback.
+The October 11 release passed developer-reported localhost and online tests for Mainmenu, Tutorial and Level01. On October 12, the developer retested the integrated version in the editor and tested `Builds/WebGL-All-Level-V1` on localhost successfully. The All-Level V1 deployment `6f1737a` introduced all four scenes at [Play StarFormer](https://xtraluck21.github.io/StarFormer/). GitHub Pages deployment success is verified separately from gameplay testing. The team has chosen this as the interim baseline for collecting feedback.
 
 The initial Web build had missing navigation scripts, causing inactive menu buttons and unaligned platforms. The same issue was confirmed in the editor. Restarting Unity and reimporting the navigation scripts restored editor behavior, and a fresh build passed the browser test. This recovery did not require a gameplay change. The precise cause of the stale import/compilation state was not established.
 
@@ -245,7 +245,7 @@ Navigation is now merged into `main`. The website is served from the separate `g
 - **Camera and checkpoints:** `level2Camera` coordinates follow, fixed, chase and falling sections. `level2Checkpoint` records scene-specific respawn positions and invokes stage events on arrival or respawn. Mainmenu entry and R restart reset the checkpoint session.
 - **Fan behavior:** W toggles airflow and Space releases the star. An abandoned fan retains its airflow state and facing. Current wind targets non-possessable rigidbody obstacles, not the star, box or bubble. Broader form-specific wind behavior remains a separate design decision.
 - **Level-specific rules:** Level01 retains its any-form flag completion after G2 opens. Evaluate Level02 stage behavior against its own scene wiring rather than assuming it uses Level01's goal script or camera.
-- **Release baseline:** All-Level V1 is the October 12 interim release. Collect teammate/playtest feedback before changing this baseline. Continue broader route, checkpoint, navigation and browser/resolution regression checks.
+- **Release baseline:** All-Level V1 established the October 12 combined release. All-Level V2 adds the fan-hint fix and is now published. Continue collecting feedback and performing broader route, checkpoint, navigation and browser/resolution regression checks. Follow [publish_instructions.md](publish_instructions.md) for future deployments.
 - **Deferred usability work:** revisit off-screen button/gate feedback and whether players discover the optional menu star interaction. Automatic level-to-level progression remains unimplemented.
 
 Update this document alongside changes to controls, form/environment rules or accepted tuning. Keep proposals distinct from implemented behavior and recorded test results.
