@@ -1,10 +1,12 @@
 # Level 1 Progress
 
-Last updated: 2026-10-11.
+Last updated: 2026-10-12.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
 **Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. This polish pass is now merged into `main` through PR #8 (`c63a17c`). Navigation is merged into `main` through PR #9 (`9fc0f95`), including the Level01 menu entry and return button. The rebuilt localhost version and the GitHub Pages release passed developer-reported playtests. Teammate testing and broader route/browser coverage remain follow-up checks.**
+
+**October 12 release follow-up:** Level01 is retained in All-Level V1 alongside Tutorial and the newly integrated Level02. An Input System exception occurred during editor regression testing. After the reload/restart diagnostic steps, the developer reported successful retesting and a successful localhost test of the new build. This update records release and integration progress, with no new Level01 layout or gameplay changes.
 
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
@@ -95,7 +97,7 @@ The developer reported successful manual tests of:
 - Upper return traversal after moving spikes `(13)`, `(14)` and `(15)` to the floor.
 - Death text, automatic restart and R restart, with the enlarged/repositioned status text showing all three lines and its default `New Text` placeholder removed.
 - Main menu entry into Level01 and return to the menu, including the completion screen, in the subsequent navigation pass.
-- Successful playtests of the rebuilt localhost version and the published GitHub Pages version. The online release includes Tutorial and Level01.
+- Successful playtests of the rebuilt localhost version and the published GitHub Pages version. The initial October 11 online release included Tutorial and Level01. The October 12 All-Level V1 release adds Level02 and passed developer-reported editor retesting and localhost testing.
 - New StarPlayer, BoxBody and BubbleBody prefab instances in WaterPlayground: movement, possession, box resizing/sinking, bubble swimming and popping, with no reported new Console errors.
 - A single reusable `BouncyBall` prefab instantiated as `BouncyBall_Lower` and `BouncyBall_Upper`, including centered star marker, waiting state before possession, A/D steering and automatic land bouncing.
 - Ball bounce-height compression beneath a low solid roof, with a faster rhythm at shorter heights and restoration of the default height in open space.
@@ -121,7 +123,7 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 
 1. **Broader regression coverage.** The developer reports successful localhost and online playtests. Continue testing alternate routes, both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion on teammates' computers. Do not treat this initial release as exhaustive coverage of every route or browser.
 2. **Level 1 merge completed.** PR #8 (`c63a17c`) integrated the Level 1 gameplay and polish into `main`.
-3. **Navigation merged and Web release published.** PR #9 (`9fc0f95`) integrates Mainmenu, Tutorial/Level01 links, return buttons and the optional menu star interaction. [Play the current build](https://xtraluck21.github.io/StarFormer/). GitHub Pages publishes `gh-pages` from its root, with initial deployment commit `73877e9`. Localhost and online testing passed after restoring missing script imports and rebuilding. Level 2 remains a Coming Soon placeholder. Automatic level progression is not implemented.
-4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Keep the published build updated after future source changes and repeat browser testing for each release. Review and commit the maintained Web configuration separately from generated rendering data, as documented in ScriptGuide.
+3. **Navigation merged and Web release published.** PR #9 (`9fc0f95`) integrates Mainmenu, Tutorial/Level01 links, return buttons and the optional menu star interaction. [Play the current build](https://xtraluck21.github.io/StarFormer/). GitHub Pages publishes `gh-pages` from its root, with initial deployment commit `73877e9`. Localhost and online testing passed after restoring missing script imports and rebuilding. Level02 is now connected from the menu and has a return button. All-Level V1 was built from source `773912d` with local editor/build changes and published as `6f1737a` on October 12. GitHub Pages reports deployment success. Automatic level progression is not implemented.
+4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Keep the published build updated after future source changes and repeat browser testing for each release. Keep configuration and generated asset review separate from the documentation commit, as documented in ScriptGuide. The team is retaining All-Level V1 as an interim baseline and collecting feedback before further gameplay changes.
 
 The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. PR #8 merged the later Level 1 polish. PR #9 merged navigation into `main`. The exported Web build is maintained separately on `gh-pages`, which must not be merged into `main`. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.
