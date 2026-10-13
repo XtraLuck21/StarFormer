@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-12. Unity version: `6000.3.22f1`.
 
-Current playable scenes, test scenes and gameplay scripts. Navigation is merged into `main` through PR #9 (`9fc0f95`). Level02 is integrated. All-Level V2 is now published on GitHub Pages with the fan-hint fix; All-Level V1 is retained as the earlier baseline. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
+Current playable scenes, test scenes and gameplay scripts. Navigation is merged into `main` through PR #9 (`9fc0f95`). Level02 is integrated. All-Level V2 is now published on GitHub Pages with the fan-hint fix; All-Level V2 is preserved at the Alpha Progress Check URL; All-Level V1 remains historical release context. For controls and gameplay behavior, see [GameplaySpec.md](GameplaySpec.md). For the current Level 1 handoff and remaining work, see [level-1.md](level-1.md).
 
 ## 1. Playable and test scenes
 
@@ -137,9 +137,12 @@ Developer-reported tests passed for loading Tutorial and Level01, returning to t
 
 For the repeatable publishing procedure, follow [publish_instructions.md](publish_instructions.md). This section records release history and troubleshooting.
 
-### Current published version: All-Level V2
+### Current published version: All-Level V2 / Alpha Progress Check
 
 - Date: October 12, 2026 (America/Los_Angeles).
+- Latest tested release: [StarFormer](https://xtraluck21.github.io/StarFormer/). This URL can change with future releases.
+- Frozen submission: [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/). Do not overwrite this folder.
+- Preservation commit: [`5a7f043`](https://github.com/XtraLuck21/StarFormer/commit/5a7f0434ae669ce347fcb5a239f034154d46e509). Its 17 exported files match the current root build. The deployment succeeded and the developer confirmed the new URL works.
 - Source revision: `d161538cdbbe3affba9094de12facaa637e71c5f`, including the teammate fan-hint fix. Local build-generated configuration/asset changes were also present.
 - Output: `Builds/WebGL-All-Level-V2`. The copied publishing files were verified against this output.
 - Published commit: [`8c48475`](https://github.com/XtraLuck21/StarFormer/commit/8c48475a6381a21dd67def33446de64466a8bcc0). GitHub Pages reports `built` for that exact commit.
@@ -148,8 +151,8 @@ For the repeatable publishing procedure, follow [publish_instructions.md](publis
 
 ### Previous version: All-Level V1
 
-- Play URL: [StarFormer](https://xtraluck21.github.io/StarFormer/).
-- Release: **All-Level V1**, October 12, 2026 (America/Los_Angeles). Retain as the interim baseline while feedback is collected.
+- Historical location: the root URL, since replaced by V2. V1 has no separately preserved live URL in the current publishing layout; its exported files remain in Git history.
+- Release: **All-Level V1**, October 12, 2026 (America/Los_Angeles), the initial combined baseline.
 - Source baseline: `main` at `773912d73866b401fb15fa1551b1c434b7f829db` (reset checkpoints on menu entry), plus the local editor/build changes described below. The build is not represented as a pristine checkout of that commit.
 - Publishing branch: `gh-pages`, root directory. Release commit: [`6f1737a`](https://github.com/XtraLuck21/StarFormer/commit/6f1737af361b2bf30d06d150ece4ba4551126470). The developer committed and pushed it, and the Pages build API reports `built` for that exact commit.
 - Included scenes: Mainmenu, Tutorial, Level01 and Level02.
@@ -164,13 +167,13 @@ Use Build And Run to test the generated site through localhost. Do not test by d
 
 ### Publishing and updating
 
-1. Build the intended source revision and test it locally before publishing. Record any local configuration changes required to reproduce it.
-2. Use a separate publishing checkout, currently the sibling folder `StarFormer-Pages`, on `gh-pages`. Copy the contents of the tested output into its root, so `index.html` is directly at the publishing root. Keep `.nojekyll` present. Do not overwrite the checkout's `.git` directory or copy Unity source/cache folders into it.
-3. Commit and push the build files to `gh-pages`. For later releases, reuse that checkout and replace the previous generated files as a complete set. Check the staged changes before committing and avoid leaving obsolete build payloads behind.
-4. GitHub Settings → Pages uses Deploy from a branch, `gh-pages`, `/ (root)`. Wait for the Pages deployment to succeed, then open the published URL.
-5. Test menu star movement and jumping, Tutorial, Level 1 and Level 2 selection, return navigation, restart, checkpoint recovery and completion/stage feedback. Keep online checks separate from local checks, and ask teammates to test on their own computers.
+Follow [publish_instructions.md](publish_instructions.md) for commands. The root URL serves the latest tested release. Each submitted milestone has a separate folder containing its complete export, including its own `index.html`, `Build/` and `TemplateData/`. Keep `alpha-progress-check/` unchanged and create new folders for future Alpha/Beta submissions.
 
-`main` contains Unity source, maintained configuration and documentation. `gh-pages` contains the exported website. Do not merge `gh-pages` into `main`. Updating source alone does not update the hosted game: publish a new tested build for each release. GitHub hosts the site without requiring the local editor or localhost server to remain running.
+Update only the root export files when replacing the latest build. Never run a root-wide synchronization with deletion: it would delete preserved version folders. Existing relative asset paths allow the copied build to run inside its own folder without editing its generated HTML.
+
+GitHub Settings → Pages remains **Deploy from a branch → gh-pages → / (root)**. One deployment contains the root and all version folders; the Actions deployment card displays the site base URL, not every version path. Test the latest and new version URLs and confirm the existing submission still loads.
+
+`main` contains Unity source, maintained configuration and documentation. `gh-pages` contains the exported website. Do not merge `gh-pages` into `main`. Updating source alone does not update the hosted game; export and publish a new tested build. Use fixed milestone URLs in submission documents.
 
 ### Missing navigation scripts during the first build
 
@@ -195,6 +198,14 @@ At the All-Level V1 documentation update, the source checkout had the following 
 | `Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset` | Only file mode changed from 100755 to 100644, with no content change |
 
 Gzip and decompression fallback are already present in the source baseline. The previous default Bloom filter completion is no longer an outstanding local change. Stage documentation files explicitly so unrelated configuration or generated asset changes are not included. These local source changes do not alter the already published build unless a new build is exported and deployed.
+
+### Local changes after building
+
+At the October 12 Alpha Progress Check documentation review, `main` still had four unrelated local changes: URP shader prefilter values, the render pipeline runtime-settings list, an Input System Actions reference in `preloadedAssets`, and a TMP fallback font mode change (100755 to 100644; identical content). The installed render-pipeline and Input System packages contain build processors that write the first three kinds of data. The exact reason the preload entry remained, and the origin of the font permission change, have not been established.
+
+These changes belong to the source checkout. Pushing documentation sends only committed changes; pushing `gh-pages` sends the exported website from the publishing checkout. Neither operation commits or clears uncommitted source files. Unity may update tracked assets during imports or builds even without manual gameplay edits.
+
+Review `git diff` and `git diff --summary` after closing Unity. Commit intentional project settings separately; back up or discard confirmed generated-only changes only after review. Do not add these tracked settings to `.gitignore` or include them automatically in a documentation commit. This documentation update leaves all four files unchanged.
 
 ### Why the publishing checkout is separate
 

@@ -4,11 +4,12 @@ StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that can pos
 
 ## Play the current build
 
-[Play StarFormer in your browser](https://xtraluck21.github.io/StarFormer/)
+- [Play the latest tested build](https://xtraluck21.github.io/StarFormer/) — updated when a new tested build is published.
+- [Play the Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2; use this link for the submission.
 
 The current test release, **All-Level V2 (October 12, 2026)**, includes the interactive main menu, Tutorial, Level 1 and Level 2. Use A/D or Left/Right Arrow to move the menu star, Space to jump, and the mouse to choose a level. All three playable levels include a Return to Main Menu button.
 
-Level 2 and its navigation are integrated into `main`. The latest release includes the fan-hint fix from source commit `d161538`. Output `Builds/WebGL-All-Level-V2` was published as `gh-pages` commit `8c48475`, and GitHub Pages reports deployment success. The developer reports the build works. Record specific online gameplay checks separately from deployment status. All-Level V1 remains the earlier baseline in the release history.
+Level 2 and its navigation are integrated into `main`. The latest release includes the fan-hint fix from source commit `d161538`. Output `Builds/WebGL-All-Level-V2` was published as `gh-pages` commit `8c48475`, and GitHub Pages reports deployment success. The same build was preserved under `alpha-progress-check/` in publishing commit `5a7f043`. The developer confirmed that the new URL works. Keep that submitted folder unchanged; future Alpha/Beta submissions use their own folders. The root URL currently serves the same build and will track future tested releases. All-Level V1 remains historical release context, not a separate preserved play URL.
 
 ## Development and release notes
 
