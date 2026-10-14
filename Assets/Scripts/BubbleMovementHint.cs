@@ -4,7 +4,7 @@ using UnityEngine;
 [ExecuteAlways]
 public class BubbleMovementHint : MonoBehaviour
 {
-    public enum HintMode { Air, Water }
+    public enum HintMode { Air, Water, ExitBubble }
 
     [SerializeField] private HintMode mode;
     [SerializeField] private PlayerPossessionController playerController;
@@ -81,7 +81,7 @@ public class BubbleMovementHint : MonoBehaviour
             Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
             Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
         }
-        else
+        else if (mode == HintMode.Water)
         {
             AddKey('W', new Vector2(0, 0.65f));
             AddKey('A', new Vector2(-0.65f, 0));
@@ -91,6 +91,10 @@ public class BubbleMovementHint : MonoBehaviour
             Arrow(new Vector2(0.98f, 0), new Vector2(1.18f, 0));
             Arrow(new Vector2(0, 0.98f), new Vector2(0, 1.18f));
             Arrow(new Vector2(0, -0.33f), new Vector2(0, -0.53f));
+        }
+        else
+        {
+            AddKey('E', Vector2.zero);
         }
     }
 
@@ -111,6 +115,11 @@ public class BubbleMovementHint : MonoBehaviour
                 points = new[] { new Vector2(-0.12f, -0.15f), new Vector2(-0.12f, 0.15f),
                     new Vector2(0.04f, 0.15f), new Vector2(0.13f, 0.07f), new Vector2(0.13f, -0.07f),
                     new Vector2(0.04f, -0.15f), new Vector2(-0.12f, -0.15f) };
+                break;
+            case 'E':
+                points = new[] { new Vector2(0.13f, 0.15f), new Vector2(-0.13f, 0.15f),
+                    new Vector2(-0.13f, -0.15f), new Vector2(0.13f, -0.15f) };
+                Stroke(center + new Vector2(-0.13f, 0), center + new Vector2(0.1f, 0));
                 break;
             case 'W':
                 points = new[] { new Vector2(-0.16f, 0.15f), new Vector2(-0.08f, -0.15f),
