@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class PlayerPossessionController : MonoBehaviour
 {
     [SerializeField] private PossessableBody initialBody;
+    [Tooltip("Optional host controlled at a fresh scene start. Keep Initial Body assigned to the Star.")]
+    [SerializeField] private PossessableBody startingHost;
 
     [Header("Height Limit")]
     [Tooltip("When enabled, leaving the Y range below restarts the level. " +
@@ -134,8 +136,24 @@ public class PlayerPossessionController : MonoBehaviour
             Physics2D.SyncTransforms();
         }
 
+        // Existing checkpoint respawns keep their original Star behavior.
+        bool enterStartingHost = !HasCheckpointInCurrentScene && startingHost != null;
+        if (enterStartingHost &&
+            (initialBody.Form != BodyForm.Star || startingHost == initialBody ||
+             startingHost.Form == BodyForm.Star || !startingHost.isActiveAndEnabled ||
+             !startingHost.IsReady || startingHost.gameObject.scene != gameObject.scene))
+        {
+            Debug.LogError("Starting Host must be an active, configured non-Star body in this scene, with Initial Body set to the Star.", this);
+            enabled = false;
+            return;
+        }
+
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        if (enterStartingHost)
+        {
+            TransferTo(startingHost);
+        }
     }
 
     private void Update()
