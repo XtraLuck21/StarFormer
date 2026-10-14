@@ -3,9 +3,15 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuUI : MonoBehaviour
 {
+    public void OpenIntroLevels()
+    {
+        LoadLevel("IntroBox");
+    }
+
+    // Keep existing serialized button events working until they are reassigned.
     public void OpenTutorial()
     {
-        LoadLevel("Tutorial");
+        OpenIntroLevels();
     }
 
     public void OpenLevel1()
@@ -20,7 +26,13 @@ public class MainMenuUI : MonoBehaviour
 
     private void LoadLevel(string sceneName)
     {
-        // 从主菜单进关卡一律是全新一局，清掉上一局残留的检查点。
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError($"Add and enable scene '{sceneName}' in the active Build Profile's Scene List.", this);
+            return;
+        }
+
+        // Every menu selection starts a fresh checkpoint session.
         PlayerPossessionController.ResetCheckpointSession();
 
         Time.timeScale = 1f;
