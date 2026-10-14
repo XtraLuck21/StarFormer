@@ -1,9 +1,13 @@
 # Publish StarFormer to GitHub Pages
 
+Last updated: 2026-10-14.
+
 - [Latest tested build](https://xtraluck21.github.io/StarFormer/) — updated for each tested release.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
 
-Use `StarFormer` on `main` for Unity source and documentation, and the sibling folder `StarFormer-Pages` on `gh-pages` for exported website files. Do not merge `gh-pages` into `main`. Coordinate one publisher per release.
+Current source includes the new intro sequence from PR #10, but no new WebGL publication is recorded for it. The existing Alpha Progress Check build keeps its original Tutorial and controls.
+
+Use `StarFormer` on `main` as the integrated source baseline for a release, and the sibling folder `StarFormer-Pages` on `gh-pages` for exported website files. Do not merge `gh-pages` into `main`. Coordinate one publisher per release.
 
 Each submission needs its own complete build and permanent URL. Never overwrite `alpha-progress-check/` or another submitted folder. Future milestones can use `alpha/`, `beta/`, or a new version-specific name. These are paths within one site, not separate domains or deployments.
 
@@ -27,14 +31,17 @@ Open Unity, wait for imports and compilation, and test from `Mainmenu`. Resolve 
 
 ```text
 0  Mainmenu
-1  Tutorial
-2  Level01
-3  Level02
+1  IntroBox
+2  IntroBubble
+3  Level01
+4  Level02
 ```
+
+Keep the old Tutorial, reference scenes and sandboxes unchecked. Open **Scene List** to edit or drag the order; Mainmenu must remain the startup scene.
 
 Use **Default** Web Template, **Gzip** compression, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**.
 
-Choose **Build And Run** with a new output folder, such as `Builds/WebGL-All-Level-V3`. Test through localhost, not by double-clicking `index.html`. Check all three level buttons, changed gameplay/hints, restart/checkpoints, and return navigation. Publish only after local tests pass.
+Choose **Build And Run** with a new output folder, such as `Builds/WebGL-All-Level-V3`. Test through localhost, not by double-clicking `index.html`. Check the Introductory Levels, Level 1 and Level 2 buttons, and play the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 route. Verify dormant bubbles activate on possession, E pops bubbles while Space does not, hazard-triggered popping still works, hint visibility and drawing order are correct, and goals/reset/return navigation work. Review existing levels for the shared bubble changes. The editor flow has passed developer testing; a new localhost/browser test is still required for the exported build. Publish only after local tests pass.
 
 ## 3. Prepare the publishing checkout
 
@@ -135,6 +142,6 @@ cd ../StarFormer
 git status
 ```
 
-Update and commit documentation on `main`, staging document paths explicitly. Unity imports/builds can modify tracked rendering settings or input preload data, and file permissions may also change. Review those separately with `git diff` and `git diff --summary`; a successful documentation or website push does not commit these local changes. Do not discard them automatically or hide tracked settings in `.gitignore`.
+Update release documentation on the working documentation/feature branch, staging document paths explicitly, then have the maintainer review and integrate it into main. Creation of PRs, commits, pushes and merges remains a manual maintainer step; editing these docs does not perform any of those operations. Unity imports/builds can modify tracked rendering settings or input preload data, and file permissions may also change. Review those separately with `git diff` and `git diff --summary`; a successful documentation or website push does not commit these local changes. Do not discard them automatically or hide tracked settings in `.gitignore`.
 
 Source changes do not affect the live game until another build is published. For release history and troubleshooting, see [ScriptGuide.md](ScriptGuide.md#4-web-build-and-github-pages-release).

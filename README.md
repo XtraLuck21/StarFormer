@@ -1,23 +1,24 @@
 # StarFormer
 
-StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that can possess objects on contact and use their abilities to explore and solve puzzles. Grow or shrink as a box to fit through passages and activate switches, or become a bubble to rise through the air and swim underwater. Progress comes from switching between forms and combining their strengths with the environment.
+StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a box, rise through the air and swim underwater as a bubble, and leave bodies in useful positions while transferring control.
 
-## Play the current build
+## Play the published build
 
-- [Play the latest tested build](https://xtraluck21.github.io/StarFormer/) — updated when a new tested build is published.
-- [Play the Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2; use this link for the submission.
+- [Latest published build](https://xtraluck21.github.io/StarFormer/) — updated separately when a tested WebGL export is published.
+- [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission.
 
-The current test release, **All-Level V2 (October 12, 2026)**, includes the interactive main menu, Tutorial, Level 1 and Level 2. Use A/D or Left/Right Arrow to move the menu star, Space to jump, and the mouse to choose a level. All three playable levels include a Return to Main Menu button.
+The last recorded publication is **All-Level V2 (October 12, 2026)**, with Mainmenu, the old Tutorial, Level01 and Level02. It predates the new intros and E-key bubble exit. The October 14 source update has not been published as a new WebGL build; merging source does not update either URL automatically.
 
-Level 2 and its navigation are integrated into `main`. The latest release includes the fan-hint fix from source commit `d161538`. Output `Builds/WebGL-All-Level-V2` was published as `gh-pages` commit `8c48475`, and GitHub Pages reports deployment success. The same build was preserved under `alpha-progress-check/` in publishing commit `5a7f043`. The developer confirmed that the new URL works. Keep that submitted folder unchanged; future Alpha/Beta submissions use their own folders. The root URL currently serves the same build and will track future tested releases. All-Level V1 remains historical release context, not a separate preserved play URL.
+All-Level V2 includes the fan-hint fix from source `d161538`, was exported to `Builds/WebGL-All-Level-V2`, and was published as `gh-pages` commit `8c48475`. Publishing commit `5a7f043` preserved it at `alpha-progress-check/`; the developer confirmed that URL worked. Keep that submitted folder unchanged. Future submissions need separate version folders, and the root can be updated with a newly tested release.
 
-## Development and release notes
+## Development references
 
 - Unity editor: `6000.3.22f1`, with Web Build Support.
-- Build scenes: `Mainmenu` (0), `Tutorial` (1), `Level01` (2), `Level02` (3).
+- Enabled build scenes: `Mainmenu` (0), `IntroBox` (1), `IntroBubble` (2), `Level01` (3), `Level02` (4). The old `Tutorial` remains in the repository but is excluded from builds.
+- [Introductory levels](Docs/intro-levels.md)
 - [Gameplay specification](Docs/GameplaySpec.md)
-- [Publish to GitHub Pages: step-by-step instructions](Docs/publish_instructions.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)
 - [Level 1 progress](Docs/level-1.md)
+- [Publish to GitHub Pages](Docs/publish_instructions.md)
 
-![StarFormer tutorial gameplay](Docs/Game_screenshot.png)
+![Historical Tutorial gameplay; predates the introductory levels](Docs/Game_screenshot.png)
