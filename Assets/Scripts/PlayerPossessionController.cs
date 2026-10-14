@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 public class PlayerPossessionController : MonoBehaviour
 {
     [SerializeField] private PossessableBody initialBody;
+    [Tooltip("Optional host controlled at a fresh scene start. Keep Initial Body assigned to the Star.")]
+    [SerializeField] private PossessableBody startingHost;
 
     [Header("Height Limit")]
     [Tooltip("When enabled, leaving the Y range below restarts the level. " +
@@ -67,6 +69,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float verticalInput;
     private bool actionRequested;
     private bool leaveRequested;
+    private bool bubblePopRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
     private static bool hasCheckpoint;
@@ -134,8 +137,24 @@ public class PlayerPossessionController : MonoBehaviour
             Physics2D.SyncTransforms();
         }
 
+        // Existing checkpoint respawns keep their original Star behavior.
+        bool enterStartingHost = !HasCheckpointInCurrentScene && startingHost != null;
+        if (enterStartingHost &&
+            (initialBody.Form != BodyForm.Star || startingHost == initialBody ||
+             startingHost.Form == BodyForm.Star || !startingHost.isActiveAndEnabled ||
+             !startingHost.IsReady || startingHost.gameObject.scene != gameObject.scene))
+        {
+            Debug.LogError("Starting Host must be an active, configured non-Star body in this scene, with Initial Body set to the Star.", this);
+            enabled = false;
+            return;
+        }
+
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        if (enterStartingHost)
+        {
+            TransferTo(startingHost);
+        }
     }
 
     private void Update()
@@ -208,6 +227,11 @@ public class PlayerPossessionController : MonoBehaviour
             verticalInput -= 1f;
         }
 
+        if (keyboard.eKey.wasPressedThisFrame)
+        {
+            RequestBubblePop(currentBody);
+        }
+
         if (keyboard.spaceKey.wasPressedThisFrame)
         {
             actionRequested = true;
@@ -240,10 +264,11 @@ public class PlayerPossessionController : MonoBehaviour
             }
         }
 
-        // Give the intentional pop action priority over a pending transfer.
-        if (actionRequested &&
-            (currentBody.Form == BodyForm.Bubble ||
-             currentBody.Form == BodyForm.Spider))
+        // Keep keyboard exits and hazard pops ahead of pending possession.
+        bool shouldPopBubble = bubblePopRequested && currentBody.Form == BodyForm.Bubble;
+        bubblePopRequested = false;
+        if (shouldPopBubble ||
+            (actionRequested && currentBody.Form == BodyForm.Spider))
         {
             PopBubble();
             return;
@@ -449,6 +474,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         restartRequested = true;
+        bubblePopRequested = false;
         pendingSource = null;
         pendingTarget = null;
         horizontalInput = 0f;
@@ -468,6 +494,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         isDead = true;
+        bubblePopRequested = false;
         pendingSource = null;
         pendingTarget = null;
         horizontalInput = 0f;
@@ -507,6 +534,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void OnDisable()
     {
+        bubblePopRequested = false;
         ClearPossessionContacts();
 
         if (isDead)
@@ -528,14 +556,16 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
-        // Reuse the existing queued pop action.
+        // E and bubble hazards share this queue, independently of Space actions.
         // FixedUpdate processes it before a pending possession.
-        actionRequested = true;
+        bubblePopRequested = true;
     }
 
     private void PopBubble()
     {
         actionRequested = false;
+        leaveRequested = false;
+        bubblePopRequested = false;
 
         if (initialBody == null ||
             !initialBody.IsReady ||
@@ -636,6 +666,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void TransferTo(PossessableBody target)
     {
+        bubblePopRequested = false;
         PossessableBody previousBody = currentBody;
 
         if (previousBody.TryGetComponent(
