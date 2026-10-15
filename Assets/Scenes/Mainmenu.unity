@@ -269,7 +269,7 @@ GameObject:
   - component: {fileID: 302291463}
   - component: {fileID: 302291462}
   m_Layer: 5
-  m_Name: TutorialButton
+  m_Name: IntroLevelsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -341,7 +341,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1863429327}
         m_TargetAssemblyTypeName: MainMenuUI, Assembly-CSharp
-        m_MethodName: OpenTutorial
+        m_MethodName: OpenIntroLevels
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -918,6 +918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerPossessionController
   initialBody: {fileID: 1486356164}
+  startingHost: {fileID: 0}
   useHeightLimit: 1
   minimumHeight: -10
   maximumHeight: 8
@@ -1279,7 +1280,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Tutorial
+  m_text: Introductory
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

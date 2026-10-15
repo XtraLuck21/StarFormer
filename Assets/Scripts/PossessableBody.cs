@@ -61,6 +61,8 @@ public class PossessableBody : MonoBehaviour
         new ContactPoint2D[16];
 
     private bool wasInWater;
+    private bool bubbleActivated;
+    private RigidbodyConstraints2D bubbleActiveConstraints;
 
     private void Awake()
     {
@@ -79,11 +81,31 @@ public class PossessableBody : MonoBehaviour
         }
 
         controlVisual.SetActive(false);
+
+        if (form == BodyForm.Bubble)
+        {
+            // Keep an untouched bubble at its authored position while preserving
+            // its dynamic collider for contact possession and trigger interactions.
+            bubbleActiveConstraints = Body.constraints;
+            Body.linearVelocity = Vector2.zero;
+            Body.angularVelocity = 0f;
+            Body.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
     }
 
     public void SetOwner(PlayerPossessionController newOwner)
     {
         owner = newOwner;
+
+        if (owner != null && form == BodyForm.Bubble && !bubbleActivated)
+        {
+            // Activation lasts for this bubble's lifetime, including after release.
+            // A scene restart or a newly spawned bubble starts dormant again.
+            bubbleActivated = true;
+            Body.constraints = bubbleActiveConstraints;
+            Body.WakeUp();
+        }
+
         controlVisual.SetActive(owner != null);
 
         if (TryGetComponent(out BodyWaterPhysics waterPhysics))
