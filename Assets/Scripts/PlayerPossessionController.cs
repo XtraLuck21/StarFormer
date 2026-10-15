@@ -561,7 +561,16 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
 
         bubble.SetOwner(null);
-        bubble.gameObject.SetActive(false);
+
+        // Loaned spider/bubble returns to its spawn instead of disappearing.
+        if (bubble.TryGetComponent(out ReturnToSpawnOnLeave respawner))
+        {
+            respawner.ReturnToSpawn();
+        }
+        else
+        {
+            bubble.gameObject.SetActive(false);
+        }
 
         // Position the inactive star before restoring its physics and visuals.
         Transform starTransform = initialBody.transform;
@@ -666,11 +675,18 @@ public class PlayerPossessionController : MonoBehaviour
         else if (previousBody.Form == BodyForm.gravityBall ||
             previousBody.Form == BodyForm.Spider)
         {
-            // 小球和蜘蛛转移到任何其他身体后销毁。
-            UnblockTarget(previousBody);
-            previousBody.gameObject.SetActive(false);
-            Destroy(previousBody.gameObject);
-            destroyedPreviousBody = true;
+            // Loaned spider/ball with ReturnToSpawnOnLeave goes back to spawn.
+            if (previousBody.TryGetComponent(out ReturnToSpawnOnLeave respawner))
+            {
+                respawner.ReturnToSpawn();
+            }
+            else
+            {
+                UnblockTarget(previousBody);
+                previousBody.gameObject.SetActive(false);
+                Destroy(previousBody.gameObject);
+                destroyedPreviousBody = true;
+            }
         }
 
         if (!starEnteredHost && !destroyedPreviousBody)
