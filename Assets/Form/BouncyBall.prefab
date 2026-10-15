@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4333947971637205139}
   - component: {fileID: 118507858145491180}
   - component: {fileID: 8456716518033438118}
+  - component: {fileID: 289730420986353665}
   m_Layer: 0
   m_Name: BouncyBall
   m_TagString: Untagged
@@ -207,6 +208,25 @@ MonoBehaviour:
   minimumSecondsToApex: 0.18
   ceilingStrikeDistance: 0.15
   waterLinearDamping: 3
+--- !u!114 &289730420986353665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3248547167596864344}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f60718293a4b5c6d7e8f09, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FormGlowHalo
+  haloColor: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 1}
+  shape: 0
+  gap: 0.05
+  glowThickness: 0.6
+  pulseSpeed: 2.5
+  minAlpha: 0.2
+  maxAlpha: 0.7
 --- !u!1 &4517398728224199895
 GameObject:
   m_ObjectHideFlags: 0

@@ -36,7 +36,6 @@ public class LevelDeathUI : MonoBehaviour
 
         deathShown = true;
 
-        statusText.text =
-            "You died.\nRestarting...\nPress R to restart now.";
+        statusText.text = "You died.\nRestarting...";
     }
 }

@@ -51,6 +51,22 @@ public class PlayerPossessionController : MonoBehaviour
     private bool actionRequested;
     private bool restartRequested;
 
+    private readonly Dictionary<PossessableBody, Vector3>
+        bouncyBallSpawnPositions =
+            new Dictionary<PossessableBody, Vector3>();
+
+    private BouncyBallCheckpointSession checkpointSession;
+
+    private bool HasCheckpointInCurrentScene =>
+        checkpointSession != null &&
+        checkpointSession.HasCheckpoint &&
+        checkpointSession.ScenePath == gameObject.scene.path;
+
+    public static void ResetCheckpointSession()
+    {
+        BouncyBallCheckpointSession.ClearCurrent();
+    }
+
     private void Start()
     {
         if (initialBody == null ||
@@ -63,6 +79,14 @@ public class PlayerPossessionController : MonoBehaviour
             );
 
             enabled = false;
+            return;
+        }
+
+        checkpointSession = BouncyBallCheckpointSession.GetOrCreate();
+        CacheBouncyBallSpawnPositions();
+
+        if (TryRestoreBouncyBallCheckpoint())
+        {
             return;
         }
 
@@ -85,6 +109,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
+            ResetCheckpointSession();
             RequestRestart();
             return;
         }
@@ -127,7 +152,11 @@ public class PlayerPossessionController : MonoBehaviour
             verticalInput -= 1f;
         }
 
-        if (keyboard.spaceKey.wasPressedThisFrame)
+        bool isBubble = currentBody != null &&
+            currentBody.Form == BodyForm.Bubble;
+
+        if ((isBubble && keyboard.eKey.wasPressedThisFrame) ||
+            (!isBubble && keyboard.spaceKey.wasPressedThisFrame))
         {
             actionRequested = true;
         }
@@ -455,6 +484,11 @@ public class PlayerPossessionController : MonoBehaviour
         currentBody = target;
         currentBody.SetOwner(this);
 
+        if (currentBody.Form == BodyForm.BouncyBall)
+        {
+            ActivateBouncyBallCheckpoint(currentBody);
+        }
+
         if (!starEnteredHost)
         {
             BlockTarget(previousBody);
@@ -471,6 +505,109 @@ public class PlayerPossessionController : MonoBehaviour
         // how they behave while unpossessed.
 
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
+    }
+
+    private void CacheBouncyBallSpawnPositions()
+    {
+        bouncyBallSpawnPositions.Clear();
+
+        PossessableBody[] bodies = FindObjectsByType<PossessableBody>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        foreach (PossessableBody body in bodies)
+        {
+            if (body != null &&
+                body.gameObject.scene == gameObject.scene &&
+                body.Form == BodyForm.BouncyBall)
+            {
+                bouncyBallSpawnPositions[body] = body.transform.position;
+            }
+        }
+    }
+
+    private void ActivateBouncyBallCheckpoint(PossessableBody ball)
+    {
+        if (ball == null ||
+            ball.Form != BodyForm.BouncyBall ||
+            isDead ||
+            restartRequested)
+        {
+            return;
+        }
+
+        if (!bouncyBallSpawnPositions.TryGetValue(
+            ball,
+            out Vector3 spawnPosition))
+        {
+            spawnPosition = ball.transform.position;
+        }
+
+        checkpointSession = BouncyBallCheckpointSession.GetOrCreate();
+        checkpointSession.Save(
+            gameObject.scene.path,
+            ball.name,
+            spawnPosition
+        );
+
+        Debug.Log($"Bouncy Ball checkpoint activated: {ball.name}.", ball);
+    }
+
+    private bool TryRestoreBouncyBallCheckpoint()
+    {
+        if (!HasCheckpointInCurrentScene ||
+            string.IsNullOrWhiteSpace(checkpointSession.BallName))
+        {
+            return false;
+        }
+
+        PossessableBody checkpointBall = null;
+
+        foreach (PossessableBody ball in bouncyBallSpawnPositions.Keys)
+        {
+            if (ball != null &&
+                ball.name == checkpointSession.BallName &&
+                ball.isActiveAndEnabled &&
+                ball.IsReady)
+            {
+                checkpointBall = ball;
+                break;
+            }
+        }
+
+        if (checkpointBall == null)
+        {
+            Debug.LogWarning(
+                $"Checkpoint ball '{checkpointSession.BallName}' was not found. " +
+                "Restarting from the beginning.",
+                this
+            );
+
+            ResetCheckpointSession();
+            return false;
+        }
+
+        checkpointBall.transform.position = checkpointSession.Position;
+        checkpointBall.Body.position = (Vector2)checkpointSession.Position;
+        checkpointBall.Body.linearVelocity = Vector2.zero;
+        checkpointBall.Body.angularVelocity = 0f;
+
+        initialBody.SetOwner(null);
+        initialBody.gameObject.SetActive(false);
+
+        currentBody = checkpointBall;
+        currentBody.SetOwner(this);
+
+        Physics2D.SyncTransforms();
+        BlockCurrentContacts();
+
+        Debug.Log(
+            $"Respawned as Bouncy Ball at checkpoint: {checkpointBall.name}.",
+            checkpointBall
+        );
+
+        return true;
     }
 
     private bool CanCompletePossession(
