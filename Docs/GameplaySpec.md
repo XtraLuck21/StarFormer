@@ -116,6 +116,7 @@ Reusable hazards require the current scene's player controller to be assigned on
 - The star retains horizontal and downward velocity, while upward velocity is removed so it can begin falling.
 - A star released underwater immediately receives its water physics through the ownership refresh.
 - The popped bubble is inactive until the scene restarts; it does not respawn automatically at its original location.
+- The right-pool bubble is the exception: active and hazard-triggered pops both create a fresh bubble immediately at its authored spawn position.
 - **Wind: planned.** Fan airflow should push bubbles away; force strength and player resistance are **Undecided**.
 
 ## 7. Bouncing Ball — Jingyi

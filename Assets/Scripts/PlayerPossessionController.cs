@@ -443,6 +443,9 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
 
         bubble.SetOwner(null);
+        bool spawnedReplacement =
+            bubble.TryGetComponent(out BubbleRespawnOnPop respawner) &&
+            respawner.TrySpawnReplacement();
         bubble.gameObject.SetActive(false);
 
         // Position the inactive star before restoring its physics and visuals.
@@ -461,6 +464,11 @@ public class PlayerPossessionController : MonoBehaviour
         currentBody = initialBody;
         currentBody.SetOwner(this);
         BlockCurrentContacts();
+
+        if (spawnedReplacement)
+        {
+            Destroy(bubble.gameObject);
+        }
 
         Debug.Log("Bubble popped. Returned to star form.", currentBody);
     }
