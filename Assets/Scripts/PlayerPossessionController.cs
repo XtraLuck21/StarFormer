@@ -60,6 +60,12 @@ public class PlayerPossessionController : MonoBehaviour
     /// </summary>
     public float VerticalInput => verticalInput;
 
+    /// <summary>
+    /// 本帧的左右输入（-1 ~ 1），键盘 A/D 与触屏左右键的合并结果。
+    /// 风扇的朝向直接读这个值，不必自己再读一遍键盘。
+    /// </summary>
+    public float HorizontalInput => horizontalInput;
+
     private PossessableBody currentBody;
     private PossessableBody pendingSource;
     private PossessableBody pendingTarget;
@@ -168,6 +174,28 @@ public class PlayerPossessionController : MonoBehaviour
     public void PressTouchPop()
     {
         RequestRelease();
+    }
+
+    /// <summary>
+    /// 风扇的吹风开关（键盘上是 W）。点一下开，再点一下关。
+    /// 只有当前附身的是风扇时才有效，和尖刺墙发射的处理方式一致。
+    /// </summary>
+    public void PressTouchBlow()
+    {
+        if (!isActiveAndEnabled ||
+            isDead ||
+            restartRequested ||
+            Time.timeScale == 0f ||
+            currentBody == null ||
+            currentBody.Form != BodyForm.Fan)
+        {
+            return;
+        }
+
+        if (currentBody.TryGetComponent(out FanBlower blower))
+        {
+            blower.ToggleBlow();
+        }
     }
 
     /// <summary>原来的 R 键：清除检查点并从头重开本关。</summary>

@@ -20,7 +20,8 @@ public class TouchHoldButton : MonoBehaviour,
         Down,     // 下（同上）
         Action,   // 空格：星星跳跃 / 尖刺墙发射。只做主动能力
         Release,  // E：脱离当前形态（泡泡破碎、蜘蛛与风扇离开）
-        Restart   // R：清除检查点并重开关卡
+        Restart,  // R：清除检查点并重开关卡
+        Blow      // W：风扇吹风开关。点一下开，再点一下关
     }
 
     [SerializeField] private PlayerPossessionController controller;
@@ -59,6 +60,10 @@ public class TouchHoldButton : MonoBehaviour,
 
             case ButtonKind.Restart:
                 controller.PressTouchRestart();
+                break;
+
+            case ButtonKind.Blow:
+                controller.PressTouchBlow();
                 break;
 
             default:

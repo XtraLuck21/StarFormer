@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// 根据当前附身的形态，决定屏幕上显示哪几个按钮。
@@ -16,6 +17,19 @@ using UnityEngine;
 /// </summary>
 public class MobileControlsUI : MonoBehaviour
 {
+    public enum ShowMode
+    {
+        AutoDetect,   // 手机/触屏设备才显示（正式发布用这个）
+        AlwaysShow,   // 永远显示（在编辑器里用鼠标调试按钮时用）
+        NeverShow     // 永远隐藏（只想用键盘测试时用）
+    }
+
+    [Header("什么时候显示按钮")]
+    [Tooltip("AutoDetect：手机/触屏才显示，电脑端自动隐藏。\n" +
+             "AlwaysShow：在编辑器里用鼠标测试按钮时选它。\n" +
+             "打包发布前务必改回 AutoDetect。")]
+    [SerializeField] private ShowMode showMode = ShowMode.AutoDetect;
+
     [SerializeField] private PlayerPossessionController controller;
 
     [Header("方向键")]
@@ -29,6 +43,7 @@ public class MobileControlsUI : MonoBehaviour
     [SerializeField] private GameObject fireButton;   // 尖刺墙，Kind = Action
     [SerializeField] private GameObject leaveButton;  // 风扇 / 蜘蛛，Kind = Release
     [SerializeField] private GameObject popButton;    // 泡泡，Kind = Release
+    [SerializeField] private GameObject blowButton;   // 风扇吹风，Kind = Blow
 
     [Header("箱子缩放（Kind 同样选 Up / Down）")]
     [Tooltip("变大 = Up，变小 = Down。它们和方向键的上下走同一个 VerticalInput，" +
@@ -41,6 +56,40 @@ public class MobileControlsUI : MonoBehaviour
     private bool lastInWater;
     private bool lastDead;
     private bool hasCachedState;
+    private bool touchControlsEnabled;
+
+    private void Awake()
+    {
+        touchControlsEnabled = ResolveShouldShow();
+
+        if (!touchControlsEnabled)
+        {
+            // 电脑端：全部关掉，之后 Update 直接退出，一帧都不会闪出来。
+            HideAll();
+        }
+    }
+
+    private bool ResolveShouldShow()
+    {
+        switch (showMode)
+        {
+            case ShowMode.AlwaysShow:
+                return true;
+
+            case ShowMode.NeverShow:
+                return false;
+        }
+
+        // Android / iOS 原生包，以及手机浏览器里跑的 WebGL，
+        // Unity 都会把 isMobilePlatform 判为 true。
+        if (Application.isMobilePlatform)
+        {
+            return true;
+        }
+
+        // 触屏一体机、平板版 Windows：有触摸屏且没有鼠标时也显示。
+        return Touchscreen.current != null && Mouse.current == null;
+    }
 
     private void Reset()
     {
@@ -49,7 +98,7 @@ public class MobileControlsUI : MonoBehaviour
 
     private void Update()
     {
-        if (controller == null)
+        if (!touchControlsEnabled || controller == null)
         {
             return;
         }
@@ -122,6 +171,7 @@ public class MobileControlsUI : MonoBehaviour
         SetActive(leaveButton,
             form == BodyForm.Fan || form == BodyForm.Spider);
         SetActive(popButton, form == BodyForm.Bubble);
+        SetActive(blowButton, form == BodyForm.Fan);
     }
 
     private void HideAll()
@@ -136,6 +186,7 @@ public class MobileControlsUI : MonoBehaviour
         SetActive(fireButton, false);
         SetActive(leaveButton, false);
         SetActive(popButton, false);
+        SetActive(blowButton, false);
     }
 
     private static void SetActive(GameObject target, bool active)
