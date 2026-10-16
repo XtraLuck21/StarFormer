@@ -54,6 +54,12 @@ public class PlayerPossessionController : MonoBehaviour
     public bool IsDead => isDead;
     public PossessableBody CurrentBody => currentBody;
 
+    /// <summary>
+    /// 本帧的上下输入（-1 ~ 1），键盘 W/S 与触屏上下键的合并结果。
+    /// 箱子的缩放能力直接读这个值，不必自己再读一遍键盘。
+    /// </summary>
+    public float VerticalInput => verticalInput;
+
     private PossessableBody currentBody;
     private PossessableBody pendingSource;
     private PossessableBody pendingTarget;
@@ -68,10 +74,19 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
-    private bool leaveRequested;
+    // E / 释放键：泡泡破碎、蜘蛛脱离、风扇脱离统一用它。
+    private bool releaseRequested;
+    // 外部危险物触发的泡泡破碎，和玩家按键分开排队。
     private bool bubblePopRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
+
+    // ===== 触屏虚拟按钮的状态（由 TouchHoldButton 写入） =====
+    private bool touchLeftHeld;
+    private bool touchRightHeld;
+    private bool touchUpHeld;
+    private bool touchDownHeld;
+
     private static bool hasCheckpoint;
     private static string checkpointScene;
     private static string checkpointId;
@@ -110,6 +125,65 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointPosition = position;
 
         Debug.Log($"check point activated:{id}", this);
+    }
+
+    // ===================================================================
+    // 触屏按钮接口。UI 按钮只调用这几个方法，物理逻辑一行都不用改。
+    // ===================================================================
+
+    public void SetTouchLeft(bool held) => touchLeftHeld = held;
+    public void SetTouchRight(bool held) => touchRightHeld = held;
+    public void SetTouchUp(bool held) => touchUpHeld = held;
+    public void SetTouchDown(bool held) => touchDownHeld = held;
+
+    /// <summary>空格键：星星跳跃 / 尖刺墙发射。只负责「主动能力」。</summary>
+    public void PressTouchAction()
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested)
+        {
+            return;
+        }
+
+        actionRequested = true;
+    }
+
+    /// <summary>
+    /// E 键 / 释放键：脱离当前形态。
+    /// 泡泡与蜘蛛走 PopBubble（变回星星），风扇走 LeaveFan。
+    /// </summary>
+    public void RequestRelease()
+    {
+        if (!isActiveAndEnabled ||
+            isDead ||
+            restartRequested ||
+            Time.timeScale == 0f)
+        {
+            return;
+        }
+
+        releaseRequested = true;
+    }
+
+    /// <summary>保留旧名字，内部等同于 RequestRelease。</summary>
+    public void PressTouchPop()
+    {
+        RequestRelease();
+    }
+
+    /// <summary>原来的 R 键：清除检查点并从头重开本关。</summary>
+    public void PressTouchRestart()
+    {
+        ResetCheckpointSession();
+        RequestRestart();
+    }
+
+    /// <summary>所有方向键强制松开（切换形态、死亡、重开时调用）。</summary>
+    public void ReleaseAllTouchInput()
+    {
+        touchLeftHeld = false;
+        touchRightHeld = false;
+        touchUpHeld = false;
+        touchDownHeld = false;
     }
 
     private void Start()
@@ -182,6 +256,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (isDead)
         {
             actionRequested = false;
+            ReleaseAllTouchInput();
 
             if (Time.unscaledTime >= deathRestartTime)
             {
@@ -197,47 +272,72 @@ public class PlayerPossessionController : MonoBehaviour
             horizontalInput = 0f;
             verticalInput = 0f;
             actionRequested = false;
-            leaveRequested = false;
+            releaseRequested = false;
             return;
         }
 
-        if (keyboard == null)
+        // ---- 键盘输入（手机上 keyboard 为 null，整段跳过） ----
+        // 注意：这里不能再像旧版那样在 keyboard == null 时 return 并清掉
+        // actionRequested，否则触屏按下的跳跃会在下一帧被抹掉。
+        if (keyboard != null)
         {
-            actionRequested = false;
-            return;
+            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+            {
+                horizontalInput -= 1f;
+            }
+
+            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+            {
+                horizontalInput += 1f;
+            }
+
+            if (keyboard.wKey.isPressed)
+            {
+                verticalInput += 1f;
+            }
+
+            if (keyboard.sKey.isPressed)
+            {
+                verticalInput -= 1f;
+            }
+
+            if (keyboard.eKey.wasPressedThisFrame)
+            {
+                // E 统一是「脱离」：泡泡破碎、蜘蛛与风扇离开。
+                RequestRelease();
+            }
+
+            if (keyboard.spaceKey.wasPressedThisFrame)
+            {
+                // 空格只做主动能力：星星跳跃、尖刺墙发射。
+                actionRequested = true;
+            }
         }
 
-        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+        // ---- 触屏按钮输入，和键盘叠加（编辑器里两种都能用） ----
+        if (touchLeftHeld)
         {
             horizontalInput -= 1f;
         }
 
-        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+        if (touchRightHeld)
         {
             horizontalInput += 1f;
         }
 
-        if (keyboard.wKey.isPressed)
+        if (touchUpHeld)
         {
             verticalInput += 1f;
         }
 
-        if (keyboard.sKey.isPressed)
+        if (touchDownHeld)
         {
             verticalInput -= 1f;
         }
 
-        if (keyboard.eKey.wasPressedThisFrame)
-        {
-            RequestBubblePop(currentBody);
-        }
-
-        if (keyboard.spaceKey.wasPressedThisFrame)
-        {
-            actionRequested = true;
-            // Fan form uses Space to leave; other forms use it as action/jump.
-            leaveRequested = true;
-        }
+        // 同时按住左右时互相抵消；键盘与触屏叠加时也不会超过 1。
+        horizontalInput = Mathf.Clamp(horizontalInput, -1f, 1f);
+        verticalInput = Mathf.Clamp(verticalInput, -1f, 1f);
     }
 
     private void FixedUpdate()
@@ -265,24 +365,29 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         // Keep keyboard exits and hazard pops ahead of pending possession.
-        bool shouldPopBubble = bubblePopRequested && currentBody.Form == BodyForm.Bubble;
+        bool shouldPopBubble =
+            bubblePopRequested && currentBody.Form == BodyForm.Bubble;
         bubblePopRequested = false;
-        if (shouldPopBubble ||
-            (actionRequested && currentBody.Form == BodyForm.Spider))
+
+        bool shouldRelease = releaseRequested;
+        releaseRequested = false;
+
+        // 泡泡和蜘蛛的脱离都是「变回星星」，走同一个方法。
+        bool releaseToStar =
+            shouldRelease &&
+            (currentBody.Form == BodyForm.Bubble ||
+             currentBody.Form == BodyForm.Spider);
+
+        if (shouldPopBubble || releaseToStar)
         {
             PopBubble();
             return;
         }
 
-        if (leaveRequested)
+        if (shouldRelease && currentBody.Form == BodyForm.Fan)
         {
-            leaveRequested = false;
-
-            if (currentBody.Form == BodyForm.Fan)
-            {
-                LeaveFan();
-                return;
-            }
+            LeaveFan();
+            return;
         }
 
         UpdateContactLocks();
@@ -418,7 +523,7 @@ public class PlayerPossessionController : MonoBehaviour
                 {
                     // keep the small ball rolling/player don control
                     actionRequested = false;
-                    leaveRequested = false;
+                    releaseRequested = false;
                     return;
                 }
 
@@ -479,6 +584,7 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
+        ReleaseAllTouchInput();
     }
 
     public void KillControlledBody(PossessableBody hitBody)
@@ -499,6 +605,7 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
+        ReleaseAllTouchInput();
 
         deathRestartTime = Time.unscaledTime + deathDelay;
         Time.timeScale = 0f;
@@ -535,6 +642,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void OnDisable()
     {
         bubblePopRequested = false;
+        ReleaseAllTouchInput();
         ClearPossessionContacts();
 
         if (isDead)
@@ -564,7 +672,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void PopBubble()
     {
         actionRequested = false;
-        leaveRequested = false;
+        releaseRequested = false;
         bubblePopRequested = false;
 
         if (initialBody == null ||
@@ -693,7 +801,7 @@ public class PlayerPossessionController : MonoBehaviour
         horizontalInput = 0f;
         verticalInput = 0f;
         actionRequested = false;
-        leaveRequested = false;
+        releaseRequested = false;
 
         bool starEnteredHost = previousBody == initialBody;
         bool destroyedPreviousBody = false;

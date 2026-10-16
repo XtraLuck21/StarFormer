@@ -25,6 +25,12 @@ public class PossessableBody : MonoBehaviour
     public float JumpSpeed => jumpSpeed;
     public bool IsControlled => owner != null;
 
+    /// <summary>
+    /// 正在控制这个身体的玩家控制器，没被附身时为 null。
+    /// 各种能力脚本（比如箱子缩放）靠它拿到统一的输入值。
+    /// </summary>
+    public PlayerPossessionController Owner => owner;
+
     public bool IsInWater
     {
         get

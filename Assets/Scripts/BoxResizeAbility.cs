@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(
     typeof(Rigidbody2D),
@@ -61,22 +60,18 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        Keyboard keyboard = Keyboard.current;
+        // 不再自己读键盘。控制器已经把 W/S 和屏幕上的「变大 / 变小」
+        // 按钮合并成了同一个 VerticalInput（-1 ~ 1），这里直接用。
+        // 好处：PC 与手机共用一套输入，手机上 Keyboard.current 为 null
+        // 也不会让缩放功能失效。
+        PlayerPossessionController owner = possessable.Owner;
 
-        if (keyboard == null)
+        if (owner == null)
         {
             return;
         }
 
-        if (keyboard.wKey.isPressed)
-        {
-            resizeInput += 1f;
-        }
-
-        if (keyboard.sKey.isPressed)
-        {
-            resizeInput -= 1f;
-        }
+        resizeInput = Mathf.Clamp(owner.VerticalInput, -1f, 1f);
     }
 
     private void FixedUpdate()
