@@ -54,7 +54,10 @@ public class BubblePopHazard : MonoBehaviour
                 break;
 
             case BodyForm.Box:
-                playerController.KillControlledBody(hitBody);
+                playerController.KillControlledBody(
+                    hitBody,
+                    AnalyticsDeathCause.UnderwaterHazard
+                );
                 break;
         }
     }

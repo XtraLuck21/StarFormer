@@ -49,7 +49,10 @@ public class SpikeHazard : MonoBehaviour
                 out PossessableBody possessableBody) &&
             possessableBody.IsControlled)
         {
-            playerController.KillControlledBody(possessableBody);
+            playerController.KillControlledBody(
+                possessableBody,
+                AnalyticsDeathCause.Spike
+            );
         }
     }
 }

@@ -17982,7 +17982,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: <alpha=#99>Press Space to cancel
+  m_text: <alpha=#99>Press E or tap Leave to release
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -19490,7 +19490,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.08, y: 1.6}
+  m_Size: {x: 1.4, y: 1.6}
   m_EdgeRadius: 0
 --- !u!4 &1818295363
 Transform:
@@ -19529,6 +19529,7 @@ MonoBehaviour:
   blockedMessage: "\u8FD8\u6709\u95E8\u6CA1\u6253\u5F00\u3002"
   blockedMessageTime: 2
   menuSceneName: Mainmenu
+  waitForMenuButton: 1
   returnDelay: 1.5
   onLevelCleared:
     m_PersistentCalls:

@@ -230,9 +230,9 @@ public class FormGlowHalo : MonoBehaviour
         {
             try
             {
+                RenderTexture previous = RenderTexture.active;
                 RenderTexture rt = RenderTexture.GetTemporary(texW, texH, 0, RenderTextureFormat.ARGB32);
                 Graphics.Blit(tex, rt);
-                RenderTexture previous = RenderTexture.active;
                 RenderTexture.active = rt;
 
                 Texture2D readable = new Texture2D(texW, texH, TextureFormat.RGBA32, false);

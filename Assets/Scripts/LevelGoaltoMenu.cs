@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-// 踩到之后回到主菜单。
+// Reaching the goal completes the level; optionally wait for a menu button.
 // 挂在终点旗子上，需要一个勾了 Is Trigger 的 Collider2D。
 [RequireComponent(typeof(Collider2D))]
 public class LevelGoalToMenu : MonoBehaviour
@@ -35,7 +35,10 @@ public class LevelGoalToMenu : MonoBehaviour
 
     [Header("Return To Menu")]
     // 主菜单场景的名字，必须和 Build Settings 里一致。
-    [SerializeField] private string menuSceneName = "MainMenu";
+    [SerializeField] private string menuSceneName = "Mainmenu";
+
+    [Tooltip("Show Level Complete and wait for the player to choose Return to Main Menu.")]
+    [SerializeField] private bool waitForMenuButton;
 
     // 显示完成提示后，等几秒再切场景。
     [SerializeField, Min(0f)] private float returnDelay = 1.5f;
@@ -45,6 +48,7 @@ public class LevelGoalToMenu : MonoBehaviour
 
     private bool cleared;
     private Coroutine blockedRoutine;
+    private bool reportedMissingMenu;
 
     private void Awake()
     {
@@ -73,7 +77,7 @@ public class LevelGoalToMenu : MonoBehaviour
 
     private void CheckPlayer(Collider2D other)
     {
-        if (cleared)
+        if (cleared || player == null || player.IsDead || Time.timeScale <= 0f)
         {
             return;
         }
@@ -82,7 +86,7 @@ public class LevelGoalToMenu : MonoBehaviour
 
         if (otherBody == null ||
             !otherBody.TryGetComponent(out PossessableBody body) ||
-            !body.IsControlled)
+            !body.IsControlled || player.CurrentBody != body)
         {
             return;
         }
@@ -90,6 +94,17 @@ public class LevelGoalToMenu : MonoBehaviour
         if (!IsGateSatisfied())
         {
             ShowBlockedMessage();
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(menuSceneName) ||
+            !Application.CanStreamedLevelBeLoaded(menuSceneName))
+        {
+            if (!reportedMissingMenu)
+            {
+                Debug.LogError($"Add and enable scene '{menuSceneName}' in the Build Profile.", this);
+                reportedMissingMenu = true;
+            }
             return;
         }
 
@@ -137,6 +152,9 @@ public class LevelGoalToMenu : MonoBehaviour
     private void Clear()
     {
         cleared = true;
+        AnalyticsManager.Instance?.TrackLevelComplete(
+            player != null ? player.CurrentBody : null
+        );
 
         if (blockedRoutine != null)
         {
@@ -151,7 +169,10 @@ public class LevelGoalToMenu : MonoBehaviour
 
         onLevelCleared.Invoke();
 
-        StartCoroutine(ReturnRoutine());
+        if (waitForMenuButton)
+            LevelTransitionUI.ShowFinalResult(menuSceneName, player);
+        else
+            StartCoroutine(ReturnRoutine());
     }
 
     private IEnumerator ReturnRoutine()
@@ -168,6 +189,7 @@ public class LevelGoalToMenu : MonoBehaviour
             yield break;
         }
 
+        PlayerPossessionController.ResetCheckpointSession();
         SceneManager.LoadScene(menuSceneName);
     }
 }

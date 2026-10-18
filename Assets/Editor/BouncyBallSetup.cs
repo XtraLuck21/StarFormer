@@ -133,7 +133,7 @@ public static class BouncyBallSetup
 
         PossessableBody possessable = root.AddComponent<PossessableBody>();
         SerializedObject serializedBody = new SerializedObject(possessable);
-        serializedBody.FindProperty("form").enumValueIndex =
+        serializedBody.FindProperty("form").intValue =
             (int)BodyForm.BouncyBall;
         serializedBody.FindProperty("controlVisual").objectReferenceValue =
             starMark;
@@ -142,6 +142,19 @@ public static class BouncyBallSetup
         serializedBody.ApplyModifiedPropertiesWithoutUndo();
 
         root.AddComponent<BodyWaterPhysics>();
+
+        FormGlowHalo halo = root.AddComponent<FormGlowHalo>();
+        SerializedObject serializedGlow = new SerializedObject(halo);
+        serializedGlow.FindProperty("haloColor").colorValue =
+            new Color(154f / 255f, 120f / 255f, 220f / 255f, 1f);
+        serializedGlow.FindProperty("shape").enumValueIndex =
+            (int)FormHaloShape.Auto;
+        serializedGlow.FindProperty("gap").floatValue = 0.05f;
+        serializedGlow.FindProperty("glowThickness").floatValue = 0.6f;
+        serializedGlow.FindProperty("pulseSpeed").floatValue = 2.5f;
+        serializedGlow.FindProperty("minAlpha").floatValue = 0.2f;
+        serializedGlow.FindProperty("maxAlpha").floatValue = 0.7f;
+        serializedGlow.ApplyModifiedPropertiesWithoutUndo();
 
         BouncyBallAbility ability = root.AddComponent<BouncyBallAbility>();
         SerializedObject serializedAbility = new SerializedObject(ability);
