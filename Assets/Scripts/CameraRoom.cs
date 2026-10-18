@@ -2,23 +2,23 @@ using UnityEngine;
 
 public enum RoomCameraMode
 {
-    // 把整个房间框进画面，镜头固定不动。
+    // Frame the entire room with a stationary camera.
     FitRoom,
 
-    // 镜头跟着玩家走，但不会越过房间边界。
+    // Follow the player without moving beyond the room boundaries.
     FollowInsideRoom
 }
 
-// 一个房间的范围。用 Collider 2D 的大小来定义房间有多大。
+// Define a room's bounds using the size of its Collider2D.
 [RequireComponent(typeof(Collider2D))]
 public class CameraRoom : MonoBehaviour
 {
     [SerializeField] private RoomCameraMode mode = RoomCameraMode.FitRoom;
 
-    // FitRoom 模式：在刚好框住房间的基础上再往外拉一点，留白。
+    // FitRoom: add padding beyond the size needed to frame the room.
     [SerializeField, Min(0f)] private float padding = 0.5f;
 
-    // FollowInsideRoom 模式：镜头的固定大小（画面高度的一半，单位米）。
+    // FollowInsideRoom: fixed orthographic size (half the view height in world units).
     [SerializeField, Min(1f)] private float followViewSize = 5f;
 
     [SerializeField] private Color gizmoColor = new Color(0.3f, 0.8f, 1f, 0.15f);
@@ -35,7 +35,7 @@ public class CameraRoom : MonoBehaviour
     {
         area = GetComponent<Collider2D>();
 
-        // 只感应，不挡路。
+        // Detect entry without blocking movement.
         area.isTrigger = true;
 
         if (TryGetComponent(out SpriteRenderer spriteRenderer))
@@ -48,7 +48,7 @@ public class CameraRoom : MonoBehaviour
         if (controller == null)
         {
             Debug.LogError(
-                "场景里找不到 RoomCameraController，请把它挂到 Main Camera 上。",
+                "No RoomCameraController found in the scene. Add it to Main Camera.",
                 this
             );
         }

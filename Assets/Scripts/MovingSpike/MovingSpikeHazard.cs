@@ -10,45 +10,45 @@ public enum SpikeMoveMode
 public class MovingSpikeHazard : MonoBehaviour
 {
     [Header("References")]
-    // 留空也可以，Start 时会自动在场景里找。
+    // Optional; automatically find the reference in Start when unassigned.
     [SerializeField] private PlayerPossessionController playerController;
 
     [Header("Movement")]
-    // Patrol = 在两点之间来回；Straight = 朝一个方向一直走，不折返。
+    // Patrol moves between two points; Straight moves continuously in one direction.
     [SerializeField] private SpikeMoveMode moveMode = SpikeMoveMode.Patrol;
 
-    // 两种模式共用的速度，单位是米/秒。
+    // Speed shared by both modes, in world units per second.
     [SerializeField, Min(0.01f)] private float moveSpeed = 2f;
 
     [Header("Patrol Mode")]
-    // 相对起点的位移。(4, 0) = 向右来回 4 米；(0, 3) = 上下来回 3 米。
+    // Offset from start: (4, 0) patrols four units right; (0, 3) patrols three units up.
     [SerializeField] private Vector2 patrolOffset = new Vector2(4f, 0f);
 
-    // 到达两端后停顿几秒，0 表示立刻折返。
+    // Pause at each endpoint in seconds; zero reverses immediately.
     [SerializeField, Min(0f)] private float waitTime = 0.5f;
 
     [SerializeField] private bool startMovingToEnd = true;
 
     [Header("Straight Mode")]
-    // 勾上 = 一直往右走，取消勾选 = 一直往左走。
+    // Enabled: move right continuously; disabled: move left.
     [SerializeField] private bool straightMovesRight = true;
 
-    // 勾上后，折返时左右翻转贴图。
+    // Enabled: flip the sprite horizontally when reversing direction.
     [SerializeField] private bool flipSpriteOnTurn = false;
 
     [Header("Lifetime")]
-    // 勾上后，尖刺存活到时间会自动消失；不勾则永久存在。
+    // Enabled: remove the spike when its lifetime expires; disabled: keep it indefinitely.
     [SerializeField] private bool useLifetime = false;
 
-    // 存活秒数，从关卡开始计时。
+    // Lifetime in seconds, measured from level start.
     [SerializeField, Min(0.1f)] private float lifetime = 5f;
 
-    // 勾上：到时间播碎片特效再消失；不勾：直接消失。
+    // Enabled: play a shatter effect before removal; disabled: remove directly.
     [SerializeField] private bool shatterOnExpire = true;
 
     [Header("Death")]
-    // 勾上：碰到立刻重开关卡，等同于按 R。
-    // 不勾：画面定格 2 秒后再重开，与普通尖刺一致。
+    // Enabled: reload immediately after a lethal hit, retaining the active checkpoint.
+    // Disabled: use a two-second death freeze before reloading, like ordinary spikes.
     [SerializeField] private bool restartImmediately = true;
 
     private Rigidbody2D body;
@@ -62,7 +62,7 @@ public class MovingSpikeHazard : MonoBehaviour
 
     private bool isConfigured;
 
-    // 已经存活的秒数，以及「已经进入销毁流程」的保险。
+    // Elapsed lifetime and a guard against entering destruction more than once.
     private float age;
     private bool isExpired;
 
@@ -75,29 +75,29 @@ public class MovingSpikeHazard : MonoBehaviour
         if (bodyCollider == null)
         {
             Debug.LogError(
-                "缺少 Collider2D。请先添加 Box Collider 2D 或 Polygon Collider 2D。",
+                "Missing Collider2D. Add a Box Collider 2D or Polygon Collider 2D first.",
                 this
             );
 
             return;
         }
 
-        // 位置完全由脚本控制：不受重力，也不会被撞飞。
+        // Script-controlled position: ignore gravity and collision impulses.
         body.bodyType = RigidbodyType2D.Kinematic;
         body.gravityScale = 0f;
         body.freezeRotation = true;
         body.simulated = true;
 
-        // 清掉可能被手动勾上的位置锁定，只保留旋转锁定。
+        // Clear any position constraints while keeping rotation locked.
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        // 让没有刚体的物体也能触发事件。
+        // Allow trigger events with objects that have no rigidbody.
         body.useFullKinematicContacts = true;
 
-        // 只检测接触，不阻挡任何东西。
+        // Detect contact without blocking movement.
         bodyCollider.isTrigger = true;
 
-        // 自动查找场景里的玩家控制器。
+        // Automatically find the player controller in the scene.
         if (playerController == null)
         {
             playerController = FindAnyObjectByType<PlayerPossessionController>();
@@ -106,8 +106,8 @@ public class MovingSpikeHazard : MonoBehaviour
         if (playerController == null)
         {
             Debug.LogError(
-                "场景里找不到 PlayerPossessionController，" +
-                "请手动拖进 Inspector 的 Player Controller 栏。",
+                "No PlayerPossessionController found in the scene. " +
+                "Assign the Player Controller field in the Inspector.",
                 this
             );
         }
@@ -129,7 +129,7 @@ public class MovingSpikeHazard : MonoBehaviour
             return;
         }
 
-        // 存活计时：到点就停止移动并销毁。
+        // Lifetime expired: stop moving and destroy the spike.
         if (useLifetime)
         {
             age += Time.fixedDeltaTime;
@@ -150,7 +150,7 @@ public class MovingSpikeHazard : MonoBehaviour
             return;
         }
 
-        // 在端点停顿。
+        // Pause at an endpoint.
         if (waitTimer > 0f)
         {
             waitTimer -= Time.fixedDeltaTime;
@@ -167,7 +167,7 @@ public class MovingSpikeHazard : MonoBehaviour
 
         body.MovePosition(nextPosition);
 
-        // 到达端点就换方向。
+        // Reverse direction on reaching an endpoint.
         if (Vector2.Distance(nextPosition, target) < 0.001f)
         {
             movingToEnd = !movingToEnd;
@@ -189,7 +189,7 @@ public class MovingSpikeHazard : MonoBehaviour
             : !movingToEnd;
     }
 
-    // 存活时间到了：按设置决定是否播碎片。
+    // On lifetime expiry, optionally play the shatter effect before removal.
     private void Expire()
     {
         if (isExpired)
@@ -207,10 +207,10 @@ public class MovingSpikeHazard : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // 被射出的刺打中时调用：先掉碎片，再销毁自己。
+    // Called when hit by a fired spike: play fragments, then destroy this object.
     public void Shatter()
     {
-        // Destroy 要等这一帧结束才真正生效，期间可能被再次调用。
+        // Destroy takes effect at frame end, so this method may be called again before removal.
         if (isExpired)
         {
             return;
@@ -226,7 +226,7 @@ public class MovingSpikeHazard : MonoBehaviour
         Destroy(gameObject);
     }
 
-    // ── 杀伤逻辑 ──
+    // -- Damage handling --
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -271,7 +271,7 @@ public class MovingSpikeHazard : MonoBehaviour
         }
         else
         {
-            // 定格两秒后自动重开。
+            // Reload automatically after a two-second freeze.
             playerController.KillControlledBody(
                 possessableBody,
                 AnalyticsDeathCause.MovingSpike
@@ -279,14 +279,14 @@ public class MovingSpikeHazard : MonoBehaviour
         }
     }
 
-    // 在 Scene 窗口里画出巡逻路线，方便摆位置。
+    // Draw the patrol path in the Scene view for easier placement.
     private void OnDrawGizmosSelected()
     {
         Vector2 from = Application.isPlaying
             ? startPoint
             : (Vector2)transform.position;
 
-        // Straight 模式只画一条表示方向的短线。
+        // In Straight mode, draw only a short line indicating direction.
         Vector2 to = moveMode == SpikeMoveMode.Straight
             ? from + (straightMovesRight ? Vector2.right : Vector2.left) * 2f
             : from + patrolOffset;

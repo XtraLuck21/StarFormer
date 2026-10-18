@@ -8,7 +8,7 @@ public class level2Camera : MonoBehaviour
     [SerializeField] private PlayerPossessionController player;
     [SerializeField] private PossessableBody spiderBody;
 
-    // 其他控制镜头的脚本，不要填本脚本。
+    // Other camera-control scripts; do not assign this component here.
     [SerializeField] private Behaviour[] normalCameraScripts;
 
     [Header("Player Area")]
@@ -46,45 +46,45 @@ public class level2Camera : MonoBehaviour
     private float cutsceneDuration = 3.5f;
 
     [Header("Chase Framing")]
-    // 拖入刺墙前沿的 SpikeAnchor。
+    // Assign the SpikeAnchor at the leading edge of the spike wall.
     [SerializeField] private Transform spikeWallEnemy;
 
     [SerializeField] private float chaseStartX = -64f;
 
-    // 刺墙左边、玩家右边各留 3 格。
+    // Leave three world units to the left of the wall and to the right of the player.
     [SerializeField, Min(0f)] private float horizontalMargin = 3f;
 
-    // 追逐镜头固定高度。
+    // Fixed camera height during the chase.
     [SerializeField] private float chaseCameraY = 13f;
 
     [Header("Chase Zoom")]
-    // 镜头收紧时的最低 Size。
+    // Minimum orthographic size when tightening the chase framing.
     [SerializeField, Min(0.01f)] private float minimumChaseSize = 4f;
 
-    // 镜头缩小的速度。
+    // Speed at which the camera zooms inward.
     [SerializeField, Min(0.01f)] private float zoomSpeed = 3f;
 
     [Header("Focus Target - After Chase")]
-    // 追逐结束后要对准的东西，比如那颗星星。
-    // 留空就改为跟随玩家当前控制的身体。
+    // Target to focus on after the chase, such as Star.
+    // Leave empty to follow the player's currently controlled body.
     [SerializeField] private Transform focusTarget;
 
     [SerializeField, Min(0.01f)] private float focusSize = 6f;
 
-    // 镜头相对目标的偏移。(0, 0) = 目标正好在画面正中。
+    // Offset from the target; (0, 0) places the target at the center of the view.
     [SerializeField]
     private Vector2 focusFollowOffset = Vector2.zero;
 
-    // 镜头平移到目标的速度，单位是米/秒。
+    // Pan speed toward the target in world units per second.
     [SerializeField, Min(0.01f)] private float focusPanSpeed = 20f;
 
-    // 镜头缩放到目标 Size 的速度。
+    // Zoom speed toward the target orthographic size.
     [SerializeField, Min(0.01f)] private float focusZoomSpeed = 4f;
 
-    // 镜头到位后停留几秒，然后把控制权交还给普通跟随。
+    // Hold duration after reaching the target before returning to normal follow.
     [SerializeField, Min(0f)] private float focusHoldTime = 0.8f;
 
-    // 镜头到位后执行，可以接「显示提示文字」之类。
+    // Invoked when the camera arrives; can reveal hint text or trigger other actions.
     [SerializeField]
     private UnityEvent onFocusReached = new UnityEvent();
 
@@ -158,8 +158,8 @@ public class level2Camera : MonoBehaviour
         chaseCameraStarted = false;
     }
 
-    // 追逐结束时调用：退出追逐镜头，平移到 Focus Target。
-    // 把刺墙的 On Chase Ended 事件连到这个方法。
+    // Called at chase end: exit chase framing and pan to Focus Target.
+    // Connect the spike wall's On Chase Ended event to this method.
     public void FocusOnTarget()
     {
         chaseCameraStarted = false;
@@ -170,14 +170,14 @@ public class level2Camera : MonoBehaviour
         focusHoldTimer = 0f;
     }
 
-    // 临时指定一个目标。
+    // Temporarily override the focus target.
     public void FocusOn(Transform target)
     {
         focusTarget = target;
         FocusOnTarget();
     }
 
-    // 只退出追逐镜头，不做别的，镜头按区域规则自己决定。
+    // Exit chase framing only; let the region rules choose the next camera behavior.
     public void EndChaseCamera()
     {
         chaseCameraStarted = false;
@@ -202,7 +202,7 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
-        // 追逐收尾：平移到星星，优先级仅次于分镜。
+        // Chase ending: pan to Star, with priority just below the cutscene.
         if (focusStarted && !remainingFollowStarted)
         {
             ApplyFocusCamera();
@@ -216,7 +216,7 @@ public class level2Camera : MonoBehaviour
     {
         TakeCamera();
 
-        // 没填目标就退化成跟随玩家，避免卡死在原地。
+        // Fall back to the controlled body when no target is assigned.
         Vector3 targetPosition;
 
         if (focusTarget != null)
@@ -247,13 +247,13 @@ public class level2Camera : MonoBehaviour
         targetPosition.x += focusFollowOffset.x;
         targetPosition.y += focusFollowOffset.y;
 
-        // 已经追上目标后直接贴住，否则目标跑得比镜头快会一直甩在后面。
+        // Once caught up, stay attached so a faster-moving target cannot leave the camera behind.
         if (focusReached)
         {
             SetCamera(targetPosition, focusSize);
 
-            // 停留一会儿，然后把镜头交还给普通跟随。
-            // 之后附身到风扇、泡泡、箱子都能正常跟随。
+            // Hold briefly, then restore normal camera following.
+            // Following continues to work after possession of Fan, Bubble, or Box.
             focusHoldTimer += Time.deltaTime;
 
             if (focusHoldTimer >= focusHoldTime)
@@ -265,7 +265,7 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
-        // 还没追上时平滑移过去，而不是瞬间切过去。
+        // Smoothly pan toward the target before arrival instead of cutting instantly.
         Vector3 nextPosition = Vector3.MoveTowards(
             transform.position,
             targetPosition,
@@ -280,7 +280,7 @@ public class level2Camera : MonoBehaviour
 
         SetCamera(nextPosition, nextSize);
 
-        // 位置和缩放都到位了，通知一次。
+        // Notify listeners once both position and zoom have reached their targets.
         if (!focusReached &&
             Vector3.Distance(nextPosition, targetPosition) < 0.01f &&
             Mathf.Abs(nextSize - focusSize) < 0.01f)
@@ -304,10 +304,10 @@ public class level2Camera : MonoBehaviour
 
         Vector3 position = currentBody.transform.position;
 
-        // 下落分镜排在收尾跟随之前，
-        // 这样追逐结束之后的下落段落仍然能正常播放。
-        // 进入下落区域后，接管镜头。
-        // 触发后即使玩家离开这个 X 范围，也继续播放下落镜头。
+        // Falling-shot logic takes priority over the final follow phase,
+        // allowing the post-chase drop sequence to play normally.
+        // Take camera control when the player enters the drop region.
+        // Once triggered, continue the falling shot even outside this X range.
         if (!droppingStarted &&
             InRange(position.x, droppingXRange) &&
             position.y <= droppingStartY)
@@ -319,7 +319,7 @@ public class level2Camera : MonoBehaviour
         {
             TakeCamera();
 
-            // 到达底部后锁定，不会因玩家再次跳起而恢复跟随。
+            // Lock at the bottom; jumping again must not restore following.
             if (position.y <= droppingStopY)
             {
                 droppingFinished = true;
@@ -340,8 +340,8 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
-        // 收尾跟随：跟着玩家当前控制的身体，
-        // 附身风扇、泡泡、箱子都适用。
+        // Final follow: track the player's currently controlled body,
+        // including Fan, Bubble, and Box after possession changes.
         if (remainingFollowStarted)
         {
             TakeCamera();
@@ -363,13 +363,13 @@ public class level2Camera : MonoBehaviour
         bool insideSecond =
             insideY && InRange(position.x, secondXRange);
 
-        // X = -75 时使用第二个区域。
+        // At X = -75, use the second region.
         bool insideFirst =
             insideY &&
             InRange(position.x, firstXRange) &&
             !insideSecond;
 
-        // Spider 首次达到指定高度，播放敌人分镜。
+        // Show the enemy cutscene when Spider first reaches the specified height.
         if (!cutsceneTriggered &&
             spiderBody != null &&
             currentBody == spiderBody &&
@@ -387,8 +387,8 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
-        // 分镜结束后，玩家超过 -64，启动追逐镜头。
-        // 追逐已经收尾过就不再重新启动。
+        // After the cutscene, start chase framing when the player passes X = -64.
+        // Do not restart a chase that has already finished.
         if (cutsceneTriggered &&
             !playingCutscene &&
             !focusStarted &&
@@ -483,17 +483,17 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
-        // spikeWallEnemy 引用的是刺墙前沿的 SpikeAnchor。
+        // spikeWallEnemy references the SpikeAnchor at the wall's leading edge.
         float left = spikeWallEnemy.position.x - horizontalMargin;
         float right = playerPosition.x + horizontalMargin;
 
         float centerX = (left + right) * 0.5f;
         float width = Mathf.Abs(right - left);
 
-        // Orthographic Size 是画面高度的一半。
+        // Orthographic size is half the view height.
         float requiredSize = width / (2f * Mathf.Max(cam.aspect, 0.01f));
 
-        // 玩家跳跃时，也为玩家高度留出空间。
+        // Allow vertical space for the player while jumping.
         float requiredHeight =
             Mathf.Abs(playerPosition.y - chaseCameraY) + 2f;
 
@@ -502,7 +502,7 @@ public class level2Camera : MonoBehaviour
             Mathf.Max(requiredSize, requiredHeight)
         );
 
-        // 放大时立即保证两者入镜，缩小时平滑收紧。
+        // Zoom out immediately to keep both targets visible; tighten the view smoothly.
         float nextSize = targetSize >= cam.orthographicSize
             ? targetSize
             : Mathf.MoveTowards(

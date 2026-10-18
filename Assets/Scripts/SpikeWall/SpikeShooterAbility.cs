@@ -13,14 +13,14 @@ public class SpikeShooterAbility : MonoBehaviour
 
     [SerializeField] private float spikeSpeed = 12f;
 
-    // 打空之后要等几秒才能换弹，防止连按空格瞬间回满。
+    // Delay after emptying the magazine to prevent rapid Space presses from refilling it instantly.
     [SerializeField, Min(0f)] private float reloadDelay = 1.5f;
 
-    // 勾上：冷却结束自动换弹，不用再按一次空格。
+    // Enabled: reload automatically when the cooldown ends without another Space press.
     [SerializeField] private bool autoReload = false;
 
-    // 勾上 = 开局朝右，取消勾选 = 开局朝左。
-    // 不按 Play 也能在 Scene 窗口里直接看到翻转效果。
+    // Enabled: face right initially; disabled: face left.
+    // Preview the facing direction in the Scene view outside Play Mode.
     [SerializeField] private bool startFacingRight = true;
 
     private PossessableBody possessable;
@@ -37,7 +37,7 @@ public class SpikeShooterAbility : MonoBehaviour
     public int RemainingSpikes => spikeSlots.Length - shotsFired;
     public bool FacingRight => facingRight;
 
-    // 还要等几秒才能换弹，0 表示现在就能换。供 UI 显示进度用。
+    // Seconds until reload is available; zero means ready. Exposed for UI progress.
     public float ReloadCooldownRemaining => RemainingSpikes > 0
         ? 0f
         : Mathf.Max(0f, emptyTime + reloadDelay - Time.time);
@@ -165,7 +165,7 @@ public class SpikeShooterAbility : MonoBehaviour
         Transform slot = spikeSlots[shotsFired];
         shotsFired++;
 
-        // 打出最后一发时开始计时。
+        // Start the cooldown when the last shot is fired.
         if (RemainingSpikes <= 0)
         {
             emptyTime = Time.time;
@@ -223,7 +223,7 @@ public class SpikeShooterAbility : MonoBehaviour
     {
         spikeSpeed = Mathf.Max(0.1f, spikeSpeed);
 
-        // 运行中由 SetFacing 接管，这里只负责编辑器里的预览。
+        // SetFacing handles runtime direction; this only updates the Editor preview.
         if (Application.isPlaying || spikeSlots == null)
         {
             return;

@@ -38,8 +38,8 @@ public class FanBlower : MonoBehaviour
             return;
         }
 
-        // 朝向读控制器算好的 HorizontalInput（键盘 A/D 与触屏左右键已合并）。
-        // 不再自己读键盘，手机上 Keyboard.current 为 null 也能正常转向。
+        // Read the controller's HorizontalInput, combining A/D and touch Left/Right.
+        // Avoid separate keyboard polling so facing still works when Keyboard.current is null.
         PlayerPossessionController owner = possessable.Owner;
 
         if (owner != null && owner.HorizontalInput != 0f)
@@ -47,8 +47,8 @@ public class FanBlower : MonoBehaviour
             facing = owner.HorizontalInput > 0f ? 1 : -1;
         }
 
-        // 吹风开关：键盘 W 直接处理；触屏那边由控制器的 PressTouchBlow
-        // 调用 ToggleBlow()，两条路都落到同一个 isBlowing 上。
+        // Keyboard W toggles wind directly; touch calls ToggleBlow() through
+        // the controller's PressTouchBlow. Both update the same isBlowing state.
         Keyboard keyboard = Keyboard.current;
 
         if (keyboard != null && keyboard.wKey.wasPressedThisFrame)

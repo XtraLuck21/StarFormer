@@ -1,11 +1,11 @@
 using UnityEngine;
 
-// 一扇会滑开的门。由 SpikeButton 之类的开关调用 SetOpen()。
+// Sliding door controlled by switches such as SpikeButton via SetOpen().
 public class TriggerDoor : MonoBehaviour
 {
     [Header("Movement")]
-    // 打开时相对关闭位置的位移。
-    // (0, 3) = 向上升 3 米；(-2, 0) = 向左退 2 米。
+    // Open-position offset relative to the closed position.
+    // (0, 3) raises the door three units; (-2, 0) moves it two units left.
     [SerializeField] private Vector2 openOffset = new Vector2(0f, 3f);
 
     [SerializeField, Min(0.01f)] private float moveSpeed = 4f;
@@ -13,8 +13,8 @@ public class TriggerDoor : MonoBehaviour
     [Header("State")]
     [SerializeField] private bool startOpen = false;
 
-    // 勾上：门一开就关掉碰撞体，适合「原地消失」式的门。
-    // 滑动式的门不需要勾，门体自己让开了。
+    // Enabled: disable the collider as soon as the door opens, for disappearing doors.
+    // Sliding doors can leave this disabled because the door moves out of the way.
     [SerializeField] private bool disableColliderWhenOpen = false;
 
     private Rigidbody2D body;
@@ -34,7 +34,7 @@ public class TriggerDoor : MonoBehaviour
 
         if (body != null)
         {
-            // 由脚本控制位置，不受重力也不被撞飞。
+            // Script-controlled position; ignore gravity and collision impulses.
             body.bodyType = RigidbodyType2D.Kinematic;
             body.gravityScale = 0f;
             body.freezeRotation = true;
@@ -45,7 +45,7 @@ public class TriggerDoor : MonoBehaviour
 
         isOpen = startOpen;
 
-        // 开局直接摆到位，不播放动画。
+        // Apply the initial position immediately without animation.
         transform.position = isOpen ? openPosition : closedPosition;
 
         ApplyCollider();
@@ -101,7 +101,7 @@ public class TriggerDoor : MonoBehaviour
         }
     }
 
-    // 在 Scene 窗口里画出门打开后的位置。
+    // Draw the open door position in the Scene view.
     private void OnDrawGizmosSelected()
     {
         Vector2 from = Application.isPlaying

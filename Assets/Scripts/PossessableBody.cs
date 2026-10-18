@@ -26,8 +26,8 @@ public class PossessableBody : MonoBehaviour
     public bool IsControlled => owner != null;
 
     /// <summary>
-    /// 正在控制这个身体的玩家控制器，没被附身时为 null。
-    /// 各种能力脚本（比如箱子缩放）靠它拿到统一的输入值。
+    /// The player controller owning this body, or null when it is not possessed.
+    /// Ability scripts, such as box resizing, use it to access shared input values.
     /// </summary>
     public PlayerPossessionController Owner => owner;
 
@@ -150,7 +150,7 @@ public class PossessableBody : MonoBehaviour
         RequestPossessionFromBody(collision.rigidbody);
     }
 
-    // Spider 的表面检测调用此方法。
+    // Called by Spider surface detection.
     public void RequestSurfacePossession(Collider2D surface)
     {
         if (surface == null)
@@ -172,7 +172,7 @@ public class PossessableBody : MonoBehaviour
             return;
         }
 
-        // 普通地面、障碍没有 PossessableBody，不会触发附身。
+        // Ground and obstacles without PossessableBody cannot trigger possession.
         if (!targetBody.TryGetComponent<PossessableBody>(
                 out var target) ||
             target == this ||
@@ -182,7 +182,7 @@ public class PossessableBody : MonoBehaviour
             return;
         }
 
-        // 切换和接触锁仍由控制器统一处理。
+        // The controller still manages transfers and contact locks.
         owner.RequestPossession(this, target);
     }
 

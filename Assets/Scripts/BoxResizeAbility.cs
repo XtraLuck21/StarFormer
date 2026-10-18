@@ -60,10 +60,10 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        // 不再自己读键盘。控制器已经把 W/S 和屏幕上的「变大 / 变小」
-        // 按钮合并成了同一个 VerticalInput（-1 ~ 1），这里直接用。
-        // 好处：PC 与手机共用一套输入，手机上 Keyboard.current 为 null
-        // 也不会让缩放功能失效。
+        // The controller combines W/S and the on-screen Grow/Shrink buttons
+        // into one VerticalInput value (-1 to 1); use it directly here.
+        // Desktop and mobile share the same input path, so resizing still works
+        // when Keyboard.current is null on a mobile device.
         PlayerPossessionController owner = possessable.Owner;
 
         if (owner == null)

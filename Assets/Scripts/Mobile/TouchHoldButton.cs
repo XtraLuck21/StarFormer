@@ -2,11 +2,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-/// 挂在屏幕上的每一个虚拟按钮上。
-/// 方向键（Left/Right/Up/Down）是“按住型”：手指按下算按着，抬起才松开。
-/// 动作键（Action/Release/Restart）是“点一下型”：按下的瞬间触发一次。
+/// Attach to each on-screen control button.
+/// Direction buttons (Left/Right/Up/Down) stay held from pointer down until pointer up.
+/// Action buttons (Action/Release/Restart) trigger once on pointer down.
 ///
-/// 注意：按钮的 Image 组件必须勾上 Raycast Target，否则收不到手指事件。
+/// Enable Raycast Target on the button's Image so it receives pointer events.
 /// </summary>
 [RequireComponent(typeof(RectTransform))]
 public class TouchHoldButton : MonoBehaviour,
@@ -14,21 +14,21 @@ public class TouchHoldButton : MonoBehaviour,
 {
     public enum ButtonKind
     {
-        Left,     // 左移
-        Right,    // 右移
-        Up,       // 上（只有泡泡在水里用得到）
-        Down,     // 下（同上）
-        Action,   // 空格：星星跳跃 / 尖刺墙发射。只做主动能力
-        Release,  // E：脱离当前形态（泡泡破碎、蜘蛛与风扇离开）
-        Restart,  // R：清除检查点并重开关卡
-        Blow      // W：风扇吹风开关。点一下开，再点一下关
+        Left,     // Move left.
+        Right,    // Move right.
+        Up,       // Upward input (Bubble swimming or Box growth).
+        Down,     // Downward input (Bubble swimming or Box shrinking).
+        Action,   // Space: Star jump / SpikeWall fire; active abilities only.
+        Release,  // E: pop Bubble or leave Spider/Fan.
+        Restart,  // R: clear checkpoints and restart the level.
+        Blow      // W: toggle Fan wind on or off.
     }
 
     [SerializeField] private PlayerPossessionController controller;
     [SerializeField] private ButtonKind kind;
 
-    [Header("可选的按下反馈")]
-    [Tooltip("留空也没关系。填了的话，按下时会变半透明。")]
+    [Header("Optional Press Feedback")]
+    [Tooltip("Optional. When assigned, the button becomes semi-transparent while pressed.")]
     [SerializeField] private CanvasGroup pressedFeedback;
     [SerializeField, Range(0.1f, 1f)] private float pressedAlpha = 0.6f;
 
@@ -36,7 +36,7 @@ public class TouchHoldButton : MonoBehaviour,
 
     private void Reset()
     {
-        // 把脚本拖到按钮上时，自动帮你找到场景里的控制器。
+        // Find the scene's controller automatically when this component is added to a button.
         controller = FindFirstObjectByType<PlayerPossessionController>();
     }
 
@@ -44,7 +44,7 @@ public class TouchHoldButton : MonoBehaviour,
     {
         if (controller == null)
         {
-            Debug.LogError("TouchHoldButton 没有指定 Controller。", this);
+            Debug.LogError("TouchHoldButton has no Controller assigned.", this);
             return;
         }
 
@@ -80,8 +80,8 @@ public class TouchHoldButton : MonoBehaviour,
         ApplyFeedback(false);
     }
 
-    // 关键：按钮被隐藏（比如泡泡出水面，上下键消失）时强制松开，
-    // 否则 OnPointerUp 永远不会来，方向会卡死。
+    // Release held input when hidden, such as when Bubble leaves water and Up/Down disappear.
+    // OnPointerUp may never arrive after hiding, which would otherwise leave movement stuck.
     private void OnDisable()
     {
         SetHeld(false);

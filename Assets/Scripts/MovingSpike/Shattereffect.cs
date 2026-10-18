@@ -1,24 +1,24 @@
 using UnityEngine;
 
-// 挂在任何「被打碎时要掉碎片」的物体上，然后在销毁前调用 Play()。
+// Attach to an object that should shatter; call Play() before destroying it.
 public class ShatterEffect : MonoBehaviour
 {
     [Header("Pieces")]
     [SerializeField, Min(1)] private int pieceCount = 6;
 
-    // 留空就自动用物体自己的贴图，碎片是它的缩小版。
+    // Use this object's sprite when unassigned; fragments are scaled-down copies.
     [SerializeField] private Sprite pieceSprite;
 
     [SerializeField, Min(0.01f)] private float pieceScale = 0.3f;
 
     [Header("Physics")]
-    // 向四周飞散的速度。
+    // Outward fragment speed.
     [SerializeField, Min(0f)] private float spreadSpeed = 3f;
 
-    // 额外向上的初速度，让碎片先弹起来再落下。
+    // Additional upward launch velocity so fragments rise before falling.
     [SerializeField, Min(0f)] private float upwardBoost = 2f;
 
-    // 翻滚速度，单位是度/秒。
+    // Angular speed in degrees per second.
     [SerializeField, Min(0f)] private float spinSpeed = 240f;
 
     [SerializeField, Min(0f)] private float gravityScale = 1.5f;
@@ -26,7 +26,7 @@ public class ShatterEffect : MonoBehaviour
     [Header("Lifetime")]
     [SerializeField, Min(0.1f)] private float lifetime = 2f;
 
-    // 消失前渐隐的秒数。
+    // Fade duration before fragments disappear.
     [SerializeField, Min(0f)] private float fadeTime = 0.6f;
 
     public void Play()
@@ -39,7 +39,7 @@ public class ShatterEffect : MonoBehaviour
 
         if (sprite == null)
         {
-            Debug.LogWarning("ShatterEffect 找不到可用的贴图。", this);
+            Debug.LogWarning("ShatterEffect could not find a usable sprite.", this);
             return;
         }
 
@@ -59,7 +59,7 @@ public class ShatterEffect : MonoBehaviour
         string sortingLayer,
         int sortingOrder)
     {
-        // 不设父物体，这样原物体被销毁后碎片还在。
+        // Keep fragments unparented so they survive destruction of the source object.
         GameObject piece = new GameObject("Debris");
 
         piece.transform.position =
@@ -80,7 +80,7 @@ public class ShatterEffect : MonoBehaviour
         rb.gravityScale = gravityScale;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
-        // 向上半圆随机飞散，再统一加一点向上的力。
+        // Scatter randomly through the upper semicircle, then add upward velocity.
         Vector2 direction = Random.insideUnitCircle.normalized;
         direction.y = Mathf.Abs(direction.y);
 
@@ -97,7 +97,7 @@ public class ShatterEffect : MonoBehaviour
     }
 }
 
-// 自动挂在每个碎片上：计时、渐隐、销毁。
+// Added to each fragment automatically to handle its lifetime, fading, and destruction.
 public class ShatterPiece : MonoBehaviour
 {
     private SpriteRenderer renderer2D;

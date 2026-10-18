@@ -11,21 +11,21 @@ public class SpikeWallEnemyChase : MonoBehaviour
     [SerializeField, Min(0f)] private float moveSpeed = 4f;
 
     [Header("Spike Lifetime")]
-    // 勾上：追逐开始的那一刻，墙上所有 SpikeLifetime 开始倒计时。
+    // Enabled: start every child SpikeLifetime countdown when the chase begins.
     [SerializeField] private bool startSpikeLifetimeOnChase = false;
 
-    // 留 0 = 用每个 SpikeLifetime 自己填的秒数。
-    // 大于 0 = 统一覆盖成这个秒数。
+    // Zero uses each SpikeLifetime component's configured duration.
+    // A positive value overrides all spike durations.
     [SerializeField, Min(0f)] private float spikeLifetimeOverride = 0f;
 
     [Header("Chase End")]
-    // 勾上：所有刺都消失后，墙停下并通知外部（镜头在这里转回去）。
+    // Enabled: stop the wall and notify listeners once all spikes are gone.
     [SerializeField] private bool endChaseWhenSpikesGone = true;
 
-    // 刺全没了之后，再过几秒才真正结束，留一点缓冲。
+    // Additional delay after the last spike disappears before ending the chase.
     [SerializeField, Min(0f)] private float endChaseDelay = 0.3f;
 
-    // 把 level2Camera 的 BeginRemainingFollow 或 FocusOnTarget 连到这里。
+    // Connect level2Camera.BeginRemainingFollow or FocusOnTarget here.
     [SerializeField] private UnityEvent onChaseEnded = new UnityEvent();
 
     [Header("Death")]
@@ -37,7 +37,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
     private float pauseTimer;
     private float fixedY;
 
-    // 追逐开始时记下这些刺，之后靠它们判断何时收尾。
+    // Track these spikes at chase start to determine when the chase should end.
     private SpikeLifetime[] trackedSpikes;
     private bool chaseEnded;
     private float endTimer;
@@ -61,7 +61,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
             player = FindFirstObjectByType<PlayerPossessionController>();
         }
 
-        // 子尖刺的 Collider 使用父对象的 Rigidbody2D。
+        // Child spike colliders use the parent object's Rigidbody2D.
         foreach (Collider2D spikeCollider
                  in GetComponentsInChildren<Collider2D>())
         {
@@ -103,7 +103,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
         body.MovePosition(nextPosition);
     }
 
-    // 刺是不是都没了；没了就开始数缓冲时间。
+    // Once all spikes are gone, begin the final delay.
     private void CheckSpikesGone()
     {
         if (trackedSpikes == null || trackedSpikes.Length == 0)
@@ -115,7 +115,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
         {
             foreach (SpikeLifetime spike in trackedSpikes)
             {
-                // 物体被销毁后，这里的引用会变成 null。
+                // Unity treats destroyed object references as null.
                 if (spike != null && !spike.IsExpired)
                 {
                     return;
@@ -134,7 +134,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
         }
     }
 
-    // 镜头分镜结束后，通过事件调用。
+    // Called by an event after the camera cutscene ends.
     public void StartChase()
     {
         if (deathRequested || chaseEnded)
@@ -146,13 +146,13 @@ public class SpikeWallEnemyChase : MonoBehaviour
 
         BeginSpikeLifetime();
 
-        Debug.Log("刺墙开始追逐！", this);
+        Debug.Log("Spike wall chase started!", this);
     }
 
-    // 让墙上所有子尖刺从这一刻开始倒计时。
+    // Start the countdown on every child spike now.
     private void BeginSpikeLifetime()
     {
-        // 不管勾没勾，都先记下有哪些刺，收尾判断要用。
+        // Always track the spikes, even when automatic lifetime start is disabled.
         trackedSpikes = GetComponentsInChildren<SpikeLifetime>();
 
         if (!startSpikeLifetimeOnChase)
@@ -172,10 +172,10 @@ public class SpikeWallEnemyChase : MonoBehaviour
             }
         }
 
-        Debug.Log($"{trackedSpikes.Length} 根尖刺开始倒计时。", this);
+        Debug.Log($"Started lifetime countdowns for {trackedSpikes.Length} spikes.", this);
     }
 
-    // 追逐收尾：墙停下，通知外部把镜头转回去。
+    // End the chase: stop the wall and notify listeners to restore the camera.
     public void EndChase()
     {
         if (chaseEnded)
@@ -188,7 +188,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
         StopChase();
         onChaseEnded.Invoke();
 
-        Debug.Log("追逐结束，镜头交还。", this);
+        Debug.Log("Chase ended; camera control released.", this);
     }
 
     public void StopChase()
@@ -197,7 +197,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
         body.linearVelocity = Vector2.zero;
     }
 
-    // 后续方块被碾碎时，可以调用此方法暂停刺墙。
+    // Later collapsing blocks can call this to pause the spike wall.
     public void PauseMovement(float duration)
     {
         pauseTimer = Mathf.Max(pauseTimer, duration);
@@ -234,7 +234,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
             return;
         }
 
-        // 多个尖刺同时碰到玩家，也只处理一次。
+        // Handle a player hit only once even if multiple spikes touch simultaneously.
         deathRequested = true;
 
         if (restartImmediately)

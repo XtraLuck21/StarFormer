@@ -56,8 +56,8 @@ public class StepCollapseBlock : MonoBehaviour
             return;
         }
 
-        // 在方块收到的碰撞中，顶部受踩的法线朝下。
-        // 侧面碰撞、从下面顶到都不会触发。
+        // In collisions received by the block, a landing on its top has a downward normal.
+        // Side impacts and hits from below do not trigger collapse.
         for (int i = 0; i < collision.contactCount; i++)
         {
             ContactPoint2D contact = collision.GetContact(i);
@@ -88,19 +88,19 @@ private void FixedUpdate()
 
     falling = true;
 
-    // 踩断后立即失去支撑。
+    // Remove support immediately when the block collapses.
     foreach (Collider2D blockCollider in blockColliders)
     {
         blockCollider.enabled = false;
     }
 
-    // 播放碎片效果。
+    // Play the shatter effect.
     if (TryGetComponent<ShatterEffect>(out var effect))
     {
         effect.Play();
     }
 
-    // 移除原本完整的方块。
+    // Remove the original intact block.
     Destroy(gameObject);
 }
 

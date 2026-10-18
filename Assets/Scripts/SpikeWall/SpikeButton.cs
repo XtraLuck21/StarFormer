@@ -2,14 +2,14 @@ using UnityEngine;
 
 public enum ButtonMode
 {
-    // 打中一次就永久开启，不能再关。
+    // One hit opens the gate permanently.
     OneShot,
 
-    // 每打中一次翻转一次状态：开 → 关 → 开。
+    // Each hit toggles the state: open, closed, open.
     Toggle,
 
-    // 刺钉在上面时保持开启，刺消失（换弹）后自动关闭。
-    // 这个模式要求按钮的 Collider 2D 不勾 Is Trigger。
+    // Stay open while a spike is attached; close when the spike disappears during reload.
+    // This mode requires a non-trigger Collider2D on the button.
     HoldWhileStuck
 }
 
@@ -19,7 +19,7 @@ public class SpikeButton : MonoBehaviour
     [Header("Behaviour")]
     [SerializeField] private ButtonMode mode = ButtonMode.OneShot;
 
-    // 这个按钮控制的门，可以填多扇。
+    // Doors controlled by this button; multiple doors can be assigned.
     [SerializeField] private TriggerDoor[] doors = new TriggerDoor[1];
 
     [Header("Visuals")]
@@ -39,7 +39,7 @@ public class SpikeButton : MonoBehaviour
         ApplyVisual();
     }
 
-    // 由 SpikeProjectile 在命中时调用。
+    // Called by SpikeProjectile on impact.
     public void OnSpikeHit(SpikeProjectile spike)
     {
         switch (mode)
@@ -73,7 +73,7 @@ public class SpikeButton : MonoBehaviour
             return;
         }
 
-        // 刺被销毁后，Unity 会让这个引用等于 null。
+        // Unity treats the destroyed spike reference as null.
         if (heldSpike == null)
         {
             SetPressed(false);

@@ -12,11 +12,11 @@ public class level2Checkpoint : MonoBehaviour
     [SerializeField] private string checkpointId = "CP01";
 
     [Header("Events")]
-    // 玩家进入这个检查点时执行。
+    // Invoked when the player enters this checkpoint.
     [SerializeField] private UnityEvent onCheckpointReached =
         new UnityEvent();
 
-    // 死亡后从这个检查点重生时执行。
+    // Invoked after reloading at this checkpoint.
     [SerializeField] private UnityEvent onRespawnHere =
         new UnityEvent();
 
@@ -58,7 +58,7 @@ public class level2Checkpoint : MonoBehaviour
             return;
         }
 
-        // 同一个检查点不重复保存或执行事件。
+        // Do not save or invoke events again for the already-active checkpoint.
         if (player.IsCurrentCheckpoint(checkpointId))
         {
             return;

@@ -2,52 +2,52 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// 根据当前附身的形态，决定屏幕上显示哪几个按钮。
-/// 挂在 Canvas 下的一个空物体上，把各个按钮拖进来即可。
+/// Show the buttons appropriate for the currently possessed form.
+/// Attach to an empty object under Canvas and assign the button references.
 ///
-/// 规则（全部来自 PlayerPossessionController.FixedUpdate 里各个 case 的实际逻辑）：
-///   Star       左右 + 跳跃
-///   Box        左右 + 变大 / 变小（BoxResizeAbility）
-///   Bubble     左右 + 破碎；在水里时额外出现 上下
-///   SpikeWall  左右 + 发射
-///   Spider     左右 + 脱离
-///   Fan        左右 + 脱离
-///   BouncyBall 左右
-///   gravityBall 全部隐藏（玩家无法控制）
+/// Controls follow the form-specific logic in PlayerPossessionController.FixedUpdate:
+///   Star        Left/Right + Jump
+///   Box         Left/Right + Grow/Shrink (BoxResizeAbility)
+///   Bubble      Left/Right + Pop; also Up/Down while in water
+///   SpikeWall   Left/Right + Fire
+///   Spider      Left/Right + Leave
+///   Fan         Left/Right + Blow/Leave
+///   BouncyBall  Left/Right
+///   gravityBall All hidden (no player control)
 /// </summary>
 public class MobileControlsUI : MonoBehaviour
 {
     public enum ShowMode
     {
-        AutoDetect,   // 手机/触屏设备才显示（正式发布用这个）
-        AlwaysShow,   // 永远显示（在编辑器里用鼠标调试按钮时用）
-        NeverShow     // 永远隐藏（只想用键盘测试时用）
+        AutoDetect,   // Show only on detected mobile/touch devices; use for release builds.
+        AlwaysShow,   // Always show; useful for mouse testing in the Editor.
+        NeverShow     // Always hide; useful for keyboard-only testing.
     }
 
-    [Header("什么时候显示按钮")]
-    [Tooltip("AutoDetect：手机/触屏才显示，电脑端自动隐藏。\n" +
-             "AlwaysShow：在编辑器里用鼠标测试按钮时选它。\n" +
-             "打包发布前务必改回 AutoDetect。")]
+    [Header("Control Visibility")]
+    [Tooltip("AutoDetect: show on detected mobile/touch devices; hide on desktop.\n" +
+             "AlwaysShow: use for mouse testing in the Editor.\n" +
+             "Restore AutoDetect before building for release.")]
     [SerializeField] private ShowMode showMode = ShowMode.AutoDetect;
 
     [SerializeField] private PlayerPossessionController controller;
 
-    [Header("方向键")]
+    [Header("Direction Buttons")]
     [SerializeField] private GameObject leftButton;
     [SerializeField] private GameObject rightButton;
     [SerializeField] private GameObject upButton;
     [SerializeField] private GameObject downButton;
 
-    [Header("动作键（每个形态只会亮一个）")]
-    [SerializeField] private GameObject jumpButton;   // 星星，Kind = Action
-    [SerializeField] private GameObject fireButton;   // 尖刺墙，Kind = Action
-    [SerializeField] private GameObject leaveButton;  // 风扇 / 蜘蛛，Kind = Release
-    [SerializeField] private GameObject popButton;    // 泡泡，Kind = Release
-    [SerializeField] private GameObject blowButton;   // 风扇吹风，Kind = Blow
+    [Header("Form-Specific Action Buttons")]
+    [SerializeField] private GameObject jumpButton;   // Star, Kind = Action.
+    [SerializeField] private GameObject fireButton;   // SpikeWall, Kind = Action.
+    [SerializeField] private GameObject leaveButton;  // Fan / Spider, Kind = Release.
+    [SerializeField] private GameObject popButton;    // Bubble, Kind = Release.
+    [SerializeField] private GameObject blowButton;   // Fan wind, Kind = Blow.
 
-    [Header("箱子缩放（Kind 同样选 Up / Down）")]
-    [Tooltip("变大 = Up，变小 = Down。它们和方向键的上下走同一个 VerticalInput，" +
-             "只是摆在右侧、换成放大缩小的图标。")]
+    [Header("Box Resizing (Use Up / Down for Kind)")]
+    [Tooltip("Grow = Up, Shrink = Down. These share VerticalInput with the direction buttons, " +
+             "but appear on the right as dedicated resizing controls.")]
     [SerializeField] private GameObject growButton;
     [SerializeField] private GameObject shrinkButton;
 
@@ -64,7 +64,7 @@ public class MobileControlsUI : MonoBehaviour
 
         if (!touchControlsEnabled)
         {
-            // 电脑端：全部关掉，之后 Update 直接退出，一帧都不会闪出来。
+            // Hide all controls before the first frame on desktop; Update then exits early.
             HideAll();
         }
     }
@@ -80,14 +80,14 @@ public class MobileControlsUI : MonoBehaviour
                 return false;
         }
 
-        // Android / iOS 原生包，以及手机浏览器里跑的 WebGL，
-        // Unity 都会把 isMobilePlatform 判为 true。
+        // Use Unity's mobile-platform detection for native mobile players
+        // and supported mobile WebGL environments.
         if (Application.isMobilePlatform)
         {
             return true;
         }
 
-        // 触屏一体机、平板版 Windows：有触摸屏且没有鼠标时也显示。
+        // Also show on touch-only computers or tablets when no mouse is present.
         return Touchscreen.current != null && Mouse.current == null;
     }
 
@@ -121,7 +121,7 @@ public class MobileControlsUI : MonoBehaviour
         BodyForm form = body.Form;
         bool inWater = body.IsInWater;
 
-        // 状态没变就什么都不做，避免每帧反复 SetActive。
+        // Avoid repeated SetActive calls when the relevant state has not changed.
         if (hasCachedState &&
             lastBody == body &&
             lastForm == form &&
@@ -148,10 +148,10 @@ public class MobileControlsUI : MonoBehaviour
 
     private void Apply(BodyForm form, bool inWater)
     {
-        // 重力球是纯演出，玩家不能操作。
+        // gravityBall is a scripted sequence without player controls.
         bool canControl = form != BodyForm.gravityBall;
 
-        // 只有泡泡在水里时才需要上下键：空中泡泡自动上升，verticalInput 不被使用。
+        // Only swimming Bubble needs directional Up/Down; airborne Bubble rises automatically.
         bool needsVertical = canControl &&
             form == BodyForm.Bubble &&
             inWater;
@@ -161,7 +161,7 @@ public class MobileControlsUI : MonoBehaviour
         SetActive(upButton, needsVertical);
         SetActive(downButton, needsVertical);
 
-        // 箱子的变大 / 变小。
+        // Box Grow/Shrink controls.
         bool canResize = form == BodyForm.Box;
         SetActive(growButton, canResize);
         SetActive(shrinkButton, canResize);

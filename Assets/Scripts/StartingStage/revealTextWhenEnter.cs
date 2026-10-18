@@ -33,7 +33,7 @@ public class RevealTextOnEnter : MonoBehaviour
 
         if (text == null)
         {
-            Debug.LogWarning("请给 RevealTextOnEnter 设置 Text 引用。", this);
+            Debug.LogWarning("Assign the Text reference on RevealTextOnEnter.", this);
             enabled = false;
             return;
         }
@@ -54,7 +54,7 @@ public class RevealTextOnEnter : MonoBehaviour
             ? player.CurrentBody
             : null;
 
-        // 检测当前控制的身体与文字之间的距离。
+        // Measure the distance from the currently controlled body to the text.
         bool isNear = body != null &&
             Vector2.Distance(
                 body.transform.position,

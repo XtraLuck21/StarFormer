@@ -59,14 +59,14 @@ public class PlayerPossessionController : MonoBehaviour
     public PossessableBody CurrentBody => currentBody;
 
     /// <summary>
-    /// 本帧的上下输入（-1 ~ 1），键盘 W/S 与触屏上下键的合并结果。
-    /// 箱子的缩放能力直接读这个值，不必自己再读一遍键盘。
+    /// This frame's vertical input (-1 to 1), combining W/S and touch Up/Down.
+    /// Box resizing reads this value instead of polling the keyboard separately.
     /// </summary>
     public float VerticalInput => verticalInput;
 
     /// <summary>
-    /// 本帧的左右输入（-1 ~ 1），键盘 A/D 与触屏左右键的合并结果。
-    /// 风扇的朝向直接读这个值，不必自己再读一遍键盘。
+    /// This frame's horizontal input (-1 to 1), combining A/D and touch Left/Right.
+    /// Fan facing reads this value instead of polling the keyboard separately.
     /// </summary>
     public float HorizontalInput => horizontalInput;
 
@@ -105,14 +105,14 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
-    // E / 释放键：泡泡破碎、蜘蛛脱离、风扇脱离统一用它。
+    // E / Release handles bubble popping and leaving Spider or Fan.
     private bool releaseRequested;
-    // 外部危险物触发的泡泡破碎，和玩家按键分开排队。
+    // Queue hazard-triggered bubble pops separately from player input.
     private bool bubblePopRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
 
-    // ===== 触屏虚拟按钮的状态（由 TouchHoldButton 写入） =====
+    // ===== Touch button state (written by TouchHoldButton) =====
     private bool touchLeftHeld;
     private bool touchRightHeld;
     private bool touchUpHeld;
@@ -132,7 +132,7 @@ public class PlayerPossessionController : MonoBehaviour
         return HasCheckpointInCurrentScene && checkpointId == id;
     }
 
-    // public：主菜单进入关卡时也要调用，保证是全新的一局。
+    // Public so main-menu level entry can also clear the session for a fresh run.
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.SubsystemRegistration)]
     public static void ResetCheckpointSession()
@@ -161,7 +161,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     // ===================================================================
-    // 触屏按钮接口。UI 按钮只调用这几个方法，物理逻辑一行都不用改。
+    // Touch input API: UI buttons use these methods without changing physics logic.
     // ===================================================================
 
     public void SetTouchLeft(bool held) => touchLeftHeld = held;
@@ -169,7 +169,7 @@ public class PlayerPossessionController : MonoBehaviour
     public void SetTouchUp(bool held) => touchUpHeld = held;
     public void SetTouchDown(bool held) => touchDownHeld = held;
 
-    /// <summary>空格键：星星跳跃 / 尖刺墙发射。只负责「主动能力」。</summary>
+    /// <summary>Space: Star jump / SpikeWall fire. Requests an active ability only.</summary>
     public void PressTouchAction()
     {
         if (!isActiveAndEnabled || isDead || restartRequested)
@@ -181,8 +181,8 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// E 键 / 释放键：脱离当前形态。
-    /// 泡泡与蜘蛛走 PopBubble（变回星星），风扇走 LeaveFan。
+    /// E / Release: leave the current form.
+    /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
     /// </summary>
     public void RequestRelease()
     {
@@ -197,15 +197,15 @@ public class PlayerPossessionController : MonoBehaviour
         releaseRequested = true;
     }
 
-    /// <summary>保留旧名字，内部等同于 RequestRelease。</summary>
+    /// <summary>Legacy name retained as an alias for RequestRelease.</summary>
     public void PressTouchPop()
     {
         RequestRelease();
     }
 
     /// <summary>
-    /// 风扇的吹风开关（键盘上是 W）。点一下开，再点一下关。
-    /// 只有当前附身的是风扇时才有效，和尖刺墙发射的处理方式一致。
+    /// Toggle the Fan's wind (W on the keyboard): press once for on, again for off.
+    /// Only applies while possessing Fan, matching the form-specific firing behavior.
     /// </summary>
     public void PressTouchBlow()
     {
@@ -225,7 +225,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
     }
 
-    /// <summary>原来的 R 键：清除检查点并从头重开本关。</summary>
+    /// <summary>R: clear checkpoints and restart the current level from the beginning.</summary>
     public void PressTouchRestart()
     {
         if (!isActiveAndEnabled || restartRequested || Time.timeScale <= 0f) return;
@@ -234,7 +234,7 @@ public class PlayerPossessionController : MonoBehaviour
         RequestRestart();
     }
 
-    /// <summary>所有方向键强制松开（切换形态、死亡、重开时调用）。</summary>
+    /// <summary>Release all directions when changing forms, dying, or restarting.</summary>
     public void ReleaseAllTouchInput()
     {
         touchLeftHeld = false;
@@ -317,7 +317,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
-            // R：清除检查点，整个关卡从头开始。
+            // R: clear checkpoints and restart the entire level from the beginning.
             AnalyticsManager.Instance?.TrackManualRestart();
             ResetCheckpointSession();
 
@@ -348,9 +348,9 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
-        // ---- 键盘输入（手机上 keyboard 为 null，整段跳过） ----
-        // 注意：这里不能再像旧版那样在 keyboard == null 时 return 并清掉
-        // actionRequested，否则触屏按下的跳跃会在下一帧被抹掉。
+        // ---- Keyboard input (skip this block when no keyboard is available) ----
+        // Do not return and clear actionRequested when keyboard is null:
+        // that would discard a jump requested by a touch button on the next frame.
         if (keyboard != null)
         {
             if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
@@ -375,18 +375,18 @@ public class PlayerPossessionController : MonoBehaviour
 
             if (keyboard.eKey.wasPressedThisFrame)
             {
-                // E 统一是「脱离」：泡泡破碎、蜘蛛与风扇离开。
+                // E consistently means Release: pop Bubble or leave Spider/Fan.
                 RequestRelease();
             }
 
             if (keyboard.spaceKey.wasPressedThisFrame)
             {
-                // 空格只做主动能力：星星跳跃、尖刺墙发射。
+                // Space requests active abilities only: Star jump or SpikeWall fire.
                 actionRequested = true;
             }
         }
 
-        // ---- 触屏按钮输入，和键盘叠加（编辑器里两种都能用） ----
+        // ---- Add touch input to keyboard input (both work in the Editor) ----
         if (touchLeftHeld)
         {
             horizontalInput -= 1f;
@@ -407,7 +407,7 @@ public class PlayerPossessionController : MonoBehaviour
             verticalInput -= 1f;
         }
 
-        // 同时按住左右时互相抵消；键盘与触屏叠加时也不会超过 1。
+        // Opposing directions cancel; combined keyboard/touch input stays within [-1, 1].
         horizontalInput = Mathf.Clamp(horizontalInput, -1f, 1f);
         verticalInput = Mathf.Clamp(verticalInput, -1f, 1f);
     }
@@ -456,7 +456,7 @@ public class PlayerPossessionController : MonoBehaviour
         bool shouldRelease = releaseRequested;
         releaseRequested = false;
 
-        // 泡泡和蜘蛛的脱离都是「变回星星」，走同一个方法。
+        // Bubble and Spider both return to Star through the same release method.
         bool releaseToStar =
             shouldRelease &&
             (currentBody.Form == BodyForm.Bubble ||
@@ -908,7 +908,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         previousBody.SetOwner(null);
 
-        // 先成功转移控制权。
+        // Transfer ownership successfully first.
         currentBody = target;
         currentBody.SetOwner(this);
         BeginBubbleHandoff(previousBody, currentBody);
@@ -930,7 +930,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (starEnteredHost)
         {
-            // 星星保留，泡泡爆裂时还能恢复。
+            // Keep Star available so it can be restored when Bubble pops.
             previousBody.gameObject.SetActive(false);
         }
         else if (previousBody.Form == BodyForm.gravityBall ||

@@ -14,7 +14,7 @@ public class SpikeProjectile : MonoBehaviour
     // When true, a stuck spike becomes solid so bodies can stand on it.
     [SerializeField] private bool solidWhenStuck = false;
 
-    // 勾上：打中移动尖刺时把它和自己一起销毁。
+    // Enabled: destroy both this projectile and the moving spike on impact.
     [SerializeField] private bool canBreakMovingSpikes = true;
 
     private Rigidbody2D body;
@@ -95,8 +95,8 @@ public class SpikeProjectile : MonoBehaviour
             return;
         }
 
-        // 移动尖刺自己也是 trigger，所以这一步必须放在下面的
-        // isTrigger 过滤之前，否则会被当成水域直接跳过。
+        // Moving spikes are triggers too, so handle them before the isTrigger filter
+        // below; otherwise they would be skipped like water zones.
         if (canBreakMovingSpikes && TryFindMovingSpike(other, out MovingSpikeHazard hazard))
         {
             isFinished = true;
@@ -108,7 +108,7 @@ public class SpikeProjectile : MonoBehaviour
             return;
         }
 
-        // 按钮：通知之后不 return，让刺继续按正常规则钉进去或飞过。
+        // Notify the button without returning; the projectile must still stick or pass through.
         if (TryFindButton(other, out SpikeButton button))
         {
             button.OnSpikeHit(this);
@@ -153,7 +153,7 @@ public class SpikeProjectile : MonoBehaviour
         return false;
     }
 
-    // 碰撞体可能挂在子物体上，所以本体和刚体都找一遍。
+    // A collider may be on a child, so check both it and the attached rigidbody.
     private static bool TryFindMovingSpike(
         Collider2D other,
         out MovingSpikeHazard hazard)

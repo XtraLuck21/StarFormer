@@ -5,15 +5,15 @@ using TMPro;
 public class HintZone : MonoBehaviour
 {
     [Header("References")]
-    // 要淡入淡出的那段文字。
+    // Text to fade in and out.
     [SerializeField] private TMP_Text hintText;
 
     [Header("Behaviour")]
-    // 勾上：离开区域后文字淡出。
-    // 不勾：显示出来就一直留着。
+    // Enabled: fade out after leaving the zone.
+    // Disabled: keep the text visible once revealed.
     [SerializeField] private bool hideOnExit = true;
 
-    // 勾上：只触发一次，之后再进来也不显示。
+    // Enabled: trigger once only; subsequent entries do not show the text again.
     [SerializeField] private bool showOnlyOnce = false;
 
     [Header("Fade")]
@@ -33,7 +33,7 @@ public class HintZone : MonoBehaviour
         if (hintText == null)
         {
             Debug.LogError(
-                "请把提示文字拖进 Inspector 的 Hint Text 栏。",
+                "Assign the hint text to the Hint Text field in the Inspector.",
                 this
             );
 
@@ -41,7 +41,7 @@ public class HintZone : MonoBehaviour
             return;
         }
 
-        // 开局先藏起来。
+        // Hide the text at startup.
         alpha = 0f;
         hintText.alpha = 0f;
     }
@@ -58,7 +58,7 @@ public class HintZone : MonoBehaviour
             return;
         }
 
-        // 用 unscaledDeltaTime，这样死亡定格时文字也能正常淡出。
+        // Use unscaledDeltaTime so the text can fade during a death freeze.
         float step = duration > 0f
             ? Time.unscaledDeltaTime / duration
             : 1f;
@@ -91,7 +91,7 @@ public class HintZone : MonoBehaviour
         }
     }
 
-    // 只认当前被玩家附身的那个身体。
+    // Only accept the body currently controlled by the player.
     private bool IsPlayer(Collider2D other)
     {
         Rigidbody2D otherBody = other.attachedRigidbody;
