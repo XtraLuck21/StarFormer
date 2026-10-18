@@ -136,6 +136,7 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointPosition = position;
 
         Debug.Log($"check point activated:{id}", this);
+        AnalyticsManager.Instance?.TrackCheckpoint(id, currentBody);
     }
 
     private void Start()
@@ -160,6 +161,7 @@ public class PlayerPossessionController : MonoBehaviour
             // Existing positional checkpoints retain priority over ball respawns.
             if (!HasCheckpointInCurrentScene && TryRestoreBouncyBallCheckpoint())
             {
+                BeginAnalyticsForCurrentBody();
                 return;
             }
         }
@@ -192,6 +194,8 @@ public class PlayerPossessionController : MonoBehaviour
         {
             TransferTo(startingHost);
         }
+
+        BeginAnalyticsForCurrentBody();
     }
 
     private void Update()
@@ -210,6 +214,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
             // R：清除检查点，整个关卡从头开始。
+            AnalyticsManager.Instance?.TrackManualRestart();
             ResetCheckpointSession();
 
             RequestRestart();
@@ -294,10 +299,21 @@ public class PlayerPossessionController : MonoBehaviour
                     ? ballMaximumHeight
                     : maximumHeight;
 
-            if (bodyBounds.max.y < minimumHeight ||
-                bodyBounds.min.y > activeMaximumHeight)
+            if (bodyBounds.max.y < minimumHeight)
             {
-                KillControlledBody(currentBody);
+                KillControlledBody(
+                    currentBody,
+                    AnalyticsDeathCause.OutOfBoundsLow
+                );
+                return;
+            }
+
+            if (bodyBounds.min.y > activeMaximumHeight)
+            {
+                KillControlledBody(
+                    currentBody,
+                    AnalyticsDeathCause.OutOfBoundsHigh
+                );
                 return;
             }
         }
@@ -519,7 +535,10 @@ public class PlayerPossessionController : MonoBehaviour
         actionRequested = false;
     }
 
-    public void KillControlledBody(PossessableBody hitBody)
+    public void KillControlledBody(
+        PossessableBody hitBody,
+        AnalyticsDeathCause deathCause = AnalyticsDeathCause.Unknown,
+        float restartDelayOverride = -1f)
     {
         if (!isActiveAndEnabled ||
             isDead ||
@@ -531,6 +550,8 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
+        AnalyticsManager.Instance?.TrackDeath(hitBody, deathCause);
+
         isDead = true;
         bubblePopRequested = false;
         pendingSource = null;
@@ -538,7 +559,10 @@ public class PlayerPossessionController : MonoBehaviour
         horizontalInput = 0f;
         actionRequested = false;
 
-        deathRestartTime = Time.unscaledTime + deathDelay;
+        float activeDeathDelay = restartDelayOverride >= 0f
+            ? restartDelayOverride
+            : deathDelay;
+        deathRestartTime = Time.unscaledTime + activeDeathDelay;
         Time.timeScale = 0f;
     }
 
@@ -660,6 +684,12 @@ public class PlayerPossessionController : MonoBehaviour
 
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        AnalyticsManager.Instance?.ChangeControlledForm(
+            bubble.Form,
+            currentBody.Form,
+            currentBody.Body.position,
+            bubble.Form == BodyForm.Bubble ? "bubble_pop" : "leave_form"
+        );
         BlockCurrentContacts();
 
         if (spawnedReplacement)
@@ -717,6 +747,12 @@ public class PlayerPossessionController : MonoBehaviour
 
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        AnalyticsManager.Instance?.ChangeControlledForm(
+            fan.Form,
+            currentBody.Form,
+            currentBody.Body.position,
+            "leave_form"
+        );
         BlockTarget(fan);
         actionRequested = false;
     }
@@ -738,6 +774,12 @@ public class PlayerPossessionController : MonoBehaviour
         currentBody = target;
         currentBody.SetOwner(this);
         BeginBubbleHandoff(previousBody, currentBody);
+        AnalyticsManager.Instance?.ChangeControlledForm(
+            previousBody.Form,
+            currentBody.Form,
+            currentBody.Body.position,
+            "possession"
+        );
         ActivateBouncyBallCheckpoint(currentBody);
 
         horizontalInput = 0f;
@@ -902,11 +944,19 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         checkpointSession = BouncyBallCheckpointSession.GetOrCreate();
+        bool isNewCheckpoint = !checkpointSession.HasCheckpoint ||
+            checkpointSession.ScenePath != gameObject.scene.path ||
+            checkpointSession.BallName != ball.name;
         checkpointSession.Save(
             gameObject.scene.path,
             ball.name,
             spawnPosition
         );
+
+        if (isNewCheckpoint)
+        {
+            AnalyticsManager.Instance?.TrackCheckpoint(ball.name, ball);
+        }
 
         Debug.Log($"Bouncy Ball checkpoint activated: {ball.name}.", ball);
     }
@@ -965,6 +1015,26 @@ public class PlayerPossessionController : MonoBehaviour
         );
 
         return true;
+    }
+
+    private void BeginAnalyticsForCurrentBody()
+    {
+        if (currentBody == null)
+        {
+            return;
+        }
+
+        string activeCheckpoint = AnalyticsValueNames.StartCheckpoint;
+        if (HasCheckpointInCurrentScene)
+        {
+            activeCheckpoint = checkpointId;
+        }
+        else if (HasBouncyBallCheckpointInCurrentScene)
+        {
+            activeCheckpoint = checkpointSession.BallName;
+        }
+
+        AnalyticsManager.Instance?.BeginLevel(currentBody, activeCheckpoint);
     }
 
     private bool CanCompletePossession(

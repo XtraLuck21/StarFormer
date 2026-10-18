@@ -18,7 +18,9 @@ All-Level V2 includes the fan-hint fix from source `d161538`, was exported to `B
 - [Introductory levels](Docs/intro-levels.md) — October 17 polish: contextual movement/form hints, matching intro colors, current-scene restart buttons, a gated exit arrow, and short completion transitions into Level 1 and Level 2. Developer-reported Play Mode tests passed; merged into main via PR #11 (`989d2d1`); a new browser build remains pending.
 - [Gameplay specification](Docs/GameplaySpec.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)
-- [Level 1 progress](Docs/level-1.md) — October 18 `level-1` handoff: ball checkpoints, U2 regeneration, visual/camera polish, Box-to-Bubble collision recovery and corrected ball prefab Form. Developer-reported testing passed; PR integration is pending and instruction polish is deferred.
+- [Level 1 progress](Docs/level-1.md) — October 18 ball checkpoints, U2 regeneration, visual/camera polish, Box-to-Bubble collision recovery and corrected ball prefab Form are merged through PR #12 (`e457e87`). A new browser build remains pending.
+- [WebGL analytics implementation](Docs/AnalyticsImplementation.md) — anonymous Level 1/2 event collection and Google Sheets pipeline.
+- [WebGL analytics test plan](Docs/AnalyticsTestPlan.md)
 - [Publish to GitHub Pages](Docs/publish_instructions.md)
 
 ![Historical Tutorial gameplay; predates the introductory levels](Docs/Game_screenshot.png)

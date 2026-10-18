@@ -5,7 +5,7 @@ Last updated: 2026-10-18.
 - [Latest tested build](https://xtraluck21.github.io/StarFormer/) — updated for each tested release.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
 
-Current main includes the new intro sequence from PR #10 and the October 17 hint/presentation polish merged through PR #11 (`989d2d1`). The tested October 18 Level 1 update on `level-1` is awaiting a separate PR/merge. No new WebGL publication is recorded for these updates. The existing Alpha Progress Check build keeps its original Tutorial and controls. Integrate the tested Level 1 update through the maintainer's normal review before building the next release from main.
+Current main includes the new intro sequence from PR #10, the October 17 hint/presentation polish from PR #11 (`989d2d1`) and the tested October 18 Level 1 update from PR #12 (`e457e87`). No new WebGL publication is recorded for these updates. The existing Alpha Progress Check build keeps its original Tutorial and controls. Analytics builds must configure and validate the test Google Apps Script endpoint described in `AnalyticsImplementation.md` before publication.
 
 Use `StarFormer` on `main` as the integrated source baseline for a release, and the sibling folder `StarFormer-Pages` on `gh-pages` for exported website files. Do not merge `gh-pages` into `main`. Coordinate one publisher per release.
 

@@ -261,13 +261,21 @@ public class MovingSpikeHazard : MonoBehaviour
 
         if (restartImmediately)
         {
-            // 等同于玩家按下 R。
-            playerController.RequestRestart();
+            // Record the death before reloading; zero delay preserves the
+            // immediate-restart behavior without bypassing Analytics.
+            playerController.KillControlledBody(
+                possessableBody,
+                AnalyticsDeathCause.MovingSpike,
+                0f
+            );
         }
         else
         {
             // 定格两秒后自动重开。
-            playerController.KillControlledBody(possessableBody);
+            playerController.KillControlledBody(
+                possessableBody,
+                AnalyticsDeathCause.MovingSpike
+            );
         }
     }
 

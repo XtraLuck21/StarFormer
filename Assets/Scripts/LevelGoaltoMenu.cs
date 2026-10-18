@@ -137,6 +137,9 @@ public class LevelGoalToMenu : MonoBehaviour
     private void Clear()
     {
         cleared = true;
+        AnalyticsManager.Instance?.TrackLevelComplete(
+            player != null ? player.CurrentBody : null
+        );
 
         if (blockedRoutine != null)
         {

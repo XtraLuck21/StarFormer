@@ -239,11 +239,18 @@ public class SpikeWallEnemyChase : MonoBehaviour
 
         if (restartImmediately)
         {
-            player.RequestRestart();
+            player.KillControlledBody(
+                possessableBody,
+                AnalyticsDeathCause.SpikeWall,
+                0f
+            );
         }
         else
         {
-            player.KillControlledBody(possessableBody);
+            player.KillControlledBody(
+                possessableBody,
+                AnalyticsDeathCause.SpikeWall
+            );
         }
     }
 }

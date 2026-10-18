@@ -33,6 +33,7 @@ public class MainMenuUI : MonoBehaviour
         }
 
         // Every menu selection starts a fresh checkpoint session.
+        AnalyticsManager.Instance?.TrackAbandoned("menu_level_selection");
         PlayerPossessionController.ResetCheckpointSession();
 
         Time.timeScale = 1f;
