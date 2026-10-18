@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 // Only the controlled, grounded Star can finish the bubble introduction.
 [RequireComponent(typeof(BoxCollider2D))]
@@ -7,6 +6,9 @@ public class IntroStarGoal : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private string nextSceneName = "Level01";
+
+    [SerializeField] private string nextLevelLabel = "Level 1";
+    [SerializeField, Min(0.1f)] private float transitionSeconds = 1.5f;
 
     private bool isLoading;
     private bool reportedMissingScene;
@@ -51,7 +53,6 @@ public class IntroStarGoal : MonoBehaviour
         }
 
         isLoading = true;
-        PlayerPossessionController.ResetCheckpointSession();
-        SceneManager.LoadScene(nextSceneName);
+        LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
     }
 }
