@@ -1,6 +1,6 @@
 # Level 1 Progress
 
-Last updated: 2026-10-14.
+Last updated: 2026-10-17.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
@@ -13,6 +13,8 @@ Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged in
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
 **October 14 source update:** [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, connects Mainmenu → IntroBox → IntroBubble → Level01 → Level02. Level01 still accepts any controlled form after G2 opens, but now clears checkpoints and loads Level02 instead of pausing at a completion screen. Shared bubbles wait until first possession and use **E** to pop. The developer confirmed the full flow in Unity Play Mode; this update has not been published as a new WebGL build. See [intro-levels.md](intro-levels.md).
+
+**October 17 source update (pending integration):** the intro polish branch adds a generated `Level up!` / `Entering Level 2...` overlay to LevelGoal. Completion still requires any living controlled form and an open G2; gameplay pauses for a default 1.5 seconds before automatic progression. The developer reported that the completion transitions work. This does not claim a new Level01 layout review, teammate-branch merge or browser build.
 
 ## 1. Current route and progress
 
@@ -45,13 +47,14 @@ The ball floats at the surface of any registered water zone. While floating it c
 | `Switch_H` | `BoxHeightSwitch.targetBox` / `door` | `Box_D` / `Gate_G2` |
 | `WaterPopHazard_01`, `WaterPopHazard_02`, `WaterPopHazard_03` | `BubblePopHazard.playerController` | `PlayerControl` |
 | `LevelGoal` | Player controller / required gate / optional status text / next scene | `PlayerControl` / `Gate_G2` / `LevelStatusText` / `Level02` |
+| `LevelGoal` completion overlay | Next Level Label / Transition Seconds | `Level 2` / default `1.5`; LevelTransitionUI generates its own Canvas and labels |
 | `LevelCanvas` | `LevelDeathUI.playerController` / `statusText` | `PlayerControl` / `LevelStatusText` |
 | `ReturnToMenuButton` | OnClick | Local `LevelCanvas` → `LevelNavigationUI.ReturnToMainMenu` |
 
 - **P → G is continuous:** only the assigned grounded C can hold it open. Control can transfer away from C while it remains on P. Moving C away closes G.
 - **H → G2 is latched:** assigned grounded D touches the overhead trigger once; G2 then remains open until restart. H has no explicit size threshold; its height creates the growth requirement.
 - **Purple hazards react by controlled form:** a bubble pops and releases the star; a box dies through the normal restart flow, including when growing into the trigger. Stars, bouncing balls and idle bodies are ignored. All three saved hazards use `WaterPopHazard` prefab instances with scene controller references and black X visual children.
-- **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star. The goal validates the next scene, clears checkpoint state and loads Level02 once; it does not pause or display completion/restart instructions.
+- **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star. The goal validates the next scene and invokes LevelTransitionUI to show Level up! / Entering Level 2... for a default 1.5 seconds while gameplay is paused. It then clears checkpoint state and loads Level02 once with normal time scale; no confirmation input is required.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
 - **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.`, `Restarting...`, and `Press R to restart now.` into the shared status text. The controller handles the two-second death pause and R restart. The text remains blank during normal play.
 - **Menu navigation:** enter Level01 directly from Mainmenu or from the IntroBubble Star goal. The top-right return button loads Mainmenu and restores time scale to 1. R restarts the current level; once the goal has loaded Level02, R restarts Level02. Menu entry and forward transitions clear checkpoint state.
@@ -76,7 +79,7 @@ These are current prototype coordinates, not final balance requirements. Positio
 | Upper floor / ceiling underside | `Y = 9` / `Y = 13` | Vertical bounds used by the implemented upper R2 challenge |
 | `BubbleRouteBlocker` position / scale | `(19, 7.125)` / `(0.6, 2.75)` | Ordinary solid wall hanging from the upper platform to block the bubble route without extending to the lower floor |
 | `LevelGoal` position | `(-10.5, 9)` | Final goal for any living controlled form after G2 opens |
-| `LevelStatusText` anchored position / size | `(0, -40)` / `(1000, 200)` | Top-center anchor and pivot; saved text empty; space for death messages; completion now advances directly |
+| `LevelStatusText` anchored position / size | `(0, -40)` / `(1000, 200)` | Top-center anchor and pivot; saved text empty; space for death messages; completion uses a separate generated overlay before advancing |
 | General vertical death limits / death delay | `-12` and `16` / `2 seconds` | Level01 settings for the star, box and bubble |
 | Bouncing-ball upper death limit | `40` | Ball-specific exception required by its 20.25-unit open-air bounce; this changes survival bounds, not bounce height |
 | Ball default bounce height / seconds to apex | `20.25` / `2.4` | Open-air bounce target before ceiling compression |
@@ -88,6 +91,8 @@ These are current prototype coordinates, not final balance requirements. Positio
 Keep boxes upright and unparented: the current resizing implementation rejects parented boxes. Do not group them under a level container without changing and testing that constraint.
 
 ## 4. Verification completed and its limits
+
+**October 17:** the developer confirmed the new timed completion transitions. Script compilation passed; no new WebGL export or broad Level01 regression run is recorded for this pass.
 
 **October 14:** the developer confirmed E-key bubble exit and the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow. Earlier completion-screen tests below describe the pre-intro version. No new browser build is claimed for October 14.
 
@@ -129,7 +134,7 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 
 1. **Broader regression coverage.** The developer reports successful localhost and online playtests. Continue testing alternate routes, both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion on teammates' computers. Do not treat this initial release as exhaustive coverage of every route or browser.
 2. **Level 1 merge completed.** PR #8 (`c63a17c`) integrated the Level 1 gameplay and polish into `main`.
-3. **Navigation merged and Web release published.** PR #9 (`9fc0f95`) integrates Mainmenu, Tutorial/Level01 links, return buttons and the optional menu star interaction. [Play the current build](https://xtraluck21.github.io/StarFormer/). GitHub Pages publishes `gh-pages` from its root, with initial deployment commit `73877e9`. Localhost and online testing passed after restoring missing script imports and rebuilding. Level02 is now connected from the menu and has a return button. All-Level V1 was built from source `773912d` with local editor/build changes and published as `6f1737a` on October 12. GitHub Pages reports deployment success. That release used manual menu selection; current source adds intro progression and automatic Level01 → Level02 transition through PR #10. A new WebGL export is still required.
+3. **Navigation merged and Web release published.** PR #9 (`9fc0f95`) integrates Mainmenu, Tutorial/Level01 links, return buttons and the optional menu star interaction. [Play the current build](https://xtraluck21.github.io/StarFormer/). GitHub Pages publishes `gh-pages` from its root, with initial deployment commit `73877e9`. Localhost and online testing passed after restoring missing script imports and rebuilding. Level02 is now connected from the menu and has a return button. All-Level V1 was built from source `773912d` with local editor/build changes and published as `6f1737a` on October 12. GitHub Pages reports deployment success. That release used manual menu selection; current source adds intro progression and automatic Level01 → Level02 transition through PR #10, with October 17 timed completion feedback pending integration from intro-levels. A new WebGL export is still required.
 4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Keep the published build updated after future source changes and repeat browser testing for each release. Keep configuration and generated asset review separate from the documentation commit, as documented in ScriptGuide. The team is collecting feedback against All-Level V2, preserved as the Alpha Progress Check submission. All-Level V1 remains historical release context.
 
 PR #10 adds the introductory sequence and Level01 → Level02 progression. The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. PR #8 merged the later Level 1 polish. PR #9 merged navigation into `main`. The exported Web build is maintained separately on `gh-pages`, which must not be merged into `main`. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.

@@ -1,11 +1,11 @@
 # Publish StarFormer to GitHub Pages
 
-Last updated: 2026-10-14.
+Last updated: 2026-10-17.
 
 - [Latest tested build](https://xtraluck21.github.io/StarFormer/) — updated for each tested release.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
 
-Current source includes the new intro sequence from PR #10, but no new WebGL publication is recorded for it. The existing Alpha Progress Check build keeps its original Tutorial and controls.
+Current source includes the new intro sequence from PR #10 and the October 17 hint/presentation polish on intro-levels (through `7fc77d5`, awaiting PR/merge at this handoff). No new WebGL publication is recorded for these updates. The existing Alpha Progress Check build keeps its original Tutorial and controls. Integrate the tested polish through the maintainer's normal review before building a release from main.
 
 Use `StarFormer` on `main` as the integrated source baseline for a release, and the sibling folder `StarFormer-Pages` on `gh-pages` for exported website files. Do not merge `gh-pages` into `main`. Coordinate one publisher per release.
 
@@ -41,7 +41,16 @@ Keep the old Tutorial, reference scenes and sandboxes unchecked. Open **Scene Li
 
 Use **Default** Web Template, **Gzip** compression, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**.
 
-Choose **Build And Run** with a new output folder, such as `Builds/WebGL-All-Level-V3`. Test through localhost, not by double-clicking `index.html`. Check the Introductory Levels, Level 1 and Level 2 buttons, and play the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 route. Verify dormant bubbles activate on possession, E pops bubbles while Space does not, hazard-triggered popping still works, hint visibility and drawing order are correct, and goals/reset/return navigation work. Review existing levels for the shared bubble changes. The editor flow has passed developer testing; a new localhost/browser test is still required for the exported build. Publish only after local tests pass.
+Choose **Build And Run** with a new output folder, such as `Builds/WebGL-All-Level-V3`. Test through localhost, not by double-clicking `index.html`. Check the Introductory Levels, Level 1 and Level 2 buttons, and play the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 route. Verify dormant bubbles activate on possession, E pops bubbles while Space does not, hazard-triggered popping still works, hint visibility and drawing order are correct, and goals/reset/return navigation work. Review existing levels for the shared bubble changes. The editor flow and October 17 intro polish have passed developer-reported testing; a new localhost/browser test is still required for the exported build. Include these checks:
+
+- IntroBox starts with contextual A/D and SPACE prompts; BoxA possession shows the contact explanation, and BoxA → BoxB shows New box. Same little star. Subtitles remain readable at the intended browser sizes.
+- IntroBubble explains automatic rise in air, four-direction movement underwater and renewed rise after leaving the water; E exits to Star. Old circle/up-arrow and follow-the-flag text should not appear.
+- Restart (R) and R both restart the current scene; IntroBubble returns to EntryBox rather than IntroBox. Return to Main Menu still works during ordinary gameplay.
+- IntroBox's arrow appears only after the flag opens the door; walking right loads IntroBubble without a Level up overlay.
+- IntroBubble and Level01 show Level up! / Entering Level 1... or Level 2... for about 1.5 seconds, load the correct scene exactly once, and restore movement/time afterward. The outgoing gameplay and pointer interaction with its UI should pause during the overlay.
+- The two intros retain the updated gray/dark palette, visible Bubble outline and correct hint/body drawing order.
+
+Publish only after local tests pass.
 
 ## 3. Prepare the publishing checkout
 

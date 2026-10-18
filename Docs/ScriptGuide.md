@@ -1,8 +1,8 @@
 # Script Guide
 
-Last updated: 2026-10-14. Unity version: `6000.3.22f1`.
+Last updated: 2026-10-17. Unity version: `6000.3.22f1`.
 
-Current source includes the introductory sequence and full progression integrated through [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, on October 14. The developer confirmed the full flow in Unity Play Mode. The last recorded published WebGL version remains All-Level V2 / Alpha Progress Check, which predates these changes. See [intro-levels.md](intro-levels.md), [GameplaySpec.md](GameplaySpec.md), and [level-1.md](level-1.md).
+Current source includes the introductory sequence and full progression integrated through [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, on October 14. The developer confirmed the full flow in Unity Play Mode. The October 17 follow-up on `intro-levels` (through `7fc77d5`, pending integration) adds contextual Star/form hints, larger subtitles, matching intro colors, Restart buttons, a gate-open arrow and timed completion overlays; developer-reported tests passed. The last recorded published WebGL version remains All-Level V2 / Alpha Progress Check, which predates these changes. See [intro-levels.md](intro-levels.md), [GameplaySpec.md](GameplaySpec.md), and [level-1.md](level-1.md).
 
 ## 1. Playable and test scenes
 
@@ -11,8 +11,8 @@ Current source includes the introductory sequence and full progression integrate
 | [Mainmenu](../Assets/Scenes/Mainmenu.unity) | Startup menu | Introductory Levels/Level01/Level02 selection, playable star and one-way UI-aligned platforms |
 | [Playground](../Assets/Scenes/Playground.unity) | Existing mechanics sandbox | Star, box, bubble, resizing, pressure plate and door |
 | [Level01_Reference](../Assets/Scenes/Level01_Reference.unity) | Earlier level layout retained as a reference | Traversal and transformation layout; not the new Alpha Level 1 |
-| [IntroBox](../Assets/Scenes/IntroBox.unity) | First introductory scene | Star movement, growth-based box transfer, shrink gap, tunnel flag and gated exit to IntroBubble |
-| [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Second introductory scene | Starting Box host, air/water bubble traversal, contextual hints, E exit, Star-only grounded goal to Level01 |
+| [IntroBox](../Assets/Scenes/IntroBox.unity) | First introductory scene | Contextual Star movement/jump hints, growth-based box transfer, shrink gap, tunnel flag and gated exit arrow to IntroBubble |
+| [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Second introductory scene | Starting Box host, air/water bubble traversal, air/water form explanations, E exit, Star-only grounded goal and completion overlay to Level01 |
 | [Tutorial](../Assets/Scenes/Tutorial.unity) | Legacy tutorial, excluded from current builds | Movement, jump, three SpikeHazard prefab instances, box possession and resizing, pressure plate, goal, feedback and return-to-menu button |
 | [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
 | [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, purple hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form goal leading to Level02, death feedback and return-to-menu button; local/online playtests passed, broader regression remains |
@@ -66,10 +66,10 @@ The enabled scenes in [EditorBuildSettings.asset](../ProjectSettings/EditorBuild
 | [BoxHeightSwitch.cs](../Assets/Scripts/BoxHeightSwitch.cs) | Overhead switch; `BoxCollider2D`, `SpriteRenderer`, assigned target box and separate door | Latches the door open when the assigned grounded box touches the switch; Level01 H targets D and controls G2 | Changing height-switch activation; required growth comes from placement, not an explicit size threshold |
 | [BubblePopHazard.cs](../Assets/Scripts/BubblePopHazard.cs) | Hazard; `CircleCollider2D`, assigned scene player controller | On trigger enter/stay, requests a pop for a controlled bubble or kills a controlled box; ignores star, bouncing ball and unpossessed bodies | Changing form-specific purple hazard responses; shared pop/death behavior stays in the player controller |
 | [SpikeHazard.cs](../Assets/Scripts/SpikeHazard.cs) | Environmental spike; `PolygonCollider2D`, assigned scene controller | Uses a trigger to kill the currently controlled body; unpossessed bodies do not trigger player death | Changing lethal hazard contact behavior |
-| [TutorialIntroUI.cs](../Assets/Scripts/TutorialIntroUI.cs) | Tutorial canvas; assigned box, controller, and two TMP text references | Displays the initial controls, first box-possession instructions, death message and completion message | Changing tutorial copy or its UI states |
+| [TutorialIntroUI.cs](../Assets/Scripts/TutorialIntroUI.cs) | Tutorial canvas; assigned box, controller, and two TMP text references | Legacy Tutorial UI; displays initial controls, first box-possession instructions, death and completion messages. Disabled on both intro Canvases in favor of IntroFormHintUI | Changing tutorial copy or its UI states |
 | [LevelDeathUI.cs](../Assets/Scripts/LevelDeathUI.cs) | Level01 `LevelCanvas`; assign scene `PlayerControl` and `LevelStatusText` | Clears status text on start; observes `IsDead` in Update and displays death/restart instructions once; does not control pause or reload | Changing level death copy or UI wiring |
 | [TutorialGoal.cs](../Assets/Scripts/TutorialGoal.cs) | Tutorial goal; `BoxCollider2D`, assigned tutorial box, door and UI | Completes only when the assigned controlled box enters the goal with the door inactive and the player alive; synchronizes its visible physics pose and pauses the game | Changing tutorial-specific completion conditions or pause behavior |
-| [LevelGoal.cs](../Assets/Scripts/LevelGoal.cs) | Level01 goal; `BoxCollider2D`, player controller, required gate, next scene name and optional TMP status text | Accepts any current controlled form after G2 opens; validates the destination, clears checkpoints, restores time scale and loads Level02 once | Changing Level01 completion conditions or the next-scene destination |
+| [LevelGoal.cs](../Assets/Scripts/LevelGoal.cs) | Level01 goal; `BoxCollider2D`, player controller, required gate, next scene name and optional TMP status text | Accepts any current controlled form after G2 opens; validates the destination and invokes LevelTransitionUI for Level up / Entering Level 2, then clears checkpoints and loads Level02 once | Changing Level01 completion conditions or the next-scene destination |
 
 **Reusable hazard prefabs:** core forms and hazards share `Assets/Form` by team convention. Being stored in this folder does not make a hazard possessable.
 
@@ -84,23 +84,25 @@ The enabled scenes in [EditorBuildSettings.asset](../ProjectSettings/EditorBuild
 - The black X uses two centered Square sprite children with Z rotations of +45 and -45 degrees. Both render at order 3 over the purple circle at order 2. They have no colliders and do not change the hazard hit area.
 - Developer-reported tests passed for spike death/restart, controlled box contact and growth into purple hazards, preserved bubble popping, and black-X readability in Level01.
 
-**Level01 feedback setup:** keep `LevelCanvas` and `LevelStatusText` active. Both `LevelGoal.statusText` and `LevelDeathUI.statusText` reference the same TMP object. Keep its saved text empty. Its top-center anchor/pivot, position `(0, -40)` and size `(1000, 200)` provide space for the three-line death message. The developer confirmed death and historical completion text display after the layout adjustment. Current LevelGoal no longer writes completion text or pauses; it advances to Level02. Keep the text reference for LevelDeathUI. Full HD preview helped verify the small hazard markers; fit the Game view to the available panel when checking text near the screen edge.
+**Level01 feedback setup:** keep `LevelCanvas` and `LevelStatusText` active. Both `LevelGoal.statusText` and `LevelDeathUI.statusText` reference the same TMP object. Keep its saved text empty. Its top-center anchor/pivot, position `(0, -40)` and size `(1000, 200)` provide space for the three-line death message. The developer confirmed death and historical completion text display after the layout adjustment. Current LevelGoal does not write completion copy into LevelStatusText. It invokes a separate generated LevelTransitionUI overlay, pauses gameplay for a default 1.5 seconds and then advances to Level02. Keep the text reference for LevelDeathUI. Full HD preview helped verify the small hazard markers; fit the Game view to the available panel when checking text near the screen edge.
 
 ### Introductory-level scripts and visuals
 
 | Script / asset | Setup and responsibility |
 | --- | --- |
 | [BoxGrowHint.cs](../Assets/Scripts/BoxGrowHint.cs) | Separate scene root with controller and target Box references. Grow/Shrink modes draw a fixed dashed size guide, arrows and boxed W/S. Visibility requires the controlled target's center inside Activation Area. Shrink hides once the box drops completely below the frame. Full visuals are created in Play Mode; selected gizmos show placement bounds. |
-| [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Separate root with controller and target Bubble references. Air = A/D, Water = WASD, ExitBubble = E. Edit-mode preview is optional; runtime visibility also requires the matching environment and activation region. Adjust Activation Area Offset when moving the prompt without moving its trigger region. |
+| [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Separate world-space root. Air = A/D, Water = WASD, ExitBubble = E, StarMove = A/D, StarJump = SPACE plus jump arc; these modes require the assigned controlled body inside the activation region (and matching Bubble water state). ContinueRight uses only Flag Gate and appears when that gate opens. Optional edit preview. Continue Arrow Width defaults to 0.08 and affects only ContinueRight; its arrowhead is larger. Keep enum values stable for saved scenes. |
+| [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | Intro TutorialCanvas; assign local controller plus separate title/subtitle TMP objects. Sequence Box/Bubble selects intro behavior. Observes form/water changes; Box sequence also detects Box-to-Box body changes. Titles persist; subtitles hold 4 seconds and fade over 0.75 seconds by default. Clear text on death/disable. Disable legacy TutorialIntroUI to avoid competing text writes. |
+| [LevelTransitionUI.cs](../Assets/Scripts/LevelTransitionUI.cs) | Created at runtime by IntroStarGoal/LevelGoal; no scene attachment required. Builds a 1920×1080-reference overlay (sorting order 32000), pauses time, disables the player controller, intercepts pointer input and clears old UI selection. After a real-time delay it resets checkpoints and loads the destination with normal time scale. Guards against duplicate active transitions and restores owned state on disable. |
 | [CircleVisual.cs](../Assets/Scripts/CircleVisual.cs) | Bubble SpriteRenderer object. Optional Show Outline, Outline Color and Outline Width bake a border inward into the same sprite; Circle Color controls the fill. The circle's outer size and Collider are unchanged. Outline is opt-in, not a new default for all circles. |
 | [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox flag trigger; assign controller, required BoxB and separate exit door. The required controlled body's contact opens the door, without loading another scene. |
 | [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Separate trigger beyond that door; assign controller, required flag gate and next scene `IntroBubble`. Once the gate is open, contact by the current controlled body loads the destination and clears checkpoints. |
-| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | IntroBubble flag trigger; assign controller and next scene `Level01`. Only the living, controlled, grounded Star completes it. Bubbles and airborne Stars cannot trigger completion. |
+| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | IntroBubble flag trigger; assign controller and next scene `Level01`. Only the living, controlled, grounded Star completes it. Bubbles and airborne Stars cannot trigger completion. Next Level Label defaults to Level 1 and Transition Seconds to 1.5; the goal invokes LevelTransitionUI after destination validation. |
 | [GoalFlagVisual.prefab](../Assets/Form/GoalFlagVisual.prefab) | Reusable dark-green pole and green triangular flag. Visual only; use separate scene triggers for gate/goal behavior. |
 
-Bubble movement hints use Sorting Order 0 for key backgrounds and 1 for strokes, below the bubble at 2 and the Star marker at 10. Growth hints retain their existing order. In IntroBubble, the bubble uses a pale fill and a dark-blue inward border (saved width 0.06). Both intro cameras remain fixed; camera-follow redesign and additional automatic-rise guidance are not implemented.
+Bubble movement hints use Sorting Order 0 for key backgrounds and 1 for strokes, below the bubble at 2 and the Star marker at 10. Growth hints retain their existing order. In IntroBubble, the bubble uses a pale fill and a dark-blue inward border (saved width 0.06). Both intro cameras remain fixed; camera-follow redesign is deferred. Automatic-rise guidance now comes from IntroFormHintUI subtitles. Both intros use warm-gray backgrounds and dark terrain; saved title/subtitle sizes are 48/32. The gate-open continuation arrow uses order 20, independent of the Bubble prompts.
 
-See [intro-levels.md](intro-levels.md) for the playable sequence, recovery limits and handoff checks. Scene-specific hint/controller/goal references must be assigned on each instance, not stored as references to another scene.
+IntroBox uses StarMoveHint, StarJumpHint and ContinueRightHint. Bind ContinueRightHint.Flag Gate to the local IntroBoxFlagTrigger; do not parent the hint under the door that gets disabled. It does not need a target body, player controller or activation area. In each intro, keep TutorialTitle/TutorialInstructions active, clear obsolete saved instructional copy, and assign them to IntroFormHintUI with the local PlayerControl. Do not delete the TMP components. See [intro-levels.md](intro-levels.md) for exact messages, the playable sequence, recovery limits and handoff checks. Scene-specific hint/controller/goal references must be assigned on each instance, not stored as references to another scene.
 
 ### Level02 integration points
 
@@ -119,7 +121,7 @@ See [intro-levels.md](intro-levels.md) for the playable sequence, recovery limit
 | Script | Attach to / dependencies | Current responsibility |
 | --- | --- | --- |
 | [MainMenuUI.cs](../Assets/Scripts/MainMenuUI.cs) | `Mainmenu` scene's `MainMenuCanvas` | `OpenIntroLevels()` loads `IntroBox`; `OpenTutorial()` is a compatibility alias for the same route; `OpenLevel1()` loads `Level01`; `OpenLevel2()` loads `Level02`; clears checkpoints and restores time scale to 1 before loading |
-| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Return UI in IntroBox, IntroBubble, Level01 and Level02; legacy Tutorial also retains it | `ReturnToMainMenu()` restores time scale to 1 and loads `Mainmenu` |
+| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Return UI in IntroBox, IntroBubble, Level01 and Level02; legacy Tutorial also retains it. Intro Canvases also host Restart buttons | `ReturnToMainMenu()` restores time scale and loads `Mainmenu`. `RestartLevel()` validates the current scene build index, clears checkpoints, restores time scale and reloads that scene, matching R |
 | [MenuUIPlatform.cs](../Assets/Scripts/MenuUIPlatform.cs) | Each menu platform root; requires `BoxCollider2D` and `PlatformEffector2D`; assign target UI rectangle and Main Camera | Converts the target's upper corners to world coordinates, aligns a thin collider with its top edge, and configures one-way collision |
 
 ### Button wiring and scene names
@@ -128,6 +130,7 @@ See [intro-levels.md](intro-levels.md) for the playable sequence, recovery limit
 - `Level1Button.OnClick` calls `MainMenuUI.OpenLevel1` on the same scene object.
 - `Level2Button` displays `Level 2` and calls `MainMenuUI.OpenLevel2`. `Level02` is enabled at build index 4.
 - `ReturnToMenuButton` in IntroBox, IntroBubble, Level01 and Level02 calls `LevelNavigationUI.ReturnToMainMenu` on that scene's own assigned UI object. Preserve the local reference when copying UI between scenes.
+- IntroBox and IntroBubble place `RestartButton` beneath the menu button, labeled Restart (R), with a single callback to the local TutorialCanvas → LevelNavigationUI.RestartLevel. Remove the copied menu callback. Restarting IntroBubble returns to EntryBox in IntroBubble, not IntroBox.
 - Keep the exact scene strings `Mainmenu`, `IntroBox`, `IntroBubble`, `Level01` and `Level02`. Forward progression is name-based: IntroBox exit → IntroBubble, IntroBubble Star goal → Level01, Level01 goal → Level02. Menu entry and forward progression start fresh checkpoint sessions; death recovery can retain an existing Level02 checkpoint.
 
 ### Menu star and platform setup
@@ -149,13 +152,13 @@ See [intro-levels.md](intro-levels.md) for the playable sequence, recovery limit
 
 ### Verification and follow-up
 
-On October 14, the developer confirmed the renamed menu entry and complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow in Unity Play Mode. Script compilation checks passed during implementation. Some intro hints remain; the new flow has not yet received a new WebGL export/browser test.
+On October 14, the developer confirmed the renamed menu entry and complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow in Unity Play Mode. Script compilation checks passed during implementation. On October 17, the developer also confirmed Star/form hints, Box-to-Box subtitles, Bubble explanations, palette/readability changes, current-scene Restart buttons, the thicker continuation arrow and timed completion transitions. These updates still need a new WebGL export/browser test.
 
 Historical developer-reported tests passed for loading Tutorial and Level01, returning to the menu, moving/jumping across menu platforms, and keeping the star visible in front of buttons while clicks still work. The October 11 rebuilt localhost version and published GitHub Pages version subsequently passed developer playtests. No menu-star movement hint or attention animation is included. Level 2 integration is complete and included in All-Level V1. The October 12 editor retest and localhost build test passed according to the developer. Teammate usability feedback and broader resolution/browser coverage remain follow-up work.
 
 ## 4. Web build and GitHub Pages release
 
-For the repeatable publishing procedure, follow [publish_instructions.md](publish_instructions.md). This section records release history and troubleshooting. The October 14 intro source changes are not yet a published WebGL release.
+For the repeatable publishing procedure, follow [publish_instructions.md](publish_instructions.md). This section records release history and troubleshooting. The introductory source updates through October 17 have no new WebGL publication recorded. The October 17 polish is still awaiting integration into main at this handoff.
 
 ### Last recorded published version: All-Level V2 / Alpha Progress Check
 
