@@ -16,7 +16,7 @@ For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script resp
 
 **October 17 source update (merged):** [PR #11](https://github.com/XtraLuck21/StarFormer/pull/11), merge `989d2d1`, adds a generated `Level up!` / `Entering Level 2...` overlay to LevelGoal. Completion still requires any living controlled form and an open G2; gameplay pauses for a default 1.5 seconds before automatic progression. The developer reported that the completion transitions work. This does not claim a new Level01 layout review, teammate-branch merge or browser build.
 
-**October 18 Level 1 handoff (awaiting PR to main):** `level-1` contains the teammate polish/checkpoint update (`62bb009`), right-pool bubble regeneration (`ea04ed9`), integration of main (`7ade8ee`), and the tested handoff/prefab fixes (`1f07b35`). The developer reports Level 1 testing passed, including the box no longer pinning the newly possessed bubble and normal BouncyBall behavior. Instruction clarity can still improve but is explicitly deferred as low priority. No new WebGL export or browser validation is recorded for this pass.
+**October 18 Level 1 handoff (merged):** PR #12 (`e457e87`) integrates the teammate polish/checkpoint update (`62bb009`), right-pool bubble regeneration (`ea04ed9`) and tested handoff/prefab fixes (`1f07b35`) into main. The developer reports Level 1 testing passed, including the box no longer pinning the newly possessed bubble and normal BouncyBall behavior. Instruction clarity can still improve but is explicitly deferred as low priority. No new WebGL export or browser validation is recorded for this pass.
 
 Current additions:
 
@@ -149,9 +149,9 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 
 ## 6. Remaining work and handoff
 
-1. **Integrate this tested Level 1 update.** Commit/push the documentation, then manually create a PR from `level-1` into `main`. PR #11 already merged the intro polish; this new PR covers the subsequent Level 1 update and shared handoff/prefab fixes. No PR number is assigned in this document yet.
+1. **Integration is complete.** PR #12 (`e457e87`) merged the tested Level 1 update and shared handoff/prefab fixes into main.
 2. **Instruction polish is deferred.** The existing ball steering prompt is usable, but clarity and additional guidance can improve later. This is low priority for the current handoff. Button/gate visibility is also a later polish item.
 3. **Build and browser validation.** After source integration, export a fresh build from main and verify the full Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow, recovery and navigation. Current Level 1 testing is developer-reported editor testing, not a new published release. Broader alternate-route, mobile and teammate-device coverage remain follow-ups.
 4. **Keep publication separate.** The last recorded deployed build remains All-Level V2, preserved at the Alpha Progress Check URL. Merging this PR does not update the website. Follow [publish_instructions.md](publish_instructions.md), preserve submission folders, and never merge `gh-pages` into `main`.
 
-Historical integration: Level 1 baseline PR #2, core prefabs PR #3, Level 1 polish PR #8, navigation PR #9, introductory progression PR #10, and intro hints/completion transitions PR #11. Forms and hazards remain together in `Assets/Form`. See [ScriptGuide.md](ScriptGuide.md) for setup and scene references.
+Historical integration: Level 1 baseline PR #2, core prefabs PR #3, Level 1 polish PR #8, navigation PR #9, introductory progression PR #10, intro hints/completion transitions PR #11, and the October 18 Level 1 handoff PR #12. Forms and hazards remain together in `Assets/Form`. See [ScriptGuide.md](ScriptGuide.md) for setup and scene references.

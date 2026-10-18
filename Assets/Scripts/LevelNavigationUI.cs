@@ -13,6 +13,7 @@ public class LevelNavigationUI : MonoBehaviour
         }
 
         // Match R: restart the whole level rather than resume at a checkpoint.
+        AnalyticsManager.Instance?.TrackManualRestart();
         PlayerPossessionController.ResetCheckpointSession();
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneIndex);
@@ -20,6 +21,8 @@ public class LevelNavigationUI : MonoBehaviour
 
     public void ReturnToMainMenu()
     {
+        AnalyticsManager.Instance?.TrackAbandoned("return_to_menu");
+        PlayerPossessionController.ResetCheckpointSession();
         Time.timeScale = 1f;
         SceneManager.LoadScene("Mainmenu");
     }

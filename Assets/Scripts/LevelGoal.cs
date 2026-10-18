@@ -61,6 +61,7 @@ public class LevelGoal : MonoBehaviour
         }
 
         isCompleted = true;
+        AnalyticsManager.Instance?.TrackLevelComplete(playerBody);
         LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
     }
 }
