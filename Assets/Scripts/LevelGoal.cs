@@ -7,92 +7,60 @@ public class LevelGoal : MonoBehaviour
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private GameObject requiredGate;
     [SerializeField] private TMP_Text statusText;
+    [SerializeField] private string nextSceneName = "Level02";
+
+    [SerializeField] private string nextLevelLabel = "Level 2";
+    [SerializeField, Min(0.1f)] private float transitionSeconds = 1.5f;
 
     private bool isCompleted;
-    private float previousTimeScale;
+    private bool reportedMissingScene;
 
     private void Awake()
     {
         GetComponent<BoxCollider2D>().isTrigger = true;
 
-        if (playerController == null ||
-            requiredGate == null ||
-            statusText == null)
+        if (playerController == null || requiredGate == null ||
+            string.IsNullOrWhiteSpace(nextSceneName))
         {
-            Debug.LogError(
-                "Assign the player controller, gate, and status text.",
-                this
-            );
-
+            Debug.LogError("Assign the player controller, gate, and next scene name.", this);
             enabled = false;
             return;
         }
 
-        statusText.text = "";
+        if (statusText != null) statusText.text = "";
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        CheckGoal(other);
-    }
-
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        CheckGoal(other);
-    }
+    private void OnTriggerEnter2D(Collider2D other) => CheckGoal(other);
+    private void OnTriggerStay2D(Collider2D other) => CheckGoal(other);
 
     private void CheckGoal(Collider2D other)
     {
-        if (!isActiveAndEnabled ||
-            isCompleted ||
-            playerController.IsDead ||
-            Time.timeScale == 0f ||
-            requiredGate.activeSelf)
+        if (!isActiveAndEnabled || isCompleted ||
+            playerController.IsDead || Time.timeScale <= 0f || requiredGate.activeSelf)
         {
             return;
         }
 
         Rigidbody2D body = other.attachedRigidbody;
-
         if (body == null ||
             !body.TryGetComponent(out PossessableBody playerBody) ||
-            !playerBody.IsControlled)
+            !playerBody.IsControlled || playerController.CurrentBody != playerBody)
         {
             return;
         }
 
-        isCompleted = true;
-
-        // Show the actual contact position before pausing.
-        Vector2 position = body.position;
-        float rotation = body.rotation;
-
-        body.interpolation = RigidbodyInterpolation2D.None;
-
-        body.transform.SetPositionAndRotation(
-            new Vector3(
-                position.x,
-                position.y,
-                body.transform.position.z
-            ),
-            Quaternion.Euler(0f, 0f, rotation)
-        );
-
-        body.linearVelocity = Vector2.zero;
-        body.angularVelocity = 0f;
-
-        statusText.text =
-            "Level 1 complete!\nPress R to restart.";
-
-        previousTimeScale = Time.timeScale;
-        Time.timeScale = 0f;
-    }
-
-    private void OnDisable()
-    {
-        if (isCompleted)
+        // Any controlled form can finish Level 1 after its final gate opens.
+        if (!Application.CanStreamedLevelBeLoaded(nextSceneName))
         {
-            Time.timeScale = previousTimeScale;
+            if (!reportedMissingScene)
+            {
+                Debug.LogError($"Add and enable scene '{nextSceneName}' in the active Build Profile's Scene List.", this);
+                reportedMissingScene = true;
+            }
+            return;
         }
+
+        isCompleted = true;
+        LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
     }
 }

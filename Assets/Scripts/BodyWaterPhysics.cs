@@ -52,14 +52,6 @@ public class BodyWaterPhysics : MonoBehaviour
         // Stars and boxes retain gravity. Bubbles suspend in water.
         body.gravityScale = isBubble ? 0f : originalGravityScale;
 
-        // An unpossessed bubble is a stable target in the water. It stays at
-        // its authored position until the player touches and possesses it.
-        if (isBubble && !possessable.IsControlled)
-        {
-            body.linearVelocity = Vector2.zero;
-            body.angularVelocity = 0f;
-        }
-
         // Controlled swimming handles acceleration and braking itself.
         body.linearDamping = isBubble && possessable.IsControlled
             ? 0f

@@ -6,10 +6,25 @@ using UnityEngine.SceneManagement;
 public class PlayerPossessionController : MonoBehaviour
 {
     [SerializeField] private PossessableBody initialBody;
+    [Tooltip("Optional host controlled at a fresh scene start. Keep Initial Body assigned to the Star.")]
+    [SerializeField] private PossessableBody startingHost;
+
+    [Header("Height Limit")]
+    [Tooltip("When enabled, leaving the Y range below restarts the level. " +
+             "Turn this off for large maps that have no ceiling/floor kill.")]
+    [SerializeField] private bool useHeightLimit = true;
+
+    [Tooltip("Falling below this Y restarts (only if Height Limit is on).")]
     [SerializeField] private float minimumHeight = -10f;
+
+    [Tooltip("Rising above this Y restarts (only if Height Limit is on).")]
     [SerializeField] private float maximumHeight = 8f;
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
+
+    [Header("Fan Repossess Cooldown")]
+    [Tooltip("Seconds after leaving a fan before the star can possess a fan again.")]
+    [SerializeField] private float fanRepossessCooldown = 2f;
 
     [Header("Water Movement")]
     [SerializeField, Min(0f)] private float starWaterSpeedMultiplier = 0.3f;
@@ -18,6 +33,10 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField, Min(0.01f)] private float swimAcceleration = 12f;
     [SerializeField, Min(0.01f)] private float swimBraking = 10f;
     [SerializeField, Range(0f, 1f)] private float starWaterJumpMultiplier = 0.75f;
+
+    [Header("Bouncy Ball Checkpoints")]
+    [Tooltip("Opt in to respawning as the last possessed Bouncy Ball after death. Enabled in Level01 only.")]
+    [SerializeField] private bool enableBouncyBallCheckpoints;
 
     [Header("Bouncy Ball Movement")]
     [SerializeField, Min(0.01f)] private float ballAcceleration = 35f;
@@ -28,6 +47,10 @@ public class PlayerPossessionController : MonoBehaviour
     [Header("Possession Stability")]
     [SerializeField, Min(0f)] private float possessionSeparationDistance = 0.35f;
     [SerializeField, Min(1)] private int possessionSeparationFrames = 3;
+
+    [Tooltip("Spider hovers slightly off surfaces, so allow a small gap to " +
+             "still count as touching when completing a possession.")]
+    [SerializeField, Min(0f)] private float possessionTouchTolerance = 0.1f;
 
     private bool isDead;
     private float deathRestartTime;
@@ -46,25 +69,61 @@ public class PlayerPossessionController : MonoBehaviour
     private readonly List<PossessableBody> blockedTargetBuffer =
         new List<PossessableBody>();
 
-    private float horizontalInput;
-    private float verticalInput;
-    private bool actionRequested;
-    private bool restartRequested;
-
-    private readonly Dictionary<PossessableBody, Vector3>
-        bouncyBallSpawnPositions =
-            new Dictionary<PossessableBody, Vector3>();
-
+    private readonly Dictionary<PossessableBody, Vector3> bouncyBallSpawnPositions =
+        new Dictionary<PossessableBody, Vector3>();
     private BouncyBallCheckpointSession checkpointSession;
 
-    private bool HasCheckpointInCurrentScene =>
-        checkpointSession != null &&
+    private bool HasBouncyBallCheckpointInCurrentScene =>
+        enableBouncyBallCheckpoints && checkpointSession != null &&
         checkpointSession.HasCheckpoint &&
         checkpointSession.ScenePath == gameObject.scene.path;
 
+    private float horizontalInput;
+    private float verticalInput;
+    private bool actionRequested;
+    private bool leaveRequested;
+    private bool bubblePopRequested;
+    private float fanRepossessBlockedUntil;
+    private bool restartRequested;
+    private static bool hasCheckpoint;
+    private static string checkpointScene;
+    private static string checkpointId;
+    private static Vector3 checkpointPosition;
+
+    public bool HasCheckpointInCurrentScene =>
+        hasCheckpoint &&
+        checkpointScene == gameObject.scene.path;
+
+    public bool IsCurrentCheckpoint(string id)
+    {
+        return HasCheckpointInCurrentScene && checkpointId == id;
+    }
+
+    // public：主菜单进入关卡时也要调用，保证是全新的一局。
+    [RuntimeInitializeOnLoadMethod(
+        RuntimeInitializeLoadType.SubsystemRegistration)]
     public static void ResetCheckpointSession()
     {
+        hasCheckpoint = false;
+        checkpointScene = null;
+        checkpointId = null;
+        checkpointPosition = Vector3.zero;
         BouncyBallCheckpointSession.ClearCurrent();
+    }
+
+    public void SetCheckpoint(string id, Vector3 position)
+    {
+        if (isDead || restartRequested || string.IsNullOrWhiteSpace(id))
+        {
+            return;
+        }
+
+        hasCheckpoint = true;
+        checkpointScene = gameObject.scene.path;
+        checkpointId = id;
+        checkpointPosition = position;
+
+        Debug.Log($"check point activated:{id}", this);
     }
 
     private void Start()
@@ -82,16 +141,45 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
-        checkpointSession = BouncyBallCheckpointSession.GetOrCreate();
-        CacheBouncyBallSpawnPositions();
-
-        if (TryRestoreBouncyBallCheckpoint())
+        if (enableBouncyBallCheckpoints)
         {
+            checkpointSession = BouncyBallCheckpointSession.Instance;
+            CacheBouncyBallSpawnPositions();
+            // Existing positional checkpoints retain priority over ball respawns.
+            if (!HasCheckpointInCurrentScene && TryRestoreBouncyBallCheckpoint())
+            {
+                return;
+            }
+        }
+
+        if (HasCheckpointInCurrentScene)
+        {
+            initialBody.transform.position = checkpointPosition;
+            initialBody.Body.position = (Vector2)checkpointPosition;
+            initialBody.Body.linearVelocity = Vector2.zero;
+            initialBody.Body.angularVelocity = 0f;
+
+            Physics2D.SyncTransforms();
+        }
+
+        // Existing checkpoint respawns keep their original Star behavior.
+        bool enterStartingHost = !HasCheckpointInCurrentScene && startingHost != null;
+        if (enterStartingHost &&
+            (initialBody.Form != BodyForm.Star || startingHost == initialBody ||
+             startingHost.Form == BodyForm.Star || !startingHost.isActiveAndEnabled ||
+             !startingHost.IsReady || startingHost.gameObject.scene != gameObject.scene))
+        {
+            Debug.LogError("Starting Host must be an active, configured non-Star body in this scene, with Initial Body set to the Star.", this);
+            enabled = false;
             return;
         }
 
         currentBody = initialBody;
         currentBody.SetOwner(this);
+        if (enterStartingHost)
+        {
+            TransferTo(startingHost);
+        }
     }
 
     private void Update()
@@ -109,7 +197,9 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
+            // R：清除检查点，整个关卡从头开始。
             ResetCheckpointSession();
+
             RequestRestart();
             return;
         }
@@ -123,6 +213,16 @@ public class PlayerPossessionController : MonoBehaviour
                 RequestRestart();
             }
 
+            return;
+        }
+
+        if (currentBody != null &&
+            currentBody.Form == BodyForm.gravityBall)
+        {
+            horizontalInput = 0f;
+            verticalInput = 0f;
+            actionRequested = false;
+            leaveRequested = false;
             return;
         }
 
@@ -152,13 +252,16 @@ public class PlayerPossessionController : MonoBehaviour
             verticalInput -= 1f;
         }
 
-        bool isBubble = currentBody != null &&
-            currentBody.Form == BodyForm.Bubble;
+        if (keyboard.eKey.wasPressedThisFrame)
+        {
+            RequestBubblePop(currentBody);
+        }
 
-        if ((isBubble && keyboard.eKey.wasPressedThisFrame) ||
-            (!isBubble && keyboard.spaceKey.wasPressedThisFrame))
+        if (keyboard.spaceKey.wasPressedThisFrame)
         {
             actionRequested = true;
+            // Fan form uses Space to leave; other forms use it as action/jump.
+            leaveRequested = true;
         }
     }
 
@@ -171,24 +274,40 @@ public class PlayerPossessionController : MonoBehaviour
 
         Bounds bodyBounds = currentBody.BodyCollider.bounds;
 
-        float activeMaximumHeight = currentBody.Form == BodyForm.BouncyBall
-            ? ballMaximumHeight
-            : maximumHeight;
-
-        if (bodyBounds.max.y < minimumHeight ||
-            bodyBounds.min.y > activeMaximumHeight)
+        if (useHeightLimit)
         {
-            KillControlledBody(currentBody);
-            return;
+            float activeMaximumHeight =
+                currentBody.Form == BodyForm.BouncyBall
+                    ? ballMaximumHeight
+                    : maximumHeight;
+
+            if (bodyBounds.max.y < minimumHeight ||
+                bodyBounds.min.y > activeMaximumHeight)
+            {
+                KillControlledBody(currentBody);
+                return;
+            }
         }
 
-        // Give the intentional pop action priority over a pending transfer.
-        if (actionRequested &&
-            (currentBody.Form == BodyForm.Bubble ||
-             currentBody.Form == BodyForm.Spider))
+        // Keep keyboard exits and hazard pops ahead of pending possession.
+        bool shouldPopBubble = bubblePopRequested && currentBody.Form == BodyForm.Bubble;
+        bubblePopRequested = false;
+        if (shouldPopBubble ||
+            (actionRequested && currentBody.Form == BodyForm.Spider))
         {
             PopBubble();
             return;
+        }
+
+        if (leaveRequested)
+        {
+            leaveRequested = false;
+
+            if (currentBody.Form == BodyForm.Fan)
+            {
+                LeaveFan();
+                return;
+            }
         }
 
         UpdateContactLocks();
@@ -296,6 +415,48 @@ public class PlayerPossessionController : MonoBehaviour
                     break;
                 }
 
+            case BodyForm.SpikeWall:
+                {
+                    bool hasShooter = currentBody.TryGetComponent(
+                        out SpikeShooterAbility shooter);
+
+                    // Pressing left or right turns the spikes to that side.
+                    if (hasShooter && horizontalInput != 0f)
+                    {
+                        shooter.SetFacing(horizontalInput > 0f);
+                    }
+
+                    if (currentBody.IsGrounded())
+                    {
+                        velocity.x = horizontalInput * currentBody.MoveSpeed;
+                    }
+
+                    if (hasShooter && actionRequested)
+                    {
+                        shooter.TryFire();
+                    }
+
+                    break;
+                }
+
+            case BodyForm.gravityBall:
+                {
+                    // keep the small ball rolling/player don control
+                    actionRequested = false;
+                    leaveRequested = false;
+                    return;
+                }
+
+            case BodyForm.Fan:
+                {
+                    if (currentBody.IsGrounded())
+                    {
+                        velocity.x = horizontalInput * currentBody.MoveSpeed;
+                    }
+
+                    break;
+                }
+
             case BodyForm.BouncyBall:
                 {
                     float targetSpeed =
@@ -338,6 +499,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         restartRequested = true;
+        bubblePopRequested = false;
         pendingSource = null;
         pendingTarget = null;
         horizontalInput = 0f;
@@ -357,6 +519,7 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         isDead = true;
+        bubblePopRequested = false;
         pendingSource = null;
         pendingTarget = null;
         horizontalInput = 0f;
@@ -383,12 +546,20 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
+        // Block re-entering a fan right after leaving one.
+        if (target.Form == BodyForm.Fan &&
+            Time.time < fanRepossessBlockedUntil)
+        {
+            return;
+        }
+
         pendingSource = source;
         pendingTarget = target;
     }
 
     private void OnDisable()
     {
+        bubblePopRequested = false;
         ClearPossessionContacts();
 
         if (isDead)
@@ -410,14 +581,16 @@ public class PlayerPossessionController : MonoBehaviour
             return;
         }
 
-        // Reuse the existing queued pop action.
+        // E and bubble hazards share this queue, independently of Space actions.
         // FixedUpdate processes it before a pending possession.
-        actionRequested = true;
+        bubblePopRequested = true;
     }
 
     private void PopBubble()
     {
         actionRequested = false;
+        leaveRequested = false;
+        bubblePopRequested = false;
 
         if (initialBody == null ||
             !initialBody.IsReady ||
@@ -443,10 +616,20 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
 
         bubble.SetOwner(null);
-        bool spawnedReplacement =
-            bubble.TryGetComponent(out BubbleRespawnOnPop respawner) &&
-            respawner.TrySpawnReplacement();
-        bubble.gameObject.SetActive(false);
+
+        // Existing loaned bodies return first; never also clone the same body.
+        bool spawnedReplacement = false;
+        if (bubble.TryGetComponent(out ReturnToSpawnOnLeave respawner))
+        {
+            respawner.ReturnToSpawn();
+        }
+        else
+        {
+            spawnedReplacement = bubble.Form == BodyForm.Bubble &&
+                bubble.TryGetComponent(out BubbleRespawnOnPop popRespawner) &&
+                popRespawner.TrySpawnReplacement();
+            bubble.gameObject.SetActive(false);
+        }
 
         // Position the inactive star before restoring its physics and visuals.
         Transform starTransform = initialBody.transform;
@@ -473,31 +656,106 @@ public class PlayerPossessionController : MonoBehaviour
         Debug.Log("Bubble popped. Returned to star form.", currentBody);
     }
 
+    private void LeaveFan()
+    {
+        if (initialBody == null ||
+            !initialBody.IsReady ||
+            initialBody.Form != BodyForm.Star)
+        {
+            Debug.LogError(
+                "Leaving a fan requires a valid initial star body.",
+                this
+            );
+
+            return;
+        }
+
+        PossessableBody fan = currentBody;
+        Vector2 releasePosition = fan.Body.position;
+        Vector2 releaseVelocity = fan.Body.linearVelocity;
+
+        pendingTarget = null;
+
+        if (fan.TryGetComponent(out HexagonSurfaceMovement hexagon))
+        {
+            hexagon.Release();
+        }
+
+        // Fan stays in the world and keeps blowing its last direction.
+        fan.SetOwner(null);
+
+        if (fanRepossessCooldown > 0f)
+        {
+            fanRepossessBlockedUntil = Time.time + fanRepossessCooldown;
+        }
+
+        Transform starTransform = initialBody.transform;
+        starTransform.position = new Vector3(
+            releasePosition.x,
+            releasePosition.y,
+            starTransform.position.z
+        );
+
+        initialBody.gameObject.SetActive(true);
+        initialBody.Body.position = releasePosition;
+        initialBody.Body.linearVelocity = releaseVelocity;
+        initialBody.Body.angularVelocity = 0f;
+
+        currentBody = initialBody;
+        currentBody.SetOwner(this);
+        BlockTarget(fan);
+        actionRequested = false;
+    }
+
     private void TransferTo(PossessableBody target)
     {
+        bubblePopRequested = false;
         PossessableBody previousBody = currentBody;
+
         if (previousBody.TryGetComponent(
             out HexagonSurfaceMovement previousHexagon))
         {
             previousHexagon.Release();
         }
+
         previousBody.SetOwner(null);
 
-        bool starEnteredHost = previousBody == initialBody;
-        if (starEnteredHost)
-        {
-            previousBody.gameObject.SetActive(false);
-        }
-
+        // 先成功转移控制权。
         currentBody = target;
         currentBody.SetOwner(this);
+        ActivateBouncyBallCheckpoint(currentBody);
 
-        if (currentBody.Form == BodyForm.BouncyBall)
+        horizontalInput = 0f;
+        verticalInput = 0f;
+        actionRequested = false;
+        leaveRequested = false;
+
+        bool starEnteredHost = previousBody == initialBody;
+        bool destroyedPreviousBody = false;
+
+        if (starEnteredHost)
         {
-            ActivateBouncyBallCheckpoint(currentBody);
+            // 星星保留，泡泡爆裂时还能恢复。
+            previousBody.gameObject.SetActive(false);
+        }
+        else if (previousBody.Form == BodyForm.gravityBall ||
+            previousBody.Form == BodyForm.Spider)
+        {
+            // Loaned spider/ball with ReturnToSpawnOnLeave goes back to spawn.
+            if (previousBody.TryGetComponent(out ReturnToSpawnOnLeave respawner))
+            {
+                respawner.ReturnToSpawn();
+            }
+            else
+            {
+                UnblockTarget(previousBody);
+                previousBody.gameObject.SetActive(false);
+                Destroy(previousBody.gameObject);
+                destroyedPreviousBody = true;
+            }
         }
 
-        if (!starEnteredHost)
+        if (!starEnteredHost && !destroyedPreviousBody)
         {
             BlockTarget(previousBody);
         }
@@ -537,7 +795,8 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void ActivateBouncyBallCheckpoint(PossessableBody ball)
     {
-        if (ball == null ||
+        if (!enableBouncyBallCheckpoints ||
+            ball == null ||
             ball.Form != BodyForm.BouncyBall ||
             isDead ||
             restartRequested)
@@ -564,7 +823,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private bool TryRestoreBouncyBallCheckpoint()
     {
-        if (!HasCheckpointInCurrentScene ||
+        if (!HasBouncyBallCheckpointInCurrentScene ||
             string.IsNullOrWhiteSpace(checkpointSession.BallName))
         {
             return false;
@@ -592,7 +851,7 @@ public class PlayerPossessionController : MonoBehaviour
                 this
             );
 
-            ResetCheckpointSession();
+            BouncyBallCheckpointSession.ClearCurrent();
             return false;
         }
 
@@ -630,7 +889,27 @@ public class PlayerPossessionController : MonoBehaviour
             target.isActiveAndEnabled &&
             target.IsReady &&
             !blockedTargets.Contains(target) &&
-            source.BodyCollider.IsTouching(target.BodyCollider);
+            AreCollidersClose(source.BodyCollider, target.BodyCollider);
+    }
+
+    // Spider hovers a small gap off every surface, so a strict IsTouching
+    // check would never pass for it. Allow a small measured gap as well.
+    private bool AreCollidersClose(Collider2D a, Collider2D b)
+    {
+        if (a == null || b == null)
+        {
+            return false;
+        }
+
+        if (a.IsTouching(b))
+        {
+            return true;
+        }
+
+        ColliderDistance2D separation = Physics2D.Distance(a, b);
+
+        return separation.isValid &&
+            separation.distance <= possessionTouchTolerance;
     }
 
     private void BlockCurrentContacts()
@@ -707,6 +986,7 @@ public class PlayerPossessionController : MonoBehaviour
             }
 
             int frames = separationFrames[target] + 1;
+
             if (frames >= possessionSeparationFrames)
             {
                 UnblockTarget(target);

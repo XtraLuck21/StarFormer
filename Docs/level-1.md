@@ -1,12 +1,20 @@
 # Level 1 Progress
 
-Last updated: 2026-10-11.
+Last updated: 2026-10-17.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
-**Status: the current Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. Final full-route regression, merge and navigation integration remain separate handoff steps.**
+**Historical Level 1 polish baseline: the Level 1 polish pass is implemented through `5f134cd`. Any controlled form can finish after G2 opens, the final U3 bubble/canopy have been removed, purple hazards kill controlled boxes and display black X markers, the three upper ceiling spikes now sit on the floor, and death feedback is restored. The developer reported successful tests of these changes, upper ball traversal and completion. This polish pass is now merged into `main` through PR #8 (`c63a17c`). Navigation is merged into `main` through PR #9 (`9fc0f95`), including the Level01 menu entry and return button. The rebuilt localhost version and the GitHub Pages release passed developer-reported playtests. Teammate testing and broader route/browser coverage remain follow-up checks.**
+
+**October 12 release follow-up:** Level01 is retained in All-Level V1 alongside Tutorial and the newly integrated Level02. An Input System exception occurred during editor regression testing. After the reload/restart diagnostic steps, the developer reported successful retesting and a successful localhost test of the new build. This update records release and integration progress, with no new Level01 layout or gameplay changes.
+
+**Last recorded Web publication (predates the intros):** All-Level V2 (`8c48475`) replaces V1 with a build from `d161538`, including the Level02 fan-hint fix. Level01 remains included, with no new Level01 gameplay edits in this documentation pass. The same build is frozen at the [Alpha Progress Check URL](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) by `5a7f043`, and the developer confirmed that URL works. The [root URL](https://xtraluck21.github.io/StarFormer/) tracks the latest tested release. Preserve the submission folder when publishing future versions. See [publish_instructions.md](publish_instructions.md) for the deployment procedure.
 
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
+
+**October 14 source update:** [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, connects Mainmenu → IntroBox → IntroBubble → Level01 → Level02. Level01 still accepts any controlled form after G2 opens, but now clears checkpoints and loads Level02 instead of pausing at a completion screen. Shared bubbles wait until first possession and use **E** to pop. The developer confirmed the full flow in Unity Play Mode; this update has not been published as a new WebGL build. See [intro-levels.md](intro-levels.md).
+
+**October 17 source update (pending integration):** the intro polish branch adds a generated `Level up!` / `Entering Level 2...` overlay to LevelGoal. Completion still requires any living controlled form and an open G2; gameplay pauses for a default 1.5 seconds before automatic progression. The developer reported that the completion transitions work. This does not claim a new Level01 layout review, teammate-branch merge or browser build.
 
 ## 1. Current route and progress
 
@@ -24,7 +32,7 @@ For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script resp
 | Right ascent | U2 swims/rises through G while C keeps P pressed | G is positioned across the local ascent exit and tested |
 | Upper box puzzle | Possess D and grow upward to touch H, opening G2 near the goal | Height switch, solid support and latched gate tested |
 | Upper return | Transfer to R2 beside D and steer across the upper return floor toward G2 and the flag | Spikes `(13)`, `(14)` and `(15)` moved from ceiling to floor and now point upward. Revised ball traversal and completion passed developer tests |
-| Finish | Pass opened G2 and reach the flag in any controlled form | Star-only restriction removed; `Bubble_U3` and `U3_Canopy` removed. Completion and restart tested, including the bouncing ball |
+| Finish | Pass opened G2 and reach the flag in any controlled form | Star-only restriction removed; `Bubble_U3` and `U3_Canopy` removed. Completion previously tested including the bouncing ball; the current goal advances to Level02, and the full progression was retested |
 
 The receiver roof limits R1's bounce height while the player steers toward C. A controlled ball normally targets a 20.25-unit bounce with 2.4 seconds to its apex. When a low solid ceiling compresses the available height, the ball strikes it and automatically uses a shorter, faster bounce rhythm. Ordinary terrain contact does not deactivate the ball. Transferring possession to another body freezes the abandoned ball in place until it is possessed again.
 
@@ -38,15 +46,18 @@ The ball floats at the surface of any registered water zone. While floating it c
 | `PressurePlate_P` | `HeldPressurePlate.targetBox` / `door` | `Box_C` / `Gate_G` |
 | `Switch_H` | `BoxHeightSwitch.targetBox` / `door` | `Box_D` / `Gate_G2` |
 | `WaterPopHazard_01`, `WaterPopHazard_02`, `WaterPopHazard_03` | `BubblePopHazard.playerController` | `PlayerControl` |
-| `LevelGoal` | Player controller / required gate / status text | `PlayerControl` / `Gate_G2` / `LevelStatusText` |
+| `LevelGoal` | Player controller / required gate / optional status text / next scene | `PlayerControl` / `Gate_G2` / `LevelStatusText` / `Level02` |
+| `LevelGoal` completion overlay | Next Level Label / Transition Seconds | `Level 2` / default `1.5`; LevelTransitionUI generates its own Canvas and labels |
 | `LevelCanvas` | `LevelDeathUI.playerController` / `statusText` | `PlayerControl` / `LevelStatusText` |
+| `ReturnToMenuButton` | OnClick | Local `LevelCanvas` → `LevelNavigationUI.ReturnToMainMenu` |
 
 - **P → G is continuous:** only the assigned grounded C can hold it open. Control can transfer away from C while it remains on P. Moving C away closes G.
 - **H → G2 is latched:** assigned grounded D touches the overhead trigger once; G2 then remains open until restart. H has no explicit size threshold; its height creates the growth requirement.
 - **Purple hazards react by controlled form:** a bubble pops and releases the star; a box dies through the normal restart flow, including when growing into the trigger. Stars, bouncing balls and idle bodies are ignored. All three saved hazards use `WaterPopHazard` prefab instances with scene controller references and black X visual children.
-- **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star.
+- **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star. The goal validates the next scene and invokes LevelTransitionUI to show Level up! / Entering Level 2... for a default 1.5 seconds while gameplay is paused. It then clears checkpoint state and loads Level02 once with normal time scale; no confirmation input is required.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
 - **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.`, `Restarting...`, and `Press R to restart now.` into the shared status text. The controller handles the two-second death pause and R restart. The text remains blank during normal play.
+- **Menu navigation:** enter Level01 directly from Mainmenu or from the IntroBubble Star goal. The top-right return button loads Mainmenu and restores time scale to 1. R restarts the current level; once the goal has loaded Level02, R restarts Level02. Menu entry and forward transitions clear checkpoint state.
 - **Ball spikes remain lethal:** `SpikeHazard` kills the currently controlled star, box, bubble or bouncing ball and reloads the scene after the configured death delay.
 - **The camera follows the controlled form:** possession changes do not break camera tracking. Level01 uses lower-left, lower-right and upper camera regions with bounded follow, smooth movement and smooth zoom transitions.
 
@@ -68,7 +79,7 @@ These are current prototype coordinates, not final balance requirements. Positio
 | Upper floor / ceiling underside | `Y = 9` / `Y = 13` | Vertical bounds used by the implemented upper R2 challenge |
 | `BubbleRouteBlocker` position / scale | `(19, 7.125)` / `(0.6, 2.75)` | Ordinary solid wall hanging from the upper platform to block the bubble route without extending to the lower floor |
 | `LevelGoal` position | `(-10.5, 9)` | Final goal for any living controlled form after G2 opens |
-| `LevelStatusText` anchored position / size | `(0, -40)` / `(1000, 200)` | Top-center anchor and pivot; saved text empty; space for death and completion messages |
+| `LevelStatusText` anchored position / size | `(0, -40)` / `(1000, 200)` | Top-center anchor and pivot; saved text empty; space for death messages; completion uses a separate generated overlay before advancing |
 | General vertical death limits / death delay | `-12` and `16` / `2 seconds` | Level01 settings for the star, box and bubble |
 | Bouncing-ball upper death limit | `40` | Ball-specific exception required by its 20.25-unit open-air bounce; this changes survival bounds, not bounce height |
 | Ball default bounce height / seconds to apex | `20.25` / `2.4` | Open-air bounce target before ceiling compression |
@@ -81,7 +92,11 @@ Keep boxes upright and unparented: the current resizing implementation rejects p
 
 ## 4. Verification completed and its limits
 
-The developer reported successful manual tests of:
+**October 17:** the developer confirmed the new timed completion transitions. Script compilation passed; no new WebGL export or broad Level01 regression run is recorded for this pass.
+
+**October 14:** the developer confirmed E-key bubble exit and the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow. Earlier completion-screen tests below describe the pre-intro version. No new browser build is claimed for October 14.
+
+Earlier developer-reported manual tests covered:
 
 - Star, box and bubble behavior in the level's water regions, including possession and bubble popping.
 - First-pool geometry, alternate exit routes and box resizing passages.
@@ -92,6 +107,8 @@ The developer reported successful manual tests of:
 - Any-form goal completion, including the bouncing ball, after G2 opens; completion feedback and restart after removal of U3 and its canopy.
 - Upper return traversal after moving spikes `(13)`, `(14)` and `(15)` to the floor.
 - Death text, automatic restart and R restart, with the enlarged/repositioned status text showing all three lines and its default `New Text` placeholder removed.
+- Main menu entry into Level01 and return to the menu, including the completion screen, in the subsequent navigation pass.
+- Successful playtests of the rebuilt localhost version and the published GitHub Pages version. The initial October 11 online release included Tutorial and Level01. The October 12 All-Level V1 release adds Level02 and passed developer-reported editor retesting and localhost testing.
 - New StarPlayer, BoxBody and BubbleBody prefab instances in WaterPlayground: movement, possession, box resizing/sinking, bubble swimming and popping, with no reported new Console errors.
 - A single reusable `BouncyBall` prefab instantiated as `BouncyBall_Lower` and `BouncyBall_Upper`, including centered star marker, waiting state before possession, A/D steering and automatic land bouncing.
 - Ball bounce-height compression beneath a low solid roof, with a faster rhythm at shorter heights and restoration of the default height in open space.
@@ -100,7 +117,7 @@ The developer reported successful manual tests of:
 - Lethal spike contact for controlled forms and full-scene restart behavior.
 - Three camera regions: enlarged lower-left and lower-right views, centered upper view, bounded local following, smooth position movement, smooth zoom and tracking across possession transfers.
 
-Earlier ball and camera segment tests reported no Console warnings or errors. The latest developer reports also confirm the revised upper traversal, completion and death UI. They do not establish exhaustive coverage of the whole route, every possible ball landing or puzzle shortcuts. Keep a final start-to-finish regression in the handoff checklist.
+Earlier ball and camera segment tests reported no Console warnings or errors. The latest developer reports also confirm the revised upper traversal, completion and death UI. They do not establish exhaustive coverage of the whole route, every possible ball landing or puzzle shortcuts. The later localhost and online release playtests also passed. These reports do not enumerate every alternate route, browser or resolution, so keep broader regression coverage as follow-up rather than describing the initial Web test as unfinished.
 
 For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Moving its `Visual` child only moves the sprite, leaving physics and possession at the root. Keep the saved `Visual` local position at `(0, 0, 0)` and restore the intended starting setup before committing the scene.
 
@@ -115,9 +132,9 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 
 ## 6. Remaining work and handoff
 
-1. **Final route regression.** Play from the initial star to the flag with the saved starting positions. Check both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion. The latest changes have passed developer tests; this final pass checks them together.
-2. **Merge the Level 1 pass.** Keep gameplay and documentation commits separate and merge the reviewed branch into `main`. Do not treat these docs as evidence that this merge has already happened.
-3. **Navigation on a separate branch.** Build a simple navigation page linking Tutorial and Level 1 after the merge. Add Level 2 later once the team finishes its remaining content and resolves its camera conflicts. No navigation page or automatic level transition is implemented in this pass.
-4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Validate the intended web build before submission.
+1. **Broader regression coverage.** The developer reports successful localhost and online playtests. Continue testing alternate routes, both ball sections, C remaining on P after transfer, lost-bubble recovery, failure/restart and completion on teammates' computers. Do not treat this initial release as exhaustive coverage of every route or browser.
+2. **Level 1 merge completed.** PR #8 (`c63a17c`) integrated the Level 1 gameplay and polish into `main`.
+3. **Navigation merged and Web release published.** PR #9 (`9fc0f95`) integrates Mainmenu, Tutorial/Level01 links, return buttons and the optional menu star interaction. [Play the current build](https://xtraluck21.github.io/StarFormer/). GitHub Pages publishes `gh-pages` from its root, with initial deployment commit `73877e9`. Localhost and online testing passed after restoring missing script imports and rebuilding. Level02 is now connected from the menu and has a return button. All-Level V1 was built from source `773912d` with local editor/build changes and published as `6f1737a` on October 12. GitHub Pages reports deployment success. That release used manual menu selection; current source adds intro progression and automatic Level01 → Level02 transition through PR #10, with October 17 timed completion feedback pending integration from intro-levels. A new WebGL export is still required.
+4. **Deferred polish.** Revisit button/gate visibility with the team. Retain current ball safety bounds and inert R1/R2 markers until further testing justifies changes. Keep the published build updated after future source changes and repeat browser testing for each release. Keep configuration and generated asset review separate from the documentation commit, as documented in ScriptGuide. The team is collecting feedback against All-Level V2, preserved as the Alpha Progress Check submission. All-Level V1 remains historical release context.
 
-The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. The current branch contains additional Level 1 changes beyond those baselines. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.
+PR #10 adds the introductory sequence and Level01 → Level02 progression. The Level 1 baseline merged into `main` through PR #2, core prefabs through PR #3, and hazard prefabs were added in a follow-up. PR #8 merged the later Level 1 polish. PR #9 merged navigation into `main`. The exported Web build is maintained separately on `gh-pages`, which must not be merged into `main`. Forms and hazards remain together in `Assets/Form` by team convention. See [ScriptGuide.md](ScriptGuide.md) for scene references and prefab setup.

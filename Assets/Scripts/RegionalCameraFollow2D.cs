@@ -24,7 +24,7 @@ public class RegionalCameraFollow2D : MonoBehaviour
     [SerializeField, Min(0.1f)] private float lowerLeftSize = 10f;
 
     [Header("Lower Right View")]
-    [SerializeField] private Vector2 lowerRightCenter = new(34f, 1f);
+    [SerializeField] private Vector2 lowerRightCenter = new(34f, -2.5f);
     [SerializeField] private Vector2 lowerRightFollowRange = new(6f, 1.5f);
     [SerializeField, Min(0.1f)] private float lowerRightSize = 10f;
 

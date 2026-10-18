@@ -47,7 +47,8 @@ public class TutorialIntroUI : MonoBehaviour
             {
                 deathShown = true;
                 titleText.text = "You died.";
-                instructionsText.text = "Restarting...";
+                instructionsText.text =
+                    "Restarting...\nPress R to restart now.";
             }
 
             return;

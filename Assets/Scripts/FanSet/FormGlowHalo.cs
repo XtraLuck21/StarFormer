@@ -322,6 +322,7 @@ public class FormGlowHalo : MonoBehaviour
                 case BodyForm.Star:
                     return FormHaloShape.Star;
                 case BodyForm.Box:
+                case BodyForm.SpikeWall:
                     return FormHaloShape.Box;
                 case BodyForm.Spider:
                     return FormHaloShape.Hexagon;
