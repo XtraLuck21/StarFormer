@@ -4,7 +4,8 @@ using UnityEngine;
 [ExecuteAlways]
 public class BubbleMovementHint : MonoBehaviour
 {
-    public enum HintMode { Air, Water, ExitBubble }
+    // Append modes to preserve existing scene values: Air=0, Water=1, ExitBubble=2.
+    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump }
 
     [SerializeField] private HintMode mode;
     [SerializeField] private PlayerPossessionController playerController;
@@ -44,10 +45,12 @@ public class BubbleMovementHint : MonoBehaviour
         bool visible = !Application.IsPlaying(gameObject) && previewInEditor;
         if (Application.IsPlaying(gameObject))
         {
+            bool starMode = mode == HintMode.StarMove || mode == HintMode.StarJump;
             visible = playerController != null && targetBody != null &&
-                targetBody.Form == BodyForm.Bubble && targetBody.isActiveAndEnabled &&
-                !playerController.IsDead && playerController.CurrentBody == targetBody &&
-                targetBody.IsInWater == (mode == HintMode.Water) && IsInsideArea();
+                targetBody.Form == (starMode ? BodyForm.Star : BodyForm.Bubble) &&
+                targetBody.isActiveAndEnabled && !playerController.IsDead &&
+                playerController.CurrentBody == targetBody &&
+                (starMode || targetBody.IsInWater == (mode == HintMode.Water)) && IsInsideArea();
         }
         if (visuals.activeSelf != visible) visuals.SetActive(visible);
     }
@@ -74,7 +77,7 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(0.5f, 0.5f), texture.width, 0, SpriteMeshType.FullRect);
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
 
-        if (mode == HintMode.Air)
+        if (mode == HintMode.Air || mode == HintMode.StarMove)
         {
             AddKey('A', new Vector2(-0.5f, 0));
             AddKey('D', new Vector2(0.5f, 0));
@@ -92,6 +95,25 @@ public class BubbleMovementHint : MonoBehaviour
             Arrow(new Vector2(0, 0.98f), new Vector2(0, 1.18f));
             Arrow(new Vector2(0, -0.33f), new Vector2(0, -0.53f));
         }
+        else if (mode == HintMode.StarJump)
+        {
+            AddKeyFrame(Vector2.zero, new Vector2(1.9f, 0.5f));
+            const string label = "SPACE";
+            for (int i = 0; i < label.Length; i++)
+                AddLetter(label[i], new Vector2((i - 2) * 0.35f, 0));
+
+            // A short jump arc, drawn as strokes rather than font-dependent symbols.
+            Vector2 previous = new Vector2(-0.85f, 0.4f);
+            for (int i = 1; i <= 16; i++)
+            {
+                float t = i / 16f;
+                Vector2 next = new Vector2(Mathf.Lerp(-0.85f, 0.85f, t),
+                    0.4f + 0.55f * 4f * t * (1f - t));
+                if (i == 16) Arrow(previous, next);
+                else Stroke(previous, next);
+                previous = next;
+            }
+        }
         else
         {
             AddKey('E', Vector2.zero);
@@ -100,10 +122,21 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void AddKey(char letter, Vector2 center)
     {
-        Rectangle(center, Vector2.one * 0.5f, keyBackground, sortingOrder);
-        Vector2[] corners = { new Vector2(-0.25f, -0.25f), new Vector2(0.25f, -0.25f),
-            new Vector2(0.25f, 0.25f), new Vector2(-0.25f, 0.25f) };
+        AddKeyFrame(center, Vector2.one * 0.5f);
+        AddLetter(letter, center);
+    }
+
+    private void AddKeyFrame(Vector2 center, Vector2 size)
+    {
+        Rectangle(center, size, keyBackground, sortingOrder);
+        Vector2 half = size * 0.5f;
+        Vector2[] corners = { new Vector2(-half.x, -half.y), new Vector2(half.x, -half.y),
+            new Vector2(half.x, half.y), new Vector2(-half.x, half.y) };
         for (int i = 0; i < 4; i++) Stroke(center + corners[i], center + corners[(i + 1) % 4]);
+    }
+
+    private void AddLetter(char letter, Vector2 center)
+    {
         Vector2[] points;
         switch (letter)
         {
@@ -120,6 +153,16 @@ public class BubbleMovementHint : MonoBehaviour
                 points = new[] { new Vector2(0.13f, 0.15f), new Vector2(-0.13f, 0.15f),
                     new Vector2(-0.13f, -0.15f), new Vector2(0.13f, -0.15f) };
                 Stroke(center + new Vector2(-0.13f, 0), center + new Vector2(0.1f, 0));
+                break;
+            case 'P':
+                points = new[] { new Vector2(-0.12f, -0.15f), new Vector2(-0.12f, 0.15f),
+                    new Vector2(0.1f, 0.15f), new Vector2(0.13f, 0.07f),
+                    new Vector2(0.1f, 0), new Vector2(-0.12f, 0) };
+                break;
+            case 'C':
+                points = new[] { new Vector2(0.13f, 0.15f), new Vector2(-0.08f, 0.15f),
+                    new Vector2(-0.13f, 0.08f), new Vector2(-0.13f, -0.08f),
+                    new Vector2(-0.08f, -0.15f), new Vector2(0.13f, -0.15f) };
                 break;
             case 'W':
                 points = new[] { new Vector2(-0.16f, 0.15f), new Vector2(-0.08f, -0.15f),
