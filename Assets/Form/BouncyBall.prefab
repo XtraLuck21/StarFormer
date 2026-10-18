@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c12cdd3236cf4f3ca0a02928f805a16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PossessableBody
-  form: 4
+  form: 7
   controlVisual: {fileID: 4517398728224199895}
   moveSpeed: 7.5
   jumpSpeed: 16.9

@@ -78,6 +78,18 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointSession.HasCheckpoint &&
         checkpointSession.ScenePath == gameObject.scene.path;
 
+    private sealed class BubbleHandoffCollision
+    {
+        public Collider2D Box;
+        public Collider2D Bubble;
+        public int SeparatedFrames;
+    }
+
+    // Independent of possession locks: a later transfer must not leave an old
+    // box/bubble pair permanently ignoring each other.
+    private readonly List<BubbleHandoffCollision> bubbleHandoffCollisions =
+        new List<BubbleHandoffCollision>();
+
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
@@ -267,6 +279,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        UpdateBubbleHandoffCollisions();
         if (currentBody == null || restartRequested || isDead)
         {
             return;
@@ -559,6 +572,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void OnDisable()
     {
+        RestoreBubbleHandoffCollisions();
         bubblePopRequested = false;
         ClearPossessionContacts();
 
@@ -723,6 +737,7 @@ public class PlayerPossessionController : MonoBehaviour
         // 先成功转移控制权。
         currentBody = target;
         currentBody.SetOwner(this);
+        BeginBubbleHandoff(previousBody, currentBody);
         ActivateBouncyBallCheckpoint(currentBody);
 
         horizontalInput = 0f;
@@ -771,6 +786,81 @@ public class PlayerPossessionController : MonoBehaviour
         // how they behave while unpossessed.
 
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
+    }
+
+    private void BeginBubbleHandoff(PossessableBody previous, PossessableBody next)
+    {
+        if (previous.Form != BodyForm.Box || next.Form != BodyForm.Bubble)
+        {
+            return;
+        }
+
+        Collider2D box = previous.BodyCollider;
+        Collider2D bubble = next.BodyCollider;
+        if (!IsActiveCollider(box) || !IsActiveCollider(bubble) ||
+            Physics2D.GetIgnoreCollision(box, bubble))
+        {
+            // Do not take ownership of an exclusion configured by another system.
+            return;
+        }
+
+        // Release only the old host's pressure. Terrain and other bodies remain solid.
+        Physics2D.IgnoreCollision(box, bubble, true);
+        bubbleHandoffCollisions.Add(new BubbleHandoffCollision
+        {
+            Box = box,
+            Bubble = bubble
+        });
+    }
+
+    private void UpdateBubbleHandoffCollisions()
+    {
+        for (int i = bubbleHandoffCollisions.Count - 1; i >= 0; i--)
+        {
+            BubbleHandoffCollision pair = bubbleHandoffCollisions[i];
+            if (!IsActiveCollider(pair.Box) || !IsActiveCollider(pair.Bubble))
+            {
+                // Unity drops pair exclusions when a collider is deactivated/destroyed.
+                bubbleHandoffCollisions.RemoveAt(i);
+                continue;
+            }
+
+            Bounds clearance = pair.Bubble.bounds;
+            clearance.Expand(possessionSeparationDistance * 2f);
+            if (clearance.Intersects(pair.Box.bounds))
+            {
+                pair.SeparatedFrames = 0;
+                continue;
+            }
+
+            pair.SeparatedFrames++;
+            if (pair.SeparatedFrames < possessionSeparationFrames)
+            {
+                continue;
+            }
+
+            Physics2D.IgnoreCollision(pair.Box, pair.Bubble, false);
+            bubbleHandoffCollisions.RemoveAt(i);
+        }
+    }
+
+    private void RestoreBubbleHandoffCollisions()
+    {
+        foreach (BubbleHandoffCollision pair in bubbleHandoffCollisions)
+        {
+            if (IsActiveCollider(pair.Box) && IsActiveCollider(pair.Bubble))
+            {
+                Physics2D.IgnoreCollision(pair.Box, pair.Bubble, false);
+            }
+        }
+
+        bubbleHandoffCollisions.Clear();
+    }
+
+    private static bool IsActiveCollider(Collider2D collider)
+    {
+        return collider != null && collider.enabled &&
+            collider.gameObject.activeInHierarchy;
     }
 
     private void CacheBouncyBallSpawnPositions()

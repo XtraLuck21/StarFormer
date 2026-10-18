@@ -133,7 +133,7 @@ public static class BouncyBallSetup
 
         PossessableBody possessable = root.AddComponent<PossessableBody>();
         SerializedObject serializedBody = new SerializedObject(possessable);
-        serializedBody.FindProperty("form").enumValueIndex =
+        serializedBody.FindProperty("form").intValue =
             (int)BodyForm.BouncyBall;
         serializedBody.FindProperty("controlVisual").objectReferenceValue =
             starMark;
