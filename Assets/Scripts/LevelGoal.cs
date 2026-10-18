@@ -1,6 +1,5 @@
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class LevelGoal : MonoBehaviour
@@ -9,6 +8,9 @@ public class LevelGoal : MonoBehaviour
     [SerializeField] private GameObject requiredGate;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private string nextSceneName = "Level02";
+
+    [SerializeField] private string nextLevelLabel = "Level 2";
+    [SerializeField, Min(0.1f)] private float transitionSeconds = 1.5f;
 
     private bool isCompleted;
     private bool reportedMissingScene;
@@ -59,8 +61,6 @@ public class LevelGoal : MonoBehaviour
         }
 
         isCompleted = true;
-        PlayerPossessionController.ResetCheckpointSession();
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(nextSceneName);
+        LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
     }
 }

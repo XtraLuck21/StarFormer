@@ -477,7 +477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &350186482
 RectTransform:
   m_ObjectHideFlags: 0
@@ -517,7 +517,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You are a star.
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3649,7 +3649,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1342776486
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3666,7 +3666,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -170}
+  m_AnchoredPosition: {x: 0, y: -80}
   m_SizeDelta: {x: 1400, y: 240}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1342776487
@@ -3689,11 +3689,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Move: A / D
-
-    Jump: Space
-
-    Restart: R'
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3720,8 +3716,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 28
+  m_fontSize: 32
+  m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5551,6 +5547,7 @@ GameObject:
   - component: {fileID: 2043469417}
   - component: {fileID: 2043469421}
   - component: {fileID: 2043469422}
+  - component: {fileID: 2043469423}
   m_Layer: 5
   m_Name: TutorialCanvas
   m_TagString: Untagged
@@ -5651,7 +5648,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043469416}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 87c1f8c49803a493d928362dcd7df887, type: 3}
   m_Name: 
@@ -5672,6 +5669,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d45df702873e4e1cb9345085f92ac93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelNavigationUI
+--- !u!114 &2043469423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043469416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b6da7b3a7394ba1a3c659e19c05005a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IntroFormHintUI
+  sequence: 1
+  playerController: {fileID: 1643171616}
+  titleText: {fileID: 350186483}
+  subtitleText: {fileID: 1342776487}
+  subtitleHoldSeconds: 4
+  subtitleFadeSeconds: 0.75
 --- !u!1 &2052661012
 GameObject:
   m_ObjectHideFlags: 0

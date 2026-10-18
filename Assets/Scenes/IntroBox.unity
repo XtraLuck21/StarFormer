@@ -1072,6 +1072,62 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &542256994
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 542256996}
+  - component: {fileID: 542256995}
+  m_Layer: 0
+  m_Name: ContinueRightHint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &542256995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542256994}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cbfcf891f5c45be85d43e715df605f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleMovementHint
+  mode: 5
+  playerController: {fileID: 0}
+  targetBody: {fileID: 0}
+  previewInEditor: 1
+  flagGate: {fileID: 1650643065}
+  activationAreaSize: {x: 8, y: 5}
+  activationAreaOffset: {x: 0, y: 0}
+  iconScale: 1
+  continueArrowWidth: 0.08
+  inkColor: {r: 1, g: 1, b: 1, a: 1}
+  keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
+  sortingOrder: 20
+--- !u!4 &542256996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 542256994}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.48, y: -2.39, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3514,9 +3570,11 @@ MonoBehaviour:
   playerController: {fileID: 1643171616}
   targetBody: {fileID: 1066985097}
   previewInEditor: 1
+  flagGate: {fileID: 0}
   activationAreaSize: {x: 4, y: 4}
   activationAreaOffset: {x: -0.5, y: -1}
   iconScale: 1
+  continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
   keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
   sortingOrder: 0
@@ -4103,9 +4161,11 @@ MonoBehaviour:
   playerController: {fileID: 1643171616}
   targetBody: {fileID: 1066985097}
   previewInEditor: 1
+  flagGate: {fileID: 0}
   activationAreaSize: {x: 4, y: 4}
   activationAreaOffset: {x: 0, y: -1}
   iconScale: 1
+  continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
   keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
   sortingOrder: 0
@@ -4789,3 +4849,4 @@ SceneRoots:
   - {fileID: 1914139345}
   - {fileID: 1925849205}
   - {fileID: 1781669106}
+  - {fileID: 542256996}
