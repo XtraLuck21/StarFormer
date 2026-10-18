@@ -1,8 +1,8 @@
 # Introductory Levels
 
-Last updated: 2026-10-17.
+Last updated: 2026-10-18.
 
-**Status:** the introductory gameplay and current hint/presentation pass are complete for this handoff. The original sequence was integrated through [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`. The October 17 polish on `intro-levels` (through `7fc77d5`) has passed developer-reported Unity Play Mode tests and is awaiting a new PR/merge into main. No new WebGL export or publication is recorded for this pass.
+**Status:** the introductory gameplay and current hint/presentation pass are complete for this handoff. The original sequence was integrated through [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`. The October 17 polish on `intro-levels` (through `7fc77d5`) passed developer-reported Unity Play Mode tests and was merged into main through [PR #11](https://github.com/XtraLuck21/StarFormer/pull/11), merge `989d2d1`. No new WebGL export or publication is recorded for this pass.
 
 ## Purpose and progression
 
@@ -109,4 +109,4 @@ Remaining work: integrate this completed intro pass through a maintainer-created
 | `850e465` | Box-to-Box message and subtitle readability |
 | `7fc77d5` | IntroBubble UI wiring, gate-open arrow with adjustable thickness, and Level 1/2 completion transitions |
 
-This record does not imply that the new polish has already been merged into main or deployed. Commits, pushes, PR creation and merges remain manual maintainer actions.
+PR #11 integrated this polish into main. No new WebGL deployment is recorded. Commits, pushes, PR creation and merges remain manual maintainer actions.
