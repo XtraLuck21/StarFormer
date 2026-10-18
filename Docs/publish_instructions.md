@@ -49,6 +49,11 @@ Choose **Build And Run** with a new output folder, such as `Builds/WebGL-All-Lev
 - IntroBox's arrow appears only after the flag opens the door; walking right loads IntroBubble without a Level up overlay.
 - IntroBubble and Level01 show Level up! / Entering Level 1... or Level 2... for about 1.5 seconds, load the correct scene exactly once, and restore movement/time afterward. The outgoing gameplay and pointer interaction with its UI should pause during the overlay.
 - The two intros retain the updated gray/dark palette, visible Bubble outline and correct hint/body drawing order.
+- In Level02, E / Leave releases Spider and Fan, W / Blow toggles Fan wind, and Space / Fire still fires the possessable spike wall. Confirm the single-line upper-center Spider hint and two-line Fan hint are readable.
+- Confirm all three Level02 top-right buttons fit: Return to Main Menu, Restart Level and Retry Checkpoint. Test Retry with no checkpoint and at CP01/CP02/CP03, automatic death recovery at each, and Restart/R after a checkpoint. Review the unassigned ShowWall callbacks described in [level-2.md](level-2.md).
+- Reach the Level02 flag: the deleted brown wall (20) should remain absent. Show Level Complete / You are a super star now! and wait for Return to Main Menu, with gameplay paused. Verify one completion event and a fresh entrance on menu re-entry.
+- Keep MobileControls on AutoDetect for the release. Test desktop hiding, phone visibility, simultaneous movement/action touches, every form, and release of held input after hiding/focus loss. The mobile Canvas is screen-fixed Overlay UI; check different browser sizes and phone aspect ratios.
+- The October 18 hint/layout and final-goal/menu checks passed in Editor according to the developer; current checkpoint-matrix coverage, a fresh WebGL/phone run and analytics delivery verification remain pending. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md).
 
 Publish only after local tests pass.
 
