@@ -244,7 +244,7 @@ The intros retain fixed cameras. The former `Tutorial` scene and its scripts rem
 
 ## 11. Main menu and navigation
 
-- Level02 completes when the current living controlled body overlaps its final flag trigger. The trigger is 1.4 × 1.6 world units with a local Y offset of 0.8. Its gate reference is empty, so no extra plate or Star-only requirement applies. It records completion once, pauses gameplay, and shows **Level Complete**, **Thanks for playing!**, and **Return to Main Menu**. The final screen waits for a click/tap; IntroBubble and Level01 retain their timed next-level transitions.
+- Level02 completes when the current living controlled body overlaps its final flag trigger. The trigger is 1.4 × 1.6 world units with a local Y offset of 0.8. Its gate reference is empty, so no extra plate or Star-only requirement applies. It records completion once, pauses gameplay, and shows **Level Complete**, **You are a super star now!**, and **Return to Main Menu**. The final screen waits for a click/tap; IntroBubble and Level01 retain their timed next-level transitions.
 
 
 - `Mainmenu` is the startup scene. Its title is `Star Former`, with Introductory Levels, Level 1 and Level 2 buttons. The Main Camera supplies the solid blue background.

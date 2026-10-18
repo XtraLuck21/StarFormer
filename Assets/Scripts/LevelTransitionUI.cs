@@ -76,7 +76,7 @@ public class LevelTransitionUI : MonoBehaviour
         background.GetComponent<Image>().color = new Color(0.04f, 0.07f, 0.1f, 0.88f);
 
         AddText("Title", finalResult ? "Level Complete" : "Level up!", 64f, 50f);
-        AddText("Destination", finalResult ? "Thanks for playing!" : "Entering " + levelLabel + "...", 36f, -45f);
+        AddText("Destination", finalResult ? "You are a super star now!" : "Entering " + levelLabel + "...", 36f, -45f);
     }
 
     private void AddText(string objectName, string message, float fontSize, float y)
