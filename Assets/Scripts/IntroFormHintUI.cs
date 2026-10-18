@@ -16,6 +16,7 @@ public class IntroFormHintUI : MonoBehaviour
     private bool hasState;
     private bool hasHosted;
     private BodyForm lastForm;
+    private PossessableBody lastBody;
     private bool lastInWater;
     private float subtitleAge;
 
@@ -23,6 +24,7 @@ public class IntroFormHintUI : MonoBehaviour
     {
         hasState = false;
         hasHosted = false;
+        lastBody = null;
         ClearText();
     }
 
@@ -52,16 +54,20 @@ public class IntroFormHintUI : MonoBehaviour
 
         BodyForm form = body.Form;
         bool inWater = form == BodyForm.Bubble && body.IsInWater;
-        if (!hasState || form != lastForm || inWater != lastInWater)
+        bool switchedBox = sequence == IntroSequence.Box && hasState &&
+            lastForm == BodyForm.Box && form == BodyForm.Box && body != lastBody;
+        if (!hasState || form != lastForm || inWater != lastInWater || switchedBox)
         {
             bool leavingWater = hasState && lastForm == BodyForm.Bubble &&
                 lastInWater && form == BodyForm.Bubble && !inWater;
-            ShowState(form, inWater, leavingWater);
+            ShowState(form, inWater, leavingWater, switchedBox);
             lastForm = form;
             lastInWater = inWater;
             hasState = true;
             if (form != BodyForm.Star) hasHosted = true;
         }
+
+        lastBody = body;
 
         // Scaled time keeps the explanation readable while gameplay is paused.
         subtitleAge += Time.deltaTime;
@@ -69,7 +75,7 @@ public class IntroFormHintUI : MonoBehaviour
             (subtitleAge - subtitleHoldSeconds) / Mathf.Max(0.01f, subtitleFadeSeconds));
     }
 
-    private void ShowState(BodyForm form, bool inWater, bool leavingWater)
+    private void ShowState(BodyForm form, bool inWater, bool leavingWater, bool switchedBox)
     {
         switch (form)
         {
@@ -79,8 +85,8 @@ public class IntroFormHintUI : MonoBehaviour
                 break;
             case BodyForm.Box:
                 titleText.text = "You are a box.";
-                subtitleText.text = sequence == IntroSequence.Box
-                    ? "New body? Just bump into it." : string.Empty;
+                subtitleText.text = switchedBox ? "New box. Same little star."
+                    : sequence == IntroSequence.Box ? "New body? Just bump into it." : string.Empty;
                 break;
             case BodyForm.Bubble:
                 titleText.text = "You are a bubble.";
