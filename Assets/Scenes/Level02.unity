@@ -2343,7 +2343,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.2286974}
+  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.7999994}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5979,7 +5979,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.45882356, g: 0.65882355, b: 0.93725497, a: 0.19885717}
+  m_Color: {r: 0.45882356, g: 0.65882355, b: 0.93725497, a: 0.17020877}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6752,7 +6752,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.5019608, g: 0.7176471, b: 0.98823535, a: 0.2286974}
+  m_Color: {r: 0.5019608, g: 0.7176471, b: 0.98823535, a: 0.7999994}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -10782,12 +10782,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -13450,7 +13450,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.2286974}
+  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.7999994}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
