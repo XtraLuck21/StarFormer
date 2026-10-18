@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AnalyticsSettings
   collectionEnabled: 1
   endpointUrl: https://script.google.com/macros/s/AKfycbwvouGhWcYK46treKMiCgguVT5qMNZkds9Ig5Iq56gEYUEypdGokJI9yAGdEzZUdxNY/exec
-  environment: test
-  buildVersion: analytics-webgl-20261018
+  environment: production
+  buildVersion: playtest-01-20261018
   logPayloadsInEditor: 1
   snapshotIntervalSeconds: 30
   trackedScenes:

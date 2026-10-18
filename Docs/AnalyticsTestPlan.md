@@ -112,3 +112,25 @@ of a successful append. The Sheet is the source of truth.
 - Immediate Level 2 hazards no longer lose death events.
 - Each completed Run produces exactly one `level_complete`.
 - Google Sheets contains no duplicate `event_id` rows.
+
+## October 18 final data validation
+
+Level 1 was verified from the published WebGL test data in `RawEvents_Test`.
+One completed run contained Star, Box, Bubble and BouncyBall changes, both
+`BouncyBall_Lower` and `BouncyBall_Upper` checkpoints, 12 distinct attempts,
+nine Spike deaths with positions and one `level_complete` event. Form-change
+and form-duration rows were both present.
+
+Level 2 received an additional Unity 6000.3.22f1 Play Mode integration check.
+The check entered Level02 through `MainMenuUI`, exercised the real controller,
+CP01, death reload and `LevelGoalToMenu` paths, and captured editor analytics
+JSON. The resulting run contained one `level_start`, four distinct attempts,
+one CP01 event, one pre-checkpoint MovingSpike death, one post-checkpoint
+SpikeWall death, eight form-change values and exactly one `level_complete`.
+Both deaths included the expected checkpoint, form, cause and coordinates.
+
+The Level 1 and Level 2 evidence used different `level_run_id` values. The
+temporary Play Mode validation runner was removed after the passing run; it is
+not production code. Google Sheets transport remains covered by the published
+WebGL test, while the Level 2 Play Mode check validates gameplay-to-analytics
+wiring without uploading editor events.

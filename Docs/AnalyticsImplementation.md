@@ -20,8 +20,12 @@ Unity gameplay event
   -> AnalyticsManager JSON event
   -> AnalyticsWebGL.jslib persistent browser queue
   -> Google Apps Script Web App
-  -> RawEvents_Test in Google Sheets
+  -> RawEvents_Test or RawEvents_Production in Google Sheets
 ```
+
+The Apps Script routes `environment: test` events to `RawEvents_Test` and
+`environment: production` events to `RawEvents_Production`. Any other
+environment value is rejected.
 
 The WebGL transport uses cross-origin `fetch` with `mode: "no-cors"` and
 `sendBeacon` during `pagehide`. Events remain in a bounded browser
@@ -103,7 +107,9 @@ Death causes currently include `Spike`, `UnderwaterHazard`, `MovingSpike`,
 1. Create the team's private Google Sheet.
 2. Open **Extensions -> Apps Script**.
 3. Copy `AnalyticsBackend/Code.gs` into the bound script.
-4. Keep `ANALYTICS_SHEET_NAME = 'RawEvents_Test'` during development.
+4. Keep Unity set to `environment: test` during development. The receiver
+   writes test events to `RawEvents_Test` and production events to
+   `RawEvents_Production`.
 5. If the script is not bound to the target Sheet, set Script Property
    `STARFORMER_ANALYTICS_SHEET_ID` to its spreadsheet ID.
 6. Deploy as a Web App, executing as the Sheet owner and allowing anonymous
@@ -117,8 +123,19 @@ The endpoint is visible in the public WebGL files and must not be treated as a
 secret. Do not place API keys, OAuth tokens or account credentials in Unity.
 
 Before a release, update `buildVersion` to the exact source commit or agreed
-release label. Use `environment: test` and `RawEvents_Test` until the full test
-plan passes.
+release label. Use `environment: test` until the full test plan passes, then
+build the approved playtest with `environment: production`.
+
+The current approved playtest configuration uses
+`environment: production` and `buildVersion: playtest-01-20261018`.
+Unity 6000.3.22f1 completed a batch-mode script compilation check for this
+configuration on October 18, 2026 without C# compiler errors.
+
+The formal playtest collection window starts at
+`2026-10-18 11:31:02 PDT (-0700)`. At that time,
+`RawEvents_Production` contained only the schema header and
+`RawEvents_Test` retained its historical test events. Editor validation did
+not upload production rows.
 
 ## Gameplay integration points
 

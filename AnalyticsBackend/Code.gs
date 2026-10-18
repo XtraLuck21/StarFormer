@@ -1,6 +1,10 @@
 const ANALYTICS_SCHEMA_VERSION = 1;
-const ANALYTICS_SHEET_NAME = 'RawEvents_Test';
 const MAX_REQUEST_CHARACTERS = 20000;
+
+const ANALYTICS_SHEET_NAMES = Object.freeze({
+  test: 'RawEvents_Test',
+  production: 'RawEvents_Production'
+});
 
 const ANALYTICS_COLUMNS = [
   'schema_version',
@@ -50,7 +54,7 @@ function doGet() {
     ok: true,
     service: 'starformer-analytics',
     schema_version: ANALYTICS_SCHEMA_VERSION,
-    sheet: ANALYTICS_SHEET_NAME
+    environments: ANALYTICS_SHEET_NAMES
   });
 }
 
@@ -77,7 +81,7 @@ function doPost(e) {
       return jsonResponse_({ ok: false, error: 'write_lock_timeout' });
     }
 
-    const sheet = getAnalyticsSheet_();
+    const sheet = getAnalyticsSheet_(payload.environment);
     ensureHeader_(sheet);
 
     if (eventAlreadyExists_(sheet, payload.event_id)) {
@@ -139,6 +143,12 @@ function validatePayload_(payload) {
     return 'invalid_event_type';
   }
 
+  if (!Object.prototype.hasOwnProperty.call(
+      ANALYTICS_SHEET_NAMES,
+      payload.environment)) {
+    return 'invalid_environment';
+  }
+
   if (payload.level_name &&
       payload.level_name !== 'Level01' &&
       payload.level_name !== 'Level02') {
@@ -148,7 +158,7 @@ function validatePayload_(payload) {
   return '';
 }
 
-function getAnalyticsSheet_() {
+function getAnalyticsSheet_(environment) {
   const spreadsheetId = PropertiesService.getScriptProperties()
     .getProperty('STARFORMER_ANALYTICS_SHEET_ID');
   const spreadsheet = spreadsheetId
@@ -162,8 +172,9 @@ function getAnalyticsSheet_() {
     );
   }
 
-  return spreadsheet.getSheetByName(ANALYTICS_SHEET_NAME) ||
-    spreadsheet.insertSheet(ANALYTICS_SHEET_NAME);
+  const sheetName = ANALYTICS_SHEET_NAMES[environment];
+  return spreadsheet.getSheetByName(sheetName) ||
+    spreadsheet.insertSheet(sheetName);
 }
 
 function ensureHeader_(sheet) {
@@ -182,7 +193,8 @@ function ensureHeader_(sheet) {
 
   if (!matches) {
     throw new Error(
-      'RawEvents_Test header does not match the expected analytics schema.'
+      sheet.getName() +
+      ' header does not match the expected analytics schema.'
     );
   }
 }
