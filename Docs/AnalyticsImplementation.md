@@ -126,10 +126,11 @@ Before a release, update `buildVersion` to the exact source commit or agreed
 release label. Use `environment: test` until the full test plan passes, then
 build the approved playtest with `environment: production`.
 
-The current approved playtest configuration uses
-`environment: production` and `buildVersion: playtest-01-20261018`.
-Unity 6000.3.22f1 completed a batch-mode script compilation check for this
-configuration on October 18, 2026 without C# compiler errors.
+The source configuration prepared for the next Alpha build uses
+`environment: production` and `buildVersion: alpha-0.1.0` for the next Alpha export. This source configuration does not update the already published `playtest-01/` build. Both builds can append to `RawEvents_Production`; filter by `build_version` to separate them. Keep the existing endpoint and backend deployment unchanged for this release.
+The earlier playtest configuration passed a Unity 6000.3.22f1 batch-mode
+script compilation check on October 18, 2026. The Alpha Web export and its
+online data delivery still need release verification.
 
 The formal playtest collection window starts at
 `2026-10-18 11:31:02 PDT (-0700)`. At that time,

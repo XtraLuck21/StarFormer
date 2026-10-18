@@ -1,0 +1,30 @@
+:root { color-scheme: dark; font-family: system-ui, sans-serif; background: #101820; color: #f4f6f7; }
+* { box-sizing: border-box; }
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+[hidden] { display: none !important; }
+#player { position: fixed; inset: 0; width: 100%; height: 100%; background: #101820; }
+#player:fullscreen, #player:-webkit-full-screen { width: 100%; height: 100%; }
+#viewport {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
+}
+#game-frame { position: relative; flex: none; }
+#unity-canvas { display: block; width: 100%; height: 100%; background: #101820; touch-action: none; outline: none; }
+button { font: inherit; border: 1px solid #6e92a0; border-radius: 8px; padding: 12px 20px; min-height: 44px; background: #276079; color: white; cursor: pointer; touch-action: manipulation; }
+button:hover:not(:disabled) { background: #337791; }
+button:focus-visible { outline: 3px solid #ffda61; outline-offset: 3px; }
+button:disabled { cursor: wait; opacity: .45; }
+#fullscreen { position: absolute; top: 8px; left: 8px; z-index: 2; padding: 8px 12px; font-size: 13px; background: #101820d9; }
+#launch { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; background: #101820; padding: 16px; overflow: auto; }
+.launch-card { width: min(100%, 480px); text-align: center; }
+.eyebrow { letter-spacing: .25em; color: #ffda61; font-size: 13px; }
+h1 { font-size: clamp(32px, 7vw, 56px); margin: 8px 0 24px; }
+#load-status { min-height: 24px; }
+progress { width: 100%; height: 10px; accent-color: #ffda61; margin: 8px 0 24px; }
+.launch-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
+.secondary { background: transparent; }
+.hint { color: #bdcbd2; line-height: 1.6; font-size: 13px; margin-top: 24px; }
+#notice, #rotate-hint { position: absolute; z-index: 4; left: 50%; transform: translateX(-50%); width: max-content; max-width: calc(100% - 32px); padding: 12px 16px; border-radius: 8px; background: #101820ed; text-align: center; pointer-events: none; font-size: 14px; }
+#notice { bottom: max(16px, env(safe-area-inset-bottom, 0px)); }
+#rotate-hint { top: max(8px, env(safe-area-inset-top, 0px)); }
+@media (max-height: 450px) { h1 { font-size: 32px; margin: 4px 0 8px; } .eyebrow, .hint { margin: 8px 0; } progress { margin: 4px 0 12px; } }
