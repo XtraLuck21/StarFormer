@@ -2,13 +2,20 @@
 
 Last updated: 2026-10-18.
 
-## Preconditions
+## Current release evidence
+
+Alpha 0.1.2 is published at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/) as `gh-pages` commit `5f62980`, with source configuration `5650250`. Player Version and Analytics buildVersion are `alpha-0.1.2`; the release uses `production`. Localhost and online gameplay tests passed according to the developer; deployment and payload/version checks also passed. The historical data validation at the end of this document is separate evidence and does not certify Alpha 0.1.2 Sheet delivery.
+
+Next data check: obtain the existing Sheet link/access from the analytics owner, run Level01/Level02 in the published Alpha, and confirm new `RawEvents_Production` rows contain `build_version = alpha-0.1.2`. Retain older rows and distinguish builds by that field. Inspecting an Editor log or successful page load is insufficient.
+
+## Preconditions for a separate test build
 
 - Unity version is `6000.3.22f1`.
 - `AnalyticsSettings.asset` uses `environment: test`.
 - `endpointUrl` is the latest Google Apps Script `/exec` deployment.
 - `buildVersion` identifies the exact source revision being tested.
-- The target Sheet contains an empty `RawEvents_Test` tab or no tab yet.
+- Use `RawEvents_Test` and isolate the run by version/session IDs; preserve any existing test history. The receiver can create the tab if it does not exist.
+- These test-build preconditions do not describe the already published production Alpha. Do not replace the live Alpha with a test or deliberately invalid-endpoint build.
 - Build scenes are Mainmenu, IntroBox, IntroBubble, Level01 and Level02 in that
   order.
 
@@ -41,6 +48,7 @@ Sheets transport.
   `UnderwaterHazard`.
 - Press R during normal play and during the death pause. Expect `level_end` with
   `result = restart`; the reloaded level must use a new Run ID.
+- Click Level01 Restart Level after a ball checkpoint. Expect `level_end` with `result = restart`, a new Run ID and a fresh level entrance with cleared checkpoints; it must not resume the ball.
 - Finish the level. Expect exactly one `level_complete`; Level 2 must start with
   a different Run ID in the same Session.
 
@@ -56,8 +64,9 @@ Sheets transport.
   `death_cause = SpikeWall` row before reload.
 - Exercise Star, Box, Bubble, SpikeWall, Spider, Fan, gravityBall and
   BouncyBall when reachable. Confirm form names are strings, not enum numbers.
-- Complete Level 2. Expect one `level_complete`, then Mainmenu, with no
-  additional `abandoned` event for the completed Run.
+- Click Restart Level after a checkpoint: expect a manual-restart `level_end`, a new Run ID and the level entrance.
+- Click Retry Checkpoint: expect the same manual-restart event category and a new Run ID, but restore the latest gameplay checkpoint (or the entrance if none exists). Neither button emits a death; the schema does not identify which button was used.
+- Complete Level 2. Expect one `level_complete` and a paused Level Complete / You are a super star now! overlay. Wait, then click Return to Main Menu. Expect no duplicate completion or additional `abandoned` event for the completed Run.
 
 ## 4. Time validation
 
@@ -91,8 +100,7 @@ of a successful append. The Sheet is the source of truth.
 
 ## 6. GitHub Pages acceptance
 
-- Publish the tested export at a new test/version path; do not overwrite the
-  preserved Alpha Progress Check folder.
+- Use a separate path for a dedicated analytics test export. Approved Alpha releases replace only `/alpha/`; preserve `playtest-01/`, Alpha Progress Check and the root.
 - In a private window, complete one Level 1 and one Level 2 route.
 - Verify the Sheet can reconstruct both Runs using Session, Run and Attempt IDs.
 - Verify every death has a valid level, form, cause and coordinate.
@@ -100,20 +108,20 @@ of a successful append. The Sheet is the source of truth.
   time. Do not add `analytics_snapshot` durations to that sum.
 - Test at least two browsers or machines and confirm two anonymous player IDs.
 - Record source commit, deployment commit, fixed URL, browser versions and test
-  results before switching the endpoint/table to production.
+  results. A test-to-production release changes the saved environment and rebuilds; the existing receiver routes each environment to its table. Alpha 0.1.2 already uses production and does not require a backend or endpoint change.
 
 ## Pass criteria
 
 - No Analytics failure blocks movement, possession, death recovery or scene
   navigation.
 - Level 1 and Level 2 share one schema and one Session when played consecutively.
-- Automatic death reload retains the Run; R creates a new Run.
+- Automatic death reload retains the Run; R, Restart Level and Retry Checkpoint create a new Run. Retry alone preserves gameplay checkpoint state.
 - Bubble popping never counts as death.
 - Immediate Level 2 hazards no longer lose death events.
 - Each completed Run produces exactly one `level_complete`.
 - Google Sheets contains no duplicate `event_id` rows.
 
-## October 18 final data validation
+## Historical October 18 data validation (before Alpha 0.1.2)
 
 Level 1 was verified from the published WebGL test data in `RawEvents_Test`.
 One completed run contained Star, Box, Bubble and BouncyBall changes, both

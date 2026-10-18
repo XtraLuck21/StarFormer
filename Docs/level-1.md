@@ -8,15 +8,15 @@ Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged in
 
 **October 12 release follow-up:** Level01 is retained in All-Level V1 alongside Tutorial and the newly integrated Level02. An Input System exception occurred during editor regression testing. After the reload/restart diagnostic steps, the developer reported successful retesting and a successful localhost test of the new build. This update records release and integration progress, with no new Level01 layout or gameplay changes.
 
-**Last recorded Web publication (predates the intros):** All-Level V2 (`8c48475`) replaces V1 with a build from `d161538`, including the Level02 fan-hint fix. Level01 remains included, with no new Level01 gameplay edits in this documentation pass. The same build is frozen at the [Alpha Progress Check URL](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) by `5a7f043`, and the developer confirmed that URL works. The [root URL](https://xtraluck21.github.io/StarFormer/) tracks the latest tested release. Preserve the submission folder when publishing future versions. See [publish_instructions.md](publish_instructions.md) for the deployment procedure.
+**Historical October 12 Web publication (predates the intros):** All-Level V2 (`8c48475`) replaces V1 with a build from `d161538`, including the Level02 fan-hint fix. Level01 remains included, with no new Level01 gameplay edits in this documentation pass. The same build is frozen at the [Alpha Progress Check URL](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) by `5a7f043`, and the developer confirmed that URL works. The [root URL](https://xtraluck21.github.io/StarFormer/) is preserved as a legacy build; current Alpha releases use `/alpha/`. Preserve the submission folder when publishing future versions. See [publish_instructions.md](publish_instructions.md) for the deployment procedure.
 
 For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md).
 
-**October 14 source update:** [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, connects Mainmenu → IntroBox → IntroBubble → Level01 → Level02. Level01 still accepts any controlled form after G2 opens, but now clears checkpoints and loads Level02 instead of pausing at a completion screen. Shared bubbles wait until first possession and use **E** to pop. The developer confirmed the full flow in Unity Play Mode; this update has not been published as a new WebGL build. See [intro-levels.md](intro-levels.md).
+**October 14 source update:** [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, connects Mainmenu → IntroBox → IntroBubble → Level01 → Level02. Level01 still accepts any controlled form after G2 opens, but now clears checkpoints and loads Level02 instead of pausing at a completion screen. Shared bubbles wait until first possession and use **E** to pop. The developer confirmed the full flow in Unity Play Mode; these changes are now included in the published Alpha 0.1.2 build. See [intro-levels.md](intro-levels.md).
 
 **October 17 source update (merged):** [PR #11](https://github.com/XtraLuck21/StarFormer/pull/11), merge `989d2d1`, adds a generated `Level up!` / `Entering Level 2...` overlay to LevelGoal. Completion still requires any living controlled form and an open G2; gameplay pauses for a default 1.5 seconds before automatic progression. The developer reported that the completion transitions work. This does not claim a new Level01 layout review, teammate-branch merge or browser build.
 
-**October 18 Level 1 handoff (merged):** PR #12 (`e457e87`) integrates the teammate polish/checkpoint update (`62bb009`), right-pool bubble regeneration (`ea04ed9`) and tested handoff/prefab fixes (`1f07b35`) into main. The developer reports Level 1 testing passed, including the box no longer pinning the newly possessed bubble and normal BouncyBall behavior. Instruction clarity can still improve but is explicitly deferred as low priority. No new WebGL export or browser validation is recorded for this pass.
+**October 18 Level 1 handoff (merged):** PR #12 (`e457e87`) integrates the teammate polish/checkpoint update (`62bb009`), right-pool bubble regeneration (`ea04ed9`) and tested handoff/prefab fixes (`1f07b35`) into main. The developer reports Level 1 testing passed, including the box no longer pinning the newly possessed bubble and normal BouncyBall behavior. Instruction clarity can still improve but is explicitly deferred as low priority. These changes are included in Alpha 0.1.2; developer-reported localhost and online tests passed, without an exhaustive route/device matrix.
 
 Current additions:
 
@@ -25,6 +25,10 @@ Current additions:
 - `Bubble_U2` regenerates a fresh dormant bubble at its authored position after E or a hazard pop. U1/U1b do not gain this regeneration component.
 - Box-to-Bubble transfer temporarily ignores only the previous box/new bubble collision pair. After clearance for consecutive physics frames, normal collisions resume. Terrain, other bodies, and the pressure-plate rules remain active; this is not permanent immunity to boxes.
 - U1/U1b/U2 holding canopies are removed, matching dormant-until-possessed bubbles. The scene uses gray/dark terrain colors, pink-red X-marked water hazards, and revised lower-right camera framing.
+
+**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified.
+
+**Alpha 0.1.2:** Level01 now includes a top-right Restart Level button beneath Return to Main Menu. It clears checkpoint state and reloads Level01 from its entrance, matching R. Automatic death recovery still resumes the last ball checkpoint.
 
 ## 1. Current route and progress
 
@@ -63,6 +67,7 @@ The ball floats at the surface of any registered water zone. While floating it c
 | `LevelGoal` completion overlay | Next Level Label / Transition Seconds | `Level 2` / default `1.5`; LevelTransitionUI generates its own Canvas and labels |
 | `LevelCanvas` | `LevelDeathUI.playerController` / `statusText` | `PlayerControl` / `LevelStatusText` |
 | `ReturnToMenuButton` | OnClick | Local `LevelCanvas` → `LevelNavigationUI.ReturnToMainMenu` |
+| `RestartLevelButton` | One OnClick callback | Local `LevelCanvas` → `LevelNavigationUI.RestartLevel` |
 
 - **P → G is continuous:** only the assigned grounded C can hold it open. Control can transfer away from C while it remains on P. Moving C away closes G.
 - **H → G2 is latched:** assigned grounded D touches the overhead trigger once; G2 then remains open until restart. H has no explicit size threshold; its height creates the growth requirement.
@@ -70,7 +75,7 @@ The ball floats at the surface of any registered water zone. While floating it c
 - **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star. The goal validates the next scene and invokes LevelTransitionUI to show Level up! / Entering Level 2... for a default 1.5 seconds while gameplay is paused. It then clears checkpoint state and loads Level02 once with normal time scale; no confirmation input is required.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
 - **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.`, `Restarting...`, and `Press R to restart now.` into the shared status text. The controller handles the two-second death pause and R restart. The text remains blank during normal play.
-- **Menu navigation:** enter Level01 directly from Mainmenu or from the IntroBubble Star goal. The top-right return button loads Mainmenu and restores time scale to 1. R restarts the current level; once the goal has loaded Level02, R restarts Level02. Menu entry and forward transitions clear checkpoint state.
+- **Menu navigation:** enter Level01 directly from Mainmenu or from the IntroBubble Star goal. The top-right return button loads Mainmenu and restores time scale to 1. Restart Level and R clear checkpoints and restart the current level; once the goal has loaded Level02, they restart Level02. Level01 has no separate Retry Checkpoint button. Menu entry and forward transitions clear checkpoint state.
 - **Ball spikes remain lethal:** `SpikeHazard` kills the currently controlled star, box, bubble or bouncing ball and reloads the scene after the configured death delay.
 - **The camera follows the controlled form:** possession changes do not break camera tracking. Level01 uses lower-left, lower-right and upper camera regions with bounded follow, smooth movement and smooth zoom transitions.
 
@@ -100,6 +105,7 @@ These are current prototype coordinates, not final balance requirements. Positio
 | Star water jump multiplier | `0.75` | Initial jump velocity multiplier |
 | Camera lower split / upper split | `X = 16` / `Y = 8.5` | Lower block divides left/right; upper floor divides lower/upper views |
 | Camera lower-left / lower-right / upper sizes | `10` / `10` / `5.25` | Lower views include more route context and keep the upper floor visible; the upper view is tighter |
+| Restart Level button | Top-right anchor/pivot `(1, 1)`; position `(-30, -115)`; size `360 × 70` | Full restart beneath the return-menu button |
 
 The saved lower-right camera center is `(34, 1)`; this scene override does not change the shared script default. Box-to-Bubble collision clearance reuses the controller's saved separation distance `0.35` and `3` consecutive physics frames.
 
@@ -107,9 +113,9 @@ Keep boxes upright and unparented: the current resizing implementation rejects p
 
 ## 4. Verification completed and its limits
 
-**October 18:** the developer reports Level 1 testing passed after the collision handoff and BouncyBall configuration fixes. Runtime and Editor script compilation passed during implementation. After enabling Reload Domain and Scene and restarting Unity, the developer reported that the Input System exceptions no longer appeared. This records a successful recovery, not proof of the exception's root cause. No new WebGL/mobile/browser test is claimed. Instruction polish remains a low-priority follow-up.
+**October 18:** the developer reports Level 1 testing passed after the collision handoff and BouncyBall configuration fixes. Runtime and Editor script compilation passed during implementation. After enabling Reload Domain and Scene and restarting Unity, the developer reported that the Input System exceptions no longer appeared. This records a successful recovery, not proof of the exception's root cause. These implementation checks preceded the later Alpha release tests summarized above. Instruction polish remains a low-priority follow-up.
 
-**October 17:** the developer confirmed the new timed completion transitions. Script compilation passed; no new WebGL export or broad Level01 regression run is recorded for this pass.
+**October 17:** the developer confirmed the new timed completion transitions. Script compilation passed; that historical check did not include a WebGL export or broad Level01 regression run; the changes were subsequently published in Alpha.
 
 **October 14:** the developer confirmed E-key bubble exit and the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow. Earlier completion-screen tests below describe the pre-intro version. No new browser build is claimed for October 14.
 
@@ -151,7 +157,7 @@ For temporary segment testing, move the **`StarPlayer` root** in Play Mode. Movi
 
 1. **Integration is complete.** PR #12 (`e457e87`) merged the tested Level 1 update and shared handoff/prefab fixes into main.
 2. **Instruction polish is deferred.** The existing ball steering prompt is usable, but clarity and additional guidance can improve later. This is low priority for the current handoff. Button/gate visibility is also a later polish item.
-3. **Build and browser validation.** After source integration, export a fresh build from main and verify the full Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow, recovery and navigation. Current Level 1 testing is developer-reported editor testing, not a new published release. Broader alternate-route, mobile and teammate-device coverage remain follow-ups.
-4. **Keep publication separate.** The last recorded deployed build remains All-Level V2, preserved at the Alpha Progress Check URL. Merging this PR does not update the website. Follow [publish_instructions.md](publish_instructions.md), preserve submission folders, and never merge `gh-pages` into `main`.
+3. **Broader regression.** Alpha 0.1.2 is published and developer-reported localhost/online tests passed. Continue alternate-route, checkpoint, simultaneous-touch and teammate-device coverage; the general acceptance report is not an exhaustive matrix.
+4. **Keep publication separate.** Current releases replace `/alpha/` with a new version label. Preserve `playtest-01/`, the Alpha Progress Check folder and the legacy root. Follow [publish_instructions.md](publish_instructions.md), and never merge `gh-pages` into `main`.
 
 Historical integration: Level 1 baseline PR #2, core prefabs PR #3, Level 1 polish PR #8, navigation PR #9, introductory progression PR #10, intro hints/completion transitions PR #11, and the October 18 Level 1 handoff PR #12. Forms and hazards remain together in `Assets/Form`. See [ScriptGuide.md](ScriptGuide.md) for setup and scene references.

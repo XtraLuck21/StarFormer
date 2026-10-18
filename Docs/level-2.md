@@ -2,9 +2,9 @@
 
 Last updated: 2026-10-18.
 
-Scene: [Level02.unity](../Assets/Scenes/Level02.unity). Current handoff branch: `Level-2`, gameplay baseline `ab68064`. The original Level02 was already included in main and the October 12 All-Level builds; the October 18 mobile/polish follow-up described here is on `Level-2`. A merge of this follow-up into main and a new WebGL publication have not been recorded.
+Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 work through `ab68064` was integrated into `main` by PR #14 (`3714a49`). Alpha 0.1.1 (`765a1ea` in source) corrected the navigation Canvas scaling. This content is included in the published Alpha 0.1.2 release.
 
-**October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. A complete checkpoint/mobile/browser regression matrix is still pending.
+**October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. Alpha 0.1.2 later passed developer-reported localhost and online tests; an exhaustive checkpoint/device matrix is not recorded.
 
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
 
@@ -70,7 +70,8 @@ Values below describe the saved scene rather than recommended new tuning. World 
 | LevelGoal | Position `(-1.28, 18.22)`; trigger `1.4 × 1.6`, Y offset `0.8` | Reachable flag trigger, widened from the thin pole |
 | Three navigation buttons | Anchors `(1, 1)`, pivot `(1, 0.5)`, size `360 × 70`, Pos X `-30` | Top-right alignment |
 | Menu / Restart / Retry Pos Y | `-57` / `-142` / `-227` | Accepted spacing; do not replace with the earlier proposed Y values |
-| Mobile Canvas | Screen Space - Overlay; reference resolution `1920 × 1080`, match `0.5` | Screen-fixed UI independent of gameplay-camera motion |
+| Navigation Canvas | Screen Space - Overlay; Scale With Screen Size, reference `1920 × 1080`, match `0.5` | Alpha 0.1.1 fix for oversized navigation buttons on mobile |
+| Mobile Canvas | Screen Space - Overlay; Scale With Screen Size, reference resolution `1920 × 1080`, match `0.5` | Screen-fixed UI independent of gameplay-camera motion |
 
 Mobile direction buttons are anchored at the lower left and action buttons at the lower right. The mobile scripts switch visibility by form/water/death state; they do not implement camera-follow positioning. No mobile layout change was made after the reported impression of platform-related motion. If actual drift recurs, capture it in motion before changing the Canvas.
 
@@ -86,7 +87,7 @@ Mobile direction buttons are anchored at the lower left and action buttons at th
 | BouncyBall | Left / Right | None; automatic bouncing |
 | gravityBall | None | None; scripted motion |
 
-Show Mode is resolved at Awake: AutoDetect uses `Application.isMobilePlatform`, or an Input System touchscreen without a mouse; AlwaysShow enables Editor mouse testing; NeverShow hides controls. There is no custom browser user-agent parser. Set the mode before Play, and restore AutoDetect before saving a release configuration. Direction/resize inputs are held; action/release inputs trigger on pointer down. Pointer up or disabling a button clears its held direction. Real-device multi-touch and detection still need testing on the newly integrated build.
+Show Mode is resolved at Awake: AutoDetect uses `Application.isMobilePlatform`, or an Input System touchscreen without a mouse; AlwaysShow enables Editor mouse testing; NeverShow hides controls. The Unity mobile-control script has no custom browser user-agent parser; the Web template separately uses browser/touch detection for rendering limits and orientation guidance. Set the mode before Play, and restore AutoDetect before saving a release configuration. Direction/resize inputs are held; action/release inputs trigger on pointer down. Pointer up or disabling a button clears its held direction. The published Alpha has passed developer-reported playtests; broader multi-touch and device-detection coverage remains a regression checklist item.
 
 ## 4. Verification completed and its limits
 
@@ -105,7 +106,7 @@ Source checks during implementation and this documentation review:
 - The saved scene has the three local navigation callbacks, AutoDetect, the accepted hint values and no `wall (20)` object.
 - The original integration preserved main's intro/Level01 scene content while adding the teammate mobile Canvas, and retained analytics, ball recovery and Box-to-Bubble handoff safeguards.
 
-A new WebGL export, current phone/browser playtest, end-to-end analytics delivery check, and a complete post-integration intro-to-Level02 run are not recorded. The last documented publication remains the historical All-Level V2 / Alpha Progress Check build, which predates these source updates.
+**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Level02 navigation scaling was fixed in Alpha 0.1.1 and retained in 0.1.2. Detailed CP01/CP02/CP03 recovery coverage and current-version analytics delivery remain unverified, rather than blocking an already completed publication.
 
 ## 5. Decisions in this polish pass
 
@@ -124,5 +125,5 @@ A new WebGL export, current phone/browser playtest, end-to-end analytics deliver
 2. After a checkpoint, verify Restart Level and R return to the entrance and clear it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
 4. Retest IntroBox → IntroBubble → Level01 → Level02 after integration, including Level01 handoff/ball/U2 recovery. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
-5. Export a new WebGL build, test it locally and on desktop/mobile browsers, and verify analytics using [AnalyticsTestPlan.md](AnalyticsTestPlan.md). Follow [publish_instructions.md](publish_instructions.md) only after validation; source changes alone do not publish a build.
-6. Prepare the Level-2-to-main handoff separately. This documentation update does not create a PR, merge, commit or push.
+5. Verify Alpha 0.1.2 analytics delivery using [AnalyticsTestPlan.md](AnalyticsTestPlan.md). For later changes, rebuild and follow [publish_instructions.md](publish_instructions.md); source changes alone do not publish a build.
+6. Level-2-to-main integration and Alpha 0.1.2 publication are complete. Remaining items above are regression and usability follow-ups, not pending merge/build steps.

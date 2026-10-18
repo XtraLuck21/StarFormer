@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-18. Unity version: `6000.3.22f1`.
 
-Current source includes the introductory sequence and full progression integrated through [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`, on October 14. The developer confirmed the full flow in Unity Play Mode. The October 17 follow-up on `intro-levels` (merged via PR #11, `989d2d1`) adds contextual Star/form hints, larger subtitles, matching intro colors, Restart buttons, a gate-open arrow and timed completion overlays; developer-reported tests passed. The last recorded published WebGL version remains All-Level V2 / Alpha Progress Check, which predates these changes. See [intro-levels.md](intro-levels.md), [GameplaySpec.md](GameplaySpec.md), and [level-1.md](level-1.md).
+**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Intro progression and hints are integrated through PR #10/#11, Level 1 recovery through PR #12, and Level 2/mobile work through PR #14. See [intro-levels.md](intro-levels.md), [GameplaySpec.md](GameplaySpec.md), [level-1.md](level-1.md) and [level-2.md](level-2.md).
 
 ## 1. Playable and test scenes
 
@@ -15,8 +15,8 @@ Current source includes the introductory sequence and full progression integrate
 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Second introductory scene | Starting Box host, air/water bubble traversal, air/water form explanations, E exit, Star-only grounded goal and completion overlay to Level01 |
 | [Tutorial](../Assets/Scenes/Tutorial.unity) | Legacy tutorial, excluded from current builds | Movement, jump, three SpikeHazard prefab instances, box possession and resizing, pressure plate, goal, feedback and return-to-menu button |
 | [WaterPlayground](../Assets/Scenes/WaterPlayground.unity) | Water integration sandbox | Water detection and water behavior for star, box and bubble; saved instances of the three core prefabs |
-| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, pink-red X-marked hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form goal leading to Level02, death feedback and return-to-menu button; October 18 editor playtests passed with ball checkpoints and U2 regeneration; new browser validation remains pending |
-| [Level02](../Assets/Scenes/Level02.unity) | Integrated second level in All-Level V1 | Spider traversal, spike-wall chase, projectile/button and fan sections, staged camera, checkpoints and return-to-menu button |
+| [Level01](../Assets/Scenes/Level01.unity) | Alpha Level 1 graybox in progress | Water routes, box size gates, held pressure plate, height switch, pink-red X-marked hazards that pop bubbles or kill boxes, two bouncing-ball sections, three-region camera, any-form goal leading to Level02, death feedback, return-to-menu and Restart Level buttons; ball checkpoints and U2 regeneration included in published Alpha 0.1.2 |
+| [Level02](../Assets/Scenes/Level02.unity) | Integrated second level in current Alpha | Spider traversal, spike-wall chase, projectile/button and fan sections, staged camera, checkpoints, final completion screen and Menu/Restart/Retry buttons |
 | [EnemyScene](../Assets/Scenes/EnemyScene.unity) | Teammate test scene present in this checkout | Not reviewed or playtested as part of the Level 1 work |
 | [FanScene](../Assets/Scenes/FanScene.unity) | Fan sandbox | Star, fan possession, W toggles airflow, E leaves the fan (2s repossess cooldown), red blowable obstacles and a box body |
 
@@ -39,7 +39,7 @@ The enabled scenes in [EditorBuildSettings.asset](../ProjectSettings/EditorBuild
 
 | Script | Attach to / dependencies | Current responsibility | Change here when... |
 | --- | --- | --- | --- |
-| [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | Box root; `PossessableBody`, `Rigidbody2D`, `BoxCollider2D` | Reads W/S only while controlled; resizes within limits; checks solid obstacles; preserves the bottom while grounded and the collider center otherwise | Changing box resizing, size limits or clearance checks |
+| [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | Box root; `PossessableBody`, `Rigidbody2D`, `BoxCollider2D` | Reads keyboard W/S or touch resize input only while controlled; resizes within limits; checks solid obstacles; preserves the bottom while grounded and the collider center otherwise | Changing box resizing, size limits or clearance checks |
 | [BouncyBallAbility.cs](../Assets/Scripts/BouncyBallAbility.cs) | Bouncy-ball root; `PossessableBody`, `Rigidbody2D`, root `Collider2D` | Keeps an unpossessed ball frozen; starts automatic bouncing when controlled; calculates the available height below solid ceilings; shortens and accelerates compressed bounces; floats the ball at water surfaces and disables vertical bouncing there | Changing bounce height/rhythm, ceiling response, waiting behavior or water-surface behavior |
 | [StarVisual.cs](../Assets/Scripts/StarVisual.cs) | Star `Visual` or host `StarMark` child; `SpriteRenderer` | Generates a star sprite at runtime; applies `starColor` and sorting order 10; disposes generated assets on destruction | Changing the star/possession marker's appearance, not its controls or collider |
 | [FanBlower.cs](../Assets/Scripts/FanSet/FanBlower.cs) | Fan root; `Rigidbody2D`, `PossessableBody` | While controlled, A/D set facing and W toggles wind; pushes non-possessable bodies in range with distance falloff; state persists after the player leaves | Changing fan wind rules, range or force |
@@ -112,9 +112,9 @@ IntroBox uses StarMoveHint, StarJumpHint and ContinueRightHint. Bind ContinueRig
 
 ### October 18 Level01 integration and verification
 
-The `level-1` branch preserves main's E-pop queue, Starting Host, Level02 checkpoint API, menu references and timed completion flow. Ball recovery is opt-in and enabled only in Level01; existing positional checkpoints take precedence. The merge keeps separate LevelNavigationUI and BouncyBallTutorialPrompt components on LevelCanvas, with separate menu-button and tutorial-text bindings.
+The merged Level 1 implementation preserves E-pop queue, Starting Host, Level02 checkpoint API, menu references and timed completion flow. Ball recovery is opt-in and enabled only in Level01; existing positional checkpoints take precedence. The merge keeps separate LevelNavigationUI and BouncyBallTutorialPrompt components on LevelCanvas, with separate menu-button and tutorial-text bindings.
 
-The developer reports Level 1 testing passed after `1f07b35`, including the former box no longer trapping the new bubble and normal ball behavior. Runtime and Editor script compilation passed. Instructions are usable but further clarity improvements are low priority. A new WebGL build and mobile/browser validation are not recorded.
+The developer reports Level 1 testing passed after `1f07b35`, including the former box no longer trapping the new bubble and normal ball behavior. Runtime and Editor script compilation passed. Instructions are usable but further clarity improvements are low priority. These changes are included in Alpha 0.1.2, with developer-reported local/online acceptance; broader device coverage is not enumerated.
 
 InputActionState null-reference errors stopped after enabling Reload Domain and Scene and restarting Unity. EditorSettings now saves `m_EnterPlayModeOptions: 0` with options enabled. This successful recovery does not establish the original cause; do not attribute it to the bubble collision fix.
 
@@ -135,7 +135,7 @@ InputActionState null-reference errors stopped after enabling Reload Domain and 
 | Script | Attach to / dependencies | Current responsibility |
 | --- | --- | --- |
 | [MainMenuUI.cs](../Assets/Scripts/MainMenuUI.cs) | `Mainmenu` scene's `MainMenuCanvas` | `OpenIntroLevels()` loads `IntroBox`; `OpenTutorial()` is a compatibility alias for the same route; `OpenLevel1()` loads `Level01`; `OpenLevel2()` loads `Level02`; clears checkpoints and restores time scale to 1 before loading |
-| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Return UI in IntroBox, IntroBubble, Level01 and Level02; legacy Tutorial also retains it. Intro Canvases also host Restart buttons | `ReturnToMainMenu()` restores time scale and loads `Mainmenu`. `RestartLevel()` validates the current scene build index, clears checkpoints, restores time scale and reloads that scene, matching R. `RetryCheckpoint()` reloads while preserving checkpoints (falls back to the scene entrance if none); both buttons record a manual restart rather than a death |
+| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Return UI in IntroBox, IntroBubble, Level01 and Level02; legacy Tutorial also retains it. Intro Canvases and Level01 also host Restart buttons; Level02 has Restart and Retry | `ReturnToMainMenu()` restores time scale and loads `Mainmenu`. `RestartLevel()` validates the current scene build index, clears checkpoints, restores time scale and reloads that scene, matching R. `RetryCheckpoint()` reloads while preserving checkpoints (falls back to the scene entrance if none); both buttons record a manual restart rather than a death |
 | [MenuUIPlatform.cs](../Assets/Scripts/MenuUIPlatform.cs) | Each menu platform root; requires `BoxCollider2D` and `PlatformEffector2D`; assign target UI rectangle and Main Camera | Converts the target's upper corners to world coordinates, aligns a thin collider with its top edge, and configures one-way collision |
 
 ### Button wiring and scene names
@@ -143,8 +143,9 @@ InputActionState null-reference errors stopped after enabling Reload Domain and 
 - The button displaying `Introductory Levels` calls the local `MainMenuCanvas` component's `MainMenuUI.OpenIntroLevels`. The button object is IntroLevelsButton; its physical platform still uses the legacy name TutorialPlatform.
 - `Level1Button.OnClick` calls `MainMenuUI.OpenLevel1` on the same scene object.
 - `Level2Button` displays `Level 2` and calls `MainMenuUI.OpenLevel2`. `Level02` is enabled at build index 4.
-- `ReturnToMenuButton` in IntroBox, IntroBubble, Level01 and Level02 calls `LevelNavigationUI.ReturnToMainMenu` on that scene's own assigned UI object. Preserve the local reference when copying UI between scenes.
+- The return-menu button in each of IntroBox, IntroBubble, Level01 and Level02 calls `LevelNavigationUI.ReturnToMainMenu` on that scene's own assigned UI object. Preserve the local reference when copying UI between scenes.
 - IntroBox and IntroBubble place `RestartButton` beneath the menu button, labeled Restart (R), with a single callback to the local TutorialCanvas → LevelNavigationUI.RestartLevel. Remove the copied menu callback. Restarting IntroBubble returns to EntryBox in IntroBubble, not IntroBox.
+- Level01 has `LevelCanvas/RestartLevelButton`, labeled Restart Level, with one callback to the local LevelNavigationUI.RestartLevel. Anchor/pivot `(1, 1)`, position `(-30, -115)`, size `360 × 70`. It clears ball/positional checkpoints and starts at the level entrance, matching R. No Retry button is added to Level01.
 - Level02 now has `ReturnToMainMenuButton`, `RestartLevelButton` and `RetryCheckpointButton` under Canvas. Each calls the matching method on its own LevelNavigationUI component, with one callback. All use top-right anchors `(1, 1)`, pivot `(1, 0.5)`, size `360 × 70`, X `-30`; their accepted Y values are `-57`, `-142` and `-227`. These buttons are already wired, not pending setup.
 - Keep the exact scene strings `Mainmenu`, `IntroBox`, `IntroBubble`, `Level01` and `Level02`. Forward progression is name-based: IntroBox exit → IntroBubble, IntroBubble Star goal → Level01, Level01 goal → Level02. Menu entry and forward progression start fresh checkpoint sessions; death recovery can retain a Level01 ball checkpoint or an existing Level02 positional checkpoint.
 
@@ -167,18 +168,37 @@ InputActionState null-reference errors stopped after enabling Reload Domain and 
 
 ### Verification and follow-up
 
-On October 14, the developer confirmed the renamed menu entry and complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow in Unity Play Mode. Script compilation checks passed during implementation. On October 17, the developer also confirmed Star/form hints, Box-to-Box subtitles, Bubble explanations, palette/readability changes, current-scene Restart buttons, the thicker continuation arrow and timed completion transitions. These updates still need a new WebGL export/browser test.
+On October 14, the developer confirmed the renamed menu entry and complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow in Unity Play Mode. Script compilation checks passed during implementation. On October 17, the developer also confirmed Star/form hints, Box-to-Box subtitles, Bubble explanations, palette/readability changes, current-scene Restart buttons, the thicker continuation arrow and timed completion transitions. These updates are included in the published Alpha 0.1.2; developer-reported local/online tests passed.
 
 Historical developer-reported tests passed for loading Tutorial and Level01, returning to the menu, moving/jumping across menu platforms, and keeping the star visible in front of buttons while clicks still work. The October 11 rebuilt localhost version and published GitHub Pages version subsequently passed developer playtests. No menu-star movement hint or attention animation is included. Level 2 integration is complete and included in All-Level V1. The October 12 editor retest and localhost build test passed according to the developer. Teammate usability feedback and broader resolution/browser coverage remain follow-up work.
 
 ## 4. Web build and GitHub Pages release
 
-For the repeatable publishing procedure, follow [publish_instructions.md](publish_instructions.md). This section records release history and troubleshooting. The introductory source updates through October 17 have no new WebGL publication recorded. PR #11 merged the October 17 intro polish. The October 18 Level 1 update is tested on level-1 and awaiting its own PR; neither source update constitutes a new Web publication.
+For the repeatable publishing procedure, follow [publish_instructions.md](publish_instructions.md). This section records current release evidence and historical troubleshooting. Source integration and exported-site publication remain separate operations.
 
-### Last recorded published version: All-Level V2 / Alpha Progress Check
+### Current published version: Alpha 0.1.2
+
+- Date: October 18, 2026 (America/Los_Angeles).
+- URL: [StarFormer Alpha](https://xtraluck21.github.io/StarFormer/alpha/), the fixed path for subsequent tested Alpha updates.
+- Source: UI/gameplay commit `9b35f8e`; matching release settings committed as `5650250` after the export. The export used those version/settings changes locally; it was not created after checking out the later settings commit.
+- Player Version / Analytics buildVersion: `alpha-0.1.2`; Analytics environment: `production`; tracked scenes: Level01 and Level02.
+- Output: `Builds/WebGL-Alpha-0.1.2`. Enabled scenes: Mainmenu, IntroBox, IntroBubble, Level01, Level02.
+- Publishing commit: [`5f62980`](https://github.com/XtraLuck21/StarFormer/commit/5f629807f65aabd28151672a3532896a5bd74754). [Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/39173067360) succeeded.
+- Changes: Level01 Restart Level button; lowered IntroBox Left/Right/Jump controls; compact IntroBubble directional/action controls and 35% background opacity. IntroBubble keeps its original fixed camera.
+- Verification: developer-reported localhost and post-publication tests passed. Exported version labels and data-package version were checked; the deployed game-data payload matched the local export. All files outside `alpha/` retained their pre-copy hashes. This does not certify exhaustive device/route coverage or current-version Google Sheets delivery.
+- Preserve `playtest-01/`, `alpha-progress-check/`, the legacy root and other existing folders. Source documentation updates do not require a game rebuild unless runtime assets/settings also change.
+
+| Earlier Alpha | Publishing commit | Recorded scope |
+| --- | --- | --- |
+| 0.1.0 | `f47d18d` | Integrated levels/mobile controls, responsive StarFormerAlpha template, fullscreen/windowed launch and aligned version metadata |
+| 0.1.1 | `a931f23` | Level02 navigation Canvas scaling fix; Player and Analytics aligned at alpha-0.1.1 |
+
+These Alpha versions used the same `/alpha/` path and have been replaced there; their exported files remain in Git history, not separate live version URLs.
+
+### Historical version: All-Level V2 / Alpha Progress Check
 
 - Date: October 12, 2026 (America/Los_Angeles).
-- Latest tested release: [StarFormer](https://xtraluck21.github.io/StarFormer/). This URL can change with future releases.
+- Historical root build: [StarFormer](https://xtraluck21.github.io/StarFormer/). Alpha publication preserves this path; the current release is `/alpha/`.
 - Frozen submission: [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/). Do not overwrite this folder.
 - Preservation commit: [`5a7f043`](https://github.com/XtraLuck21/StarFormer/commit/5a7f0434ae669ce347fcb5a239f034154d46e509). At preservation time, its 17 exported files matched the root build. The deployment succeeded and the developer confirmed the new URL works.
 - Source revision: `d161538cdbbe3affba9094de12facaa637e71c5f`, including the teammate fan-hint fix. Local build-generated configuration/asset changes were also present.
@@ -199,15 +219,19 @@ For the repeatable publishing procedure, follow [publish_instructions.md](publis
 
 ### Build configuration
 
-Use Unity `6000.3.22f1` with Web Build Support. Select Web in Build Profiles and confirm Mainmenu (0), IntroBox (1), IntroBubble (2), Level01 (3) and Level02 (4) are enabled. Keep the old Tutorial unchecked. Use the Default Web template, Gzip compression, Decompression Fallback enabled, and a normal build with Development Build unchecked. Thread support remains disabled.
+Use Unity `6000.3.22f1` with Web Build Support. Select Web in Build Profiles and confirm Mainmenu (0), IntroBox (1), IntroBubble (2), Level01 (3) and Level02 (4) are enabled. Keep the old Tutorial unchecked. Use the StarFormerAlpha Web template, default canvas `1920 × 1080`, Gzip compression, Decompression Fallback and Name Files As Hashes enabled, and Development Build unchecked. Thread support remains disabled. Player Version and Analytics buildVersion must match (`alpha-0.1.2` for the current release).
+
+The template fits a 16:9 canvas to the available viewport and safe-area padding, preserving composition with letterboxing. Rendering follows device pixel density with desktop caps of 2× / 2560 × 1440 and touch/mobile caps of 1.5× / 1920 × 1080. Play Fullscreen requests fullscreen from a user gesture; Play in Window skips it. The fullscreen container includes an Exit Fullscreen control, and desktop Esc remains available. Unsupported or rejected fullscreen requests fall back to windowed play. The template versions CSS/JS URLs from PRODUCT_VERSION; do not hand-edit generated release HTML.
+
+If a build clips UI after resizing, verify StarFormerAlpha is selected, scene Canvases use the intended reference-resolution scaling, and the browser is loading the new export. Increasing render resolution alone does not fix Canvas layout.
 
 Use Build And Run to test the generated site through localhost. Do not test by directly opening `index.html` as a local file. Keep outputs under the ignored `Builds` directory and outside Assets. Preserve `index.html`, `Build`, `TemplateData` and any other generated runtime files as one set.
 
 ### Publishing and updating
 
-Follow [publish_instructions.md](publish_instructions.md) for commands. The root URL serves the latest tested release. Each submitted milestone has a separate folder containing its complete export, including its own `index.html`, `Build/` and `TemplateData/`. Keep `alpha-progress-check/` unchanged and create new folders for future Alpha/Beta submissions.
+Follow [publish_instructions.md](publish_instructions.md) for commands. The current release uses `/alpha/`; replace only that folder with the complete tested export. Keep `playtest-01/`, `alpha-progress-check/`, all other preserved folders and the legacy root unchanged.
 
-Update only the root export files when replacing the latest build. Never run a root-wide synchronization with deletion: it would delete preserved version folders. Existing relative asset paths allow the copied build to run inside its own folder without editing its generated HTML.
+Synchronize only into `alpha/`, removing obsolete files within that directory. Never run synchronization with deletion against the publishing root. Relative asset paths allow the complete copied export to run in its folder without editing generated HTML.
 
 GitHub Settings → Pages remains **Deploy from a branch → gh-pages → / (root)**. One deployment contains the root and all version folders; the Actions deployment card displays the site base URL, not every version path. Test the latest and new version URLs and confirm the existing submission still loads.
 
@@ -253,12 +277,13 @@ This separation is a workflow choice, not a GitHub Pages requirement. Other work
 
 ## Level 2 and mobile integration (October 18)
 
-- [MobileControlUI.cs](../Assets/Scripts/Mobile/MobileControlUI.cs) defines `MobileControlsUI`: Awake resolves AutoDetect/AlwaysShow/NeverShow, then it selects buttons by controlled form, water state and death state. Set AlwaysShow **before Play**, then restore AutoDetect before publishing. There is no custom browser user-agent detector. Scene references to the controller and all action buttons must remain assigned.
+- [MobileControlUI.cs](../Assets/Scripts/Mobile/MobileControlUI.cs) defines `MobileControlsUI`: Awake resolves AutoDetect/AlwaysShow/NeverShow, then it selects buttons by controlled form, water state and death state. Set AlwaysShow **before Play**, then restore AutoDetect before publishing. The Unity button-visibility logic has no custom browser user-agent detector; the Web template independently uses browser/touch detection for render limits and orientation guidance. Scene references to the controller and all action buttons must remain assigned.
 - [TouchHoldButton.cs](../Assets/Scripts/Mobile/TouchHoldButton.cs): Left/Right/Up/Down maintain held input. Action/Release/Blow/Restart invoke the controller on pointer down. Pointer up and disable clear held direction state. Mobile restart retains the full-scene semantics and analytics of R.
 - `PossessableBody.Owner` exposes the controller to BoxResizeAbility and FanBlower so touch and keyboard input share resize/direction behavior. Fan W and touch Blow both toggle airflow; E/touch Leave releases the host.
 - [LevelGoaltoMenu.cs](../Assets/Scripts/LevelGoaltoMenu.cs) defines `LevelGoalToMenu`. `waitForMenuButton` is enabled on Level02's flag. It requires the live current controlled body, validates the menu scene and records completion once. The old delayed-return path remains available to other existing instances. The widened Level02 flag trigger removes the need to overlap only the thin pole; no extra plate or Star-form condition is configured.
 - `LevelTransitionUI.ShowFinalResult` shows Level Complete / You are a super star now! and waits for Return to Main Menu; it does not automatically leave Level02. The Spider hint is a single size-3 line at `(-70, 15.2)`. Fan retains W / Blow and E / Leave. The unused finish block `wall (20)` has been deleted.
 - `LevelNavigationUI.RetryCheckpoint()` preserves checkpoint state on reload; `RestartLevel()` clears it. Both call TrackManualRestart rather than TrackDeath. All three checkpoint respawn event lists retain an unassigned WallSlideOnDrop.ShowWall callback alongside the valid camera callback; review those entries during stage-recovery testing.
-- Mobile `Canvas (1)` is Screen Space - Overlay, scaled against 1920 × 1080 with match 0.5; its buttons are screen-fixed and are not moved by the mobile scripts. AutoDetect is saved in Level02.
+- Level02 navigation Canvas and mobile `Canvas (1)` both use Screen Space - Overlay and Scale With Screen Size at 1920 × 1080, match 0.5. Alpha 0.1.1 corrected navigation scaling without changing accepted button positions. Mobile buttons are screen-fixed and not moved by the scripts; AutoDetect is saved in all four gameplay scenes.
+- Alpha 0.1.2 layout changes are scene-local: IntroBox lowers Left/Right/Jump to Y 100, retaining 160 × 160 opaque buttons; IntroBubble uses 120 × 120 buttons with background alpha 0.35 and the original camera Size 6 / Y 0.75. Direction keys keep their original arrangement. See [intro-levels.md](intro-levels.md#alpha-012-mobile-layout) for the exact coordinates. No shared prefab or camera logic was changed.
 - Script comments, Inspector headers/tooltips, logs and default hint strings were standardized to English in `260b9b1`. Thirty scripts changed without renaming serialized fields/methods or changing control flow. The scan covered 96 script/source files; existing serialized scene strings were outside that cleanup.
-- See [level-2.md](level-2.md) for the route, wiring, saved tuning, accepted Editor checks and remaining checkpoint/device/build tests. The current wrap-up is on Level-2; no new publication is recorded.
+- See [level-2.md](level-2.md) for the route, wiring, saved tuning, accepted Editor checks and remaining checkpoint/device/build tests. The wrap-up is merged through PR #14 and included in Alpha 0.1.2; remaining checks are regression/data-validation follow-ups.

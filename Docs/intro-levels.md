@@ -2,7 +2,7 @@
 
 Last updated: 2026-10-18.
 
-**Status:** the introductory gameplay and current hint/presentation pass are complete for this handoff. The original sequence was integrated through [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merge `69f3902`. The October 17 polish on `intro-levels` (through `7fc77d5`) passed developer-reported Unity Play Mode tests and was merged into main through [PR #11](https://github.com/XtraLuck21/StarFormer/pull/11), merge `989d2d1`. No new WebGL export or publication is recorded for this pass.
+**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
 
 ## Purpose and progression
 
@@ -47,7 +47,7 @@ Both intro cameras are currently fixed. The right platform provides a landing ar
 | Bubble in air | A/D or Left/Right Arrow | Automatic rise; E returns to Star |
 | Bubble underwater | WASD, including diagonals | E returns to Star |
 
-R and the **Restart (R)** button restart the whole current scene and clear its checkpoint session. IntroBubble restarts at EntryBox in IntroBubble, not at IntroBox. Each intro places Restart below Return to Main Menu; both buttons use that scene's own `LevelNavigationUI`. E is a Bubble exit, not a universal exit key; Fan and Spider still use their existing Space behavior.
+R and the **Restart (R)** button restart the whole current scene and clear its checkpoint session. IntroBubble restarts at EntryBox in IntroBubble, not at IntroBox. Each intro places Restart below Return to Main Menu; both buttons use that scene's own `LevelNavigationUI`. E / Pop exits Bubble; E / Leave also exits Fan and Spider in levels that contain those forms. Space remains Star jump and SpikeWall fire, not a release key.
 
 - **Star:** boxed A/D appears in the opening movement region; boxed SPACE and a jump arc appear near the low step. These prompts require control of the assigned Star and disappear after possession.
 - **Box:** `BoxGrowHint` also gives EntryBox a growth reminder beneath the Bubble.
@@ -56,6 +56,28 @@ R and the **Restart (R)** button restart the whole current scene and clear its c
 - **Exit:** boxed E appears when the controlled Bubble reaches the safe platform area; it disappears after returning to Star. E remains usable elsewhere too.
 - **Continuation:** IntroBox uses `ContinueRight` mode with its `IntroFlagGate` reference. The arrow is hidden at runtime until the gate opens, then remains visible until the scene changes or restarts. This mode does not use a body or activation area. Its saved line width is 0.08, with a larger arrowhead and Sorting Order 20.
 - **Readability:** both intros use a warm-gray camera background (`#ADA7A7`) and dark terrain, while retaining distinct form/water colors. Saved top titles use font size 48 and subtitles 32, in dark blue. Bubble movement hints use orders 0/1, below the Bubble at 2 and its Star marker at 10. The Bubble has a pale-blue fill and dark-blue outline; the border changes neither its outer size nor its collision shape.
+
+### Alpha 0.1.2 mobile layout
+
+Both intro mobile Canvases use Screen Space - Overlay and Scale With Screen Size, reference `1920 × 1080`, match `0.5`. Show Mode is saved as AutoDetect. Set AlwaysShow before Play for Editor testing and restore AutoDetect before saving a release. Button visibility follows the controlled form; controls are not all shown simultaneously in play.
+
+IntroBox keeps `160 × 160` buttons and opaque backgrounds. Only Left, Right and Jump were lowered to Y `100`: Left X `223`, Right X `575` (bottom-left anchors), Jump X `-296` (bottom-right anchor). Other action positions retain their existing scene values.
+
+IntroBubble uses `120 × 120` buttons, pivot `(0.5, 0.5)`, and white Image backgrounds with alpha `0.35`. Only the Image background is faded; labels keep their opacity, and the full `120 × 120` button rectangle remains clickable. Direction keys keep their two-dimensional arrangement:
+
+| Button | Anchor | Pos X | Pos Y |
+| --- | --- | --- | --- |
+| Left | Bottom-left `(0, 0)` | 160 | 160 |
+| Right | Bottom-left `(0, 0)` | 440 | 160 |
+| Up | Bottom-left `(0, 0)` | 300 | 230 |
+| Down | Bottom-left `(0, 0)` | 300 | 90 |
+| Jump / Pop / Fire | Bottom-right `(1, 0)` | -300 | 160 |
+| Grow | Bottom-right `(1, 0)` | -300 | 230 |
+| Shrink | Bottom-right `(1, 0)` | -300 | 90 |
+| Blow | Bottom-right `(1, 0)` | -440 | 160 |
+| Leave | Bottom-right `(1, 0)` | -160 | 160 |
+
+Buttons are siblings of MobileControls under Canvas; moving MobileControls alone does not reposition them. IntroBubble retains its original fixed camera at `(0.5, 0.75, -10)`, orthographic Size `6`. IntroBox retains `(-3, 0, -10)`, Size `7`. The wider/lower IntroBubble camera experiment was reverted before release. No dedicated bottom control strip or camera-follow redesign was added. Transparency reduces visual obstruction but does not prevent fingers covering gameplay.
 
 ### Top-center form messages
 
@@ -84,7 +106,7 @@ Box-to-Box feedback detects a changed body reference in the Box sequence; stayin
 ## Scene wiring and shared behavior
 
 - Keep `PlayerControl.Initial Body` assigned to the configured, active StarPlayer in edit mode. IntroBox leaves `Starting Host` empty; IntroBubble assigns EntryBox. The controller hides the original Star while hosted and restores it when the Bubble pops.
-- Untouched Bubbles remain motionless until first possession. Once activated, they retain their environmental physics after transferring away. Restarting the scene restores fresh dormant Bubbles; popped Bubbles do not regenerate during the same run. This is shared behavior, not limited to IntroBubble.
+- Untouched Bubbles remain motionless until first possession. Once activated, they retain their environmental physics after transferring away. Restarting the scene restores fresh dormant Bubbles. The intro Bubble does not regenerate during the same run; Level01 Bubble_U2 is an explicit exception through BubbleRespawnOnPop.
 - IntroBubble's BubbleBody needs `BodyWaterPhysics`; WaterArea uses a trigger `BoxCollider2D` and `WaterZone`. Waiting no longer depends on a Bubble canopy, while room ceilings still guide an activated Bubble.
 - IntroBox uses `IntroFlagGate` for the flag/door and `IntroSceneExit` for loading IntroBubble. IntroBubble uses `IntroStarGoal` with `Next Scene Name = Level01`, label `Level 1`, and default transition 1.5 seconds. `LevelGoal` advances Level01 to Level02 after G2 opens, accepting any controlled form; its label is `Level 2` with the same default transition duration.
 - `GoalFlagVisual.prefab` is visual only. Keep scene-specific goal triggers and controller references separate from the shared flag asset.
@@ -96,9 +118,9 @@ For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [Ga
 
 ## Verification and remaining work
 
-The developer confirmed box transfer/shrinking, dormant Bubble activation, air/water movement, visual hints/outline, E exit, the grounded-Star flag, and the full menu-to-Level02 flow. The October 17 follow-up also confirmed the palette, contextual Star prompts, form/subtitle changes including Box-to-Box transfer, larger subtitles, IntroBubble messages, current-scene Restart buttons, the thicker gate-open arrow, and completion transitions. Script compilation checks passed during implementation. These are editor results, not a claim that a new WebGL build has been tested or published.
+The developer confirmed box transfer/shrinking, dormant Bubble activation, air/water movement, visual hints/outline, E exit, the grounded-Star flag, and the full menu-to-Level02 flow. The October 17 follow-up also confirmed the palette, contextual Star prompts, form/subtitle changes including Box-to-Box transfer, larger subtitles, IntroBubble messages, current-scene Restart buttons, the thicker gate-open arrow, and completion transitions. Script compilation checks passed during implementation. Those were the original Editor results. The integrated Alpha 0.1.2 export has since passed developer-reported localhost and online tests; the accepted IntroBubble preview retains transparency and the original camera.
 
-Remaining work: integrate this completed intro pass through a maintainer-created PR, review readability/framing with new players, and test a new WebGL export before publication. Early Bubble popping or a stranded body can still require R; automatic soft-lock recovery is not implemented. The current intro route does not add a dedicated underwater-hazard lesson. Camera-follow redesign and mobile controls are not part of this completed pass.
+Remaining work: gather new-player readability feedback and broaden device/aspect-ratio and simultaneous-touch coverage. Early Bubble popping or a stranded body can still require Restart; automatic soft-lock recovery and a dedicated underwater-hazard lesson are not implemented. The current mobile layout is accepted for Alpha 0.1.2; further redesign is deferred.
 
 ### October 17 implementation record
 
@@ -109,4 +131,4 @@ Remaining work: integrate this completed intro pass through a maintainer-created
 | `850e465` | Box-to-Box message and subtitle readability |
 | `7fc77d5` | IntroBubble UI wiring, gate-open arrow with adjustable thickness, and Level 1/2 completion transitions |
 
-PR #11 integrated this polish into main. No new WebGL deployment is recorded. Commits, pushes, PR creation and merges remain manual maintainer actions.
+PR #11 integrated this polish into main. PR #14 integrated mobile controls, and `9b35f8e` records the Alpha 0.1.2 layout changes. The current export is published as `5f62980`; see the release record in [ScriptGuide.md](ScriptGuide.md#4-web-build-and-github-pages-release).
