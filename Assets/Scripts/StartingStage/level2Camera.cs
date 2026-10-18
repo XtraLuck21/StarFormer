@@ -64,6 +64,34 @@ public class level2Camera : MonoBehaviour
     // 镜头缩小的速度。
     [SerializeField, Min(0.01f)] private float zoomSpeed = 3f;
 
+    [Header("Focus Target - After Chase")]
+    // 追逐结束后要对准的东西，比如那颗星星。
+    // 留空就改为跟随玩家当前控制的身体。
+    [SerializeField] private Transform focusTarget;
+
+    [SerializeField, Min(0.01f)] private float focusSize = 6f;
+
+    // 镜头相对目标的偏移。(0, 0) = 目标正好在画面正中。
+    [SerializeField]
+    private Vector2 focusFollowOffset = Vector2.zero;
+
+    // 镜头平移到目标的速度，单位是米/秒。
+    [SerializeField, Min(0.01f)] private float focusPanSpeed = 20f;
+
+    // 镜头缩放到目标 Size 的速度。
+    [SerializeField, Min(0.01f)] private float focusZoomSpeed = 4f;
+
+    // 镜头到位后停留几秒，然后把控制权交还给普通跟随。
+    [SerializeField, Min(0f)] private float focusHoldTime = 0.8f;
+
+    // 镜头到位后执行，可以接「显示提示文字」之类。
+    [SerializeField]
+    private UnityEvent onFocusReached = new UnityEvent();
+
+    private bool focusStarted;
+    private bool focusReached;
+    private float focusHoldTimer;
+
     [Header("Dropping Scene")]
     [SerializeField]
     private Vector2 droppingXRange =
@@ -126,6 +154,33 @@ public class level2Camera : MonoBehaviour
     {
         remainingFollowStarted = true;
         playingCutscene = false;
+        focusStarted = false;
+        chaseCameraStarted = false;
+    }
+
+    // 追逐结束时调用：退出追逐镜头，平移到 Focus Target。
+    // 把刺墙的 On Chase Ended 事件连到这个方法。
+    public void FocusOnTarget()
+    {
+        chaseCameraStarted = false;
+        playingCutscene = false;
+
+        focusStarted = true;
+        focusReached = false;
+        focusHoldTimer = 0f;
+    }
+
+    // 临时指定一个目标。
+    public void FocusOn(Transform target)
+    {
+        focusTarget = target;
+        FocusOnTarget();
+    }
+
+    // 只退出追逐镜头，不做别的，镜头按区域规则自己决定。
+    public void EndChaseCamera()
+    {
+        chaseCameraStarted = false;
     }
 
     private void LateUpdate()
@@ -147,7 +202,93 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
+        // 追逐收尾：平移到星星，优先级仅次于分镜。
+        if (focusStarted && !remainingFollowStarted)
+        {
+            ApplyFocusCamera();
+            return;
+        }
+
         ApplyPlayerCamera();
+    }
+
+    private void ApplyFocusCamera()
+    {
+        TakeCamera();
+
+        // 没填目标就退化成跟随玩家，避免卡死在原地。
+        Vector3 targetPosition;
+
+        if (focusTarget != null)
+        {
+            targetPosition = new Vector3(
+                focusTarget.position.x,
+                focusTarget.position.y,
+                cameraZ
+            );
+        }
+        else
+        {
+            PossessableBody currentBody =
+                player != null ? player.CurrentBody : null;
+
+            if (currentBody == null)
+            {
+                return;
+            }
+
+            targetPosition = new Vector3(
+                currentBody.transform.position.x,
+                currentBody.transform.position.y,
+                cameraZ
+            );
+        }
+
+        targetPosition.x += focusFollowOffset.x;
+        targetPosition.y += focusFollowOffset.y;
+
+        // 已经追上目标后直接贴住，否则目标跑得比镜头快会一直甩在后面。
+        if (focusReached)
+        {
+            SetCamera(targetPosition, focusSize);
+
+            // 停留一会儿，然后把镜头交还给普通跟随。
+            // 之后附身到风扇、泡泡、箱子都能正常跟随。
+            focusHoldTimer += Time.deltaTime;
+
+            if (focusHoldTimer >= focusHoldTime)
+            {
+                focusStarted = false;
+                remainingFollowStarted = true;
+            }
+
+            return;
+        }
+
+        // 还没追上时平滑移过去，而不是瞬间切过去。
+        Vector3 nextPosition = Vector3.MoveTowards(
+            transform.position,
+            targetPosition,
+            focusPanSpeed * Time.deltaTime
+        );
+
+        float nextSize = Mathf.MoveTowards(
+            cam.orthographicSize,
+            focusSize,
+            focusZoomSpeed * Time.deltaTime
+        );
+
+        SetCamera(nextPosition, nextSize);
+
+        // 位置和缩放都到位了，通知一次。
+        if (!focusReached &&
+            Vector3.Distance(nextPosition, targetPosition) < 0.01f &&
+            Mathf.Abs(nextSize - focusSize) < 0.01f)
+        {
+            focusReached = true;
+            focusHoldTimer = 0f;
+            onFocusReached.Invoke();
+        }
     }
 
     private void ApplyPlayerCamera()
@@ -163,21 +304,8 @@ public class level2Camera : MonoBehaviour
 
         Vector3 position = currentBody.transform.position;
 
-        if (remainingFollowStarted)
-        {
-            TakeCamera();
-
-            SetCamera(
-                new Vector3(
-                    position.x + remainingFollowOffset.x,
-                    position.y + remainingFollowOffset.y,
-                    cameraZ
-                ),
-                remainingFollowSize
-            );
-
-            return;
-        }
+        // 下落分镜排在收尾跟随之前，
+        // 这样追逐结束之后的下落段落仍然能正常播放。
         // 进入下落区域后，接管镜头。
         // 触发后即使玩家离开这个 X 范围，也继续播放下落镜头。
         if (!droppingStarted &&
@@ -212,6 +340,24 @@ public class level2Camera : MonoBehaviour
             return;
         }
 
+        // 收尾跟随：跟着玩家当前控制的身体，
+        // 附身风扇、泡泡、箱子都适用。
+        if (remainingFollowStarted)
+        {
+            TakeCamera();
+
+            SetCamera(
+                new Vector3(
+                    position.x + remainingFollowOffset.x,
+                    position.y + remainingFollowOffset.y,
+                    cameraZ
+                ),
+                remainingFollowSize
+            );
+
+            return;
+        }
+
         bool insideY = InRange(position.y, yRange);
 
         bool insideSecond =
@@ -242,8 +388,10 @@ public class level2Camera : MonoBehaviour
         }
 
         // 分镜结束后，玩家超过 -64，启动追逐镜头。
+        // 追逐已经收尾过就不再重新启动。
         if (cutsceneTriggered &&
             !playingCutscene &&
+            !focusStarted &&
             position.x > chaseStartX)
         {
             chaseCameraStarted = true;

@@ -36,6 +36,16 @@ public class MovingSpikeHazard : MonoBehaviour
     // 勾上后，折返时左右翻转贴图。
     [SerializeField] private bool flipSpriteOnTurn = false;
 
+    [Header("Lifetime")]
+    // 勾上后，尖刺存活到时间会自动消失；不勾则永久存在。
+    [SerializeField] private bool useLifetime = false;
+
+    // 存活秒数，从关卡开始计时。
+    [SerializeField, Min(0.1f)] private float lifetime = 5f;
+
+    // 勾上：到时间播碎片特效再消失；不勾：直接消失。
+    [SerializeField] private bool shatterOnExpire = true;
+
     [Header("Death")]
     // 勾上：碰到立刻重开关卡，等同于按 R。
     // 不勾：画面定格 2 秒后再重开，与普通尖刺一致。
@@ -51,6 +61,10 @@ public class MovingSpikeHazard : MonoBehaviour
     private float waitTimer;
 
     private bool isConfigured;
+
+    // 已经存活的秒数，以及「已经进入销毁流程」的保险。
+    private float age;
+    private bool isExpired;
 
     private void Start()
     {
@@ -102,15 +116,29 @@ public class MovingSpikeHazard : MonoBehaviour
         endPoint = startPoint + patrolOffset;
         movingToEnd = startMovingToEnd;
 
+        age = 0f;
+
         isConfigured = true;
         ApplyFacing();
     }
 
     private void FixedUpdate()
     {
-        if (!isConfigured)
+        if (!isConfigured || isExpired)
         {
             return;
+        }
+
+        // 存活计时：到点就停止移动并销毁。
+        if (useLifetime)
+        {
+            age += Time.fixedDeltaTime;
+
+            if (age >= lifetime)
+            {
+                Expire();
+                return;
+            }
         }
 
         if (moveMode == SpikeMoveMode.Straight)
@@ -161,9 +189,35 @@ public class MovingSpikeHazard : MonoBehaviour
             : !movingToEnd;
     }
 
+    // 存活时间到了：按设置决定是否播碎片。
+    private void Expire()
+    {
+        if (isExpired)
+        {
+            return;
+        }
+
+        if (shatterOnExpire)
+        {
+            Shatter();
+            return;
+        }
+
+        isExpired = true;
+        Destroy(gameObject);
+    }
+
     // 被射出的刺打中时调用：先掉碎片，再销毁自己。
     public void Shatter()
     {
+        // Destroy 要等这一帧结束才真正生效，期间可能被再次调用。
+        if (isExpired)
+        {
+            return;
+        }
+
+        isExpired = true;
+
         if (TryGetComponent(out ShatterEffect effect))
         {
             effect.Play();
@@ -186,7 +240,7 @@ public class MovingSpikeHazard : MonoBehaviour
 
     private void CheckContact(Collider2D other)
     {
-        if (!isActiveAndEnabled || playerController == null)
+        if (!isActiveAndEnabled || isExpired || playerController == null)
         {
             return;
         }
