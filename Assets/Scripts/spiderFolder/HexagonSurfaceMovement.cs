@@ -25,8 +25,8 @@ public class HexagonSurfaceMovement : MonoBehaviour
     [SerializeField, Min(1f)]
     private float settleDegreesPerSecond = 240f;
 
-    // Flat Top 六边形：中心到左右尖角的本地距离。
-    // 如果图片宽度为 1，则这里填 0.5。
+    // Flat-top hexagon: local distance from the center to the left/right vertex.
+    // Use 0.5 for a sprite with width 1.
     [SerializeField, Min(0.01f)]
     private float visualRadius = 0.5f;
 
@@ -159,7 +159,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
             -surfaceNormal.x
         );
 
-        // 有输入时，检查行进方向前方的表面。
+        // With movement input, check the surface ahead in the travel direction.
         if (Mathf.Abs(input) > 0.01f)
         {
             Vector2 moveDirection = tangent * Mathf.Sign(input);
@@ -190,8 +190,8 @@ public class HexagonSurfaceMovement : MonoBehaviour
                     surfaceNormal
                 );
 
-                // 小于 0：正在朝这个表面撞过去。
-                // 大于 0：正在离开这个表面，不应切换过去。
+                // Negative: moving toward this surface.
+                // Positive: moving away from this surface; do not switch to it.
                 float approachDot = Vector2.Dot(
                     moveDirection,
                     candidateNormal
@@ -204,7 +204,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
                 }
             }
         }
-        // 无论有没有输入，都检测当前吸附表面。
+        // Detect the current attached surface with or without movement input.
         bestHit = Physics2D.CircleCast(
             center,
             probeRadius,
@@ -218,7 +218,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
             return true;
         }
 
-        // 当前表面丢失后，搜索附近表面。
+        // Search nearby surfaces when the current surface is lost.
         bestHit = default;
         float closestDistance = float.PositiveInfinity;
 
@@ -263,17 +263,17 @@ public class HexagonSurfaceMovement : MonoBehaviour
         if (visual == null)
             return;
 
-        // 本次 60° 翻滚的进度：0 到 1。
+        // Progress through the current 60-degree roll, from 0 to 1.
         float phase = Mathf.Repeat(rollAngle, 60f) / 60f;
 
-        // 从 -30° 到 +30°。
+        // Rotate from -30 to +30 degrees.
         float pivotAngle = (phase - 0.5f) * Mathf.PI / 3f;
 
-        // 边贴墙时中心较低，转到顶点时中心较高。
+        // The center is lower on an edge and higher when pivoting over a vertex.
         float supportHeight = radius * Mathf.Cos(pivotAngle);
 
-        // 绕接触顶点翻滚的水平路径，
-        // 相对于身体匀速前进的位置做视觉补偿。
+        // Horizontal path while rolling around the contact vertex,
+        // compensated visually relative to the body's constant-speed movement.
         float arcTravel = radius * (
             0.5f + Mathf.Sin(pivotAngle)
         );
@@ -294,7 +294,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
             visual.position.z
         );
 
-        // Flat Top 六边形在地面上，0° 就有一条水平底边。
+        // A flat-top hexagon on the ground has a horizontal bottom edge at zero degrees.
         float surfaceAngle = Mathf.Atan2(
             tangent.y,
             tangent.x

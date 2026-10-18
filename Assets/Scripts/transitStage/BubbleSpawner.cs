@@ -24,7 +24,7 @@ private void Update()
         return;
     }
 
-    // 泡泡存在且处于激活状态，就继续等待。
+    // Keep waiting while the bubble exists and is active.
     if (currentBubble != null && currentBubble.activeInHierarchy)
     {
         return;

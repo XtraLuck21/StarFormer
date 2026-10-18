@@ -1,23 +1,23 @@
 using UnityEngine;
 
-// 挂在 Main Camera 上。根据玩家所在的房间移动和缩放镜头。
+// Attach to Main Camera to position and zoom it based on the player's room.
 [RequireComponent(typeof(Camera))]
 public class RoomCameraController : MonoBehaviour
 {
     [Header("Transition")]
-    // 勾上：瞬间切换，像塞尔达那种硬切分镜。
-    // 不勾：平滑推过去。
+    // Enabled: switch instantly with a hard camera cut.
+    // Disabled: transition smoothly.
     [SerializeField] private bool snapInstantly = false;
 
     [SerializeField, Min(0.1f)] private float moveSpeed = 6f;
     [SerializeField, Min(0.1f)] private float zoomSpeed = 6f;
 
     [Header("Start")]
-    // 开局所在的房间，留空就用第一次触发到的房间。
+    // Starting room; leave empty to use the first room entered.
     [SerializeField] private CameraRoom startRoom;
 
     [Header("References")]
-    // 留空会自动在场景里找。
+    // Automatically find the reference in the scene when unassigned.
     [SerializeField] private PlayerPossessionController player;
 
     private Camera cam;
@@ -39,7 +39,7 @@ public class RoomCameraController : MonoBehaviour
         if (!cam.orthographic)
         {
             Debug.LogWarning(
-                "镜头不是 Orthographic（正交）模式，2D 游戏请在 Camera 上改成 Orthographic。",
+                "The camera is not orthographic. Set Camera Projection to Orthographic for this 2D game.",
                 this
             );
         }
@@ -51,7 +51,7 @@ public class RoomCameraController : MonoBehaviour
         {
             EnterRoom(startRoom);
 
-            // 开局直接到位，不播放推镜。
+            // Position the camera immediately at startup without a transition.
             ApplyImmediately();
         }
     }
@@ -82,7 +82,7 @@ public class RoomCameraController : MonoBehaviour
             return;
         }
 
-        // 指数平滑：越接近目标越慢，和帧率无关。
+        // Frame-rate-independent exponential smoothing slows as the target approaches.
         float moveT = 1f - Mathf.Exp(-moveSpeed * Time.deltaTime);
         float zoomT = 1f - Mathf.Exp(-zoomSpeed * Time.deltaTime);
 
@@ -101,14 +101,14 @@ public class RoomCameraController : MonoBehaviour
         SetPosition(next);
     }
 
-    // 计算这一帧镜头应该在哪、多大。
+    // Calculate this frame's target camera position and size.
     private void Recalculate()
     {
         Bounds area = currentRoom.Area;
 
         if (currentRoom.Mode == RoomCameraMode.FitRoom)
         {
-            // 要同时装下房间的宽和高，取更大的那个需求。
+            // Use the larger size required to fit both the room's width and height.
             float sizeByHeight = area.extents.y;
             float sizeByWidth = area.extents.x / cam.aspect;
 
@@ -118,7 +118,7 @@ public class RoomCameraController : MonoBehaviour
             return;
         }
 
-        // FollowInsideRoom：固定大小，跟着玩家，但夹在房间里。
+        // FollowInsideRoom: follow at a fixed size, clamped to the room bounds.
         targetSize = currentRoom.FollowViewSize;
 
         Vector2 desired = target != null
@@ -134,7 +134,7 @@ public class RoomCameraController : MonoBehaviour
         );
     }
 
-    // 把镜头中心夹在房间内；房间比画面还小时直接居中。
+    // Clamp the camera center to the room; center it if the view exceeds the room.
     private static float ClampAxis(float value, float min, float max, float halfView)
     {
         float low = min + halfView;
@@ -156,7 +156,7 @@ public class RoomCameraController : MonoBehaviour
         SetPosition(targetPosition);
     }
 
-    // 只改 X 和 Y，Z 保持不变（2D 相机通常是 -10）。
+    // Update only X and Y; preserve Z (typically -10 for a 2D camera).
     private void SetPosition(Vector2 position)
     {
         Vector3 next = transform.position;
@@ -167,7 +167,7 @@ public class RoomCameraController : MonoBehaviour
         transform.position = next;
     }
 
-    // 玩家随时可能附身到别的身体上，所以每帧问一次控制器。
+    // Query the controller each frame because possession can change the target body.
     private void RefreshTarget()
     {
         PossessableBody body = player != null ? player.CurrentBody : null;

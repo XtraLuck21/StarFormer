@@ -23,7 +23,7 @@ public class WallSlideOnDrop : MonoBehaviour
         body.gravityScale = 0f;
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        // 墙直接放在最终位置，不再播放移动动画。
+        // Place the wall directly at its final position without a movement animation.
         body.position = (Vector2)transform.position;
 
         wallRenderers =

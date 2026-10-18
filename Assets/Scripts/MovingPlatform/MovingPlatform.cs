@@ -5,24 +5,24 @@ using UnityEngine;
 public class MovingPlatform : MonoBehaviour
 {
     [Header("Patrol")]
-    // 相对起点的位移。(4, 0) = 左右来回 4 米；(0, 3) = 上下来回 3 米。
+    // Offset from the start: (4, 0) travels four units horizontally; (0, 3) three vertically.
     [SerializeField] private Vector2 patrolOffset = new Vector2(4f, 0f);
 
     [SerializeField, Min(0.01f)] private float moveSpeed = 2f;
 
-    // 到达两端后停顿几秒，0 表示立刻折返。
+    // Pause at each endpoint in seconds; zero reverses immediately.
     [SerializeField, Min(0f)] private float waitTime = 0.5f;
 
     [SerializeField] private bool startMovingToEnd = true;
 
     [Header("Riders")]
-    // 站在平台上的物体会跟着一起移动。
+    // Carry bodies standing on the platform.
     [SerializeField] private bool carryRiders = true;
 
-    // 接触面法线至少要多向上，才算"站在平台上"。
+    // Minimum upward contact-normal alignment required to count as standing on top.
     [SerializeField, Range(0f, 1f)] private float riderNormalThreshold = 0.5f;
 
-    // 带动乘客时，顺便抵消它的下坠速度，减少上下抖动。
+    // Cancel passengers' downward velocity while carrying them to reduce vertical jitter.
     [SerializeField] private bool dampRiderFalling = true;
 
     private Rigidbody2D body;
@@ -35,7 +35,7 @@ public class MovingPlatform : MonoBehaviour
 
     private bool isConfigured;
 
-    // 本帧站在平台上的物体。
+    // Bodies standing on the platform this frame.
     private readonly HashSet<Rigidbody2D> riders =
         new HashSet<Rigidbody2D>();
 
@@ -49,7 +49,7 @@ public class MovingPlatform : MonoBehaviour
         if (bodyCollider == null)
         {
             Debug.LogError(
-                "缺少 Collider2D。请先添加 Box Collider 2D。",
+                "Missing Collider2D. Add a Box Collider 2D first.",
                 this
             );
 
@@ -61,10 +61,10 @@ public class MovingPlatform : MonoBehaviour
         body.simulated = true;
         body.constraints = RigidbodyConstraints2D.FreezeRotation;
 
-        // 画面平滑，必须和玩家设成一样。
+        // Match the player's interpolation settings for smooth motion.
         body.interpolation = RigidbodyInterpolation2D.Interpolate;
 
-        // 实心碰撞体才能站上去。
+        // Use a solid collider so bodies can stand on the platform.
         bodyCollider.isTrigger = false;
 
         startPoint = body.position;
@@ -74,8 +74,8 @@ public class MovingPlatform : MonoBehaviour
         if (patrolOffset == Vector2.zero)
         {
             Debug.LogWarning(
-                "Patrol Offset 是 (0,0)，这个平台不会移动。" +
-                "请在 Inspector 里填一个位移，例如 X = 4。",
+                "Patrol Offset is (0, 0), so this platform will not move. " +
+                "Set an offset in the Inspector, such as X = 4.",
                 this
             );
         }
@@ -90,7 +90,7 @@ public class MovingPlatform : MonoBehaviour
             return;
         }
 
-        // 在端点停顿。
+        // Pause at an endpoint.
         if (waitTimer > 0f)
         {
             waitTimer -= Time.fixedDeltaTime;
@@ -109,8 +109,8 @@ public class MovingPlatform : MonoBehaviour
 
         Vector2 delta = nextPosition - current;
 
-        // 直接赋值而不是 MovePosition，
-        // 这样平台和乘客在同一瞬间移动，不会错开一帧。
+        // Assign position directly instead of using MovePosition,
+        // so the platform and its passengers move together without a one-frame offset.
         body.position = nextPosition;
 
         if (carryRiders && delta != Vector2.zero)
@@ -124,7 +124,7 @@ public class MovingPlatform : MonoBehaviour
 
                 rider.position += delta;
 
-                // 抵消站立时累积的下坠速度。
+                // Cancel downward velocity accumulated while standing on the platform.
                 if (dampRiderFalling)
                 {
                     Vector2 riderVelocity = rider.linearVelocity;
@@ -138,7 +138,7 @@ public class MovingPlatform : MonoBehaviour
             }
         }
 
-        // 乘客名单每帧重建，离开平台的自动移除。
+        // Rebuild the passenger list each frame so bodies that leave are removed.
         riders.Clear();
 
         if (Vector2.Distance(nextPosition, target) < 0.001f)
@@ -167,7 +167,7 @@ public class MovingPlatform : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            // 法线从对方指向平台。对方在上面时，法线朝下。
+            // The normal points from the other collider toward the platform; from above it points down.
             if (contacts[i].normal.y < -riderNormalThreshold)
             {
                 riders.Add(otherBody);

@@ -58,6 +58,18 @@ public class PlayerPossessionController : MonoBehaviour
     public bool IsDead => isDead;
     public PossessableBody CurrentBody => currentBody;
 
+    /// <summary>
+    /// This frame's vertical input (-1 to 1), combining W/S and touch Up/Down.
+    /// Box resizing reads this value instead of polling the keyboard separately.
+    /// </summary>
+    public float VerticalInput => verticalInput;
+
+    /// <summary>
+    /// This frame's horizontal input (-1 to 1), combining A/D and touch Left/Right.
+    /// Fan facing reads this value instead of polling the keyboard separately.
+    /// </summary>
+    public float HorizontalInput => horizontalInput;
+
     private PossessableBody currentBody;
     private PossessableBody pendingSource;
     private PossessableBody pendingTarget;
@@ -93,10 +105,19 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
-    private bool leaveRequested;
+    // E / Release handles bubble popping and leaving Spider or Fan.
+    private bool releaseRequested;
+    // Queue hazard-triggered bubble pops separately from player input.
     private bool bubblePopRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
+
+    // ===== Touch button state (written by TouchHoldButton) =====
+    private bool touchLeftHeld;
+    private bool touchRightHeld;
+    private bool touchUpHeld;
+    private bool touchDownHeld;
+
     private static bool hasCheckpoint;
     private static string checkpointScene;
     private static string checkpointId;
@@ -111,7 +132,7 @@ public class PlayerPossessionController : MonoBehaviour
         return HasCheckpointInCurrentScene && checkpointId == id;
     }
 
-    // public：主菜单进入关卡时也要调用，保证是全新的一局。
+    // Public so main-menu level entry can also clear the session for a fresh run.
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.SubsystemRegistration)]
     public static void ResetCheckpointSession()
@@ -137,6 +158,89 @@ public class PlayerPossessionController : MonoBehaviour
 
         Debug.Log($"check point activated:{id}", this);
         AnalyticsManager.Instance?.TrackCheckpoint(id, currentBody);
+    }
+
+    // ===================================================================
+    // Touch input API: UI buttons use these methods without changing physics logic.
+    // ===================================================================
+
+    public void SetTouchLeft(bool held) => touchLeftHeld = held;
+    public void SetTouchRight(bool held) => touchRightHeld = held;
+    public void SetTouchUp(bool held) => touchUpHeld = held;
+    public void SetTouchDown(bool held) => touchDownHeld = held;
+
+    /// <summary>Space: Star jump / SpikeWall fire. Requests an active ability only.</summary>
+    public void PressTouchAction()
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested)
+        {
+            return;
+        }
+
+        actionRequested = true;
+    }
+
+    /// <summary>
+    /// E / Release: leave the current form.
+    /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
+    /// </summary>
+    public void RequestRelease()
+    {
+        if (!isActiveAndEnabled ||
+            isDead ||
+            restartRequested ||
+            Time.timeScale == 0f)
+        {
+            return;
+        }
+
+        releaseRequested = true;
+    }
+
+    /// <summary>Legacy name retained as an alias for RequestRelease.</summary>
+    public void PressTouchPop()
+    {
+        RequestRelease();
+    }
+
+    /// <summary>
+    /// Toggle the Fan's wind (W on the keyboard): press once for on, again for off.
+    /// Only applies while possessing Fan, matching the form-specific firing behavior.
+    /// </summary>
+    public void PressTouchBlow()
+    {
+        if (!isActiveAndEnabled ||
+            isDead ||
+            restartRequested ||
+            Time.timeScale == 0f ||
+            currentBody == null ||
+            currentBody.Form != BodyForm.Fan)
+        {
+            return;
+        }
+
+        if (currentBody.TryGetComponent(out FanBlower blower))
+        {
+            blower.ToggleBlow();
+        }
+    }
+
+    /// <summary>R: clear checkpoints and restart the current level from the beginning.</summary>
+    public void PressTouchRestart()
+    {
+        if (!isActiveAndEnabled || restartRequested || Time.timeScale <= 0f) return;
+        AnalyticsManager.Instance?.TrackManualRestart();
+        ResetCheckpointSession();
+        RequestRestart();
+    }
+
+    /// <summary>Release all directions when changing forms, dying, or restarting.</summary>
+    public void ReleaseAllTouchInput()
+    {
+        touchLeftHeld = false;
+        touchRightHeld = false;
+        touchUpHeld = false;
+        touchDownHeld = false;
     }
 
     private void Start()
@@ -213,7 +317,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
-            // R：清除检查点，整个关卡从头开始。
+            // R: clear checkpoints and restart the entire level from the beginning.
             AnalyticsManager.Instance?.TrackManualRestart();
             ResetCheckpointSession();
 
@@ -224,6 +328,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (isDead)
         {
             actionRequested = false;
+            ReleaseAllTouchInput();
 
             if (Time.unscaledTime >= deathRestartTime)
             {
@@ -239,47 +344,72 @@ public class PlayerPossessionController : MonoBehaviour
             horizontalInput = 0f;
             verticalInput = 0f;
             actionRequested = false;
-            leaveRequested = false;
+            releaseRequested = false;
             return;
         }
 
-        if (keyboard == null)
+        // ---- Keyboard input (skip this block when no keyboard is available) ----
+        // Do not return and clear actionRequested when keyboard is null:
+        // that would discard a jump requested by a touch button on the next frame.
+        if (keyboard != null)
         {
-            actionRequested = false;
-            return;
+            if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+            {
+                horizontalInput -= 1f;
+            }
+
+            if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+            {
+                horizontalInput += 1f;
+            }
+
+            if (keyboard.wKey.isPressed)
+            {
+                verticalInput += 1f;
+            }
+
+            if (keyboard.sKey.isPressed)
+            {
+                verticalInput -= 1f;
+            }
+
+            if (keyboard.eKey.wasPressedThisFrame)
+            {
+                // E consistently means Release: pop Bubble or leave Spider/Fan.
+                RequestRelease();
+            }
+
+            if (keyboard.spaceKey.wasPressedThisFrame)
+            {
+                // Space requests active abilities only: Star jump or SpikeWall fire.
+                actionRequested = true;
+            }
         }
 
-        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
+        // ---- Add touch input to keyboard input (both work in the Editor) ----
+        if (touchLeftHeld)
         {
             horizontalInput -= 1f;
         }
 
-        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
+        if (touchRightHeld)
         {
             horizontalInput += 1f;
         }
 
-        if (keyboard.wKey.isPressed)
+        if (touchUpHeld)
         {
             verticalInput += 1f;
         }
 
-        if (keyboard.sKey.isPressed)
+        if (touchDownHeld)
         {
             verticalInput -= 1f;
         }
 
-        if (keyboard.eKey.wasPressedThisFrame)
-        {
-            RequestBubblePop(currentBody);
-        }
-
-        if (keyboard.spaceKey.wasPressedThisFrame)
-        {
-            actionRequested = true;
-            // Fan form uses Space to leave; other forms use it as action/jump.
-            leaveRequested = true;
-        }
+        // Opposing directions cancel; combined keyboard/touch input stays within [-1, 1].
+        horizontalInput = Mathf.Clamp(horizontalInput, -1f, 1f);
+        verticalInput = Mathf.Clamp(verticalInput, -1f, 1f);
     }
 
     private void FixedUpdate()
@@ -319,24 +449,29 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         // Keep keyboard exits and hazard pops ahead of pending possession.
-        bool shouldPopBubble = bubblePopRequested && currentBody.Form == BodyForm.Bubble;
+        bool shouldPopBubble =
+            bubblePopRequested && currentBody.Form == BodyForm.Bubble;
         bubblePopRequested = false;
-        if (shouldPopBubble ||
-            (actionRequested && currentBody.Form == BodyForm.Spider))
+
+        bool shouldRelease = releaseRequested;
+        releaseRequested = false;
+
+        // Bubble and Spider both return to Star through the same release method.
+        bool releaseToStar =
+            shouldRelease &&
+            (currentBody.Form == BodyForm.Bubble ||
+             currentBody.Form == BodyForm.Spider);
+
+        if (shouldPopBubble || releaseToStar)
         {
             PopBubble();
             return;
         }
 
-        if (leaveRequested)
+        if (shouldRelease && currentBody.Form == BodyForm.Fan)
         {
-            leaveRequested = false;
-
-            if (currentBody.Form == BodyForm.Fan)
-            {
-                LeaveFan();
-                return;
-            }
+            LeaveFan();
+            return;
         }
 
         UpdateContactLocks();
@@ -472,7 +607,7 @@ public class PlayerPossessionController : MonoBehaviour
                 {
                     // keep the small ball rolling/player don control
                     actionRequested = false;
-                    leaveRequested = false;
+                    releaseRequested = false;
                     return;
                 }
 
@@ -533,6 +668,7 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
+        ReleaseAllTouchInput();
     }
 
     public void KillControlledBody(
@@ -558,6 +694,7 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
+        ReleaseAllTouchInput();
 
         float activeDeathDelay = restartDelayOverride >= 0f
             ? restartDelayOverride
@@ -598,6 +735,7 @@ public class PlayerPossessionController : MonoBehaviour
     {
         RestoreBubbleHandoffCollisions();
         bubblePopRequested = false;
+        ReleaseAllTouchInput();
         ClearPossessionContacts();
 
         if (isDead)
@@ -627,7 +765,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void PopBubble()
     {
         actionRequested = false;
-        leaveRequested = false;
+        releaseRequested = false;
         bubblePopRequested = false;
 
         if (initialBody == null ||
@@ -770,7 +908,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         previousBody.SetOwner(null);
 
-        // 先成功转移控制权。
+        // Transfer ownership successfully first.
         currentBody = target;
         currentBody.SetOwner(this);
         BeginBubbleHandoff(previousBody, currentBody);
@@ -785,14 +923,14 @@ public class PlayerPossessionController : MonoBehaviour
         horizontalInput = 0f;
         verticalInput = 0f;
         actionRequested = false;
-        leaveRequested = false;
+        releaseRequested = false;
 
         bool starEnteredHost = previousBody == initialBody;
         bool destroyedPreviousBody = false;
 
         if (starEnteredHost)
         {
-            // 星星保留，泡泡爆裂时还能恢复。
+            // Keep Star available so it can be restored when Bubble pops.
             previousBody.gameObject.SetActive(false);
         }
         else if (previousBody.Form == BodyForm.gravityBall ||

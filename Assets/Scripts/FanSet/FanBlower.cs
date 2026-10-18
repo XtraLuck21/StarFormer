@@ -38,24 +38,20 @@ public class FanBlower : MonoBehaviour
             return;
         }
 
+        // Read the controller's HorizontalInput, combining A/D and touch Left/Right.
+        // Avoid separate keyboard polling so facing still works when Keyboard.current is null.
+        PlayerPossessionController owner = possessable.Owner;
+
+        if (owner != null && owner.HorizontalInput != 0f)
+        {
+            facing = owner.HorizontalInput > 0f ? 1 : -1;
+        }
+
+        // Keyboard W toggles wind directly; touch calls ToggleBlow() through
+        // the controller's PressTouchBlow. Both update the same isBlowing state.
         Keyboard keyboard = Keyboard.current;
 
-        if (keyboard == null)
-        {
-            return;
-        }
-
-        if (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed)
-        {
-            facing = -1;
-        }
-
-        if (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed)
-        {
-            facing = 1;
-        }
-
-        if (keyboard.wKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.wKey.wasPressedThisFrame)
         {
             isBlowing = !isBlowing;
         }

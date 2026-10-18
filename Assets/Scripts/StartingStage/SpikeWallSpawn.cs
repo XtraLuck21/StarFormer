@@ -14,7 +14,7 @@ public class spikeWallSpawn : MonoBehaviour
     [Header("Expression")]
     [SerializeField] private SpikeAngryText angryText;
 
-    // 重新加载场景时保留，重新开始游戏运行时清除。
+    // Persist across scene reloads; clear when a new play session begins.
     private static bool expressionPlayed;
 
     private Rigidbody2D body;
@@ -28,7 +28,7 @@ public class spikeWallSpawn : MonoBehaviour
     private bool chaseRequested;
     private bool chaseStarted;
 
-    // 0 = 静止，1 = 表情等待，2 = 出墙，3 = 出墙完成。
+    // 0 = idle, 1 = expression delay, 2 = emerging, 3 = fully emerged.
     private int stage;
 
     [RuntimeInitializeOnLoadMethod(
@@ -66,7 +66,7 @@ public class spikeWallSpawn : MonoBehaviour
         }
         else
         {
-            // 死亡或按 R 重开后，不再显示表情。
+            // Skip the expression after death or an R-key restart.
             if (angryText != null)
             {
                 angryText.HideAngry();

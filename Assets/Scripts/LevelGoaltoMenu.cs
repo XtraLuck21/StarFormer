@@ -4,47 +4,51 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-// 踩到之后回到主菜单。
-// 挂在终点旗子上，需要一个勾了 Is Trigger 的 Collider2D。
+// Reaching the goal completes the level; optionally wait for a menu button.
+// Attach to the goal flag with a Collider2D marked Is Trigger.
 [RequireComponent(typeof(Collider2D))]
 public class LevelGoalToMenu : MonoBehaviour
 {
     [Header("References")]
-    // 留空会自动在场景里找。
+    // Automatically find the reference in the scene when unassigned.
     [SerializeField] private PlayerPossessionController player;
 
     [Header("Required Gate")]
-    // 必须先处理掉的门。留空 = 不做任何限制，踩到就通关。
+    // Gate requirement; leave empty to allow completion without a gate check.
     [SerializeField] private GameObject requiredGate;
 
-    // 勾上：门被销毁或关闭才算通过。
-    // 不勾：门还在才算通过（极少用，按需要改）。
+    // Enabled: the gate must be destroyed or inactive to allow completion.
+    // Disabled: the gate must still be active (for special cases).
     [SerializeField] private bool gateMustBeGone = true;
 
     [Header("Status Text")]
     [SerializeField] private TMP_Text statusText;
 
     [SerializeField, TextArea]
-    private string clearedMessage = "关卡完成！";
+    private string clearedMessage = "Level complete!";
 
     [SerializeField, TextArea]
-    private string blockedMessage = "还有门没打开。";
+    private string blockedMessage = "A gate is still closed.";
 
-    // 条件不满足时，提示文字显示几秒后消失。
+    // Seconds to display the blocked message when the requirement is not met.
     [SerializeField, Min(0f)] private float blockedMessageTime = 2f;
 
     [Header("Return To Menu")]
-    // 主菜单场景的名字，必须和 Build Settings 里一致。
-    [SerializeField] private string menuSceneName = "MainMenu";
+    // Main-menu scene name; must match the enabled build scene list.
+    [SerializeField] private string menuSceneName = "Mainmenu";
 
-    // 显示完成提示后，等几秒再切场景。
+    [Tooltip("Show Level Complete and wait for the player to choose Return to Main Menu.")]
+    [SerializeField] private bool waitForMenuButton;
+
+    // Delay between displaying completion and loading the next scene.
     [SerializeField, Min(0f)] private float returnDelay = 1.5f;
 
-    // 切场景之前执行，可以接音效、存档等等。
+    // Invoked before switching scenes; can trigger audio, saving, or other actions.
     [SerializeField] private UnityEvent onLevelCleared = new UnityEvent();
 
     private bool cleared;
     private Coroutine blockedRoutine;
+    private bool reportedMissingMenu;
 
     private void Awake()
     {
@@ -73,7 +77,7 @@ public class LevelGoalToMenu : MonoBehaviour
 
     private void CheckPlayer(Collider2D other)
     {
-        if (cleared)
+        if (cleared || player == null || player.IsDead || Time.timeScale <= 0f)
         {
             return;
         }
@@ -82,7 +86,7 @@ public class LevelGoalToMenu : MonoBehaviour
 
         if (otherBody == null ||
             !otherBody.TryGetComponent(out PossessableBody body) ||
-            !body.IsControlled)
+            !body.IsControlled || player.CurrentBody != body)
         {
             return;
         }
@@ -93,10 +97,21 @@ public class LevelGoalToMenu : MonoBehaviour
             return;
         }
 
+        if (string.IsNullOrWhiteSpace(menuSceneName) ||
+            !Application.CanStreamedLevelBeLoaded(menuSceneName))
+        {
+            if (!reportedMissingMenu)
+            {
+                Debug.LogError($"Add and enable scene '{menuSceneName}' in the Build Profile.", this);
+                reportedMissingMenu = true;
+            }
+            return;
+        }
+
         Clear();
     }
 
-    // 门的条件是否满足。留空就永远算满足。
+    // Check the gate requirement; an unassigned gate always passes.
     private bool IsGateSatisfied()
     {
         if (requiredGate == null)
@@ -104,7 +119,7 @@ public class LevelGoalToMenu : MonoBehaviour
             return true;
         }
 
-        // 物体被销毁后，这里的引用会变成 null。
+        // Unity treats destroyed object references as null.
         bool gateGone = !requiredGate.activeInHierarchy;
 
         return gateMustBeGone ? gateGone : !gateGone;
@@ -154,23 +169,27 @@ public class LevelGoalToMenu : MonoBehaviour
 
         onLevelCleared.Invoke();
 
-        StartCoroutine(ReturnRoutine());
+        if (waitForMenuButton)
+            LevelTransitionUI.ShowFinalResult(menuSceneName, player);
+        else
+            StartCoroutine(ReturnRoutine());
     }
 
     private IEnumerator ReturnRoutine()
     {
-        // 用 Realtime，万一有脚本把 Time.timeScale 设成 0 也能走完。
+        // Use realtime so the delay completes even if Time.timeScale is zero.
         yield return new WaitForSecondsRealtime(returnDelay);
 
-        // 切场景前恢复时间流速，否则主菜单会是静止的。
+        // Restore time before loading so the main menu is not paused.
         Time.timeScale = 1f;
 
         if (string.IsNullOrWhiteSpace(menuSceneName))
         {
-            Debug.LogError("没有填主菜单场景名。", this);
+            Debug.LogError("The main-menu scene name is not assigned.", this);
             yield break;
         }
 
+        PlayerPossessionController.ResetCheckpointSession();
         SceneManager.LoadScene(menuSceneName);
     }
 }

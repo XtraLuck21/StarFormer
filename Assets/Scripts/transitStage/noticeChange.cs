@@ -21,7 +21,7 @@ public class noticeChange : MonoBehaviour
             return;
         }
 
-        // 门被关闭对象（解锁）后，把右箭头换成左箭头。
+        // When the gate object is deactivated (unlocked), replace the right arrow with the left arrow.
         if (!door1.activeSelf)
         {
             text.text = text.text.Replace("Not this way", "← all the way");

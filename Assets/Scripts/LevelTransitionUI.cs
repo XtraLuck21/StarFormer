@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-// A short, scene-local completion overlay. It never persists into the next level.
+// Scene-local progression and final-completion overlays; never persist into another scene.
 public class LevelTransitionUI : MonoBehaviour
 {
     private static LevelTransitionUI activeTransition;
@@ -18,7 +18,24 @@ public class LevelTransitionUI : MonoBehaviour
     public static void ShowAndLoad(string sceneName, string levelLabel,
         PlayerPossessionController playerController, float duration)
     {
-        if (activeTransition != null) return;
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        transition.BuildOverlay(levelLabel);
+        transition.StartCoroutine(transition.LoadAfterDelay(sceneName, duration));
+    }
+
+    public static void ShowFinalResult(string menuSceneName,
+        PlayerPossessionController playerController)
+    {
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        transition.BuildOverlay(null, true);
+        transition.AddMenuButton(menuSceneName);
+    }
+
+    private static LevelTransitionUI Begin(PlayerPossessionController playerController)
+    {
+        if (activeTransition != null) return null;
 
         var root = new GameObject("LevelCompletionOverlay", typeof(RectTransform));
         var transition = root.AddComponent<LevelTransitionUI>();
@@ -36,11 +53,10 @@ public class LevelTransitionUI : MonoBehaviour
             transition.previousSelection = EventSystem.current.currentSelectedGameObject;
             EventSystem.current.SetSelectedGameObject(null);
         }
-        transition.BuildOverlay(levelLabel);
-        transition.StartCoroutine(transition.LoadAfterDelay(sceneName, duration));
+        return transition;
     }
 
-    private void BuildOverlay(string levelLabel)
+    private void BuildOverlay(string levelLabel, bool finalResult = false)
     {
         Canvas canvas = gameObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -59,8 +75,8 @@ public class LevelTransitionUI : MonoBehaviour
         rect.offsetMin = rect.offsetMax = Vector2.zero;
         background.GetComponent<Image>().color = new Color(0.04f, 0.07f, 0.1f, 0.88f);
 
-        AddText("Title", "Level up!", 64f, 50f);
-        AddText("Destination", "Entering " + levelLabel + "...", 36f, -45f);
+        AddText("Title", finalResult ? "Level Complete" : "Level up!", 64f, 50f);
+        AddText("Destination", finalResult ? "You are a super star now!" : "Entering " + levelLabel + "...", 36f, -45f);
     }
 
     private void AddText(string objectName, string message, float fontSize, float y)
@@ -77,6 +93,52 @@ public class LevelTransitionUI : MonoBehaviour
         text.alignment = TextAlignmentOptions.Center;
         text.color = Color.white;
         text.raycastTarget = false;
+    }
+
+    private void AddMenuButton(string menuSceneName)
+    {
+        var buttonObject = new GameObject("ReturnToMainMenu", typeof(RectTransform),
+            typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(transform, false);
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
+        rect.anchoredPosition = new Vector2(0f, -180f);
+        rect.sizeDelta = new Vector2(520f, 90f);
+        Image background = buttonObject.GetComponent<Image>();
+        background.color = new Color(0.16f, 0.36f, 0.46f, 1f);
+        Button button = buttonObject.GetComponent<Button>();
+        button.targetGraphic = background;
+        // Keep navigation inside the result overlay, away from the old scene's buttons.
+        button.navigation = new Navigation { mode = Navigation.Mode.None };
+
+        var label = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        label.transform.SetParent(buttonObject.transform, false);
+        RectTransform labelRect = label.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = labelRect.offsetMax = Vector2.zero;
+        TextMeshProUGUI text = label.GetComponent<TextMeshProUGUI>();
+        text.text = "Return to Main Menu";
+        text.fontSize = 32f;
+        text.alignment = TextAlignmentOptions.Center;
+        text.color = Color.white;
+        text.raycastTarget = false;
+
+        button.onClick.AddListener(() =>
+        {
+            if (!Application.CanStreamedLevelBeLoaded(menuSceneName))
+            {
+                Debug.LogError($"Add and enable scene '{menuSceneName}' in the Build Profile.", this);
+                return;
+            }
+            button.interactable = false;
+            PlayerPossessionController.ResetCheckpointSession();
+            RestoreState();
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(menuSceneName);
+        });
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(buttonObject);
     }
 
     private IEnumerator LoadAfterDelay(string sceneName, float duration)

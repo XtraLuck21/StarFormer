@@ -1,40 +1,40 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-// 只负责倒计时，时间到了就让自己消失。
-// 不处理杀伤、不处理碎裂，也不需要 Rigidbody2D。
-// 杀伤由父物体的 SpikeWallEnemyChase 统一接管。
+// Count down and remove this object when its lifetime expires.
+// Does not handle damage or shattering and does not require Rigidbody2D.
+// The parent SpikeWallEnemyChase handles damage.
 public class SpikeLifetime : MonoBehaviour
 {
     [Header("Start")]
-    // 勾上 = 关卡加载就开始倒计时。
-    // 不勾 = 等外部调用 Begin() 才开始，比如追逐开始的那一刻。
+    // Enabled: start the countdown when the level loads.
+    // Disabled: wait for an external Begin() call, such as when the chase starts.
     [SerializeField] private bool countFromStart = false;
 
-    // 存活秒数。
+    // Lifetime in seconds.
     [SerializeField, Min(0.1f)] private float lifetime = 5f;
 
     [Header("Expire")]
-    // 勾上 = 只关掉物体（之后还能用 SetActive 恢复）。
-    // 不勾 = 直接销毁。
+    // Enabled: deactivate the object so SetActive can restore it later.
+    // Disabled: destroy the object.
     [SerializeField] private bool disableInsteadOfDestroy = false;
 
-    // 消失前执行，可以在这里接音效等等。
+    // Invoked before removal; can trigger audio or other effects.
     [SerializeField] private UnityEvent onExpired = new UnityEvent();
 
     private bool counting;
     private bool expired;
     private float age;
 
-    // 给别的脚本或 UI 读的状态。
+    // State exposed to other scripts or UI.
     public bool IsCounting => counting;
     public bool IsExpired => expired;
 
-    // 剩余秒数。还没开始计时就返回完整时长。
+    // Remaining seconds; returns the full duration before the countdown starts.
     public float Remaining =>
         counting ? Mathf.Max(0f, lifetime - age) : lifetime;
 
-    // 0 到 1 的进度，方便接进度条。
+    // Progress from 0 to 1, suitable for a progress bar.
     public float Progress =>
         counting ? Mathf.Clamp01(age / Mathf.Max(0.01f, lifetime)) : 0f;
 
@@ -46,7 +46,7 @@ public class SpikeLifetime : MonoBehaviour
         }
     }
 
-    // 从现在开始倒计时，用 Inspector 里填好的秒数。
+    // Start counting down using the duration configured in the Inspector.
     public void Begin()
     {
         if (expired)
@@ -58,7 +58,7 @@ public class SpikeLifetime : MonoBehaviour
         age = 0f;
     }
 
-    // 从现在开始倒计时，并临时指定秒数。
+    // Start counting down with a temporary duration override.
     public void Begin(float seconds)
     {
         if (expired)
@@ -71,14 +71,14 @@ public class SpikeLifetime : MonoBehaviour
         age = 0f;
     }
 
-    // 取消倒计时，已经走过的时间作废。
+    // Cancel the countdown and discard elapsed time.
     public void Cancel()
     {
         counting = false;
         age = 0f;
     }
 
-    // 延长剩余时间，传负数就是缩短。
+    // Extend the remaining duration; a negative value shortens it.
     public void AddTime(float seconds)
     {
         if (expired)
@@ -89,7 +89,7 @@ public class SpikeLifetime : MonoBehaviour
         age = Mathf.Max(0f, age - seconds);
     }
 
-    // 不等倒计时，立刻消失。
+    // Remove immediately without waiting for the countdown.
     public void ExpireNow()
     {
         Expire();

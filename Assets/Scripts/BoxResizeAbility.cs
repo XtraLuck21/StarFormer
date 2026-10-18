@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(
     typeof(Rigidbody2D),
@@ -61,22 +60,18 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        Keyboard keyboard = Keyboard.current;
+        // The controller combines W/S and the on-screen Grow/Shrink buttons
+        // into one VerticalInput value (-1 to 1); use it directly here.
+        // Desktop and mobile share the same input path, so resizing still works
+        // when Keyboard.current is null on a mobile device.
+        PlayerPossessionController owner = possessable.Owner;
 
-        if (keyboard == null)
+        if (owner == null)
         {
             return;
         }
 
-        if (keyboard.wKey.isPressed)
-        {
-            resizeInput += 1f;
-        }
-
-        if (keyboard.sKey.isPressed)
-        {
-            resizeInput -= 1f;
-        }
+        resizeInput = Mathf.Clamp(owner.VerticalInput, -1f, 1f);
     }
 
     private void FixedUpdate()
