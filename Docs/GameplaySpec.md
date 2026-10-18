@@ -1,10 +1,12 @@
 # Gameplay Specification
 
-Last updated: 2026-10-17.
+Last updated: 2026-10-18.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Current source baseline: [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merged as `69f3902` on October 14, adds IntroBox and IntroBubble, E-key bubble exit, and Mainmenu → IntroBox → IntroBubble → Level01 → Level02 progression. The developer confirmed the complete flow in Unity Play Mode. The October 17 intro polish (through `7fc77d5` on `intro-levels`, pending integration) adds contextual hints, updated colors, current-scene restart buttons, an exit arrow and timed completion feedback; the developer also reported successful tests of those additions. See [intro-levels.md](intro-levels.md).
+Current source baseline: [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merged as `69f3902` on October 14, adds IntroBox and IntroBubble, E-key bubble exit, and Mainmenu → IntroBox → IntroBubble → Level01 → Level02 progression. The developer confirmed the complete flow in Unity Play Mode. The October 17 intro polish (merged through PR #11, `989d2d1`) adds contextual hints, updated colors, current-scene restart buttons, an exit arrow and timed completion feedback; the developer also reported successful tests of those additions. See [intro-levels.md](intro-levels.md).
+
+**October 18 Level 1 update:** the tested `level-1` branch adds ball checkpoint recovery, a lower-ball A/D prompt, U2 regeneration and visual/camera polish. Box-to-Bubble collision handoff and BouncyBall prefab configuration are fixed in `1f07b35`; the developer reports Level 1 testing passed. Integration into main is pending. Instruction improvements are deferred as low priority.
 
 Publication is separate: the last recorded WebGL release is **All-Level V2**, built from `d161538` and published as `8c48475`, with the old Tutorial and Space-based bubble exit. It is preserved at the [Alpha Progress Check URL](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) by `5a7f043`. No new WebGL export or deployment is recorded for the intro update. The controls and implemented behavior below describe current source unless explicitly labeled historical.
 
@@ -16,7 +18,7 @@ Publication is separate: the last recorded WebGL release is **All-Level V2**, bu
 | Box resizing; pressure plate opening a door | Implemented and manually tested |
 | Bubble popping and return to the star | Implemented and manually tested |
 | Water behavior for star, box and bubble | Implemented and manually tested in WaterPlayground |
-| IntroBox and IntroBubble teaching sequence | Gameplay and current hint/presentation pass complete; developer-reported Play Mode tests passed; October 17 polish awaits integration and WebGL testing |
+| IntroBox and IntroBubble teaching sequence | Gameplay and current hint/presentation pass complete; developer-reported Play Mode tests passed; October 17 polish merged via PR #11; new WebGL testing remains pending |
 | Old Tutorial | Retained as a legacy scene; excluded from the current build |
 | R restart; automatic restart after death / vertical out-of-bounds | Implemented |
 | Reusable StarPlayer, BoxBody, BubbleBody, SpikeHazard and WaterPopHazard prefabs | Available in `Assets/Form`; developer-reported instance tests passed |
@@ -67,16 +69,18 @@ Keys below describe the currently controlled form. W/S are held inputs; Space, E
 - Transferring between hosts moves control to the touched body. Boxes retain gravity; previously activated bubbles retain their environmental physics; abandoned bouncing balls freeze until possessed again. The controller consumes a previous Spider or gravityBall host on transfer.
 - `Starting Host` optionally begins a fresh scene inside an existing body. IntroBubble assigns EntryBox while keeping Initial Body assigned to StarPlayer, so E can restore the original Star later. This is a new scene setup, not physical transport of BoxB across scenes.
 - A contact can cause at most one transfer. Every possessable body already touching or immediately surrounding the new host is blocked until it remains safely separated for several physics frames; only a new collision after separation can transfer control again. The queued transfer also verifies that the source and target are still touching before it executes.
+- Box → Bubble temporarily ignores collisions only between the old box and the new bubble, allowing the player to escape a box resting on it. The pair becomes solid again after sufficient separation for consecutive physics frames; controller disable also cleans up active exclusions. Other body/terrain collisions are unaffected.
 - Contact possession remains active underwater. Popping above a box can therefore lead to automatic box possession when the released star lands on it.
 
 ### Death and restart
 
 - A hazard using `SpikeHazard` kills the currently controlled body in any implemented form.
-- A hazard using `BubblePopHazard` pops a controlled bubble and releases the star, but kills a controlled box through the normal death/restart flow. This includes a box growing into the trigger. It ignores the star, bouncing ball and unpossessed bodies. The reusable `WaterPopHazard.prefab` displays a purple circle with a centered black X to distinguish it from a possessable bubble. Its behavior is not restricted to water.
+- A hazard using `BubblePopHazard` pops a controlled bubble and releases the star, but kills a controlled box through the normal death/restart flow. This includes a box growing into the trigger. It ignores the star, bouncing ball and unpossessed bodies. The reusable `WaterPopHazard.prefab` displays a pink-red circle with a centered black X to distinguish it from a possessable bubble. Its behavior is not restricted to water.
 - Contact by an unpossessed body does not itself kill the player.
 - Death pauses gameplay, then reloads the whole current scene after the configured delay. Tutorial, WaterPlayground and Level01 currently save a delay of **2 seconds**. R bypasses the wait.
 - Tutorial and Level01 display `You died.`, `Restarting...`, and `Press R to restart now.` during the death pause. Level01 uses `LevelDeathUI` and the existing `LevelStatusText`; the controller still owns death timing and scene reload. The text is blank before play and during normal gameplay. The sandbox scenes do not currently contain this death-feedback UI.
 - Automatic vertical failure occurs when the entire controlled collider is below `minimumHeight` or above the active form's upper limit. Tutorial and WaterPlayground save **-10 / 8**. Level01 uses **-12 / 16** for the star, box and bubble, while the bouncing ball uses a separate upper limit of **40** so its 20.25-unit open-air bounce does not cause an unintended death. These values are not a general left/right map-boundary system.
+- Level01 enables BouncyBall checkpoints: possession records the ball name and authored spawn position. Automatic death reload resets the scene and resumes in that ball; R clears both checkpoint systems and starts over. Menu level entry and forward progression also clear both. Missing checkpoint balls fall back to a fresh start. This does not preserve plate/gate state.
 - Scene reload restores bodies and puzzle objects. Level02 has scene-specific checkpoints: automatic death reload retains the checkpoint and places the initial star at its saved position, with checkpoint events restoring the relevant stage setup. R clears checkpoints and restarts from the beginning. Entering any level from Mainmenu or advancing through IntroBox, IntroBubble or the Level01 goal also clears the checkpoint session. This is session state, not a saved game across browser launches.
 - A stranded box or a route blocked by an abandoned body does not trigger automatic soft-lock detection. The current recovery is R restart.
 
@@ -133,15 +137,16 @@ Reusable hazards require the current scene's player controller to be assigned on
 - E pops the controlled bubble in both environments and restores the original star at the bubble's current position. `BubblePopHazard` requests the same queued action through `RequestBubblePop`; a requested pop is processed before a pending possession transfer. If control leaves a bubble by touching another form instead, the abandoned bubble remains in the scene and continues its unpossessed environmental physics.
 - The star retains horizontal and downward velocity, while upward velocity is removed so it can begin falling.
 - A star released underwater immediately receives its water physics through the ownership refresh.
-- The popped bubble is inactive until the scene restarts; it does not respawn automatically at its original location.
-- The right-pool bubble is the exception: active and hazard-triggered pops both create a fresh bubble immediately at its authored spawn position.
+- By default, the popped bubble is inactive until the scene restarts. A body with ReturnToSpawnOnLeave instead returns to its spawn; this takes priority over replacement spawning.
+- Level01 Bubble_U2 has BubbleRespawnOnPop: E and hazard-triggered pops create a fresh dormant replacement at its authored spawn position. The consumed original is destroyed after successful replacement; U1/U1b do not have this component.
 - **Wind: planned.** Fan airflow should push bubbles away; force strength and player resistance are **Undecided**.
 
 ## 7. Bouncing Ball — Jingyi
 
 ### Waiting and possession
 
-- Both Level01 balls are instances of the same reusable `BouncyBall` prefab.
+- Both Level01 balls are instances of the same reusable `BouncyBall` prefab. Its saved Form is `BouncyBall` (7), matching the shared enum; the old prefab value 4 represented Spider. The generator now writes the numeric enum value rather than its display index.
+- The lower ball shows an A/D steering prompt for 4 seconds on first possession in the scene. Improved instruction design remains deferred.
 - An unpossessed ball is kinematic, frozen and motionless. Touching it with the controlled star, box or bubble transfers control to the ball and starts its land behavior.
 - The centered star marker appears only while the ball is controlled; it is not placed above the ball.
 - Transferring from the ball into another eligible body immediately stops and freezes the abandoned ball. Ordinary terrain collision does not deactivate a controlled ball.
