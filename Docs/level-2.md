@@ -35,7 +35,7 @@ To test in Editor, stop Play, set Show Mode to AlwaysShow, start Play and test t
 - Level02 enables `waitForMenuButton`. On completion it records analytics once, pauses gameplay, disables the player controller and overlays **Level Complete**, **You are a super star now!**, and **Return to Main Menu**. The player chooses when to leave; there is no timed return.
 - IntroBubble and Level01 still use the existing timed Level up / Entering next level overlay.
 - FanHint now reads **W / Blow: wind on/off** and **E / Leave: return to star**. Its text area is 10 × 2, reveal distance 4 and hide delay 2 seconds. The Spider exit hint is a single line, **E / Leave: return to star**, using font size 3 in a 10 × 1 text area, center-aligned at (-70, 15.2), in the upper middle of this section’s fixed camera view. Reveal distance remains 5 and hide delay remains 3 seconds. Spider has no independent Space jump; jumping is available as the grounded Star after release. These scene-local changes leave other proximity hints and Space shooting prompts unchanged. Hint visibility/layout still requires Play Mode verification.
-- R and touch Restart clear checkpoint state and restart the current scene from the beginning. Death reload retains the checkpoint. Returning to Mainmenu and selecting a level starts a fresh run. A checkpoint-retry button has not been introduced in this integration.
+- R and touch Restart clear checkpoint state and restart the current scene from the beginning. Death reload retains the checkpoint. Returning to Mainmenu and selecting a level starts a fresh run. `LevelNavigationUI.RestartLevel()` clears checkpoints; `RetryCheckpoint()` retains them and reloads the scene, running the existing checkpoint restoration events. Without a checkpoint, Retry starts at the level entrance. Both manual actions are recorded as manual restarts, not deaths. Scene buttons still need to be added and bound in Unity beneath Return to Main Menu.
 
 ## Validation and remaining checks
 
@@ -58,4 +58,6 @@ Still required after integration:
 3. Reach the Level02 flag in Star and another host form. Confirm one completion event, a persistent readable result screen, paused gameplay and a working menu button. Re-enter Level02 and confirm it starts from the beginning.
 4. Export a fresh WebGL build and test desktop/mobile browser visibility, layout and console errors. Confirm analytics still arrives as intended using [AnalyticsTestPlan.md](AnalyticsTestPlan.md).
 
-Deferred: top-center form identity hints, broader instruction clarity and the menu-area Restart/Retry Checkpoint button design. Keep button labels consistent with the eventual reset scope.
+Pending Unity setup: add Restart Level and Retry Checkpoint beneath Return to Main Menu, binding one callback per button to the matching LevelNavigationUI method. Verify Retry before/after a checkpoint, Restart after a checkpoint, and death respawn.
+
+Deferred: top-center form identity hints and broader instruction clarity.

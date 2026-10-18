@@ -5,6 +5,16 @@ public class LevelNavigationUI : MonoBehaviour
 {
     public void RestartLevel()
     {
+        ReloadCurrentScene(clearCheckpoint: true);
+    }
+
+    public void RetryCheckpoint()
+    {
+        ReloadCurrentScene(clearCheckpoint: false);
+    }
+
+    private void ReloadCurrentScene(bool clearCheckpoint)
+    {
         int sceneIndex = gameObject.scene.buildIndex;
         if (sceneIndex < 0)
         {
@@ -12,9 +22,16 @@ public class LevelNavigationUI : MonoBehaviour
             return;
         }
 
-        // Match R: restart the whole level rather than resume at a checkpoint.
+        // Both buttons are manual restarts, not deaths.
         AnalyticsManager.Instance?.TrackManualRestart();
-        PlayerPossessionController.ResetCheckpointSession();
+        if (clearCheckpoint)
+        {
+            // Match R: restart the whole level from the beginning.
+            PlayerPossessionController.ResetCheckpointSession();
+        }
+
+        // Keeping checkpoint state lets the existing scene startup restore it.
+        // Without an active checkpoint, startup uses the normal level entrance.
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneIndex);
     }
