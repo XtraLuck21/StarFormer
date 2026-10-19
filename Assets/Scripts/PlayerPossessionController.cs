@@ -560,6 +560,10 @@ public class PlayerPossessionController : MonoBehaviour
                             currentBody.MoveSpeed *
                             bubbleWaterSpeedMultiplier;
 
+                        targetVelocity = currentBody.RemoveBubbleWallPush(
+                            targetVelocity
+                        );
+
                         float acceleration = swimInput.sqrMagnitude > 0f
                             ? swimAcceleration
                             : swimBraking;
@@ -576,6 +580,7 @@ public class PlayerPossessionController : MonoBehaviour
                         velocity.y = Mathf.Min(velocity.y, maximumRiseSpeed);
                     }
 
+                    velocity = currentBody.RemoveBubbleWallPush(velocity);
                     break;
                 }
 

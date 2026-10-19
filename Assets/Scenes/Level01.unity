@@ -534,7 +534,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.6819979}
+  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.3734721}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7182,7 +7182,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6365321090011789611, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
   m_PrefabInstance: {fileID: 7266841892958452941}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 7266841892958452942}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7c12cdd3236cf4f3ca0a02928f805a16, type: 3}
@@ -7453,7 +7453,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.6819979}
+  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.3734721}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13777,11 +13777,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3770227647070505218, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -9.48
+      value: -9.49
       objectReference: {fileID: 0}
     - target: {fileID: 3770227647070505218, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.49
+      value: 0.486
       objectReference: {fileID: 0}
     - target: {fileID: 3770227647070505218, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
       propertyPath: m_LocalPosition.z
@@ -13816,6 +13816,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5655016888199123377, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5655016888199123377, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
       propertyPath: m_Material
       value: 
       objectReference: {fileID: 6200000, guid: 09913fe5acabb6f499f4d987a9c92d03, type: 2}
@@ -13843,11 +13847,74 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5655016888199123377, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6785508596734417838, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7266841892958452943}
   m_SourcePrefab: {fileID: 100100000, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
+--- !u!1 &7266841892958452942 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6785508596734417838, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
+  m_PrefabInstance: {fileID: 7266841892958452941}
+  m_PrefabAsset: {fileID: 0}
+--- !u!60 &7266841892958452943
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7266841892958452942}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 6200000, guid: 09913fe5acabb6f499f4d987a9c92d03, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.0027780533, y: 0.4024912}
+      - {x: -0.12897402, y: 0.1252211}
+      - {x: -0.4248209, y: 0.09434372}
+      - {x: -0.26074505, y: -0.40331155}
+      - {x: 0.26586628, y: -0.40331152}
+      - {x: 0.42495787, y: 0.09722698}
+      - {x: 0.12646103, y: 0.12155217}
+  m_UseDelaunayMesh: 1
 --- !u!1001 &8397919687555415268
 PrefabInstance:
   m_ObjectHideFlags: 0
