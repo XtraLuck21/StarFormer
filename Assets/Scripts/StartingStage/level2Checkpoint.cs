@@ -32,6 +32,11 @@ public class level2Checkpoint : MonoBehaviour
 
     private void Start()
     {
+        if (player != null && respawnPoint != null)
+        {
+            player.CheckpointFeedback.RegisterMarker(respawnPoint, checkpointId);
+        }
+
         if (player != null &&
             player.IsCurrentCheckpoint(checkpointId))
         {

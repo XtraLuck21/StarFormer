@@ -36,7 +36,7 @@ public class TutorialIntroUI : MonoBehaviour
 
         titleText.text = "You are a star.";
         instructionsText.text =
-            "Move: A / D\nJump: Space\nRestart: R";
+            "Move: A / D\nJump: Space\nRestart menu: R";
     }
 
     private void Update()
@@ -48,7 +48,7 @@ public class TutorialIntroUI : MonoBehaviour
                 deathShown = true;
                 titleText.text = "You died.";
                 instructionsText.text =
-                    "Restarting...\nPress R to restart now.";
+                    "Retrying...\nPress R for restart options.";
             }
 
             return;
@@ -69,7 +69,7 @@ public class TutorialIntroUI : MonoBehaviour
             "Move: A / D\n" +
             "Grow: Hold W\n" +
             "Shrink: Hold S\n" +
-            "Restart: R";
+            "Restart menu: R";
     }
 
     public void ShowCompletion()
@@ -79,6 +79,6 @@ public class TutorialIntroUI : MonoBehaviour
         titleText.text = "Now get ready to transform!";
         instructionsText.text =
             "More forms. More possibilities.\n\n" +
-            "Press R to restart.";
+            "Press R for restart options.";
     }
 }

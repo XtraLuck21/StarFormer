@@ -22,6 +22,25 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
 
+    private RestartMenuUI restartMenu;
+    private CheckpointFeedbackUI checkpointFeedback;
+    public bool HasSavedCheckpoint => HasCheckpointInCurrentScene || HasBouncyBallCheckpointInCurrentScene;
+
+    public CheckpointFeedbackUI CheckpointFeedback
+    {
+        get
+        {
+            if (checkpointFeedback == null)
+            {
+                checkpointFeedback = GetComponent<CheckpointFeedbackUI>();
+                if (checkpointFeedback == null)
+                    checkpointFeedback = gameObject.AddComponent<CheckpointFeedbackUI>();
+                checkpointFeedback.Initialize(this);
+            }
+            return checkpointFeedback;
+        }
+    }
+
     [Header("Fan Repossess Cooldown")]
     [Tooltip("Seconds after leaving a fan before the star can possess a fan again.")]
     [SerializeField] private float fanRepossessCooldown = 2f;
@@ -132,6 +151,12 @@ public class PlayerPossessionController : MonoBehaviour
         return HasCheckpointInCurrentScene && checkpointId == id;
     }
 
+    public bool IsCurrentBouncyBallCheckpoint(string ballName)
+    {
+        return !HasCheckpointInCurrentScene && HasBouncyBallCheckpointInCurrentScene &&
+            checkpointSession.BallName == ballName;
+    }
+
     // Public so main-menu level entry can also clear the session for a fresh run.
     [RuntimeInitializeOnLoadMethod(
         RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -158,6 +183,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         Debug.Log($"check point activated:{id}", this);
         AnalyticsManager.Instance?.TrackCheckpoint(id, currentBody);
+        CheckpointFeedback.ShowSaved();
     }
 
     // ===================================================================
@@ -172,7 +198,7 @@ public class PlayerPossessionController : MonoBehaviour
     /// <summary>Space: Star jump / SpikeWall fire. Requests an active ability only.</summary>
     public void PressTouchAction()
     {
-        if (!isActiveAndEnabled || isDead || restartRequested)
+        if (!isActiveAndEnabled || isDead || restartRequested || Time.timeScale <= 0f)
         {
             return;
         }
@@ -225,13 +251,41 @@ public class PlayerPossessionController : MonoBehaviour
         }
     }
 
-    /// <summary>R: clear checkpoints and restart the current level from the beginning.</summary>
+    /// <summary>Open the same restart choices as the R key.</summary>
     public void PressTouchRestart()
     {
-        if (!isActiveAndEnabled || restartRequested || Time.timeScale <= 0f) return;
+        if (!isActiveAndEnabled || restartRequested || (!isDead && Time.timeScale <= 0f)) return;
+        if (restartMenu == null) restartMenu = gameObject.AddComponent<RestartMenuUI>();
+        restartMenu.Show(this);
+    }
+
+    public bool ConfirmManualRestart(bool clearCheckpoint)
+    {
+        if (!isActiveAndEnabled || restartRequested) return false;
+        if (gameObject.scene.buildIndex < 0)
+        {
+            Debug.LogError("Add the current scene to the enabled build scene list before restarting.", this);
+            return false;
+        }
+        if (!clearCheckpoint && !HasSavedCheckpoint) return false;
         AnalyticsManager.Instance?.TrackManualRestart();
-        ResetCheckpointSession();
+        if (clearCheckpoint) ResetCheckpointSession();
         RequestRestart();
+        return true;
+    }
+
+    public void ClearInputForRestartMenu()
+    {
+        horizontalInput = verticalInput = 0f;
+        actionRequested = releaseRequested = false;
+        ReleaseAllTouchInput();
+    }
+
+    public void ResumeAfterRestartMenu(float pausedDuration)
+    {
+        // Death recovery also uses unscaled time; browsing the menu must not consume its delay.
+        if (isDead) deathRestartTime += pausedDuration;
+        ClearInputForRestartMenu();
     }
 
     /// <summary>Release all directions when changing forms, dying, or restarting.</summary>
@@ -256,6 +310,11 @@ public class PlayerPossessionController : MonoBehaviour
 
             enabled = false;
             return;
+        }
+
+        if (gameObject.scene.name != "Mainmenu")
+        {
+            CheckpointFeedback.Initialize(this);
         }
 
         if (enableBouncyBallCheckpoints)
@@ -315,13 +374,16 @@ public class PlayerPossessionController : MonoBehaviour
         verticalInput = 0f;
         Keyboard keyboard = Keyboard.current;
 
+        if (restartMenu != null && restartMenu.IsOpen)
+        {
+            if (keyboard != null && (keyboard.rKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame))
+                restartMenu.Close();
+            return;
+        }
+
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
-            // R: clear checkpoints and restart the entire level from the beginning.
-            AnalyticsManager.Instance?.TrackManualRestart();
-            ResetCheckpointSession();
-
-            RequestRestart();
+            PressTouchRestart();
             return;
         }
 
@@ -733,6 +795,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (restartMenu != null) restartMenu.Close();
         RestoreBubbleHandoffCollisions();
         bubblePopRequested = false;
         ReleaseAllTouchInput();
@@ -1059,6 +1122,7 @@ public class PlayerPossessionController : MonoBehaviour
                 body.Form == BodyForm.BouncyBall)
             {
                 bouncyBallSpawnPositions[body] = body.transform.position;
+                CheckpointFeedback.RegisterMarker(body.transform, body.name, true);
             }
         }
     }
@@ -1094,6 +1158,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (isNewCheckpoint)
         {
             AnalyticsManager.Instance?.TrackCheckpoint(ball.name, ball);
+            CheckpointFeedback.ShowSaved();
         }
 
         Debug.Log($"Bouncy Ball checkpoint activated: {ball.name}.", ball);

@@ -4,7 +4,7 @@ using UnityEngine.EventSystems;
 /// <summary>
 /// Attach to each on-screen control button.
 /// Direction buttons (Left/Right/Up/Down) stay held from pointer down until pointer up.
-/// Action buttons (Action/Release/Restart) trigger once on pointer down.
+/// Action/Release/Restart trigger once on pointer down.
 ///
 /// Enable Raycast Target on the button's Image so it receives pointer events.
 /// </summary>
@@ -20,7 +20,7 @@ public class TouchHoldButton : MonoBehaviour,
         Down,     // Downward input (Bubble swimming or Box shrinking).
         Action,   // Space: Star jump / SpikeWall fire; active abilities only.
         Release,  // E: pop Bubble or leave Spider/Fan.
-        Restart,  // R: clear checkpoints and restart the level.
+        Restart,  // Open restart choices.
         Blow      // W: toggle Fan wind on or off.
     }
 

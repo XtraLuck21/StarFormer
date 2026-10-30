@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -6,6 +7,13 @@ using UnityEngine;
 /// </summary>
 public sealed class BouncyBallCheckpointSession : MonoBehaviour
 {
+    private readonly HashSet<string> reachedCheckpoints = new HashSet<string>();
+
+    public bool HasReachedCheckpoint(string scenePath, string ballName)
+    {
+        return HasCheckpoint && ScenePath == scenePath && reachedCheckpoints.Contains(ballName);
+    }
+
     public static BouncyBallCheckpointSession Instance { get; private set; }
 
     public bool HasCheckpoint { get; private set; }
@@ -45,6 +53,8 @@ public sealed class BouncyBallCheckpointSession : MonoBehaviour
 
     public void Save(string scenePath, string ballName, Vector3 position)
     {
+        if (ScenePath != scenePath) reachedCheckpoints.Clear();
+        reachedCheckpoints.Add(ballName);
         HasCheckpoint = true;
         ScenePath = scenePath;
         BallName = ballName;
@@ -53,6 +63,7 @@ public sealed class BouncyBallCheckpointSession : MonoBehaviour
 
     public void Clear()
     {
+        reachedCheckpoints.Clear();
         HasCheckpoint = false;
         ScenePath = null;
         BallName = null;

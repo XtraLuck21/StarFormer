@@ -26,7 +26,7 @@ public class LevelNavigationUI : MonoBehaviour
         AnalyticsManager.Instance?.TrackManualRestart();
         if (clearCheckpoint)
         {
-            // Match R: restart the whole level from the beginning.
+            // Explicit full restart; R opens a menu with checkpoint and full-restart choices.
             PlayerPossessionController.ResetCheckpointSession();
         }
 
