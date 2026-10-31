@@ -85,14 +85,15 @@ public class BoxGrowHint : MonoBehaviour
             }
         }
 
-        // Draw the W as strokes so this icon needs no font or imported artwork.
+        // Draw K as strokes so this icon needs no font or imported artwork.
         Vector2[] letter =
         {
-            new Vector2(-0.23f, 0.20f) * unit,
-            new Vector2(-0.115f, -0.20f) * unit,
-            new Vector2(0f, 0.05f) * unit,
-            new Vector2(0.115f, -0.20f) * unit,
-            new Vector2(0.23f, 0.20f) * unit
+            new Vector2(-0.18f, -0.20f) * unit,
+            new Vector2(-0.18f, 0.20f) * unit,
+            new Vector2(-0.18f, 0f) * unit,
+            new Vector2(0.20f, 0.20f) * unit,
+            new Vector2(-0.18f, 0f) * unit,
+            new Vector2(0.20f, -0.20f) * unit
         };
         AddKeyPrompt(letter, unit);
     }
@@ -117,14 +118,17 @@ public class BoxGrowHint : MonoBehaviour
             }
         }
 
+        // Draw J with a top bar and a hooked lower stroke.
         Vector2[] letter =
         {
-            new Vector2(0.20f, 0.20f) * unit,
             new Vector2(-0.20f, 0.20f) * unit,
-            new Vector2(-0.20f, 0f) * unit,
-            new Vector2(0.20f, 0f) * unit,
-            new Vector2(0.20f, -0.20f) * unit,
-            new Vector2(-0.20f, -0.20f) * unit
+            new Vector2(0.20f, 0.20f) * unit,
+            new Vector2(0.10f, 0.20f) * unit,
+            new Vector2(0.10f, -0.12f) * unit,
+            new Vector2(0.02f, -0.20f) * unit,
+            new Vector2(-0.12f, -0.20f) * unit,
+            new Vector2(-0.20f, -0.12f) * unit,
+            new Vector2(-0.20f, -0.04f) * unit
         };
         AddKeyPrompt(letter, unit);
     }
