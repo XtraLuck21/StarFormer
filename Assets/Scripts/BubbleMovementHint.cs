@@ -1,11 +1,12 @@
 using UnityEngine;
+using TMPro;
 
 // Keep this on a scene root so the instruction stays attached to the teaching area.
 [ExecuteAlways]
 public class BubbleMovementHint : MonoBehaviour
 {
     // Append modes to preserve existing scene values: Air=0, Water=1, ExitBubble=2.
-    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight }
+    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction }
 
     [SerializeField] private HintMode mode;
     [SerializeField] private PlayerPossessionController playerController;
@@ -88,7 +89,11 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(0.5f, 0.5f), texture.width, 0, SpriteMeshType.FullRect);
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
 
-        if (mode == HintMode.ContinueRight)
+        if (mode == HintMode.BubbleIntroduction)
+        {
+            BuildBubbleIntroduction();
+        }
+        else if (mode == HintMode.ContinueRight)
         {
             Arrow(new Vector2(-0.6f, 0), new Vector2(0.6f, 0));
         }
@@ -133,6 +138,29 @@ public class BubbleMovementHint : MonoBehaviour
         {
             AddKey('Q', Vector2.zero);
         }
+    }
+
+    private void BuildBubbleIntroduction()
+    {
+        AddKey('A', new Vector2(-0.5f, 0));
+        AddKey('D', new Vector2(0.5f, 0));
+        Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
+        Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
+
+        GameObject label = new GameObject("BubbleIntroductionText", typeof(RectTransform));
+        label.hideFlags = HideFlags.HideAndDontSave;
+        label.transform.SetParent(visuals.transform, false);
+        label.transform.localPosition = new Vector3(0, 0.8f, 0);
+        TextMeshPro text = label.AddComponent<TextMeshPro>();
+        text.font = TMP_Settings.defaultFontAsset;
+        text.text = "You are a\nBubble";
+        text.fontSize = 3f;
+        text.fontStyle = FontStyles.Bold;
+        text.color = inkColor;
+        text.alignment = TextAlignmentOptions.Center;
+        text.textWrappingMode = TextWrappingModes.Normal;
+        text.rectTransform.sizeDelta = new Vector2(2.7f, 0.8f);
+        text.renderer.sortingOrder = sortingOrder + 2;
     }
 
     private void AddKey(char letter, Vector2 center)

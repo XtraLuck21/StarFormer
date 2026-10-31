@@ -11275,18 +11275,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cbfcf891f5c45be85d43e715df605f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BubbleMovementHint
-  mode: 0
+  mode: 6
   playerController: {fileID: 1643171616}
   targetBody: {fileID: 934574713}
   previewInEditor: 1
   flagGate: {fileID: 0}
   activationAreaSize: {x: 7, y: 8}
-  activationAreaOffset: {x: -1.2, y: -2.6}
+  activationAreaOffset: {x: -1.25, y: -0.5}
   iconScale: 0.8
   continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
   keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
-  sortingOrder: 0
+  sortingOrder: 20
 --- !u!4 &2015068084
 Transform:
   m_ObjectHideFlags: 0
@@ -11296,7 +11296,7 @@ Transform:
   m_GameObject: {fileID: 2015068082}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.8, y: 4.1, z: 0}
+  m_LocalPosition: {x: -3.75, y: 1.8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
