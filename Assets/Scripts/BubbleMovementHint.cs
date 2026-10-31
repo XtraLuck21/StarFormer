@@ -131,7 +131,7 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else
         {
-            AddKey('E', Vector2.zero);
+            AddKey('Q', Vector2.zero);
         }
     }
 
@@ -163,6 +163,14 @@ public class BubbleMovementHint : MonoBehaviour
                 points = new[] { new Vector2(-0.12f, -0.15f), new Vector2(-0.12f, 0.15f),
                     new Vector2(0.04f, 0.15f), new Vector2(0.13f, 0.07f), new Vector2(0.13f, -0.07f),
                     new Vector2(0.04f, -0.15f), new Vector2(-0.12f, -0.15f) };
+                break;
+            case 'Q':
+                points = new[] { new Vector2(-0.07f, -0.15f), new Vector2(-0.13f, -0.07f),
+                    new Vector2(-0.13f, 0.07f), new Vector2(-0.07f, 0.15f),
+                    new Vector2(0.07f, 0.15f), new Vector2(0.13f, 0.07f),
+                    new Vector2(0.13f, -0.07f), new Vector2(0.07f, -0.15f),
+                    new Vector2(-0.07f, -0.15f) };
+                Stroke(center + new Vector2(0.03f, -0.05f), center + new Vector2(0.17f, -0.19f));
                 break;
             case 'E':
                 points = new[] { new Vector2(0.13f, 0.15f), new Vector2(-0.13f, 0.15f),

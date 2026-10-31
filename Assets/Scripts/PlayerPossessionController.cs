@@ -124,7 +124,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
-    // E / Release handles bubble popping and leaving Spider or Fan.
+    // Q pops Bubble; E leaves Spider or Fan. Touch controls share this request.
     private bool releaseRequested;
     // Queue hazard-triggered bubble pops separately from player input.
     private bool bubblePopRequested;
@@ -207,7 +207,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// E / Release: leave the current form.
+    /// Release the current form (Q for Bubble, E for Spider/Fan, or touch).
     /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
     /// </summary>
     public void RequestRelease()
@@ -435,9 +435,12 @@ public class PlayerPossessionController : MonoBehaviour
                 verticalInput -= 1f;
             }
 
-            if (keyboard.eKey.wasPressedThisFrame)
+            if (currentBody != null &&
+                ((currentBody.Form == BodyForm.Bubble && keyboard.qKey.wasPressedThisFrame) ||
+                 ((currentBody.Form == BodyForm.Spider || currentBody.Form == BodyForm.Fan) &&
+                  keyboard.eKey.wasPressedThisFrame)))
             {
-                // E consistently means Release: pop Bubble or leave Spider/Fan.
+                // Bubble uses Q to pop; Spider and Fan keep E to leave.
                 RequestRelease();
             }
 
