@@ -20,6 +20,9 @@ public class BubbleMovementHint : MonoBehaviour
     [SerializeField] private Vector2 activationAreaOffset;
 
     [Header("Appearance")]
+    [SerializeField] private string waterDescription = "";
+    [SerializeField] private string popDescription = "";
+    [SerializeField] private Color popDescriptionColor = Color.white;
     [SerializeField, Min(0.1f)] private float iconScale = 1f;
     [Tooltip("Stroke thickness for the Continue Right arrow only.")]
     [SerializeField, Min(0.01f)] private float continueArrowWidth = 0.08f;
@@ -106,6 +109,8 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else if (mode == HintMode.Water)
         {
+            if (!string.IsNullOrWhiteSpace(waterDescription))
+                AddHintText("WaterDescription", waterDescription, new Vector2(0, -1.1f), new Vector2(3f, 0.8f));
             AddKey('W', new Vector2(0, 0.65f));
             AddKey('A', new Vector2(-0.65f, 0));
             AddKey('S', Vector2.zero);
@@ -137,6 +142,8 @@ public class BubbleMovementHint : MonoBehaviour
         else
         {
             AddKey('Q', Vector2.zero);
+            if (!string.IsNullOrWhiteSpace(popDescription))
+                AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);
         }
     }
 
@@ -147,19 +154,24 @@ public class BubbleMovementHint : MonoBehaviour
         Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
         Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
 
-        GameObject label = new GameObject("BubbleIntroductionText", typeof(RectTransform));
+        AddHintText("BubbleIntroductionText", "You are a\nBubble", new Vector2(0, 0.8f), new Vector2(2.7f, 0.8f));
+    }
+
+    private void AddHintText(string objectName, string message, Vector2 position, Vector2 size, Color? textColor = null)
+    {
+        GameObject label = new GameObject(objectName, typeof(RectTransform));
         label.hideFlags = HideFlags.HideAndDontSave;
         label.transform.SetParent(visuals.transform, false);
-        label.transform.localPosition = new Vector3(0, 0.8f, 0);
+        label.transform.localPosition = position;
         TextMeshPro text = label.AddComponent<TextMeshPro>();
         text.font = TMP_Settings.defaultFontAsset;
-        text.text = "You are a\nBubble";
+        text.text = message;
         text.fontSize = 3f;
         text.fontStyle = FontStyles.Bold;
-        text.color = inkColor;
+        text.color = textColor ?? inkColor;
         text.alignment = TextAlignmentOptions.Center;
         text.textWrappingMode = TextWrappingModes.Normal;
-        text.rectTransform.sizeDelta = new Vector2(2.7f, 0.8f);
+        text.rectTransform.sizeDelta = size;
         text.renderer.sortingOrder = sortingOrder + 2;
     }
 

@@ -9908,8 +9908,10 @@ MonoBehaviour:
   targetBody: {fileID: 934574713}
   previewInEditor: 1
   flagGate: {fileID: 0}
-  activationAreaSize: {x: 3.5, y: 3}
-  activationAreaOffset: {x: -0.5, y: -0.6}
+  activationAreaSize: {x: 1.6, y: 3}
+  activationAreaOffset: {x: 1.4, y: -0.6}
+  popDescription: "Pop Bubble\nReturn to Star"
+  popDescriptionColor: {r: 0, g: 0, b: 0, a: 1}
   iconScale: 1
   continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
@@ -9924,7 +9926,7 @@ Transform:
   m_GameObject: {fileID: 1773415586}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.3, y: 4.1, z: 0}
+  m_LocalPosition: {x: 4.5, y: 4.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10663,6 +10665,7 @@ MonoBehaviour:
   flagGate: {fileID: 0}
   activationAreaSize: {x: 7, y: 10}
   activationAreaOffset: {x: 2.075, y: 0.35}
+  waterDescription: Move freely underwater
   iconScale: 0.8
   continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
