@@ -1,12 +1,14 @@
 # Level 2 Progress
 
-Last updated: 2026-10-18.
+Last updated: 2026-10-31.
 
 Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 work through `ab68064` was integrated into `main` by PR #14 (`3714a49`). Alpha 0.1.1 (`765a1ea` in source) corrected the navigation Canvas scaling. This content is included in the published Alpha 0.1.2 release.
 
 **October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. Alpha 0.1.2 later passed developer-reported localhost and online tests; an exhaustive checkpoint/device matrix is not recorded.
 
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
+
+**October 31 shared controls:** J grows Box, K shrinks Box, Q pops Bubble; Spider/Fan still use E to leave and Fan uses W for wind. R now opens restart choices. These source changes are not included in the recorded Alpha 0.1.2 publication. See [CheckpointGuidance.md](CheckpointGuidance.md).
 
 ## 1. Current route and progress
 
@@ -44,7 +46,7 @@ The table describes the authored stage groups and major mechanics; it is not a n
 
 **Completion:** the goal checks that the player is alive and the entering body is currently controlled. It validates the destination, records completion once, pauses gameplay and disables the player controller. The generated overlay shows **Level Complete**, **You are a super star now!**, and **Return to Main Menu**. It stays open until clicked/tapped, then clears checkpoints and loads Mainmenu with normal time scale. IntroBubble and Level01 retain their timed next-level overlays.
 
-**Recovery:** Restart Level and R clear both checkpoint systems and reload Level02 from the entrance. Retry Checkpoint reloads while preserving the active checkpoint; without one it starts at the entrance. Automatic death reload also retains the checkpoint. Scene reload resets bodies and puzzle objects; checkpoint events restore selected stage behavior, not a complete snapshot of puzzle state. Returning to Mainmenu and re-entering starts a fresh checkpoint session. Both manual buttons currently use `TrackManualRestart`, so analytics records a manual restart rather than a death and does not distinguish the two button choices.
+**Recovery:** R opens the restart menu. Confirming Restart Level, or using its standalone button, clears both checkpoint systems and reloads Level02 from the entrance. Retry Checkpoint reloads while preserving the active checkpoint; without one it starts at the entrance. Automatic death reload also retains the checkpoint. Scene reload resets bodies and puzzle objects; checkpoint events restore selected stage behavior, not a complete snapshot of puzzle state. Returning to Mainmenu and re-entering starts a fresh checkpoint session. Both manual buttons currently use `TrackManualRestart`, so analytics records a manual restart rather than a death and does not distinguish the two button choices.
 
 **Checkpoint callback follow-up:** the saved CP01, CP02 and CP03 `onRespawnHere` lists each contain a `WallSlideOnDrop.ShowWall` callback with an unassigned target (`fileID: 0`), in addition to the valid camera callback. This entry cannot restore a wall. Determine whether it is obsolete or needs a target during checkpoint regression testing; it was not repaired in this documentation pass and is not established as a current gameplay failure.
 
@@ -110,7 +112,7 @@ Source checks during implementation and this documentation review:
 
 ## 5. Decisions in this polish pass
 
-- Use E / Leave for Spider and Fan, E / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
+- Use E / Leave for Spider and Fan, Q / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
 - Use a short upper-center Spider release hint; omit the redundant Star-jump line. Keep the accepted Fan hint.
 - Finish on touching the flag in any living controlled form. Do not require a final pressure plate or an unprompted return to Star.
 - Keep an explicit completion screen with the celebratory subtitle and a user-selected return to Mainmenu.
@@ -122,7 +124,7 @@ Source checks during implementation and this documentation review:
 ## 6. Remaining work and handoff
 
 1. Test Retry before any checkpoint and at CP01, CP02 and CP03; verify position, camera state and the reachable onward route. Check the unassigned ShowWall callbacks and automatic death recovery at each stage.
-2. After a checkpoint, verify Restart Level and R return to the entrance and clear it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
+2. After a checkpoint, verify opening/cancelling R preserves the checkpoint; Return to Checkpoint resumes it. Confirm Restart Level returns to the entrance and clears it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
 4. Retest IntroBox → IntroBubble → Level01 → Level02 after integration, including Level01 handoff/ball/U2 recovery. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
 5. Verify Alpha 0.1.2 analytics delivery using [AnalyticsTestPlan.md](AnalyticsTestPlan.md). For later changes, rebuild and follow [publish_instructions.md](publish_instructions.md); source changes alone do not publish a build.

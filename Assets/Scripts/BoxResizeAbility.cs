@@ -60,7 +60,7 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        // The controller combines W/S and the on-screen Grow/Shrink buttons
+        // The controller combines J/K and the on-screen Grow/Shrink buttons
         // into one VerticalInput value (-1 to 1); use it directly here.
         // Desktop and mobile share the same input path, so resizing still works
         // when Keyboard.current is null on a mobile device.
@@ -235,6 +235,12 @@ public class BoxResizeAbility : MonoBehaviour
 
         Physics2D.SyncTransforms();
         body.WakeUp();
+    }
+
+    public void RestoreSceneEntrySize(float size)
+    {
+        Physics2D.SyncTransforms();
+        ApplySize(Mathf.Clamp(size, minimumSize, maximumSize), boxCollider.bounds, false);
     }
 
     private void OnValidate()

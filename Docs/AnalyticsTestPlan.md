@@ -1,6 +1,6 @@
 # WebGL Analytics Test Plan
 
-Last updated: 2026-10-18.
+Last updated: 2026-10-31.
 
 ## Current release evidence
 
@@ -41,13 +41,12 @@ Sheets transport.
 - Die while controlling that ball. Expect the same Run ID after scene reload,
   a new Attempt ID and Bouncy Ball form at respawn.
 - Possess the upper ball and repeat the checkpoint/death test.
-- Pop Bubble with E. Expect Bubble `form_duration` and Star `form_change`, but
+- Pop Bubble with Q (current source; the published Alpha 0.1.2 used E). Expect Bubble `form_duration` and Star `form_change`, but
   no `death`.
 - Pop Bubble on a Bubble-only hazard. Expect no `death`.
 - Touch the same water hazard as Box. Expect one `death` with
   `UnderwaterHazard`.
-- Press R during normal play and during the death pause. Expect `level_end` with
-  `result = restart`; the reloaded level must use a new Run ID.
+- Open the R menu during normal play and during the death pause. Opening and cancelling must not emit a restart `level_end` or create a new Run. Confirm Restart Level: expect `level_end` with `result = restart`, a new Run ID and cleared gameplay checkpoints. With a checkpoint, confirm Return to Checkpoint: expect the same restart event category and a new Run ID, but retained gameplay checkpoint state.
 - Click Level01 Restart Level after a ball checkpoint. Expect `level_end` with `result = restart`, a new Run ID and a fresh level entrance with cleared checkpoints; it must not resume the ball.
 - Finish the level. Expect exactly one `level_complete`; Level 2 must start with
   a different Run ID in the same Session.
@@ -115,7 +114,7 @@ of a successful append. The Sheet is the source of truth.
 - No Analytics failure blocks movement, possession, death recovery or scene
   navigation.
 - Level 1 and Level 2 share one schema and one Session when played consecutively.
-- Automatic death reload retains the Run; R, Restart Level and Retry Checkpoint create a new Run. Retry alone preserves gameplay checkpoint state.
+- Automatic death reload retains the Run; confirmed Restart Level, Return to Checkpoint and Retry Checkpoint create a new Run. The latter two preserve gameplay checkpoint state; opening/cancelling R does not create a new Run.
 - Bubble popping never counts as death.
 - Immediate Level 2 hazards no longer lose death events.
 - Each completed Run produces exactly one `level_complete`.

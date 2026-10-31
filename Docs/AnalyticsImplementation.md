@@ -1,6 +1,6 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-10-18.
+Last updated: 2026-10-31.
 
 ## Scope
 
@@ -58,8 +58,7 @@ uses `DontDestroyOnLoad`. Do not add separate copies to Level 1 or Level 2.
 - `level_run_id`: new on fresh level entry or a manual restart, including Retry Checkpoint.
 - `attempt_id`: new at level start, checkpoint activation and death respawn.
 
-Automatic death reload retains the current Level Run. Pressing R, using the
-Restart Level button, or entering the level again starts a new Run. Level02 Retry Checkpoint also calls `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death, and the event schema does not distinguish those button choices. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
+Automatic death reload retains the current Level Run. Opening/cancelling the R menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in the R menu and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death, and the event schema does not distinguish those button choices. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
 
 Level 1 uses `BouncyBall_Lower` and `BouncyBall_Upper` as checkpoint IDs. Level
 2 uses the existing `CP01`, `CP02` and `CP03` IDs. The attempt timer resets when

@@ -1,11 +1,12 @@
 using UnityEngine;
+using TMPro;
 
 // Keep this on a scene root so the instruction stays attached to the teaching area.
 [ExecuteAlways]
 public class BubbleMovementHint : MonoBehaviour
 {
     // Append modes to preserve existing scene values: Air=0, Water=1, ExitBubble=2.
-    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight }
+    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction }
 
     [SerializeField] private HintMode mode;
     [SerializeField] private PlayerPossessionController playerController;
@@ -19,6 +20,9 @@ public class BubbleMovementHint : MonoBehaviour
     [SerializeField] private Vector2 activationAreaOffset;
 
     [Header("Appearance")]
+    [SerializeField] private string waterDescription = "";
+    [SerializeField] private string popDescription = "";
+    [SerializeField] private Color popDescriptionColor = Color.white;
     [SerializeField, Min(0.1f)] private float iconScale = 1f;
     [Tooltip("Stroke thickness for the Continue Right arrow only.")]
     [SerializeField, Min(0.01f)] private float continueArrowWidth = 0.08f;
@@ -56,20 +60,23 @@ public class BubbleMovementHint : MonoBehaviour
             else
             {
                 bool starMode = mode == HintMode.StarMove || mode == HintMode.StarJump;
-                visible = playerController != null && targetBody != null &&
-                    targetBody.Form == (starMode ? BodyForm.Star : BodyForm.Bubble) &&
-                    targetBody.isActiveAndEnabled && !playerController.IsDead &&
-                    playerController.CurrentBody == targetBody &&
-                    (starMode || targetBody.IsInWater == (mode == HintMode.Water)) && IsInsideArea();
+                // Pop guidance applies to whichever Bubble the player currently possesses.
+                PossessableBody body = mode == HintMode.ExitBubble && playerController != null
+                    ? playerController.CurrentBody : targetBody;
+                visible = playerController != null && body != null &&
+                    body.Form == (starMode ? BodyForm.Star : BodyForm.Bubble) &&
+                    body.isActiveAndEnabled && !playerController.IsDead &&
+                    playerController.CurrentBody == body &&
+                    (starMode || body.IsInWater == (mode == HintMode.Water)) && IsInsideArea(body);
             }
         }
         if (visuals.activeSelf != visible) visuals.SetActive(visible);
     }
 
-    private bool IsInsideArea()
+    private bool IsInsideArea(PossessableBody body)
     {
-        if (targetBody.BodyCollider == null) return false;
-        Vector2 center = (Vector2)transform.InverseTransformPoint(targetBody.BodyCollider.bounds.center);
+        if (body.BodyCollider == null) return false;
+        Vector2 center = (Vector2)transform.InverseTransformPoint(body.BodyCollider.bounds.center);
         Vector2 distance = center - activationAreaOffset;
         return Mathf.Abs(distance.x) <= activationAreaSize.x * 0.5f &&
             Mathf.Abs(distance.y) <= activationAreaSize.y * 0.5f;
@@ -88,7 +95,11 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(0.5f, 0.5f), texture.width, 0, SpriteMeshType.FullRect);
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
 
-        if (mode == HintMode.ContinueRight)
+        if (mode == HintMode.BubbleIntroduction)
+        {
+            BuildBubbleIntroduction();
+        }
+        else if (mode == HintMode.ContinueRight)
         {
             Arrow(new Vector2(-0.6f, 0), new Vector2(0.6f, 0));
         }
@@ -101,6 +112,8 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else if (mode == HintMode.Water)
         {
+            if (!string.IsNullOrWhiteSpace(waterDescription))
+                AddHintText("WaterDescription", waterDescription, new Vector2(0, -1.1f), new Vector2(3f, 0.8f));
             AddKey('W', new Vector2(0, 0.65f));
             AddKey('A', new Vector2(-0.65f, 0));
             AddKey('S', Vector2.zero);
@@ -131,8 +144,38 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else
         {
-            AddKey('E', Vector2.zero);
+            AddKey('Q', Vector2.zero);
+            if (!string.IsNullOrWhiteSpace(popDescription))
+                AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);
         }
+    }
+
+    private void BuildBubbleIntroduction()
+    {
+        AddKey('A', new Vector2(-0.5f, 0));
+        AddKey('D', new Vector2(0.5f, 0));
+        Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
+        Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
+
+        AddHintText("BubbleIntroductionText", "You are a\nBubble", new Vector2(0, 0.8f), new Vector2(2.7f, 0.8f));
+    }
+
+    private void AddHintText(string objectName, string message, Vector2 position, Vector2 size, Color? textColor = null)
+    {
+        GameObject label = new GameObject(objectName, typeof(RectTransform));
+        label.hideFlags = HideFlags.HideAndDontSave;
+        label.transform.SetParent(visuals.transform, false);
+        label.transform.localPosition = position;
+        TextMeshPro text = label.AddComponent<TextMeshPro>();
+        text.font = TMP_Settings.defaultFontAsset;
+        text.text = message;
+        text.fontSize = 3f;
+        text.fontStyle = FontStyles.Bold;
+        text.color = textColor ?? inkColor;
+        text.alignment = TextAlignmentOptions.Center;
+        text.textWrappingMode = TextWrappingModes.Normal;
+        text.rectTransform.sizeDelta = size;
+        text.renderer.sortingOrder = sortingOrder + 2;
     }
 
     private void AddKey(char letter, Vector2 center)
@@ -163,6 +206,14 @@ public class BubbleMovementHint : MonoBehaviour
                 points = new[] { new Vector2(-0.12f, -0.15f), new Vector2(-0.12f, 0.15f),
                     new Vector2(0.04f, 0.15f), new Vector2(0.13f, 0.07f), new Vector2(0.13f, -0.07f),
                     new Vector2(0.04f, -0.15f), new Vector2(-0.12f, -0.15f) };
+                break;
+            case 'Q':
+                points = new[] { new Vector2(-0.07f, -0.15f), new Vector2(-0.13f, -0.07f),
+                    new Vector2(-0.13f, 0.07f), new Vector2(-0.07f, 0.15f),
+                    new Vector2(0.07f, 0.15f), new Vector2(0.13f, 0.07f),
+                    new Vector2(0.13f, -0.07f), new Vector2(0.07f, -0.15f),
+                    new Vector2(-0.07f, -0.15f) };
+                Stroke(center + new Vector2(0.03f, -0.05f), center + new Vector2(0.17f, -0.19f));
                 break;
             case 'E':
                 points = new[] { new Vector2(0.13f, 0.15f), new Vector2(-0.13f, 0.15f),
