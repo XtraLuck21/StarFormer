@@ -60,20 +60,23 @@ public class BubbleMovementHint : MonoBehaviour
             else
             {
                 bool starMode = mode == HintMode.StarMove || mode == HintMode.StarJump;
-                visible = playerController != null && targetBody != null &&
-                    targetBody.Form == (starMode ? BodyForm.Star : BodyForm.Bubble) &&
-                    targetBody.isActiveAndEnabled && !playerController.IsDead &&
-                    playerController.CurrentBody == targetBody &&
-                    (starMode || targetBody.IsInWater == (mode == HintMode.Water)) && IsInsideArea();
+                // Pop guidance applies to whichever Bubble the player currently possesses.
+                PossessableBody body = mode == HintMode.ExitBubble && playerController != null
+                    ? playerController.CurrentBody : targetBody;
+                visible = playerController != null && body != null &&
+                    body.Form == (starMode ? BodyForm.Star : BodyForm.Bubble) &&
+                    body.isActiveAndEnabled && !playerController.IsDead &&
+                    playerController.CurrentBody == body &&
+                    (starMode || body.IsInWater == (mode == HintMode.Water)) && IsInsideArea(body);
             }
         }
         if (visuals.activeSelf != visible) visuals.SetActive(visible);
     }
 
-    private bool IsInsideArea()
+    private bool IsInsideArea(PossessableBody body)
     {
-        if (targetBody.BodyCollider == null) return false;
-        Vector2 center = (Vector2)transform.InverseTransformPoint(targetBody.BodyCollider.bounds.center);
+        if (body.BodyCollider == null) return false;
+        Vector2 center = (Vector2)transform.InverseTransformPoint(body.BodyCollider.bounds.center);
         Vector2 distance = center - activationAreaOffset;
         return Mathf.Abs(distance.x) <= activationAreaSize.x * 0.5f &&
             Mathf.Abs(distance.y) <= activationAreaSize.y * 0.5f;
