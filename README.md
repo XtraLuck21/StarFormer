@@ -15,11 +15,17 @@ Source release configuration: `5650250`; gameplay/UI changes: `9b35f8e`; publish
 
 Publish future Alpha updates only into `alpha/`; preserve the older paths. Source changes do not update the hosted game until rebuilt and published. See the [release history](Docs/ScriptGuide.md#4-web-build-and-github-pages-release) and [publishing instructions](Docs/publish_instructions.md).
 
+## Current branch source (October 31)
+
+The IntroBubble rebuild is newer than the published Alpha: an enclosed water-tank route, contextual map hints, a spare Bubble, and a left exit returning to IntroBox's endpoint as BoxB with its door open. Box now uses **hold J to grow / hold K to shrink**; Bubble uses **Q to pop**. IntroBubble hides its standalone Restart button and uses a smaller Main Menu button; **R opens restart choices**.
+
+These changes require a new build and publication. The existing Alpha links and `alpha-0.1.2` version remain unchanged. See [intro-levels.md](Docs/intro-levels.md) for the route and recovery limits, and [CheckpointGuidance.md](Docs/CheckpointGuidance.md) for restart behavior and the remaining Level01 E/Q reminder mismatch.
+
 ## Development references
 
 - Unity editor: `6000.3.22f1`, with Web Build Support.
 - Enabled build scenes: `Mainmenu` (0), `IntroBox` (1), `IntroBubble` (2), `Level01` (3), `Level02` (4). The old `Tutorial` remains in the repository but is excluded from builds.
-- [Introductory levels](Docs/intro-levels.md) — current teaching sequence, hints, restart flow and Alpha 0.1.2 mobile layout values.
+- [Introductory levels](Docs/intro-levels.md) — rebuilt IntroBubble route, current hints/controls, return travel, spare Bubble and mobile layout.
 - [Gameplay specification](Docs/GameplaySpec.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)
 - [Level 1 progress](Docs/level-1.md) — ball checkpoints, U2 regeneration, possession recovery and the added Restart Level button.

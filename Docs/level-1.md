@@ -1,6 +1,6 @@
 # Level 1 Progress
 
-Last updated: 2026-10-18.
+Last updated: 2026-10-31.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
 
@@ -20,15 +20,19 @@ For controls and tuning, see [GameplaySpec.md](GameplaySpec.md). For script resp
 
 Current additions:
 
-- Possessing a bouncing ball records its authored spawn position for automatic death recovery. Level01 opts in through `Enable Bouncy Ball Checkpoints`; other scenes retain their existing recovery behavior. R starts Level01 from the beginning. Death reload resets the scene's puzzle objects and restores control to the recorded ball; it is not a full puzzle-state save.
+- Possessing a bouncing ball records its authored spawn position for automatic death recovery. Level01 opts in through `Enable Bouncy Ball Checkpoints`; other scenes retain their existing recovery behavior. R opens restart choices; confirming Restart Level starts Level01 from the beginning. Death reload resets the scene's puzzle objects and restores control to the recorded ball; it is not a full puzzle-state save.
 - The lower ball displays an A/D steering prompt on first possession. Both balls use the shared halo visual. The prefab now stores `BodyForm.BouncyBall = 7`; its generator writes the enum value explicitly. Level01's two existing instances already had the correct override.
-- `Bubble_U2` regenerates a fresh dormant bubble at its authored position after E or a hazard pop. U1/U1b do not gain this regeneration component.
+- `Bubble_U2` regenerates a fresh dormant bubble at its authored position after Q or a hazard pop. U1/U1b do not gain this regeneration component.
 - Box-to-Bubble transfer temporarily ignores only the previous box/new bubble collision pair. After clearance for consecutive physics frames, normal collisions resume. Terrain, other bodies, and the pressure-plate rules remain active; this is not permanent immunity to boxes.
 - U1/U1b/U2 holding canopies are removed, matching dormant-until-possessed bubbles. The scene uses gray/dark terrain colors, pink-red X-marked water hazards, and revised lower-right camera framing.
 
 **Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified.
 
-**Alpha 0.1.2:** Level01 now includes a top-right Restart Level button beneath Return to Main Menu. It clears checkpoint state and reloads Level01 from its entrance, matching R. Automatic death recovery still resumes the last ball checkpoint.
+**Alpha 0.1.2:** Level01 now includes a top-right Restart Level button beneath Return to Main Menu. It clears checkpoint state and reloads Level01 from its entrance, matching the R behavior in that published release. Current source uses the R menu described below. Automatic death recovery still resumes the last ball checkpoint.
+
+**Current source (October 31):** Box now uses **J to grow / K to shrink** and Bubble uses **Q to pop**. R opens a restart menu rather than immediately reloading. IntroBubble has been rebuilt with an enclosed water tank, contextual map hints, one spare Bubble and return travel to the IntroBox endpoint. These branch changes require a new tested export; the last recorded publication remains Alpha 0.1.2.
+
+**Known hint mismatch:** Level01's runtime idle-Bubble reminder in CheckpointFeedbackUI still says `Press E to pop bubble`. Actual pop input is Q. This documentation update records the mismatch without changing code. The proposed lift-ceiling / selectable-spike Level 1 redesign remains a plan and is not the current map.
 
 ## 1. Current route and progress
 
@@ -74,8 +78,8 @@ The ball floats at the surface of any registered water zone. While floating it c
 - **X-marked hazards react by controlled form:** a bubble pops and releases the star; a box dies through the normal restart flow, including when growing into the trigger. Stars, bouncing balls and idle bodies are ignored. All three saved hazards use `WaterPopHazard` prefab instances with scene controller references and black X visual children.
 - **The goal accepts any controlled form:** it checks that the player is alive, the entering body is controlled, and G2 is inactive. It does not independently verify every earlier puzzle. U3 is no longer required to convert the player back to a star. The goal validates the next scene and invokes LevelTransitionUI to show Level up! / Entering Level 2... for a default 1.5 seconds while gameplay is paused. It then clears checkpoint state and loads Level02 once with normal time scale; no confirmation input is required.
 - The water zones are triggers. Bodies use `BodyWaterPhysics` and the common possession controller for their water behavior.
-- **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.`, `Restarting...`, and `Press R to restart now.` into the shared status text. The controller handles the two-second death pause and R restart. The text remains blank during normal play.
-- **Menu navigation:** enter Level01 directly from Mainmenu or from the IntroBubble Star goal. The top-right return button loads Mainmenu and restores time scale to 1. Restart Level and R clear checkpoints and restart the current level; once the goal has loaded Level02, they restart Level02. Level01 has no separate Retry Checkpoint button. Menu entry and forward transitions clear checkpoint state.
+- **Death feedback:** `LevelDeathUI` observes the controller's death state and writes `You died.` plus `Returning to checkpoint...` or `Retrying from the start...` into the shared status text. The controller handles the automatic death-recovery delay; opening the R menu pauses that countdown. The text remains blank during normal play.
+- **Menu navigation:** enter Level01 directly from Mainmenu or from the IntroBubble Star goal. The top-right return button loads Mainmenu and restores time scale to 1. Restart Level clears checkpoints and restarts the current level. R opens a menu with Return to Checkpoint when available, Restart Level and Cancel. Once Level02 loads, restart actions apply to that scene. Level01 has no separate Retry Checkpoint button. Menu entry and forward transitions clear checkpoint state.
 - **Ball spikes remain lethal:** `SpikeHazard` kills the currently controlled star, box, bubble or bouncing ball and reloads the scene after the configured death delay.
 - **The camera follows the controlled form:** possession changes do not break camera tracking. Level01 uses lower-left, lower-right and upper camera regions with bounded follow, smooth movement and smooth zoom transitions.
 

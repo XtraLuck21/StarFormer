@@ -1,6 +1,6 @@
 # Restart menu and checkpoint feedback
 
-Source update: October 30, 2026. Requires rebuilding before the hosted game changes.
+Source documentation updated: October 31, 2026 (restart implementation from October 30). Requires rebuilding before the hosted game changes.
 
 - Press R or a TouchHoldButton with Kind = Restart to open the restart menu. No hold is required; opening the menu never reloads the scene.
 - Return to Checkpoint appears only when the current scene has an activated positional or Bouncy Ball checkpoint. It preserves that checkpoint and reloads using the existing recovery flow.
@@ -10,9 +10,13 @@ Source update: October 30, 2026. Requires rebuilding before the hosted game chan
 - The permanent top panel, route instructions, and hold progress are removed. Activation shows a short CHECKPOINT SAVED notification. World-position checkpoint markers remain.
 - Existing scene buttons retain their explicit Restart Level / Retry Checkpoint behavior.
 
+IntroBubble hides its standalone Restart button, so keyboard players use R for these choices. Its left exit is a separate scene-return action to the IntroBox endpoint as BoxB with the door open; it is not Return to Checkpoint.
+
 ## Level 1 bubble reminder
 
 Before BouncyBall_Upper (the second checkpoint) has been activated, a controlled Bubble whose Y position stays within 0.05 world units for 2 seconds shows a small "Press E to pop bubble" above the body. Horizontal movement does not reset this timer, so sliding sideways while blocked vertically still shows the reminder. Meaningful vertical movement, changing forms, dying, or pausing hides and resets it. Other forms and scenes do not show the bubble-specific instruction.
+
+**Known mismatch:** the quoted E reminder is still hardcoded in CheckpointFeedbackUI. The shared Bubble input has changed to **Q**. Update that reminder in a separately authorized code change and validate it in Level01; the IntroBubble map hint already displays Q.
 
 The checkpoint session remembers which balls have been activated across retries, so revisiting the lower ball after the upper checkpoint does not re-enable the hint. Full restart or a fresh level entry clears that history. Delay and vertical tolerance can be adjusted on the runtime CheckpointFeedbackUI component. The reminder uses 18-point text; checkpoint markers use 16-point text without pulsing, and the save notification uses 20-point text.
 
