@@ -37,6 +37,8 @@ public class LevelDeathUI : MonoBehaviour
         deathShown = true;
 
         statusText.text =
-            "You died.\nRestarting...\nPress R to restart now.";
+            playerController.HasSavedCheckpoint
+                ? "You died.\nReturning to checkpoint..."
+                : "You died.\nRetrying from the start...";
     }
 }
