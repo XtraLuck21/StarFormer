@@ -939,8 +939,8 @@ Transform:
   m_GameObject: {fileID: 114066374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: -3.5, z: 0}
-  m_LocalScale: {x: 18.5, y: 1, z: 1}
+  m_LocalPosition: {x: 0.2576, y: -3.5162, z: 0}
+  m_LocalScale: {x: 18.997934, y: 1.0322609, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2359,7 +2359,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &350186482
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3226,7 +3226,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &521477069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3242,8 +3242,8 @@ MonoBehaviour:
   mode: 0
   playerController: {fileID: 1643171616}
   targetBody: {fileID: 470202030}
-  activationAreaSize: {x: 2, y: 2}
-  activationAreaOffset: {x: 0, y: 0}
+  activationAreaSize: {x: 4, y: 3}
+  activationAreaOffset: {x: -0.5, y: 0.7}
   frameSize: {x: 1.6, y: 1.6}
   dashLength: 0.18
   gapLength: 0.12
@@ -7928,7 +7928,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1342776486
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8671,8 +8671,8 @@ Transform:
   m_GameObject: {fileID: 1476743711}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.5, y: 2.95, z: 0}
-  m_LocalScale: {x: 2, y: 3.9, z: 1}
+  m_LocalPosition: {x: -1.5, y: 3.01, z: 0}
+  m_LocalScale: {x: 2, y: 4.02012, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -9890,7 +9890,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1773415587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9905,12 +9905,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BubbleMovementHint
   mode: 2
   playerController: {fileID: 1643171616}
-  targetBody: {fileID: 936718040}
+  targetBody: {fileID: 934574713}
   previewInEditor: 1
   flagGate: {fileID: 0}
-  activationAreaSize: {x: 1.5, y: 1.8}
-  activationAreaOffset: {x: 0, y: 0.3}
-  iconScale: 1.2
+  activationAreaSize: {x: 3.5, y: 3}
+  activationAreaOffset: {x: -0.5, y: -0.6}
+  iconScale: 1
   continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
   keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
@@ -9924,7 +9924,7 @@ Transform:
   m_GameObject: {fileID: 1773415586}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7, y: 4.3, z: 0}
+  m_LocalPosition: {x: 5.3, y: 4.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10643,7 +10643,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1920257503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10661,9 +10661,9 @@ MonoBehaviour:
   targetBody: {fileID: 934574713}
   previewInEditor: 1
   flagGate: {fileID: 0}
-  activationAreaSize: {x: 6, y: 5}
-  activationAreaOffset: {x: 0, y: 1.85}
-  iconScale: 1
+  activationAreaSize: {x: 7, y: 10}
+  activationAreaOffset: {x: 2.075, y: 0.35}
+  iconScale: 0.8
   continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
   keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
@@ -10677,7 +10677,7 @@ Transform:
   m_GameObject: {fileID: 1920257502}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3, y: -2.35, z: 0}
+  m_LocalPosition: {x: -1.2, y: -0.6, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11262,7 +11262,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2015068083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11280,9 +11280,9 @@ MonoBehaviour:
   targetBody: {fileID: 934574713}
   previewInEditor: 1
   flagGate: {fileID: 0}
-  activationAreaSize: {x: 8, y: 5}
-  activationAreaOffset: {x: -1, y: -0.2}
-  iconScale: 1
+  activationAreaSize: {x: 7, y: 8}
+  activationAreaOffset: {x: -1.2, y: -2.6}
+  iconScale: 0.8
   continueArrowWidth: 0.08
   inkColor: {r: 1, g: 1, b: 1, a: 1}
   keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
@@ -11296,7 +11296,7 @@ Transform:
   m_GameObject: {fileID: 2015068082}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3, y: -0.3, z: 0}
+  m_LocalPosition: {x: -3.8, y: 4.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -11600,7 +11600,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043469416}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4b6da7b3a7394ba1a3c659e19c05005a, type: 3}
   m_Name: 
