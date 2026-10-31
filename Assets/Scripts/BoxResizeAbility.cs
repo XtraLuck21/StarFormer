@@ -237,6 +237,12 @@ public class BoxResizeAbility : MonoBehaviour
         body.WakeUp();
     }
 
+    public void RestoreSceneEntrySize(float size)
+    {
+        Physics2D.SyncTransforms();
+        ApplySize(Mathf.Clamp(size, minimumSize, maximumSize), boxCollider.bounds, false);
+    }
+
     private void OnValidate()
     {
         minimumSize = Mathf.Clamp(minimumSize, 0.1f, 1f);

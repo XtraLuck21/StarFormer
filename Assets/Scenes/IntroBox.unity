@@ -6993,6 +6993,9 @@ MonoBehaviour:
   playerController: {fileID: 1643171616}
   requiredFlagGate: {fileID: 1650643065}
   nextSceneName: IntroBubble
+  returnBody: {fileID: 1190341460}
+  returnPosition: {x: 7.8, y: -2.64}
+  returnBoxSize: 0.5
 --- !u!61 &1914139344
 BoxCollider2D:
   m_ObjectHideFlags: 0

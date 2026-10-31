@@ -340,6 +340,17 @@ public class PlayerPossessionController : MonoBehaviour
             Physics2D.SyncTransforms();
         }
 
+        if (IntroSceneExit.TryRestoreReturn(this, out PossessableBody returnHost))
+        {
+            initialBody.SetOwner(null);
+            initialBody.gameObject.SetActive(false);
+            currentBody = returnHost;
+            currentBody.SetOwner(this);
+            BlockCurrentContacts();
+            BeginAnalyticsForCurrentBody();
+            return;
+        }
+
         // Existing checkpoint respawns keep their original Star behavior.
         bool enterStartingHost = !HasCheckpointInCurrentScene && startingHost != null;
         if (enterStartingHost &&
