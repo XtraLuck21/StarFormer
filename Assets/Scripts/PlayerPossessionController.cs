@@ -78,7 +78,7 @@ public class PlayerPossessionController : MonoBehaviour
     public PossessableBody CurrentBody => currentBody;
 
     /// <summary>
-    /// This frame's vertical input (-1 to 1): K/J for Box resizing, W/S otherwise,
+    /// This frame's vertical input (-1 to 1): J/K for Box resizing, W/S otherwise,
     /// combined with touch Up/Down (Grow/Shrink for Box).
     /// Box resizing reads this value instead of polling the keyboard separately.
     /// </summary>
@@ -438,12 +438,12 @@ public class PlayerPossessionController : MonoBehaviour
             }
 
             bool isBox = currentBody != null && currentBody.Form == BodyForm.Box;
-            if (isBox ? keyboard.kKey.isPressed : keyboard.wKey.isPressed)
+            if (isBox ? keyboard.jKey.isPressed : keyboard.wKey.isPressed)
             {
                 verticalInput += 1f;
             }
 
-            if (isBox ? keyboard.jKey.isPressed : keyboard.sKey.isPressed)
+            if (isBox ? keyboard.kKey.isPressed : keyboard.sKey.isPressed)
             {
                 verticalInput -= 1f;
             }

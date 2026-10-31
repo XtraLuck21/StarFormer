@@ -67,8 +67,8 @@ public class TutorialIntroUI : MonoBehaviour
         instructionsText.text =
             "Touch special objects to become them.\n\n" +
             "Move: A / D\n" +
-            "Grow: Hold K\n" +
-            "Shrink: Hold J\n" +
+            "Grow: Hold J\n" +
+            "Shrink: Hold K\n" +
             "Restart menu: R";
     }
 

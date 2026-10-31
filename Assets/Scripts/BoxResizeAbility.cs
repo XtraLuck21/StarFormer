@@ -60,7 +60,7 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        // The controller combines K/J and the on-screen Grow/Shrink buttons
+        // The controller combines J/K and the on-screen Grow/Shrink buttons
         // into one VerticalInput value (-1 to 1); use it directly here.
         // Desktop and mobile share the same input path, so resizing still works
         // when Keyboard.current is null on a mobile device.
