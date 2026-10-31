@@ -34,7 +34,7 @@ Sheets transport.
 - Die while controlling that ball. Expect the same Run ID after scene reload,
   a new Attempt ID and Bouncy Ball form at respawn.
 - Possess the upper ball and repeat the checkpoint/death test.
-- Pop Bubble with E. Expect Bubble `form_duration` and Star `form_change`, but
+- Pop Bubble with Q. Expect Bubble `form_duration` and Star `form_change`, but
   no `death`.
 - Pop Bubble on a Bubble-only hazard. Expect no `death`.
 - Touch the same water hazard as Box. Expect one `death` with

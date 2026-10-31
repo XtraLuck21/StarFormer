@@ -47,11 +47,11 @@ public class FanBlower : MonoBehaviour
             facing = owner.HorizontalInput > 0f ? 1 : -1;
         }
 
-        // Keyboard W toggles wind directly; touch calls ToggleBlow() through
+        // Keyboard F toggles wind directly; touch calls ToggleBlow() through
         // the controller's PressTouchBlow. Both update the same isBlowing state.
         Keyboard keyboard = Keyboard.current;
 
-        if (keyboard != null && keyboard.wKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
         {
             isBlowing = !isBlowing;
         }

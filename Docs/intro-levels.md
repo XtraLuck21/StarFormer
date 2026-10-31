@@ -33,7 +33,7 @@ Scene: [IntroBubble.unity](../Assets/Scenes/IntroBubble.unity).
 2. Walk out, grow beneath the waiting Bubble and transfer into it on contact.
 3. Steer through the air passage with A/D while the activated Bubble rises automatically.
 4. Enter the water from the side. Use WASD to swim down, across beneath the hanging divider, and up the other side.
-5. Leave the water and automatically rise again. Move above the right platform, press E to pop the Bubble, and land as Star.
+5. Leave the water and automatically rise again. Move above the right platform, press Q to pop the Bubble, and land as Star.
 6. Walk to the green flag. Only the living, controlled, grounded Star can trigger the goal. A short `Level up!` / `Entering Level 1...` overlay appears before Level01 loads.
 
 Both intro cameras are currently fixed. The right platform provides a landing area before the flag; reaching it as a Bubble does not finish the level.
@@ -44,16 +44,16 @@ Both intro cameras are currently fixed. The right platform provides a landing ar
 | --- | --- | --- |
 | Star | A/D or Left/Right Arrow | Space jumps |
 | Box | A/D while grounded | Hold W to grow, S to shrink; no jump or manual exit |
-| Bubble in air | A/D or Left/Right Arrow | Automatic rise; E returns to Star |
-| Bubble underwater | WASD, including diagonals | E returns to Star |
+| Bubble in air | A/D or Left/Right Arrow | Automatic rise; Q returns to Star |
+| Bubble underwater | WASD, including diagonals | Q returns to Star |
 
-R and the **Restart (R)** button restart the whole current scene and clear its checkpoint session. IntroBubble restarts at EntryBox in IntroBubble, not at IntroBox. Each intro places Restart below Return to Main Menu; both buttons use that scene's own `LevelNavigationUI`. E is a Bubble exit, not a universal exit key; Fan and Spider still use their existing Space behavior.
+R and the **Restart (R)** button restart the whole current scene and clear its checkpoint session. IntroBubble restarts at EntryBox in IntroBubble, not at IntroBox. Each intro places Restart below Return to Main Menu; both buttons use that scene's own `LevelNavigationUI`. Q is a Bubble exit, not a universal exit key; Fan uses F / Blow and Q / Leave.
 
 - **Star:** boxed A/D appears in the opening movement region; boxed SPACE and a jump arc appear near the low step. These prompts require control of the assigned Star and disappear after possession.
 - **Box:** `BoxGrowHint` also gives EntryBox a growth reminder beneath the Bubble.
 - **Air:** `BubbleMovementHint` displays boxed A/D and horizontal arrows. The earlier small-circle/up-arrow graphic stays removed; the top subtitle now explains automatic rise: `You float up. You steer sideways.`
 - **Water:** boxed WASD sits directly below the divider. Its activation area covers the pool, so it appears on entry rather than only when the player reaches the icon.
-- **Exit:** boxed E appears when the controlled Bubble reaches the safe platform area; it disappears after returning to Star. E remains usable elsewhere too.
+- **Exit:** boxed Q appears when the controlled Bubble reaches the safe platform area; it disappears after returning to Star. Q remains usable elsewhere too.
 - **Continuation:** IntroBox uses `ContinueRight` mode with its `IntroFlagGate` reference. The arrow is hidden at runtime until the gate opens, then remains visible until the scene changes or restarts. This mode does not use a body or activation area. Its saved line width is 0.08, with a larger arrowhead and Sorting Order 20.
 - **Readability:** both intros use a warm-gray camera background (`#ADA7A7`) and dark terrain, while retaining distinct form/water colors. Saved top titles use font size 48 and subtitles 32, in dark blue. Bubble movement hints use orders 0/1, below the Bubble at 2 and its Star marker at 10. The Bubble has a pale-blue fill and dark-blue outline; the border changes neither its outer size nor its collision shape.
 
@@ -96,7 +96,7 @@ For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [Ga
 
 ## Verification and remaining work
 
-The developer confirmed box transfer/shrinking, dormant Bubble activation, air/water movement, visual hints/outline, E exit, the grounded-Star flag, and the full menu-to-Level02 flow. The October 17 follow-up also confirmed the palette, contextual Star prompts, form/subtitle changes including Box-to-Box transfer, larger subtitles, IntroBubble messages, current-scene Restart buttons, the thicker gate-open arrow, and completion transitions. Script compilation checks passed during implementation. These are editor results, not a claim that a new WebGL build has been tested or published.
+The developer confirmed box transfer/shrinking, dormant Bubble activation, air/water movement, visual hints/outline, Q exit, the grounded-Star flag, and the full menu-to-Level02 flow. The October 17 follow-up also confirmed the palette, contextual Star prompts, form/subtitle changes including Box-to-Box transfer, larger subtitles, IntroBubble messages, current-scene Restart buttons, the thicker gate-open arrow, and completion transitions. Script compilation checks passed during implementation. These are editor results, not a claim that a new WebGL build has been tested or published.
 
 Remaining work: integrate this completed intro pass through a maintainer-created PR, review readability/framing with new players, and test a new WebGL export before publication. Early Bubble popping or a stranded body can still require R; automatic soft-lock recovery is not implemented. The current intro route does not add a dedicated underwater-hazard lesson. Camera-follow redesign and mobile controls are not part of this completed pass.
 
