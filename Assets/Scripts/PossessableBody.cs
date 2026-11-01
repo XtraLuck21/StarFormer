@@ -69,6 +69,7 @@ public class PossessableBody : MonoBehaviour
     private bool wasInWater;
     private bool bubbleActivated;
     private RigidbodyConstraints2D bubbleActiveConstraints;
+    private PhysicsMaterial2D bubbleSurfaceMaterial;
 
     private void Awake()
     {
@@ -90,6 +91,16 @@ public class PossessableBody : MonoBehaviour
 
         if (form == BodyForm.Bubble)
         {
+            // Repeated input against a wall must not turn friction into a brake
+            // on buoyancy or swimming. Also covers scene-authored bubbles.
+            bubbleSurfaceMaterial = new PhysicsMaterial2D("BubbleSurface")
+            {
+                friction = 0f,
+                bounciness = 0f,
+                frictionCombine = PhysicsMaterialCombine2D.Minimum
+            };
+            BodyCollider.sharedMaterial = bubbleSurfaceMaterial;
+
             // Keep an untouched bubble at its authored position while preserving
             // its dynamic collider for contact possession and trigger interactions.
             bubbleActiveConstraints = Body.constraints;
@@ -112,7 +123,13 @@ public class PossessableBody : MonoBehaviour
             Body.WakeUp();
         }
 
-        controlVisual.SetActive(owner != null);
+        // Spider uses its googly eyes without the possession star overlay.
+        controlVisual.SetActive(owner != null && form != BodyForm.Spider);
+
+        if (TryGetComponent(out SpiderGooglyEyes spiderEyes))
+        {
+            spiderEyes.RefreshVisibility();
+        }
 
         if (TryGetComponent(out BodyWaterPhysics waterPhysics))
         {
@@ -138,6 +155,29 @@ public class PossessableBody : MonoBehaviour
         }
 
         return false;
+    }
+
+    public Vector2 RemoveBubbleWallPush(Vector2 velocity)
+    {
+        int count = Body.GetContacts(contacts);
+
+        for (int i = 0; i < count; i++)
+        {
+            Vector2 normal = contacts[i].normal;
+            if (Mathf.Abs(normal.x) < 0.65f)
+            {
+                continue;
+            }
+
+            // Keep motion along the wall and allow moving away immediately.
+            float intoWall = Vector2.Dot(velocity, normal);
+            if (intoWall < 0f)
+            {
+                velocity -= normal * intoWall;
+            }
+        }
+
+        return velocity;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -213,5 +253,13 @@ public class PossessableBody : MonoBehaviour
     private void OnDisable()
     {
         wasInWater = false;
+    }
+
+    private void OnDestroy()
+    {
+        if (bubbleSurfaceMaterial != null)
+        {
+            Destroy(bubbleSurfaceMaterial);
+        }
     }
 }

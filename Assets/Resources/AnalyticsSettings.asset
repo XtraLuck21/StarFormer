@@ -15,7 +15,7 @@ MonoBehaviour:
   collectionEnabled: 1
   endpointUrl: https://script.google.com/macros/s/AKfycbwvouGhWcYK46treKMiCgguVT5qMNZkds9Ig5Iq56gEYUEypdGokJI9yAGdEzZUdxNY/exec
   environment: production
-  buildVersion: playtest-01-20261018
+  buildVersion: alpha-0.1.2
   logPayloadsInEditor: 1
   snapshotIntervalSeconds: 30
   trackedScenes:

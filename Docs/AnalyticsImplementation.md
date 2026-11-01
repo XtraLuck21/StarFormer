@@ -1,6 +1,6 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-10-18.
+Last updated: 2026-10-31.
 
 ## Scope
 
@@ -55,12 +55,10 @@ uses `DontDestroyOnLoad`. Do not add separate copies to Level 1 or Level 2.
 
 - `player_id`: persists in the same browser and origin.
 - `session_id`: new every time the WebGL page loads.
-- `level_run_id`: new when Level 1 or Level 2 starts from the beginning.
+- `level_run_id`: new on fresh level entry or a manual restart, including Retry Checkpoint.
 - `attempt_id`: new at level start, checkpoint activation and death respawn.
 
-Automatic death reload retains the current Level Run. Pressing R, using the
-Restart button, or entering the level again starts a new Run. Returning to the
-menu records the active Run as `abandoned`.
+Automatic death reload retains the current Level Run. Opening/cancelling the R menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in the R menu and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death, and the event schema does not distinguish those button choices. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
 
 Level 1 uses `BouncyBall_Lower` and `BouncyBall_Upper` as checkpoint IDs. Level
 2 uses the existing `CP01`, `CP02` and `CP03` IDs. The attempt timer resets when
@@ -126,10 +124,9 @@ Before a release, update `buildVersion` to the exact source commit or agreed
 release label. Use `environment: test` until the full test plan passes, then
 build the approved playtest with `environment: production`.
 
-The current approved playtest configuration uses
-`environment: production` and `buildVersion: playtest-01-20261018`.
-Unity 6000.3.22f1 completed a batch-mode script compilation check for this
-configuration on October 18, 2026 without C# compiler errors.
+The published Alpha 0.1.2 configuration uses `environment: production` and `buildVersion: alpha-0.1.2`, matching Player Version. The endpoint and backend deployment were unchanged. The deployed HTML/version and game-data payload were verified, and the developer reported local/online gameplay tests passed. These checks do not verify Sheet delivery: the analytics owner still needs to confirm new rows labeled `alpha-0.1.2`.
+
+The preserved `playtest-01/` build keeps its embedded configuration. Alpha and older production builds can append to `RawEvents_Production`; separate them by `build_version`, not by website path. Do not clear historical rows or redeploy the backend just to publish a game update. The earlier playtest configuration passed the recorded Unity 6000.3.22f1 compilation and data checks; see [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for their scope.
 
 The formal playtest collection window starts at
 `2026-10-18 11:31:02 PDT (-0700)`. At that time,
@@ -147,7 +144,7 @@ not upload production rows.
 - Immediate Level 2 hazards now use zero-delay `KillControlledBody` rather than
   bypassing death handling with `RequestRestart`.
 - `LevelGoal` records Level 1 completion before the transition overlay.
-- `LevelGoalToMenu` records Level 2 completion before returning to Mainmenu.
+- `LevelGoalToMenu` records Level 2 completion when the flag is reached, then shows the final overlay. Return to Main Menu happens only after its button is selected.
 - `LevelNavigationUI` records restart/abandonment before loading another scene.
 
 ## Editor and release behavior
@@ -156,9 +153,8 @@ The Editor prints event JSON when `logPayloadsInEditor` is enabled and does not
 contact Google. Uploading is compiled only for WebGL outside the Editor.
 
 If `endpointUrl` is blank, WebGL logs one warning and gameplay continues without
-uploading. This is the committed safe default until the team supplies its test
-deployment URL.
+uploading. The current Alpha asset has a configured endpoint and collection enabled; the blank-endpoint behavior is a fallback, not the current release configuration.
 
 Use Unity `6000.3.22f1` and the scene/build configuration documented in
 `publish_instructions.md`. Source integration does not update GitHub Pages; a
-new WebGL export and separate `gh-pages` publication are still required.
+new WebGL export and separate `gh-pages` publication are required for future source changes. Alpha 0.1.2 publication is already complete.

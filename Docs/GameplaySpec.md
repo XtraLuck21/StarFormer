@@ -1,16 +1,18 @@
 # Gameplay Specification
 
-Last updated: 2026-10-18.
+Last updated: 2026-10-31.
 
 This document records current controls, implemented gameplay and unresolved design decisions. For script responsibilities and integration points, see [ScriptGuide.md](ScriptGuide.md).
 
-Current source baseline: [PR #10](https://github.com/XtraLuck21/StarFormer/pull/10), merged as `69f3902` on October 14, adds IntroBox and IntroBubble, E-key bubble exit, and Mainmenu → IntroBox → IntroBubble → Level01 → Level02 progression. The developer confirmed the complete flow in Unity Play Mode. The October 17 intro polish (merged through PR #11, `989d2d1`) adds contextual hints, updated colors, current-scene restart buttons, an exit arrow and timed completion feedback; the developer also reported successful tests of those additions. See [intro-levels.md](intro-levels.md).
+**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The current source includes intro progression/hints from PR #10/#11, Level 1 recovery fixes from PR #12 and Level 2/mobile integration from PR #14. See [intro-levels.md](intro-levels.md) for the Alpha 0.1.2 control layout.
 
-**October 18 Level 1 update:** ball checkpoint recovery, a lower-ball A/D prompt, U2 regeneration, visual/camera polish, the Box-to-Bubble collision fix and corrected BouncyBall prefab configuration are merged into main through PR #12 (`e457e87`). The developer reports Level 1 testing passed. Instruction improvements are deferred as low priority; a new browser build remains pending.
+**October 18 Level 1 update:** ball checkpoint recovery, a lower-ball A/D prompt, U2 regeneration, visual/camera polish, the Box-to-Bubble collision fix and corrected BouncyBall prefab configuration are merged into main through PR #12 (`e457e87`). The developer reports Level 1 testing passed. Instruction improvements are deferred as low priority. Alpha 0.1.2 adds a wired Restart Level button and includes these fixes in the published build.
 
-**October 18 Level 2/mobile integration:** `Level-2` incorporates main through analytics PR #13 (`7e50e09`), retaining the intro polish and Level 1 recovery fixes. Touch controls are retained in the intro/formal levels; Q now releases Bubble, Spider and Fan. Level02 uses an explicit final-completion screen and menu button. The follow-up on `Level-2` through `ab68064` includes tested Spider/Fan hints, accepted top-right Restart/Retry buttons, English script text and finish-block cleanup. The developer confirmed completion and menu return after cleanup; full checkpoint/device regression and a fresh WebGL build remain pending. See [level-2.md](level-2.md).
+**October 18 Level 2/mobile integration:** PR #14 (`3714a49`) merged the Level-2 follow-up into main, preserving intro polish, Level 1 recovery and analytics. E releases Bubble, Spider and Fan. Level02 uses an explicit final-completion screen, corrected Spider/Fan hints and separate Restart/Retry buttons. Alpha 0.1.1 fixes navigation scaling; Alpha 0.1.2 retains that behavior. See [level-2.md](level-2.md).
 
-Publication is separate: the last recorded WebGL release is **All-Level V2**, built from `d161538` and published as `8c48475`, with the old Tutorial and Space-based bubble exit. It is preserved at the [Alpha Progress Check URL](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) by `5a7f043`. No new WebGL export or deployment is recorded for the intro update. The controls and implemented behavior below describe current source unless explicitly labeled historical.
+Publication is separate from source commits. Alpha 0.1.2 is live at `/alpha/`; All-Level V2 remains historical and preserved at the [Alpha Progress Check URL](https://xtraluck21.github.io/StarFormer/alpha-progress-check/). Preserve that folder, `playtest-01/` and the root during future Alpha replacements. The controls below describe current source unless explicitly labeled historical.
+
+**Current source (October 31):** the `intro-bubble` branch rebuilds IntroBubble and its world-space hints, adds return travel to the IntroBox exit and a spare underwater Bubble, and uses **J = Grow, K = Shrink, Q = Pop Bubble**. R opens the restart menu. These source changes are not a new published build; the last recorded release remains Alpha 0.1.2.
 
 ## 1. Current scope
 
@@ -20,9 +22,9 @@ Publication is separate: the last recorded WebGL release is **All-Level V2**, bu
 | Box resizing; pressure plate opening a door | Implemented and manually tested |
 | Bubble popping and return to the star | Implemented and manually tested |
 | Water behavior for star, box and bubble | Implemented and manually tested in WaterPlayground |
-| IntroBox and IntroBubble teaching sequence | Gameplay and current hint/presentation pass complete; developer-reported Play Mode tests passed; October 17 polish merged via PR #11; new WebGL testing remains pending |
+| IntroBox and IntroBubble teaching sequence | Original sequence published in Alpha 0.1.2; current branch rebuilds IntroBubble and updates both intros' resize hints, pending a new export |
 | Old Tutorial | Retained as a legacy scene; excluded from the current build |
-| R restart; automatic restart after death / vertical out-of-bounds | Implemented |
+| R restart-choice menu; automatic recovery after death / vertical out-of-bounds | Implemented in source; see CheckpointGuidance.md for pending verification |
 | Reusable StarPlayer, BoxBody, BubbleBody, SpikeHazard and WaterPopHazard prefabs | Available in `Assets/Form`; developer-reported instance tests passed |
 | Level01 held plate, overhead height switch, purple water hazards, any-form completion and death UI | Implemented; developer-reported tests passed |
 | Reusable BouncyBall prefab; automatic land bounce, A/D steering, ceiling compression and water-surface floating | Implemented; two Level01 instances and developer-reported segment tests passed |
@@ -30,8 +32,9 @@ Publication is separate: the last recorded WebGL release is **All-Level V2**, bu
 | Level01 complete route, including final bouncing-ball traversal | Upper traversal, completion and subsequent localhost/online playtests passed. Broader regression remains |
 | Main menu, Introductory Levels/Level01/Level02 selection and return buttons | Connected; full intro-to-Level02 flow tested in Unity Play Mode |
 | Playable menu star and one-way title/button platforms | Implemented; movement, jumping, foreground rendering and button clicks passed developer tests |
-| All-Level V2 / Alpha Progress Check | Fan-hint fix included; published as `8c48475` and preserved at `alpha-progress-check/` by `5a7f043`; developer reports the fixed URL works |
-| Level02 gameplay, camera stages and checkpoints | Original baseline integrated into main/All-Level V1; October 18 mobile/polish follow-up on Level-2 includes final completion UI and separate Restart/Retry actions |
+| Alpha 0.1.2 | Current release at `/alpha/`, published as `5f62980`; Player/Analytics versions aligned; developer-reported local/online tests passed |
+| Historical All-Level V2 / Alpha Progress Check | Fan-hint fix included; published as `8c48475` and preserved at `alpha-progress-check/` by `5a7f043`; developer reports the fixed URL works |
+| Level02 gameplay, camera stages and checkpoints | Integrated into main via PR #14 and published in Alpha; includes final completion UI, responsive navigation and separate Restart/Retry actions |
 | Fan, possessable spike wall and spider | Shared controller integration exists, with associated Level02 gameplay sections |
 | Fan airflow | Implemented for movable non-possessable obstacles; possessable bodies are excluded |
 
@@ -39,27 +42,26 @@ Publication is separate: the last recorded WebGL release is **All-Level V2**, bu
 
 ## 2. Controls
 
-Keys below describe the currently controlled form. W/S are held inputs; Space, Q and R respond to a new press.
+Keys below describe current source. Hold J/K for Box resizing; use A/D for horizontal movement and WASD for underwater Bubble movement; Q, E, Space and R respond to a new press.
 
-| Form / environment | A / D | W | S | Space | Q | R |
-| --- | --- | --- | --- | --- | --- | --- |
-| Star, outside water | Move left/right | No action | No action | Jump when grounded | No action | Restart scene |
-| Star, underwater | Slower left/right movement | No action | No action | Reduced jump when grounded | No action | Restart scene |
-| Box, outside water | Move left/right while grounded | Grow | Shrink | No action | No action | Restart scene |
-| Box, underwater | Slower left/right movement while grounded | Grow | Shrink | No action | No action | Restart scene |
-| Bubble, in air | Move left/right | No action | No action | No action | Pop and return to Star | Restart scene |
-| Bubble, underwater | Swim left/right | Swim up | Swim down | No action | Pop and return to Star | Restart scene |
-| Fan | Move while grounded and set facing | No action | No action | No action | Leave fan and return to Star (F toggles airflow) | Restart from beginning |
-| Spike wall | Move while grounded and set firing direction | No action | No action | Fire projectile | No action | Restart from beginning |
-| Spider | Move along connected surfaces | No action | No action | No action | Exit to Star through the shared pop/release routine | Restart from beginning |
-| Bouncing ball, on land | Steer while automatically bouncing | No action | No action | No action | No action | Restart scene |
-| Bouncing ball, touching water | Reduced movement along the water surface | No action | No action | No action | No action | Restart scene |
+| Form / environment | Movement | Ability / exit |
+| --- | --- | --- |
+| Star | A/D; slower underwater | Space: grounded jump, reduced underwater |
+| Box | A/D while grounded; slower underwater | Hold J: grow; hold K: shrink; no jump or manual exit |
+| Bubble in air | A/D; rises automatically | Q: pop and return to Star |
+| Bubble underwater | WASD, including diagonals | Q: pop and return to Star |
+| Fan | A/D while grounded and facing | W: toggle airflow; E: leave |
+| Spike wall | A/D while grounded and facing | Space: fire |
+| Spider | A/D along connected surfaces | E: leave |
+| Bouncing ball | A/D; automatic land bouncing, slower surface movement on water | No manual jump or release |
+
+R opens the restart menu for all forms. It does not immediately reload the scene.
 
 - Left/Right Arrow also work as alternatives to A/D in the current controller. Up/Down Arrow are not implemented as W/S alternatives.
 - There is no manual possession key. Contact with an eligible body automatically requests a transfer.
-- There is no general key for exiting a box. Q releases Bubble, Spider and Fan to the Star; it is not a universal exit key. Space remains the Star jump / SpikeWall fire action. Touch Pop/Leave calls the same release path.
+- There is no general key for exiting a box. Q releases Bubble, while E releases Spider and Fan to the Star; neither key is a universal exit action. Space remains the Star jump / SpikeWall fire action. Touch Pop/Leave remains available through the corresponding mobile actions.
 - Mobile controls use AutoDetect (Unity mobile-platform flag, or a touchscreen with no mouse); AlwaysShow is an Editor test override, read at Awake. Direction and Box resize buttons are held inputs; action/release buttons trigger on pointer down, and Fan Blow toggles airflow. See [level-2.md](level-2.md) for form-specific controls and device tests.
-- R clears the current checkpoint session and restarts the current scene from its beginning, including during the death pause. IntroBox and IntroBubble also expose a Restart (R) button with the same scope: restarting IntroBubble does not return to IntroBox. Level02 adds Restart Level and Retry Checkpoint beneath Return to Main Menu: Restart clears checkpoints, while Retry retains the latest one and reloads (or uses the entrance if none exists). Both buttons record a manual restart, not a death.
+- R opens RestartMenuUI with Restart Level and Cancel; Return to Checkpoint is available when a checkpoint exists. Only choosing Restart Level clears checkpoints. Explicit scene Restart/Retry buttons keep their own full-restart/retry actions. IntroBubble hides its standalone Restart button and retains a compact Main Menu button. See [CheckpointGuidance.md](CheckpointGuidance.md).
 - IntroBubble and Level01 goals briefly pause gameplay for a default 1.5-second completion overlay before advancing automatically; the player controller is disabled during this transition. IntroBox continues directly into IntroBubble after its flag gate opens and the separate exit is reached.
 
 ## 3. Shared possession and failure rules
@@ -80,12 +82,12 @@ Keys below describe the currently controlled form. W/S are held inputs; Space, Q
 - A hazard using `SpikeHazard` kills the currently controlled body in any implemented form.
 - A hazard using `BubblePopHazard` pops a controlled bubble and releases the star, but kills a controlled box through the normal death/restart flow. This includes a box growing into the trigger. It ignores the star, bouncing ball and unpossessed bodies. The reusable `WaterPopHazard.prefab` displays a pink-red circle with a centered black X to distinguish it from a possessable bubble. Its behavior is not restricted to water.
 - Contact by an unpossessed body does not itself kill the player.
-- Death pauses gameplay, then reloads the whole current scene after the configured delay. Tutorial, WaterPlayground and Level01 currently save a delay of **2 seconds**. R bypasses the wait.
-- Tutorial and Level01 display `You died.`, `Restarting...`, and `Press R to restart now.` during the death pause. Level01 uses `LevelDeathUI` and the existing `LevelStatusText`; the controller still owns death timing and scene reload. The text is blank before play and during normal gameplay. The sandbox scenes do not currently contain this death-feedback UI.
+- Death pauses gameplay, then reloads the whole current scene after the configured delay. Tutorial, WaterPlayground and Level01 currently save a delay of **2 seconds**. R opens the restart menu and pauses the automatic recovery countdown.
+- Level01 displays `You died.` plus `Returning to checkpoint...` or `Retrying from the start...` according to checkpoint availability. Legacy Tutorial displays `You died.`, `Retrying...` and `Press R for restart options.` Level01 uses `LevelDeathUI` and the existing `LevelStatusText`; the controller still owns death timing and scene reload. The text is blank before play and during normal gameplay. The sandbox scenes do not currently contain this death-feedback UI.
 - Automatic vertical failure occurs when the entire controlled collider is below `minimumHeight` or above the active form's upper limit. Tutorial and WaterPlayground save **-10 / 8**. Level01 uses **-12 / 16** for the star, box and bubble, while the bouncing ball uses a separate upper limit of **40** so its 20.25-unit open-air bounce does not cause an unintended death. These values are not a general left/right map-boundary system.
-- Level01 enables BouncyBall checkpoints: possession records the ball name and authored spawn position. Automatic death reload resets the scene and resumes in that ball; R clears both checkpoint systems and starts over. Menu level entry and forward progression also clear both. Missing checkpoint balls fall back to a fresh start. This does not preserve plate/gate state.
-- Scene reload restores bodies and puzzle objects. Level02 has scene-specific checkpoints: automatic death reload retains the checkpoint and places the initial star at its saved position, with checkpoint events restoring the relevant stage setup. R clears checkpoints and restarts from the beginning. Entering any level from Mainmenu or advancing through IntroBox, IntroBubble or the Level01 goal also clears the checkpoint session. This is session state, not a saved game across browser launches.
-- A stranded box or a route blocked by an abandoned body does not trigger automatic soft-lock detection. Recovery is R restart, with Level02 also offering the Restart Level and Retry Checkpoint buttons.
+- Level01 enables BouncyBall checkpoints: possession records the ball name and authored spawn position. Automatic death reload resets the scene and resumes in that ball; choosing Restart Level clears both checkpoint systems and starts over. Menu level entry and forward progression also clear both. Missing checkpoint balls fall back to a fresh start. This does not preserve plate/gate state.
+- Scene reload restores bodies and puzzle objects. Level02 has scene-specific checkpoints: automatic death reload retains the checkpoint and places the initial star at its saved position, with checkpoint events restoring the relevant stage setup. Restart Level clears checkpoints and restarts from the beginning. Entering any level from Mainmenu or advancing through IntroBox, IntroBubble or the Level01 goal also clears the checkpoint session. This is session state, not a saved game across browser launches.
+- A stranded box or a route blocked by an abandoned body does not trigger automatic soft-lock detection. Recovery uses the R menu or explicit scene buttons. IntroBubble also has one spare Bubble in its right water tank.
 
 Reusable hazards require the current scene's player controller to be assigned on each instance. Their prefab assets deliberately leave that scene reference empty; see [ScriptGuide.md](ScriptGuide.md) for setup.
 
@@ -104,7 +106,7 @@ Reusable hazards require the current scene's player controller to be assigned on
 ## 5. Box — Xiao
 
 - Moves along supporting surfaces and cannot jump. Directional input does not provide active steering while airborne or sinking before reaching support.
-- Holding W grows it; holding S shrinks it. Default size limits are **0.5 to 2 times** the initial X/Y scale; scene overrides apply. IntroBox BoxA allows **3.4 times**, and IntroBubble EntryBox allows **3 times**.
+- Holding J grows it; holding K shrinks it. Default size limits are **0.5 to 2 times** the initial X/Y scale; scene overrides apply. IntroBox BoxA allows **3.4 times**, and IntroBubble EntryBox allows **3 times**.
 - Growth stops when solid geometry blocks the requested size. Grounded resizing preserves the bottom; unsupported resizing preserves the collider center. Trigger hazards are not solid growth blockers: growing a controlled box into a purple water hazard causes death instead.
 - Mass remains constant when resized. The current test box has mass **5**.
 - Can activate the weight-based plate, an assigned-box held plate, or an assigned-box overhead switch. Their activation and persistence rules differ; see the interactions below.
@@ -213,8 +215,11 @@ The controlled bubble uses controller acceleration/braking instead of rigidbody 
 
 ## 9. Introductory levels
 
-The menu's **Introductory Levels** button enters IntroBox. Both scenes use short playable demonstrations, contextual key icons and top-center form explanations. The current October 17 hint and visual pass is complete for handoff. See [intro-levels.md](intro-levels.md) for wiring and scope.
+The menu starts IntroBox, followed by IntroBubble. IntroBox teaches Star movement/jump, contact possession, J growth into an elevated Box, K shrinking through a gap, and a BoxB flag that opens the exit. Walking beyond that gate loads IntroBubble without a completion overlay.
 
+IntroBubble now uses a rectangular enclosed water tank: EntryBox → dormant Bubble → air ascent and ceiling passage → underwater descent and traversal beneath a divider → right exit shaft → Q pop above safe ground → Star jump to the flag. The grounded-Star goal advances to Level01. A spare Bubble in the right water tank supports recovery after falling back in as Star. It is not an unlimited respawn source.
+
+IntroBubble disables top-center form messages and uses plain map text with key icons/arrows: `You are a Bubble` beside the ascent, `Move freely underwater` within the left water area, and `Pop Bubble / Return to Star` at the safe landing area. Only the pop hint follows any currently possessed Bubble; air/water hints remain bound to the original Bubble. Box hints in both intros show J for growth and K for shrinking.
 | Scene | Teaching sequence | Completion |
 | --- | --- | --- |
 | IntroBox | Start as Star, move and jump over a low step, possess BoxA, grow into elevated BoxB, then shrink through a gap and walk through the low tunnel | Controlled BoxB touches the flag to open the exit door and reveal a right arrow; walking through the separate exit loads IntroBubble without a completion overlay |
@@ -222,9 +227,9 @@ The menu's **Introductory Levels** button enters IntroBox. Both scenes use short
 
 Box hints show W/grow and S/shrink only while their target body is controlled and inside the configured region. Bubble hints show A/D in air, WASD in water, and Q above the landing platform. The water prompt sits beneath the divider while its activation area still covers the whole pool. The speculative automatic-rise circle/arrow stays removed; the subtitle now explains `You float up. You steer sideways.` In water it changes to `Underwater, every direction is yours.`, and leaving water shows `Back in the air. Up you go!`
 
-Star movement and jump prompts appear in their respective opening regions. `IntroFormHintUI` displays `You are a star.` / `You are a box.` / `You are a bubble.` with short subtitles. A Box-to-Box transfer replays `New box. Same little star.` even though the form type is unchanged. Subtitles hold for 4 seconds then fade over 0.75 seconds; titles remain. Both intro scenes use a warm-gray background and dark terrain, with larger subtitles. Exact copy and setup are in [intro-levels.md](intro-levels.md).
+The bottom-left entrance also returns to IntroBox's endpoint as BoxB, with its exit door open. This is a one-use destination setup, not a saved snapshot of the whole prior scene. Full restart remains a fresh start of the current scene. IntroBubble hides its standalone Restart button and uses a smaller Main Menu button; R opens restart options.
 
-The intros retain fixed cameras. The former `Tutorial` scene and its scripts remain as legacy references, including its old assigned-box goal and completion pause, but are excluded from the current build and menu route. IntroBox/IntroBubble do not use that completion flow.
+The fixed cameras and existing mobile layout remain: IntroBubble Size 6 at `(0.5, 0.75, -10)` with 120 × 120 semi-transparent controls; IntroBox Size 7 at `(-3, 0, -10)` with 160 × 160 controls. Full scene wiring, exact hint positions and validation limits are in [intro-levels.md](intro-levels.md). These October 31 source changes require a new tested export before appearing in the hosted Alpha.
 
 ## 10. Level01 interactions and completion
 
@@ -238,7 +243,7 @@ The intros retain fixed cameras. The former `Tutorial` scene and its scripts rem
 - P and U2 are horizontally offset. The intended solution deliberately leaves C pressing P while transferring to U2. G spans the right-hand ascent exit, giving nearby feedback about whether the plate remains held.
 - H has ordinary solid support above it. It detects grounded contact, not a particular key press or explicit size value. G2 is near the final goal, separate from G.
 - The goal shows `Level up!` / `Entering Level 2...` through `LevelTransitionUI`, then loads `Level02` with normal time scale after clearing checkpoint state. It checks G2's current inactive state, not a recorded history of every puzzle or G's state. The star-only restriction was removed so the bouncing ball can finish directly. `Bubble_U3` and `U3_Canopy` were removed because a final bubble-to-star conversion is no longer required.
-- R restarts the current scene, resets switches and restores consumed bubbles. Normal progression is now IntroBox → IntroBubble → Level01 → Level02; Level01 uses a short automatic completion pause rather than waiting for player input at the goal.
+- Choosing Restart Level in the R menu restarts the current scene, resets switches and restores consumed bubbles. Normal progression is now IntroBox → IntroBubble → Level01 → Level02; Level01 uses a short automatic completion pause rather than waiting for player input at the goal.
 - `BouncyBall_Lower` and `BouncyBall_Upper` are working instances of the shared BouncyBall prefab. The old R1/R2 marker transforms remain as inert references only. Upper-route ceiling spikes `(13)`, `(14)` and `(15)` were moved to the upper return floor and rotated upward because the overhead placement made ball traversal too difficult. The developer tested the revised traversal and completion successfully. Passing segment tests is not proof of exhaustive full-route validation.
 - Level01 camera regions use `X = 16` to divide the lower-left and lower-right views and `Y = 8.5` to enter the upper view. Lower view sizes are **10**, keeping the green upper floor visible; the upper view size is **5.25**. The camera follows the current controlled form within a bounded range and smooths movement and zoom during transitions.
 
@@ -249,8 +254,8 @@ The intros retain fixed cameras. The former `Tutorial` scene and its scripts rem
 
 - `Mainmenu` is the startup scene. Its title is `Star Former`, with Introductory Levels, Level 1 and Level 2 buttons. The Main Camera supplies the solid blue background.
 - Mouse clicks on Introductory Levels, Level 1 and Level 2 load `IntroBox`, `Level01` and `Level02`, respectively. `OpenTutorial()` remains a compatibility alias for `OpenIntroLevels()` and also loads IntroBox.
-- IntroBox, IntroBubble, Level01 and Level02 each have a `Return to Main Menu` button. `MainMenuUI` and `LevelNavigationUI` restore `Time.timeScale` to 1 before loading the destination. Return navigation is available during gameplay and death pauses; the short completion overlay blocks pointer interaction with the old scene UI and clears its selected control. Entering a level through MainMenuUI clears its checkpoint session and starts a fresh run. Automatic death reload can still resume a Level02 checkpoint.
-- The menu reuses StarPlayer and the shared possession controller. A/D or Left/Right Arrow moves the star, Space jumps when grounded, and R restarts the menu. The star starts above the title and lands on its platform.
+- IntroBox, IntroBubble, Level01 and Level02 each have a menu-return button; IntroBubble now labels its compact button `Main Menu`. `MainMenuUI` and `LevelNavigationUI` restore `Time.timeScale` to 1 before loading the destination. Return navigation is available during gameplay and death pauses; the short completion overlay blocks pointer interaction with the old scene UI and clears its selected control. Entering a level through MainMenuUI clears its checkpoint session and starts a fresh run. Automatic death reload can still resume a Level02 checkpoint.
+- The menu reuses StarPlayer and the shared possession controller. A/D or Left/Right Arrow moves the star, Space jumps when grounded, and R opens restart options for the menu scene. The star starts above the title and lands on its platform.
 - The three level-selection buttons have physical platforms aligned to their UI rectangles. Separate physical platforms align with the top edges of the title and button rectangles, with a ground platform beneath them.
 - These are one-way platforms: the star can jump straight up through them and land on top while falling. It does not need to go around a button's edge to ascend. Walking off an edge allows descent.
 - The current title spacing is accepted even though the star cannot jump back to the title from the introductory-level button. Returning to the title is not a menu objective or a requirement for entering a level.
@@ -258,22 +263,22 @@ The intros retain fixed cameras. The former `Tutorial` scene and its scripts rem
 - The menu Canvas uses Screen Space - Camera with Main Camera. The star renders in front of the buttons, so they do not hide it while it passes through them.
 - No additional movement hint or attention animation has been added. The team will test whether new players discover the star interaction before deciding on further guidance.
 
-The enabled build scenes are `Mainmenu` (0), `IntroBox` (1), `IntroBubble` (2), `Level01` (3) and `Level02` (4). Tutorial, reference and sandbox scenes are unchecked. Scene transitions use names; keep Mainmenu first for startup. On October 14, the developer confirmed the complete menu → intro → Level01 → Level02 flow in Unity Play Mode. The October 17 contextual hints, Restart buttons, exit arrow and completion transitions also passed developer-reported Play Mode tests. Browser testing for these source changes remains pending a new export.
+The enabled build scenes are `Mainmenu` (0), `IntroBox` (1), `IntroBubble` (2), `Level01` (3) and `Level02` (4). Tutorial, reference and sandbox scenes are unchecked. Scene transitions use names; keep Mainmenu first for startup. On October 14, the developer confirmed the complete menu → intro → Level01 → Level02 flow in Unity Play Mode. The October 17 contextual hints, Restart buttons, exit arrow and completion transitions also passed developer-reported Play Mode tests. These source changes are now included in Alpha 0.1.2, with developer-reported localhost and online acceptance.
 
 The October 11 release passed developer-reported localhost and online tests for Mainmenu, Tutorial and Level01. On October 12, the developer retested the integrated version in the editor and tested `Builds/WebGL-All-Level-V1` on localhost successfully. The All-Level V1 deployment `6f1737a` introduced all four scenes at [Play StarFormer](https://xtraluck21.github.io/StarFormer/). GitHub Pages deployment success is verified separately from gameplay testing. This was the initial combined baseline; the last recorded root publication is V2, not an archive of V1.
 
 The initial Web build had missing navigation scripts, causing inactive menu buttons and unaligned platforms. The same issue was confirmed in the editor. Restarting Unity and reimporting the navigation scripts restored editor behavior, and a fresh build passed the browser test. This recovery did not require a gameplay change. The precise cause of the stale import/compilation state was not established.
 
-The initial navigation release completed the first Web publishing and playability check. The website is served from the separate `gh-pages` branch; the introductory updates through October 17 still need a new export. Teammate usability testing and broader browser/resolution coverage remain open.
+The initial navigation release completed the first Web publishing and playability check. The website is served from the separate `gh-pages` branch; the integrated introductory and formal levels are now published in Alpha 0.1.2. Teammate usability testing and broader browser/resolution coverage remain open.
 
 ## 12. Level02 integration and release follow-up
 
 - **Integrated gameplay:** Level02 includes spider surface traversal, a spike-wall chase, projectile/button interactions and fan obstacles. The shared controller now dispatches fan, spike-wall and spider behavior. These are no longer future-only forms.
-- **Camera and checkpoints:** `level2Camera` coordinates follow, fixed, chase and falling sections. `level2Checkpoint` records scene-specific respawn positions and invokes stage events on arrival or respawn. Mainmenu entry and R restart reset the checkpoint session.
-- **Fan behavior:** F / Blow toggles airflow and Q / Leave releases the star. An abandoned fan retains its airflow state and facing. Current wind targets non-possessable rigidbody obstacles, not the star, box or bubble. Broader form-specific wind behavior remains a separate design decision.
+- **Camera and checkpoints:** `level2Camera` coordinates follow, fixed, chase and falling sections. `level2Checkpoint` records scene-specific respawn positions and invokes stage events on arrival or respawn. Mainmenu entry and confirmed Restart Level reset the checkpoint session; opening/cancelling R preserves it.
+- **Fan behavior:** W / Blow toggles airflow and E / Leave releases the star. An abandoned fan retains its airflow state and facing. Current wind targets non-possessable rigidbody obstacles, not the star, box or bubble. Broader form-specific wind behavior remains a separate design decision.
 - **Level-specific rules:** Level01 retains its any-form flag completion after G2 opens. Level02 accepts any living controlled form at the flag without a gate/plate requirement and waits on its completion screen for a menu-button click. The unused brown finish block `wall (20)` was removed; it had a sprite/collider rather than a pressure-plate script. Completion and menu return passed developer testing afterward.
-- **Presentation and recovery:** Spider shows one small upper-center line, Q / Leave: return to star; Fan shows F / Blow: wind on/off and Q / Leave: return to star. Level02 has three top-right navigation buttons. Restart Level clears checkpoints; Retry preserves them. The existing mobile Overlay Canvas stays screen-fixed, and its layout was left unchanged. See [level-2.md](level-2.md) for saved values and the unassigned legacy ShowWall checkpoint callbacks that still need review.
-- **Release baseline:** All-Level V1 established the October 12 combined release. All-Level V2 adds the fan-hint fix and is preserved as the [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/). Keep submitted builds unchanged; publish future milestones at new paths and update the root separately. Continue collecting feedback and performing broader route, checkpoint, navigation and browser/resolution regression checks. Follow [publish_instructions.md](publish_instructions.md) for future deployments.
+- **Presentation and recovery:** Spider shows one small upper-center line, E / Leave: return to star; Fan shows W / Blow: wind on/off and E / Leave: return to star. Level02 has three top-right navigation buttons. Restart Level clears checkpoints; Retry preserves them. The existing mobile Overlay Canvas stays screen-fixed, and its layout was left unchanged. See [level-2.md](level-2.md) for saved values and the unassigned legacy ShowWall checkpoint callbacks that still need review.
+- **Release baseline:** All-Level V1 established the October 12 combined release. All-Level V2 adds the fan-hint fix and is preserved as the [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/). Current Alpha 0.1.2 uses the fixed `/alpha/` path. Replace only that folder for subsequent tested Alpha versions, leaving historical submissions, `playtest-01/` and the root intact. Continue collecting feedback and performing broader route, checkpoint, navigation and browser/resolution regression checks. Follow [publish_instructions.md](publish_instructions.md) for future deployments.
 - **Deferred usability work:** revisit off-screen button/gate feedback and whether players discover the optional menu star interaction. The current intro hint/presentation pass is complete; new-player readability feedback and browser/resolution testing remain.
 
 Update this document alongside changes to controls, form/environment rules or accepted tuning. Keep proposals distinct from implemented behavior and recorded test results.

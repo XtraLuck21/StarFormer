@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101820">
+  <title>StarFormer | Alpha</title>
+  <link rel="stylesheet" href="TemplateData/alpha.css?v={{{ PRODUCT_VERSION }}}">
+</head>
+<body>
+  <main id="player" aria-label="StarFormer game">
+    <div id="viewport">
+      <div id="game-frame">
+        <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1" aria-label="Game"></canvas>
+        <button id="fullscreen" type="button" hidden>Fullscreen</button>
+      </div>
+    </div>
+    <section id="launch" aria-labelledby="game-title">
+      <div class="launch-card">
+        <p class="eyebrow">ALPHA</p>
+        <h1 id="game-title">StarFormer</h1>
+        <p id="load-status" role="status">Loading your next adventure…</p>
+        <progress id="progress" max="1" value="0" aria-label="Loading game"></progress>
+        <div class="launch-actions">
+          <button id="play-fullscreen" type="button" disabled>Play Fullscreen</button>
+          <button id="play-windowed" class="secondary" type="button" disabled>Play in Window</button>
+        </div>
+        <p class="hint">Desktop: press Esc to exit fullscreen.<br>On mobile, turn your phone sideways.</p>
+      </div>
+    </section>
+    <p id="rotate-hint" hidden>Turn your phone sideways for a bigger view.</p>
+    <p id="notice" role="status" hidden></p>
+    <noscript>Enable JavaScript to play StarFormer.</noscript>
+  </main>
+  <script>
+    window.starFormerBuild = {
+      loaderUrl: "Build/{{{ LOADER_FILENAME }}}",
+      config: {
+        arguments: [],
+        dataUrl: "Build/{{{ DATA_FILENAME }}}",
+        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
+#if USE_THREADS
+        workerUrl: "Build/{{{ WORKER_FILENAME }}}",
+#endif
+#if USE_WASM
+        codeUrl: "Build/{{{ CODE_FILENAME }}}",
+#endif
+#if SYMBOLS_FILENAME
+        symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
+#endif
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
+        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
+        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
+        matchWebGLToCanvasSize: false
+      }
+    };
+  </script>
+  <script src="TemplateData/alpha.js?v={{{ PRODUCT_VERSION }}}"></script>
+</body>
+</html>

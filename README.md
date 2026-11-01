@@ -4,24 +4,34 @@ StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possess
 
 ## Play the published build
 
-- [Latest published build](https://xtraluck21.github.io/StarFormer/) — updated separately when a tested WebGL export is published.
-- [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission.
+- [Play Alpha 0.1.2](https://xtraluck21.github.io/StarFormer/alpha/) — current Alpha; later tested Alpha releases replace this path.
+- [Earlier analytics playtest](https://xtraluck21.github.io/StarFormer/playtest-01/) — preserved older build.
+- [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen October 12 All-Level V2 submission.
+- [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved separately from Alpha.
 
-The last recorded publication is **All-Level V2 (October 12, 2026)**, with Mainmenu, the old Tutorial, Level01 and Level02. It predates the new intros and E-key bubble exit. The introductory, Level 1, and Level 2/mobile source updates through October 18 have no new WebGL publication recorded; merging source does not update either URL automatically.
+Alpha **0.1.2** was published on October 18, 2026, with Mainmenu → IntroBox → IntroBubble → Level01 → Level02. It includes the Level 1 Restart Level button, lowered IntroBox movement/jump controls, and compact, semi-transparent IntroBubble controls with the original camera framing. Level 2 retains its completion screen, corrected Spider/Fan hints and Restart/Retry navigation. The Alpha template provides a fitted 16:9 view, resolution scaling and fullscreen/windowed launch choices.
 
-All-Level V2 includes the fan-hint fix from source `d161538`, was exported to `Builds/WebGL-All-Level-V2`, and was published as `gh-pages` commit `8c48475`. Publishing commit `5a7f043` preserved it at `alpha-progress-check/`; the developer confirmed that URL worked. Keep that submitted folder unchanged. Future submissions need separate version folders, and the root can be updated with a newly tested release.
+Source release configuration: `5650250`; gameplay/UI changes: `9b35f8e`; publishing commit: `5f62980`. Localhost and online tests passed according to the developer, and the deployed HTML/version and game-data payload were verified. Player and Analytics versions are both `alpha-0.1.2`. Collection remains in `production` for Level01/Level02; current-version Sheet delivery still needs confirmation by the analytics owner.
+
+Publish future Alpha updates only into `alpha/`; preserve the older paths. Source changes do not update the hosted game until rebuilt and published. See the [release history](Docs/ScriptGuide.md#4-web-build-and-github-pages-release) and [publishing instructions](Docs/publish_instructions.md).
+
+## Current branch source (October 31)
+
+The IntroBubble rebuild is newer than the published Alpha: an enclosed water-tank route, contextual map hints, a spare Bubble, and a left exit returning to IntroBox's endpoint as BoxB with its door open. Box now uses **hold J to grow / hold K to shrink**; Bubble uses **Q to pop**. IntroBubble hides its standalone Restart button and uses a smaller Main Menu button; **R opens restart choices**.
+
+These changes require a new build and publication. The existing Alpha links and `alpha-0.1.2` version remain unchanged. See [intro-levels.md](Docs/intro-levels.md) for the route and recovery limits, and [CheckpointGuidance.md](Docs/CheckpointGuidance.md) for restart behavior and the remaining Level01 E/Q reminder mismatch.
 
 ## Development references
 
 - Unity editor: `6000.3.22f1`, with Web Build Support.
 - Enabled build scenes: `Mainmenu` (0), `IntroBox` (1), `IntroBubble` (2), `Level01` (3), `Level02` (4). The old `Tutorial` remains in the repository but is excluded from builds.
-- [Introductory levels](Docs/intro-levels.md) — October 17 polish: contextual movement/form hints, matching intro colors, current-scene restart buttons, a gated exit arrow, and short completion transitions into Level 1 and Level 2. Developer-reported Play Mode tests passed; merged into main via PR #11 (`989d2d1`); a new browser build remains pending.
+- [Introductory levels](Docs/intro-levels.md) — rebuilt IntroBubble route, current hints/controls, return travel, spare Bubble and mobile layout.
 - [Gameplay specification](Docs/GameplaySpec.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)
-- [Level 1 progress](Docs/level-1.md) — October 18 ball checkpoints, U2 regeneration, visual/camera polish, Box-to-Bubble collision recovery and corrected ball prefab Form are merged through PR #12 (`e457e87`). A new browser build remains pending.
-- [Level 2 progress](Docs/level-2.md) — October 18 wrap-up on `Level-2` through `ab68064`: mobile integration, corrected Spider/Fan hints, final completion UI, top-right Restart/Retry buttons, English script text and finish-block cleanup. Hint and final-goal/menu tests passed; full checkpoint/device regression and a new build remain pending.
-- [WebGL analytics implementation](Docs/AnalyticsImplementation.md) — anonymous Level 1/2 event collection and Google Sheets pipeline.
-- [WebGL analytics test plan](Docs/AnalyticsTestPlan.md)
+- [Level 1 progress](Docs/level-1.md) — ball checkpoints, U2 regeneration, possession recovery and the added Restart Level button.
+- [Level 2 progress](Docs/level-2.md) — integrated route, final completion UI, hints, responsive navigation and checkpoint follow-ups.
+- [WebGL analytics implementation](Docs/AnalyticsImplementation.md) — Level 1/2 event collection and Google Sheets pipeline.
+- [WebGL analytics test plan](Docs/AnalyticsTestPlan.md) — recorded evidence and remaining data checks.
 - [Publish to GitHub Pages](Docs/publish_instructions.md)
 
 ![Historical Tutorial gameplay; predates the introductory levels](Docs/Game_screenshot.png)
