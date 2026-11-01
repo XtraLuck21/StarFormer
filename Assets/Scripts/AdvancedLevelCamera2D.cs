@@ -49,6 +49,34 @@ public class AdvancedLevelCamera2D : MonoBehaviour
     [SerializeField, Min(0.01f)] private float zoomSmoothTime = 0.5f;
     [SerializeField, Range(0.02f, 0.2f)] private float targetScreenMargin = 0.08f;
 
+    private bool cinematic;
+    public bool IsCinematic => cinematic;
+
+    // The route switch owns the short, paused preview; normal regional framing stays intact.
+    public bool TryBeginCinematic()
+    {
+        if (!isActiveAndEnabled || cinematic) return false;
+        cinematic = true;
+        positionVelocity = Vector3.zero;
+        zoomVelocity = 0f;
+        return true;
+    }
+
+    public void SetCinematicView(Vector3 position, float size)
+    {
+        if (!cinematic) return;
+        transform.position = position;
+        viewCamera.orthographicSize = Mathf.Max(.1f, size);
+    }
+
+    public void EndCinematic()
+    {
+        cinematic = false;
+        positionVelocity = Vector3.zero;
+        zoomVelocity = 0f;
+        previousBody = null;
+    }
+
     private Camera viewCamera;
     private Region region;
     private PossessableBody previousBody;
@@ -76,7 +104,7 @@ public class AdvancedLevelCamera2D : MonoBehaviour
 
     private void LateUpdate()
     {
-        UpdateView(Time.deltaTime);
+        if (!cinematic) UpdateView(Time.deltaTime);
     }
 
     private void UpdateView(float deltaTime)
