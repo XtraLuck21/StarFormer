@@ -1234,7 +1234,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.2601626, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1244,7 +1244,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.5203252, y: 1}
   m_EdgeRadius: 0
 --- !u!1 &10000100
 GameObject:
@@ -1483,7 +1483,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 10000110}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -1621,7 +1621,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 10000120}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Density: 1
   m_Material: {fileID: 0}
@@ -5127,6 +5127,14 @@ PrefabInstance:
     - target: {fileID: 4240325369198079652, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8456716518033438118, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
+      propertyPath: defaultBounceHeight
+      value: 5.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8456716518033438118, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
+      propertyPath: defaultSecondsToApex
+      value: 0.65
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
