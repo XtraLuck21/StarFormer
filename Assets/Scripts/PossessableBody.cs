@@ -123,7 +123,13 @@ public class PossessableBody : MonoBehaviour
             Body.WakeUp();
         }
 
-        controlVisual.SetActive(owner != null);
+        // Spider uses its googly eyes without the possession star overlay.
+        controlVisual.SetActive(owner != null && form != BodyForm.Spider);
+
+        if (TryGetComponent(out SpiderGooglyEyes spiderEyes))
+        {
+            spiderEyes.RefreshVisibility();
+        }
 
         if (TryGetComponent(out BodyWaterPhysics waterPhysics))
         {

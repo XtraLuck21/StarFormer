@@ -37,6 +37,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
     private Vector3 originalVisualLocalPosition;
     private Quaternion originalVisualLocalRotation;
     public bool IsAttached { get; private set; }
+    public Transform Visual => visual;
 
     private void Awake()
     {
@@ -45,6 +46,10 @@ public class HexagonSurfaceMovement : MonoBehaviour
         circle = GetComponent<CircleCollider2D>();
 
         airGravity = body.gravityScale;
+        // Also covers spiders authored directly in scenes before eyes were added.
+        if (possessable.Form == BodyForm.Spider && !TryGetComponent<SpiderGooglyEyes>(out _))
+            gameObject.AddComponent<SpiderGooglyEyes>();
+
         if (visual != null)
         {
             originalVisualLocalPosition = visual.localPosition;

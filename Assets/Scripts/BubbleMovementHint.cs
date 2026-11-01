@@ -1,12 +1,13 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
 
 // Keep this on a scene root so the instruction stays attached to the teaching area.
 [ExecuteAlways]
 public class BubbleMovementHint : MonoBehaviour
 {
     // Append modes to preserve existing scene values: Air=0, Water=1, ExitBubble=2.
-    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction }
+    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction, SpiderIntroduction, SpiderBlockedExit }
 
     [SerializeField] private HintMode mode;
     [SerializeField] private PlayerPossessionController playerController;
@@ -14,6 +15,10 @@ public class BubbleMovementHint : MonoBehaviour
     [SerializeField] private bool previewInEditor = true;
     [Tooltip("Only used by Continue Right: show the arrow after this flag opens its gate.")]
     [SerializeField] private IntroFlagGate flagGate;
+
+    [Header("Spider Q Reminder")]
+    [SerializeField, Min(0.1f)] private float blockedKeyHintSeconds = 3f;
+    [SerializeField] private Vector2 blockedKeyHintOffset = new Vector2(0f, 1.8f);
 
     [Header("Activation Area")]
     [SerializeField] private Vector2 activationAreaSize = new Vector2(8f, 5f);
@@ -34,6 +39,8 @@ public class BubbleMovementHint : MonoBehaviour
     private GameObject visuals;
     private Sprite strokeSprite;
     private bool rebuildRequested;
+    private float blockedKeyHintRemaining;
+    private PossessableBody reminderBody;
 
     private void OnEnable() => rebuildRequested = true;
     private void OnValidate() => rebuildRequested = true;
@@ -44,6 +51,18 @@ public class BubbleMovementHint : MonoBehaviour
         {
             rebuildRequested = false;
             BuildVisuals();
+        }
+
+        if (Application.IsPlaying(gameObject) && mode == HintMode.SpiderBlockedExit)
+        {
+            PossessableBody body = playerController != null ? playerController.CurrentBody : null;
+            if (body != reminderBody || body == null || body.Form != BodyForm.Spider || playerController.IsDead)
+                blockedKeyHintRemaining = 0f;
+            reminderBody = body;
+            blockedKeyHintRemaining = Mathf.Max(0f, blockedKeyHintRemaining - Time.deltaTime);
+            if (body != null && body.Form == BodyForm.Spider && !playerController.IsDead &&
+                Time.timeScale > 0f && Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
+                blockedKeyHintRemaining = blockedKeyHintSeconds;
         }
     }
 
@@ -56,6 +75,20 @@ public class BubbleMovementHint : MonoBehaviour
             if (mode == HintMode.ContinueRight)
             {
                 visible = flagGate != null && flagGate.IsOpen;
+            }
+            else if (mode == HintMode.SpiderIntroduction || mode == HintMode.SpiderBlockedExit)
+            {
+                PossessableBody body = playerController != null ? playerController.CurrentBody : null;
+                visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+                    !playerController.IsDead &&
+                    (mode != HintMode.SpiderBlockedExit || blockedKeyHintRemaining > 0f);
+                if (visible && mode == HintMode.SpiderBlockedExit)
+                {
+                    // Keep feedback readable wherever the spider has climbed; never rotate it with the body.
+                    Vector3 position = body.transform.position + (Vector3)blockedKeyHintOffset;
+                    position.z = transform.position.z;
+                    visuals.transform.position = position;
+                }
             }
             else
             {
@@ -95,7 +128,7 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(0.5f, 0.5f), texture.width, 0, SpriteMeshType.FullRect);
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
 
-        if (mode == HintMode.BubbleIntroduction)
+        if (mode == HintMode.BubbleIntroduction || mode == HintMode.SpiderIntroduction)
         {
             BuildBubbleIntroduction();
         }
@@ -145,7 +178,9 @@ public class BubbleMovementHint : MonoBehaviour
         else
         {
             AddKey('Q', Vector2.zero);
-            if (!string.IsNullOrWhiteSpace(popDescription))
+            if (mode == HintMode.SpiderBlockedExit)
+                AddHintText("BlockedKeyDescription", "Q can't be used here.", new Vector2(0, -0.65f), new Vector2(4f, 0.8f));
+            else if (!string.IsNullOrWhiteSpace(popDescription))
                 AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);
         }
     }
@@ -157,7 +192,9 @@ public class BubbleMovementHint : MonoBehaviour
         Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
         Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
 
-        AddHintText("BubbleIntroductionText", "You are a\nBubble", new Vector2(0, 0.8f), new Vector2(2.7f, 0.8f));
+        bool spiderIntroduction = mode == HintMode.SpiderIntroduction;
+        AddHintText("FormIntroductionText", spiderIntroduction ? "You are a Spider" : "You are a\nBubble",
+            new Vector2(0, 0.8f), spiderIntroduction ? new Vector2(4.4f, 0.6f) : new Vector2(2.7f, 0.8f));
     }
 
     private void AddHintText(string objectName, string message, Vector2 position, Vector2 size, Color? textColor = null)
@@ -169,7 +206,7 @@ public class BubbleMovementHint : MonoBehaviour
         TextMeshPro text = label.AddComponent<TextMeshPro>();
         text.font = TMP_Settings.defaultFontAsset;
         text.text = message;
-        text.fontSize = 3f;
+        text.fontSize = mode == HintMode.SpiderIntroduction ? 4f : 3f;
         text.fontStyle = FontStyles.Bold;
         text.color = textColor ?? inkColor;
         text.alignment = TextAlignmentOptions.Center;
@@ -277,7 +314,12 @@ public class BubbleMovementHint : MonoBehaviour
         return part.transform;
     }
 
-    private void OnDisable() => ReleaseVisuals();
+    private void OnDisable()
+    {
+        blockedKeyHintRemaining = 0f;
+        reminderBody = null;
+        ReleaseVisuals();
+    }
     private void OnDestroy() => ReleaseVisuals();
 
     private void ReleaseVisuals()
@@ -303,6 +345,9 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        // Spider hints depend only on possession or a Q press, never a spatial trigger.
+        if (mode == HintMode.SpiderIntroduction || mode == HintMode.SpiderBlockedExit) return;
+
         Matrix4x4 previous = Gizmos.matrix;
         Color previousColor = Gizmos.color;
         Gizmos.matrix = transform.localToWorldMatrix;
