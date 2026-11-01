@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 10000002}
   - component: {fileID: 10000003}
   - component: {fileID: 10000004}
+  - component: {fileID: 10000005}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5258,6 +5259,60 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &10000005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10000000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d53df77924b747469a6ca14dab32f2b8, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelCamera2D
+  playerController: {fileID: 20000101}
+  entrance:
+    center: {x: 8.5, y: 4.7}
+    followRange: {x: 1, y: 0}
+    offset: {x: 2, y: 0}
+    size: 4.2
+    lookAhead: 0
+  waterTransfer:
+    center: {x: 12.9, y: 5.8}
+    followRange: {x: 2.3, y: 0.3}
+    offset: {x: 1.5, y: 1.2}
+    size: 5.6
+    lookAhead: 0
+  doorRoom:
+    center: {x: 31, y: 5.8}
+    followRange: {x: 0, y: 0}
+    offset: {x: 0, y: 0}
+    size: 7.1
+    lookAhead: 0
+  rightAscent:
+    center: {x: 36.8, y: 9.7}
+    followRange: {x: 0, y: 3.7}
+    offset: {x: 0, y: 2}
+    size: 4.5
+    lookAhead: 0
+  upperReturn:
+    center: {x: 22.15, y: 14.1}
+    followRange: {x: 14.65, y: 0}
+    offset: {x: 0, y: 0}
+    size: 4
+    lookAhead: 1.5
+  waterEntryX: 7.5
+  dropShaftX: 18.9
+  dropArrivalY: 3.8
+  doorRoomEntryX: 21
+  ascentEntryX: 39.4
+  upperFloorY: 11.3
+  upperLandingX: 40.8
+  boundaryHysteresis: 0.35
+  positionSmoothTime: 0.35
+  zoomSmoothTime: 0.5
+  targetScreenMargin: 0.08
 --- !u!114 &20000101
 MonoBehaviour:
   m_ObjectHideFlags: 0
