@@ -37,6 +37,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
     private Vector3 originalVisualLocalPosition;
     private Quaternion originalVisualLocalRotation;
     public bool IsAttached { get; private set; }
+    public Collider2D AttachedSurface { get; private set; }
     public Transform Visual => visual;
 
     private void Awake()
@@ -70,6 +71,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
         if (!FindSurface(center, radius, input, out RaycastHit2D hit))
         {
             IsAttached = false;
+            AttachedSurface = null;
             surfaceNormal = Vector2.up;
             body.gravityScale = airGravity;
 
@@ -80,6 +82,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
             ResetRollingVisual();
             return;
         }
+        AttachedSurface = hit.collider;
         possessable.RequestSurfacePossession(hit.collider);
 
         surfaceNormal = hit.normal.normalized;
@@ -326,6 +329,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
     public void Release()
     {
         IsAttached = false;
+        AttachedSurface = null;
         surfaceNormal = Vector2.up;
 
         ResetRollingVisual();

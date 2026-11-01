@@ -33,18 +33,30 @@ public class BoxResizeAbility : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
 
+        // Dynamic hosts must scale independently, even when grouped in a scene.
+        // Detach before capturing the baseline scale, preserving world pose and size.
+        if (possessable.Form == BodyForm.Box && transform.parent != null)
+        {
+            transform.SetParent(null, true);
+        }
+
         originalScale = transform.localScale;
 
-        if (possessable.Form != BodyForm.Box ||
-            transform.parent != null ||
-            Mathf.Abs(Mathf.DeltaAngle(body.rotation, 0f)) > 0.01f ||
-            originalScale.x <= 0f ||
-            originalScale.y <= 0f ||
-            boxCollider.edgeRadius > 0f)
+        var problems = new List<string>();
+        if (possessable.Form != BodyForm.Box)
+            problems.Add($"Form is {possessable.Form}; expected Box");
+        if (Mathf.Abs(Mathf.DeltaAngle(body.rotation, 0f)) > 0.01f)
+            problems.Add($"world rotation Z is {body.rotation}; expected 0 degrees");
+        if (originalScale.x <= 0f || originalScale.y <= 0f)
+            problems.Add($"scale is {originalScale}; X and Y must be positive");
+        if (boxCollider.edgeRadius > 0f)
+            problems.Add($"BoxCollider2D Edge Radius is {boxCollider.edgeRadius}; expected 0");
+
+        if (problems.Count > 0)
         {
             Debug.LogError(
-                "Box resizing requires an upright, unparented box " +
-                "with positive scale and zero collider edge radius.",
+                $"Box resizing disabled on '{name}' in scene '{gameObject.scene.name}': " +
+                string.Join("; ", problems) + ".",
                 this
             );
 
