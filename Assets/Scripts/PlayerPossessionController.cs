@@ -208,7 +208,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// Release the current form (Q for Bubble, E for Spider/Fan, or touch).
+    /// Q / Release: leave the current form.
     /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
     /// </summary>
     public void RequestRelease()
@@ -231,7 +231,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggle the Fan's wind (W on the keyboard): press once for on, again for off.
+    /// Toggle the Fan's wind (F on the keyboard): press once for on, again for off.
     /// Only applies while possessing Fan, matching the form-specific firing behavior.
     /// </summary>
     public void PressTouchBlow()
@@ -448,12 +448,9 @@ public class PlayerPossessionController : MonoBehaviour
                 verticalInput -= 1f;
             }
 
-            if (currentBody != null &&
-                ((currentBody.Form == BodyForm.Bubble && keyboard.qKey.wasPressedThisFrame) ||
-                 ((currentBody.Form == BodyForm.Spider || currentBody.Form == BodyForm.Fan) &&
-                  keyboard.eKey.wasPressedThisFrame)))
+            if (keyboard.qKey.wasPressedThisFrame)
             {
-                // Bubble uses Q to pop; Spider and Fan keep E to leave.
+                // Q consistently means Release: pop Bubble or leave Spider/Fan.
                 RequestRelease();
             }
 

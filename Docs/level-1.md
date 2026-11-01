@@ -121,7 +121,7 @@ Keep boxes upright and unparented: the current resizing implementation rejects p
 
 **October 17:** the developer confirmed the new timed completion transitions. Script compilation passed; that historical check did not include a WebGL export or broad Level01 regression run; the changes were subsequently published in Alpha.
 
-**October 14:** the developer confirmed E-key bubble exit and the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow. Earlier completion-screen tests below describe the pre-intro version. No new browser build is claimed for October 14.
+**October 14:** the developer confirmed Q-key bubble exit and the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 flow. Earlier completion-screen tests below describe the pre-intro version. No new browser build is claimed for October 14.
 
 Earlier developer-reported manual tests covered:
 
