@@ -121,7 +121,7 @@ public class BouncyBallAbility : MonoBehaviour
 
             // A movable ceiling needs a physical strike to advance its ratchet.
             if (hit.collider.TryGetComponent(out RatchetingCeiling lift) &&
-                lift.isActiveAndEnabled)
+                lift.isActiveAndEnabled && lift.BallRaisesCeiling)
             {
                 continue;
             }
