@@ -21,9 +21,10 @@ public class BoxResizeAbility : MonoBehaviour
 
     private Vector3 originalScale;
     private float currentSize = 1f;
-    private float resizeInput;
 
     private readonly List<Collider2D> overlaps =
+        new List<Collider2D>(16);
+    private readonly List<Collider2D> growthContacts =
         new List<Collider2D>(16);
 
     private void Awake()
@@ -51,11 +52,11 @@ public class BoxResizeAbility : MonoBehaviour
         }
     }
 
-    private void Update()
+    // The controller captures grounding before resizing invalidates contacts,
+    // then applies movement to the resized body in the same physics step.
+    public void Tick(bool isGrounded)
     {
-        resizeInput = 0f;
-
-        if (!possessable.IsControlled)
+        if (!isActiveAndEnabled || !possessable.IsControlled)
         {
             return;
         }
@@ -71,12 +72,10 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        resizeInput = Mathf.Clamp(owner.VerticalInput, -1f, 1f);
-    }
-
-    private void FixedUpdate()
-    {
-        if (!possessable.IsControlled || resizeInput == 0f)
+        // Read the current owner's input in the physics step. A cached Update
+        // value can resize a newly entered host after TransferTo clears input.
+        float resizeInput = Mathf.Clamp(owner.VerticalInput, -1f, 1f);
+        if (resizeInput == 0f)
         {
             return;
         }
@@ -95,13 +94,15 @@ public class BoxResizeAbility : MonoBehaviour
         Physics2D.SyncTransforms();
 
         Bounds originalBounds = boxCollider.bounds;
-        bool keepBottom = possessable.IsGrounded();
+        bool keepBottom = isGrounded;
+        growthContacts.Clear();
 
         // Shrinking stays inside the current occupied space.
         // Growing requires enough room for the proposed collider.
         if (requestedSize > currentSize &&
             !HasRoom(requestedSize, originalBounds, keepBottom))
         {
+            growthContacts.AddRange(overlaps);
             float lower = currentSize;
             float upper = requestedSize;
 
@@ -124,6 +125,20 @@ public class BoxResizeAbility : MonoBehaviour
         }
 
         ApplySize(requestedSize, originalBounds, keepBottom);
+
+        // A safe resize stops just before contact. Report a reached host even
+        // when no collision callback is generated for that small clearance.
+        foreach (Collider2D other in growthContacts)
+        {
+            if (other == null || other.attachedRigidbody == body ||
+                Physics2D.GetIgnoreCollision(boxCollider, other)) continue;
+
+            ColliderDistance2D distance = Physics2D.Distance(boxCollider, other);
+            if (distance.isValid && distance.distance <= ContactTolerance * 2f)
+            {
+                possessable.RequestSurfacePossession(other);
+            }
+        }
     }
 
     private void GetProposedBounds(
@@ -157,9 +172,10 @@ public class BoxResizeAbility : MonoBehaviour
             out Vector2 size
         );
 
-        // Allow normal surface contact without treating it as penetration.
-        size.x = Mathf.Max(0.001f, size.x - ContactTolerance * 2f);
-        size.y = Mathf.Max(0.001f, size.y - ContactTolerance * 2f);
+        // Keep clearance instead of allowing a small penetration. Repeated J
+        // presses otherwise overlap a neighbour anew and push it every step.
+        size.x = Mathf.Max(0.001f, size.x + ContactTolerance * 2f);
+        size.y = Mathf.Max(0.001f, size.y + ContactTolerance * 2f);
 
         ContactFilter2D filter = new ContactFilter2D();
         filter.SetLayerMask(

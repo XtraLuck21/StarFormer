@@ -3974,7 +3974,7 @@ MonoBehaviour:
   previewInEditor: 0
   flagGate: {fileID: 0}
   blockedKeyHintSeconds: 3
-  blockedKeyHintOffset: {x: 0, y: 3.5}
+  blockedKeyHintOffset: {x: 0, y: 1.5}
   activationAreaSize: {x: 8, y: 5}
   activationAreaOffset: {x: 0, y: 0}
   waterDescription: 
