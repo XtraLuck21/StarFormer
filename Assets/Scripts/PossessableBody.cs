@@ -74,7 +74,22 @@ public class PossessableBody : MonoBehaviour
     private void Awake()
     {
         Body = GetComponent<Rigidbody2D>();
-        BodyCollider = GetComponent<Collider2D>();
+
+        // Prefer the first enabled collider: a prefab may keep a disabled
+        // legacy collider (e.g. StarPlayer's old capsule) before the live one.
+        foreach (Collider2D candidate in GetComponents<Collider2D>())
+        {
+            if (candidate.enabled)
+            {
+                BodyCollider = candidate;
+                break;
+            }
+        }
+
+        if (BodyCollider == null)
+        {
+            BodyCollider = GetComponent<Collider2D>();
+        }
 
         if (!IsReady)
         {
