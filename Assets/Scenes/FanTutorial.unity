@@ -407,7 +407,6 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
-  - component: {fileID: 519420033}
   - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
@@ -528,28 +527,12 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 4.22, y: 0.01, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &519420033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1b2c3d4e5f60718293a4b5c6d7e8f07, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  player: {fileID: 1643171616}
-  offset: {x: 0, y: 1, z: -10}
-  smoothSpeed: 8
-  verticalWeight: 1
 --- !u!114 &519420034
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -562,16 +545,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a4aa6c7f4e28004ca25c4c0e238da2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFocusIntro
-  follow: {fileID: 0}
   playerController: {fileID: 0}
   focusTarget: {fileID: 955004383}
-  duration: 4
+  duration: 5
+  returnDuration: 0.8
   offset: {x: 0, y: 1, z: -10}
   smoothSpeed: 8
   introOrthographicSize: 3
   hintText: These are safe to touch, but very heavy, find a way to move them
   labelWorldOffset: {x: 0, y: 2, z: 0}
-  labelFontSize: 50
+  labelFontSize: 60
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -1563,7 +1546,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.54901963, g: 0.7803922, b: 0.9490197, a: 0.23001595}
+  m_Color: {r: 0.54901963, g: 0.7803922, b: 0.9490197, a: 0.013835326}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2272,10 +2255,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee3a6f99f53ba6640b574a8740167923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FanPossessionHint
-  hintText: Press F to activate air flow, Press Q to quit form
-  displayDuration: 5
+  hints:
+  - key: F
+    caption: Activate air flow
+  - key: Q
+    caption: Quit form
+  customAnchor: {fileID: 0}
   labelWorldOffset: {x: 0, y: 1.5, z: 0}
-  labelFontSize: 50
+  keySize: 60
+  keyFontSize: 35
+  captionFontSize: 35
+  captionGap: 10
+  columnWidth: 180
+  keySpacing: 48
+  borderColor: {r: 1, g: 1, b: 1, a: 1}
+  fillColor: {r: 0, g: 0, b: 0, a: 0.35}
+  borderThickness: 4
+  cornerRadius: 10
+  borderTextureSize: 64
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
