@@ -26,6 +26,9 @@ public class BoxResizeAbility : MonoBehaviour
     private readonly List<Collider2D> overlaps =
         new List<Collider2D>(16);
 
+    private readonly List<RatchetingCeiling> liftableCeilings =
+        new List<RatchetingCeiling>(2);
+
     private void Awake()
     {
         possessable = GetComponent<PossessableBody>();
@@ -123,6 +126,11 @@ public class BoxResizeAbility : MonoBehaviour
             requestedSize = lower;
         }
 
+        // Commit ceiling movement only after all obstacles accept the final size.
+        if (requestedSize > currentSize &&
+            !HasRoom(requestedSize, originalBounds, keepBottom, true))
+            return;
+
         ApplySize(requestedSize, originalBounds, keepBottom);
     }
 
@@ -147,7 +155,8 @@ public class BoxResizeAbility : MonoBehaviour
     private bool HasRoom(
         float targetSize,
         Bounds originalBounds,
-        bool keepBottom)
+        bool keepBottom,
+        bool moveCeilings = false)
     {
         GetProposedBounds(
             targetSize,
@@ -156,6 +165,9 @@ public class BoxResizeAbility : MonoBehaviour
             out Vector2 center,
             out Vector2 size
         );
+
+        float requiredCeilingBottom = center.y + size.y * 0.5f + ContactTolerance;
+        liftableCeilings.Clear();
 
         // Allow normal surface contact without treating it as penetration.
         size.x = Mathf.Max(0.001f, size.x - ContactTolerance * 2f);
@@ -192,7 +204,20 @@ public class BoxResizeAbility : MonoBehaviour
                 continue;
             }
 
+            if (keepBottom && other.TryGetComponent(out RatchetingCeiling lift) &&
+                lift.CanLiftForBox(boxCollider, requiredCeilingBottom))
+            {
+                liftableCeilings.Add(lift);
+                continue;
+            }
+
             return false;
+        }
+
+        if (moveCeilings)
+        {
+            foreach (RatchetingCeiling lift in liftableCeilings)
+                lift.LiftForBox(requiredCeilingBottom);
         }
 
         return true;
