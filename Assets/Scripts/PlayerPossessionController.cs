@@ -118,7 +118,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     // Independent of possession locks: a later transfer must not leave an old
-    // box/spider and bubble pair permanently ignoring each other.
+    // box/bubble pair permanently ignoring each other.
     private readonly List<BubbleHandoffCollision> bubbleHandoffCollisions =
         new List<BubbleHandoffCollision>();
 
@@ -1018,9 +1018,9 @@ public class PlayerPossessionController : MonoBehaviour
             previousBody.gameObject.SetActive(false);
         }
         else if (previousBody.Form == BodyForm.gravityBall ||
-            (previousBody.Form == BodyForm.Spider && previousBody.TryGetComponent<ReturnToSpawnOnLeave>(out _)))
+            previousBody.Form == BodyForm.Spider)
         {
-            // Loaned bodies return to spawn; only disposable gravity balls are removed.
+            // Loaned spider/ball with ReturnToSpawnOnLeave goes back to spawn.
             if (previousBody.TryGetComponent(out ReturnToSpawnOnLeave respawner))
             {
                 respawner.ReturnToSpawn();
@@ -1054,8 +1054,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void BeginBubbleHandoff(PossessableBody previous, PossessableBody next)
     {
-        if ((previous.Form != BodyForm.Box && previous.Form != BodyForm.Spider) ||
-            next.Form != BodyForm.Bubble)
+        if (previous.Form != BodyForm.Box || next.Form != BodyForm.Bubble)
         {
             return;
         }
