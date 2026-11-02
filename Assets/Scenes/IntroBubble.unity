@@ -9150,6 +9150,7 @@ MonoBehaviour:
   nextSceneName: IntroBouncyBall
   nextLevelLabel: Bouncy Ball Tutorial
   transitionSeconds: 1.5
+  showTransitionOverlay: 0
 --- !u!61 &1527559127
 BoxCollider2D:
   m_ObjectHideFlags: 0

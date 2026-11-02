@@ -75,6 +75,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float deathRestartTime;
 
     public bool IsDead => isDead;
+    public AnalyticsDeathCause LastDeathCause { get; private set; } = AnalyticsDeathCause.Unknown;
     public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
 
@@ -797,6 +798,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         AnalyticsManager.Instance?.TrackDeath(hitBody, deathCause);
 
+        LastDeathCause = deathCause;
         isDead = true;
         bubblePopRequested = false;
         pendingSource = null;
