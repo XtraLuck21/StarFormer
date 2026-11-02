@@ -52,6 +52,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
     private Vector3 ruinFaceStart;
     private HazardGroup[] hazards;
     private SafeRouteObstacles safeObstacles;
+    private HardRouteFallingSpike fallingSpike;
     private Camera viewCamera;
     private Vector3 returnPosition;
     private float returnSize;
@@ -87,6 +88,8 @@ public class AdvancedRouteSwitch : MonoBehaviour
             return;
         }
         safeObstacles = routeB.GetComponent<SafeRouteObstacles>();
+        fallingSpike = hardCeilingSpikes.GetComponent<HardRouteFallingSpike>();
+        if (fallingSpike != null) fallingSpike.ResetTrap();
         sensor.isTrigger = true;
         ruinSensor.isTrigger = true;
         if (levelCamera == null) levelCamera = FindFirstObjectByType<AdvancedLevelCamera2D>();
@@ -174,6 +177,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
     public void RestoreCheckpointRoute(RouteState state, bool seenPreview = false,
         bool seenSafe = false, bool seenHard = false)
     {
+        if (fallingSpike != null) fallingSpike.ResetTrap();
         CurrentRoute = state;
         previewShown = seenPreview;
         safeShown = seenSafe;
@@ -187,6 +191,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
         // Only one camera presentation may own the pause at a time.
         if (levelCamera != null && levelCamera.IsCinematic) return false;
         bool brief = state == RouteState.Normal || (state == RouteState.Safe ? safeShown : hardShown);
+        if (fallingSpike != null) fallingSpike.ResetTrap();
         CurrentRoute = state;
         if (state == RouteState.Safe) safeShown = true;
         else if (state == RouteState.Hard) hardShown = true;
