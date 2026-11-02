@@ -12,7 +12,10 @@ public class RatchetingCeiling : MonoBehaviour
     [Tooltip("Box lifts the door; controlled Ball landings on its top lower it instead of lifting it from below.")]
     [SerializeField] private bool ballPushesDown;
 
-    public bool BallRaisesCeiling => !ballPushesDown;
+    [Tooltip("Only Box growth moves this panel. Ball impacts never raise or lower it.")]
+    [SerializeField] private bool boxOnlyLift;
+
+    public bool BallRaisesCeiling => !boxOnlyLift && !ballPushesDown;
 
     private BoxCollider2D ceiling;
     private float minimumBottom;
@@ -85,7 +88,7 @@ public class RatchetingCeiling : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (Time.time < nextBallHitTime || collision.rigidbody == null ||
+        if (boxOnlyLift || Time.time < nextBallHitTime || collision.rigidbody == null ||
             !collision.rigidbody.TryGetComponent(out PossessableBody ball) ||
             !ball.IsControlled || ball.Form != BodyForm.BouncyBall || ball.IsInWater)
             return;
