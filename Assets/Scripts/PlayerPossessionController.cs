@@ -75,6 +75,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float deathRestartTime;
 
     public bool IsDead => isDead;
+    public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
 
     /// <summary>
@@ -168,9 +169,10 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointId = null;
         checkpointPosition = Vector3.zero;
         BouncyBallCheckpointSession.ClearCurrent();
+        AdvancedCheckpointController.ClearSession();
     }
 
-    public void SetCheckpoint(string id, Vector3 position)
+    public void SetCheckpoint(string id, Vector3 position, bool showFeedback = true)
     {
         if (isDead || restartRequested || string.IsNullOrWhiteSpace(id))
         {
@@ -184,7 +186,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         Debug.Log($"check point activated:{id}", this);
         AnalyticsManager.Instance?.TrackCheckpoint(id, currentBody);
-        CheckpointFeedback.ShowSaved();
+        if (showFeedback) CheckpointFeedback.ShowSaved();
     }
 
     // ===================================================================
@@ -316,6 +318,20 @@ public class PlayerPossessionController : MonoBehaviour
         if (gameObject.scene.name != "Mainmenu")
         {
             CheckpointFeedback.Initialize(this);
+        }
+
+        // Advanced checkpoints choose a fixed host and restore completed mechanisms.
+        // All scene Awakes have finished before this startup-only ownership handoff.
+        if (TryGetComponent(out AdvancedCheckpointController advancedCheckpoints) &&
+            advancedCheckpoints.TryRestore(out PossessableBody checkpointBody))
+        {
+            initialBody.SetOwner(null);
+            if (checkpointBody != initialBody) initialBody.gameObject.SetActive(false);
+            currentBody = checkpointBody;
+            currentBody.SetOwner(this);
+            BlockCurrentContacts();
+            BeginAnalyticsForCurrentBody();
+            return;
         }
 
         if (enableBouncyBallCheckpoints)

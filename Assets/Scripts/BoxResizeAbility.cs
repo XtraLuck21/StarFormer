@@ -27,6 +27,9 @@ public class BoxResizeAbility : MonoBehaviour
     private readonly List<Collider2D> growthContacts =
         new List<Collider2D>(16);
 
+    private readonly List<RatchetingCeiling> liftableCeilings =
+        new List<RatchetingCeiling>(2);
+
     private void Awake()
     {
         possessable = GetComponent<PossessableBody>();
@@ -136,6 +139,11 @@ public class BoxResizeAbility : MonoBehaviour
             requestedSize = lower;
         }
 
+        // Commit ceiling movement only after all obstacles accept the final size.
+        if (requestedSize > currentSize &&
+            !HasRoom(requestedSize, originalBounds, keepBottom, true))
+            return;
+
         ApplySize(requestedSize, originalBounds, keepBottom);
 
         // A safe resize stops just before contact. Report a reached host even
@@ -174,7 +182,8 @@ public class BoxResizeAbility : MonoBehaviour
     private bool HasRoom(
         float targetSize,
         Bounds originalBounds,
-        bool keepBottom)
+        bool keepBottom,
+        bool moveCeilings = false)
     {
         GetProposedBounds(
             targetSize,
@@ -184,8 +193,12 @@ public class BoxResizeAbility : MonoBehaviour
             out Vector2 size
         );
 
-        // Keep clearance instead of allowing a small penetration. Repeated J
-        // presses otherwise overlap a neighbour anew and push it every step.
+        float requiredCeilingBottom = center.y + size.y * 0.5f + ContactTolerance;
+        liftableCeilings.Clear();
+
+        // Keep clearance around ordinary obstacles to avoid pushing hosts while
+        // growing. Liftable panels are checked separately and moved only after
+        // every obstacle accepts the final size.
         size.x = Mathf.Max(0.001f, size.x + ContactTolerance * 2f);
         size.y = Mathf.Max(0.001f, size.y + ContactTolerance * 2f);
 
@@ -220,7 +233,20 @@ public class BoxResizeAbility : MonoBehaviour
                 continue;
             }
 
+            if (keepBottom && other.TryGetComponent(out RatchetingCeiling lift) &&
+                lift.CanLiftForBox(boxCollider, requiredCeilingBottom))
+            {
+                liftableCeilings.Add(lift);
+                continue;
+            }
+
             return false;
+        }
+
+        if (moveCeilings)
+        {
+            foreach (RatchetingCeiling lift in liftableCeilings)
+                lift.LiftForBox(requiredCeilingBottom);
         }
 
         return true;

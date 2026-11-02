@@ -1,20 +1,20 @@
 # Introductory Levels
 
-Last updated: 2026-10-31.
+Last updated: 2026-11-01.
 
-**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
+**Last recorded published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
 
-**Current source (October 31):** the `intro-bubble` branch rebuilds IntroBubble and its world-space hints, adds return travel to the IntroBox exit and a spare underwater Bubble, and uses **J = Grow, K = Shrink, Q = Pop Bubble**. R opens the restart menu. These source changes are not a new published build; the last recorded release remains Alpha 0.1.2.
+**Current source (November 1):** the integrated IntroBubble keeps its rebuilt tank, map hints, return travel to IntroBox and spare Bubble. Controls are **J = Grow, K = Shrink, Q = Pop Bubble**; Q also releases Spider/Fan and F toggles Fan wind. R opens restart choices. Advanced is now formal Level01; its flag continues through IntroSpider and FanTutorial before Level02. Current source is not a new published build.
 
 ## Purpose and progression
 
 Replace the old Tutorial with two short introductions that teach contact possession through experimentation. First show why both growing and shrinking are useful, then reuse the Box to introduce a Bubble and its different air/water controls.
 
 ```text
-Mainmenu → IntroBox → IntroBubble → Level01 → Level02
+Mainmenu → IntroBox → IntroBubble → Level01 → IntroSpider → FanTutorial → Level02
 ```
 
-The menu's **Introductory Levels** button starts IntroBox; direct Level 1 and Level 2 entries remain available. The old Tutorial scene stays in the repository but is unchecked in the build list.
+The menu's **Introductory Levels** button starts IntroBox; direct Level 1, Level 2 Intro and Level 2 entries remain available. The old Tutorial scene stays in the repository but is unchecked in the build list.
 
 ## IntroBox
 
@@ -55,7 +55,7 @@ Walking left through IntroBubble's entrance exit loads IntroBox at its endpoint,
 | Bubble in air | A/D or Left/Right Arrow | Automatic rise; Q returns to Star |
 | Bubble underwater | WASD, including diagonals | Q returns to Star |
 
-R opens the restart menu; choose Restart Level for a fresh start, Return to Checkpoint when available, or Cancel. See [CheckpointGuidance.md](CheckpointGuidance.md). IntroBubble hides its standalone Restart button and uses a compact **Main Menu** button. IntroBox retains its explicit full-restart button. Q / Pop exits Bubble; E / Leave remains the Fan/Spider control. Space remains Star jump and SpikeWall fire.
+R opens the restart menu; choose Restart Level for a fresh start, Return to Checkpoint when available, or Cancel. See [CheckpointGuidance.md](CheckpointGuidance.md). IntroBubble hides its standalone Restart button and uses a compact **Main Menu** button. IntroBox retains its explicit full-restart button. Q / Pop exits Bubble; Q / Leave releases Fan/Spider and F toggles Fan wind. Space remains Star jump and SpikeWall fire.
 
 - **Star:** boxed A/D appears in the opening movement region; boxed SPACE and a jump arc appear near the low step. These prompts require control of the assigned Star and disappear after possession.
 - **Box:** `BoxGrowHint` also gives EntryBox a growth reminder beneath the Bubble.
@@ -109,16 +109,16 @@ Box-to-Box feedback detects a changed body reference in the Box sequence; stayin
 ### Completion feedback
 
 - IntroBubble → Level01: `Level up!` and `Entering Level 1...`.
-- Level01 → Level02: `Level up!` and `Entering Level 2...`.
+- Level01 → IntroSpider: `Level up!` and `Entering Level 2 Intro...`; IntroSpider then continues through FanTutorial to Level02.
 - The goal validates its destination and starts `LevelTransitionUI` once. The generated screen-space overlay pauses gameplay and disables the player controller for a default 1.5 seconds measured in real time, then clears checkpoints and loads the next scene with normal time scale. It requires no manually placed completion Canvas or TMP labels.
 - The backdrop intercepts pointer input and the old UI selection is cleared during the transition. This is an automatic transition, not a completion screen waiting for input. `Next Level Label` and `Transition Seconds` are configurable on the goal component; `Next Scene Name` remains the actual scene name.
 
 ## Scene wiring and shared behavior
 
 - Keep `PlayerControl.Initial Body` assigned to the configured, active StarPlayer in edit mode. IntroBox leaves `Starting Host` empty; IntroBubble assigns EntryBox. The controller hides the original Star while hosted and restores it when the Bubble pops.
-- Untouched Bubbles remain motionless until first possession. Once activated, they retain their environmental physics after transferring away. Restarting the scene restores fresh dormant Bubbles. Neither IntroBubble BubbleBody nor BackupBubble regenerates during the same run; Level01 Bubble_U2 is an explicit exception through BubbleRespawnOnPop.
+- Untouched Bubbles remain motionless until first possession. Once activated, they retain their environmental physics after transferring away. Restarting the scene restores fresh dormant Bubbles. Neither IntroBubble BubbleBody nor BackupBubble regenerates during the same run. The old U2 regeneration exception belongs to Level01_Legacy; current Level01 recreates popped Bubbles on scene reload.
 - IntroBubble's BubbleBody needs `BodyWaterPhysics`; WaterArea and IBWaterInlet use trigger `BoxCollider2D` / `WaterZone` components to cover the tank and its tall inlet. Waiting no longer depends on a Bubble canopy, while room ceilings still guide an activated Bubble.
-- IntroBox uses `IntroFlagGate` for the flag/door and `IntroSceneExit` for loading IntroBubble. IntroBubble uses `IntroStarGoal` with `Next Scene Name = Level01`, label `Level 1`, and default transition 1.5 seconds. `LevelGoal` advances Level01 to Level02 after G2 opens, accepting any controlled form; its label is `Level 2` with the same default transition duration.
+- IntroBox uses `IntroFlagGate` for the flag/door and `IntroSceneExit` for loading IntroBubble. IntroBubble uses `IntroStarGoal` with `Next Scene Name = Level01`, label `Level 1`, and default transition 1.5 seconds. `LevelGoal` advances current Level01 to IntroSpider without a gate prerequisite, accepting any living controlled form; its label is `Level 2 Intro` with the same transition duration. G2 belongs to the Legacy layout.
 - `GoalFlagVisual.prefab` is visual only. Keep scene-specific goal triggers and controller references separate from the shared flag asset.
 - Hint roots stay separate from moving bodies. `BubbleMovementHint` has Air, Water, ExitBubble, StarMove, StarJump, ContinueRight and BubbleIntroduction modes with optional edit-mode preview; `BoxGrowHint` creates its full visuals at runtime. Moving a body-dependent hint may require adjusting Activation Area Offset to preserve where it activates. ContinueRight only needs Flag Gate; Continue Arrow Width affects that mode alone.
 - On IntroBox's `TutorialCanvas`, disable the legacy `TutorialIntroUI` component and enable `IntroFormHintUI`. Assign local PlayerControl, TutorialTitle and TutorialInstructions references; choose Box for IntroBox. In IntroBox, keep both TMP objects active and clear obsolete saved instructional text; IntroFormHintUI owns their runtime text. IntroBubble instead keeps both form-message scripts disabled and its old title/instruction objects inactive.
@@ -128,11 +128,13 @@ For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [Ga
 
 ## Verification and remaining work
 
+November 1 integration: developer playtests and isolated Unity checks passed Mainmenu entries, IntroBubble → formal Level01, Level01 completion in all four forms → IntroSpider, then FanTutorial → Level02. Legacy scene/meta preservation and current Level01 checkpoint/Home behavior were also verified. A new browser/mobile export remains a separate check.
+
 **Historical Alpha verification (October 14–18):** the developer confirmed box transfer/shrinking, dormant Bubble activation, air/water movement, visual hints/outline, E exit, the grounded-Star flag, and the full menu-to-Level02 flow. The October 17 follow-up also confirmed the palette, contextual Star prompts, form/subtitle changes including Box-to-Box transfer, larger subtitles, IntroBubble messages, current-scene Restart buttons, the thicker gate-open arrow, and completion transitions. Script compilation checks passed during implementation. Those were the original Editor results. The integrated Alpha 0.1.2 export has since passed developer-reported localhost and online tests; the accepted IntroBubble preview retains transparency and the original camera.
 
 October 31 source verification: Unity compilation passed for the shared Q pop / J grow / K shrink controls and current hint logic. The developer accepted the rebuilt terrain and contextual hints during iterative Editor checks. The spare-Bubble pop-hint fix compiled; a complete browser/mobile regression of this branch has not been recorded. No new publication is claimed.
 
-Remaining work: verify both Bubble instances can reach the upper platform and trigger the Q hint, recovery after a premature pop, return travel in both directions, J/K hints in both intros, and R menu behavior. The spare Bubble is consumable; early popping before reaching it or consuming both bubbles can still require Restart. Air/water hints remain assigned to the original Bubble; only the pop hint follows any possessed Bubble. Gather new-player readability feedback and broaden device/aspect-ratio and simultaneous-touch coverage. Early Bubble popping or a stranded body can still require Restart; automatic soft-lock recovery and a dedicated underwater-hazard lesson are not implemented. The current mobile layout is accepted for Alpha 0.1.2; further redesign is deferred.
+Next browser/device regression: verify both Bubble instances can reach the upper platform and trigger the Q hint, recovery after a premature pop, return travel in both directions, J/K hints in both intros, and R menu behavior. The spare Bubble is consumable; early popping before reaching it or consuming both bubbles can still require Restart. Air/water hints remain assigned to the original Bubble; only the pop hint follows any possessed Bubble. Gather new-player readability feedback and broaden device/aspect-ratio and simultaneous-touch coverage. Early Bubble popping or a stranded body can still require Restart; automatic soft-lock recovery and a dedicated underwater-hazard lesson are not implemented. The current mobile layout is accepted for Alpha 0.1.2; further redesign is deferred.
 
 ### October 17 implementation record
 
