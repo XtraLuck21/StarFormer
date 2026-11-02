@@ -1,5 +1,7 @@
 # Level 1 Progress
 
+> **Current source:** `Level01.unity` now contains the former `Level01_Advanced` layout, including SAVE/NORMAL/RUIN routes, three fixed-form checkpoints, and the Home pause menu. Mainmenu and IntroBubble still enter `Level01`. Reaching its flag advances to IntroSpider → FanTutorial → Level02 and clears checkpoint progress. The previous scene is preserved unchanged as `Level01_Legacy.unity`, excluded from builds. Sections below describe the historical original layout unless noted otherwise.
+
 Last updated: 2026-10-31.
 
 Scene: [Level01.unity](../Assets/Scenes/Level01.unity). Level baseline merged into `main` through PR #2, merge commit `d8a0c70`. Core prefabs merged through PR #3. Hazard prefab follow-up: `core-form-prefabs`, implementation baseline `af9e0aa`. Design reference: Level 1 Revision 08.
