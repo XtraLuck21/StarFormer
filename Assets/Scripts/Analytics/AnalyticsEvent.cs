@@ -3,7 +3,7 @@ using System;
 [Serializable]
 public sealed class AnalyticsEvent
 {
-    public int schema_version = 1;
+    public int schema_version = 2;
     public string environment;
     public string client_timestamp;
     public string event_id;
@@ -29,4 +29,6 @@ public sealed class AnalyticsEvent
     public string result;
     public string build_version;
     public string details;
+    public string map_version;
+    public string entry_reason;
 }

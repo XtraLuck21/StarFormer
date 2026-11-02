@@ -23,7 +23,7 @@ public class LevelNavigationUI : MonoBehaviour
         }
 
         // Both buttons are manual restarts, not deaths.
-        AnalyticsManager.Instance?.TrackManualRestart();
+        AnalyticsManager.Instance?.TrackManualRestart(clearCheckpoint ? "restart_level" : "retry_checkpoint");
         if (clearCheckpoint)
         {
             // Explicit full restart; R opens a menu with checkpoint and full-restart choices.
