@@ -287,7 +287,6 @@ public class FanPossessionHint : MonoBehaviour
 
         var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
         texture.filterMode = FilterMode.Bilinear;
-        texture.alphaIsTransparency = true;
         var pixels = new Color32[size * size];
 
         for (int y = 0; y < size; y++)
