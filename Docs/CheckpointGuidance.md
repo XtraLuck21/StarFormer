@@ -1,33 +1,68 @@
-# Restart menu and checkpoint feedback
+# Checkpoints, restart and pause menus
 
-Source documentation updated: October 31, 2026 (restart implementation from October 30). Requires rebuilding before the hosted game changes.
+Last updated: 2026-11-01. This describes current source, including the promoted Level01. Hosted builds require a separate export and publication.
 
-- Press R or a TouchHoldButton with Kind = Restart to open the restart menu. No hold is required; opening the menu never reloads the scene.
-- Return to Checkpoint appears only when the current scene has an activated positional or Bouncy Ball checkpoint. It preserves that checkpoint and reloads using the existing recovery flow.
-- Restart Level clears checkpoint state and starts the current level from its entrance.
-- Cancel, Escape, or R closes the menu without changing checkpoint state. Cancel is initially selected. Arrow keys navigate within the menu; Enter/Space selects the focused button.
-- The menu pauses gameplay and automatic death recovery. Cancelling restores the previous time scale and remaining death-recovery delay.
-- The permanent top panel, route instructions, and hold progress are removed. Activation shows a short CHECKPOINT SAVED notification. World-position checkpoint markers remain.
-- Existing scene buttons retain their explicit Restart Level / Retry Checkpoint behavior.
+## Level01 checkpoints
 
-IntroBubble hides its standalone Restart button, so keyboard players use R for these choices. Its left exit is a separate scene-return action to the IntroBox endpoint as BoxB with the door open; it is not Return to Checkpoint.
+`AdvancedCheckpointController` owns three scene-configured checkpoints. Only the living, currently controlled body can activate one while gameplay is active. Indices advance monotonically: passing an older marker never replaces a later checkpoint.
 
-## Level 1 bubble reminder
+| Index / ID | Position in route | Restored form |
+| --- | --- | --- |
+| 1 / `ADV_CP1` | Lower room after the Box drop | Box, using `BoxB_DropShaft` |
+| 2 / `ADV_CP2` | Right ascent below the Bubble shelf | BouncyBall, using `BallR1_LowRoom`; bounce up to reach the Bubble |
+| 3 / `ADV_CP3` | Upper-left landing after the right ascent | Star, even if Box activated it |
 
-Before BouncyBall_Upper (the second checkpoint) has been activated, a controlled Bubble whose Y position stays within 0.05 world units for 2 seconds shows a small "Press E to pop bubble" above the body. Horizontal movement does not reset this timer, so sliding sideways while blocked vertically still shows the reminder. Meaningful vertical movement, changing forms, dying, or pausing hides and resets it. Other forms and scenes do not show the bubble-specific instruction.
+Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble passing overhead does not activate it. Markers stay hollow: blue before reaching them, yellow afterward, with a temporary `CHECKPOINT SAVED` label. Old reached markers remain yellow. The latest point determines respawn.
 
-**Known mismatch:** the quoted E reminder is still hardcoded in CheckpointFeedbackUI. The shared Bubble input has changed to **Q**. Update that reminder in a separately authorized code change and validate it in Level01; the IntroBubble map hint already displays Q.
+`enableBouncyBallCheckpoints` is off in formal Level01. Touching R1 or R2 alone does not create a save. `BouncyBallCheckpointSession` remains available for legacy opt-in scenes; it is not the current first-level checkpoint system.
 
-The checkpoint session remembers which balls have been activated across retries, so revisiting the lower ball after the upper checkpoint does not re-enable the hint. Full restart or a fresh level entry clears that history. Delay and vertical tolerance can be adjusted on the runtime CheckpointFeedbackUI component. The reminder uses 18-point text; checkpoint markers use 16-point text without pulsing, and the save notification uses 20-point text.
+## Recovery matrix
+
+| State | Death / Return to Checkpoint | Restart Level / fresh entry |
+| --- | --- | --- |
+| Active checkpoint and reached markers | Retained; restore its fixed host and safe position | Cleared; start as Star at entrance |
+| Latest completed NORMAL/SAFE/HARD mode | Retained, without replaying its cinematic | NORMAL |
+| Upper one-way platform | Highest completed lift retained | Authored low height |
+| RUIN cover | Broken state retained | Intact |
+| Viewed SAVE warning and route presentations | Retained | Cleared |
+| Lower reversible lift/door | Authored initial state | Authored initial state |
+| Loose bodies, sizes and consumed Bubbles | Recreated at authored scene state, then place checkpoint host | Authored initial state |
+| SAFE moving-board phase | Predictable fresh cycle | Hidden in NORMAL |
+| HARD falling spike | Restored to its ceiling and rearmed when HARD is active | Hidden in NORMAL |
+| READY interaction and local timed Bubble hints | Fresh scene-local state | Fresh scene-local state |
+
+The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Mainmenu entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
+
+## Level01 Home menu
+
+The top-right house-and-Star square has no permanent text. Hover shows `Home · Restart`. Clicking opens `Paused` and freezes gameplay.
+
+| Choice | Behavior |
+| --- | --- |
+| Continue Playing | Close the menu and restore play; initially selected |
+| Return to Checkpoint | Disabled with `No checkpoint yet` before a save; otherwise reload using the retained recovery state |
+| Restart Level | Confirmation before clearing progress and reloading the current scene |
+| Main Menu | Confirmation before clearing the session and loading Mainmenu |
+
+Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Escape from Paused resumes. The menu blocks background interaction, does not stack over the R menu or a route cinematic, and restores its owned pause when disabled. It does not add Hint/Controls actions.
+
+## R menu and other scenes
+
+- R or a touch Restart action opens `RestartMenuUI`; no hold is required and opening never reloads.
+- Return to Checkpoint appears when a current-scene positional or opted-in ball checkpoint exists. Restart Level clears progress. Cancel, Escape or R closes without restarting; Cancel is initially selected.
+- The R menu also pauses automatic death recovery. Cancelling restores the remaining death-delay time.
+- Home's extra confirmation screens do not replace or change the existing R shortcut.
+- IntroBubble hides its standalone Restart button; R remains available. Its left exit returns to IntroBox's endpoint as BoxB with the door open. That scene-travel feature is not checkpoint recovery.
+- Level02 retains CP01/CP02/CP03 and its existing Return to Main Menu, Restart Level and Retry Checkpoint buttons. Retry/death restore its saved Star position and stage events; full restart clears it. See [level-2.md](level-2.md).
+
+## Bubble hints
+
+Formal Level01 uses assigned ceiling contact and teaching regions, not generic stationary detection. The first tank displays its R lesson after 1.5 seconds. The water-exit and upper-right ceilings each display a once-per-scene-load `Press Q to pop` lesson after 3 seconds of continuous qualifying contact. Sideways movement under the ceiling can still count. Paused time does not advance the pop lessons.
+
+The generic E-pop reminder still exists in the legacy feedback script but is suppressed for scenes with `AdvancedCheckpointController`. It must not appear beside the current Level01 Q hints. This suppression is part of the scene-promotion fix, not an outstanding first-level copy bug.
 
 ## Verification
 
-Compilation was checked against the project's Unity assembly references. Play Mode and visual verification remain to be done.
+Developer playtests passed for checkpoint implementation and formal Level01 promotion. Isolated Unity regression checks passed for all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
 
-1. In IntroBox/IntroBubble or a fresh Level01/Level02, press R. Confirm only Restart Level and Cancel appear. Cancel and verify gameplay resumes without a reload.
-2. Activate each Level01 ball and each Level02 checkpoint. Confirm Return to Checkpoint appears. Select it and verify the existing respawn behavior and checkpoint state are preserved.
-3. With an active checkpoint, choose Restart Level. Verify the level entrance and that the checkpoint option is absent when reopening the menu.
-4. Verify Cancel, Escape, a second R press, mouse/touch buttons, and keyboard navigation. Holding R must not repeatedly toggle the dialog. Background controls must not receive clicks through the backdrop.
-5. Open the menu during the death delay and leave it open beyond that delay. Confirm no automatic reload occurs while open; cancelling resumes the remaining delay.
-6. Check 16:9 and narrow windows, checkpoint marker readability, main-menu entry, and completion overlays.
-7. Before the upper ball checkpoint, move Bubble sideways while keeping its Y fixed for over 2 seconds. Verify the small reminder appears despite horizontal movement, follows the bubble, and hides when moving vertically or popping. Verify continuous vertical travel and other forms/scenes do not show it. Activate the upper ball, retry, then control a Bubble again: the reminder should remain suppressed. A fresh full restart should enable it again. Check that the smaller checkpoint markers and notification do not obscure the route.
+For the next WebGL export, repeat these paths in-browser, including input/focus loss, narrow windows, real touch devices where controls exist, and pause during the death delay. Editor checks do not establish hosted-build or Google Sheets delivery results. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for gameplay checkpoint IDs versus analytics Run/Attempt lifecycle.
