@@ -1,6 +1,6 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-11-01.
+Last updated: 2026-11-02.
 
 ## Scope
 
@@ -13,9 +13,15 @@ addresses or Google account information. `player_id` is a random UUID stored in
 the browser through Unity `PlayerPrefs`. Clearing site data, using a private
 window or changing browsers creates a different anonymous player.
 
-## Beta 0.1.0 configuration
+## Beta 0.1.0 release and dashboard status
 
-Source Player Version and Analytics `buildVersion` both use `beta-0.1.0`. Collection remains enabled with the existing endpoint, `production` environment and tracked scenes Level01/Level02. No backend/schema change is needed. Final Web re-export after this configuration change, deployment to `/beta/` and actual `RawEvents_Production` rows labeled `beta-0.1.0` are pending. The earlier successful local build does not verify this updated embedded configuration.
+Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. Player Version and Analytics `buildVersion` both use `beta-0.1.0`; the existing endpoint, `production` environment and tracked scenes Level01/Level02 were retained. Publication required no receiver/schema change.
+
+The developer confirmed records are arriving. The supplied November 2 production-dashboard screenshot is filtered to `beta-0.1.0` / Level 1 / All players / Normal entries, showing 2 anonymous players, 7 level runs, 79 events, 1 completed start out of 7 (14.3%), and 1 death. These are a point-in-time filtered sample, not a complete metric audit or a player-difficulty conclusion. The header's 5,334 production events is a separate overall count, not the Beta sample count. Level02-specific delivery and direct raw-row verification were not established by this screenshot.
+
+**Open issue: matching map/version.** The dashboard shows a historical/unrecognized map-version selection and warns that no matching real map is available. It correctly falls back to a coordinate grid rather than substituting a different map. This does not mean event upload failed. The checked-in `AnalyticsEvent` schema includes `build_version`, coordinates and `details`, but no dedicated `map_version` field; the deployed dashboard's map registry/resolver has not been inspected, so the exact cause is not yet established.
+
+Follow up by inspecting the actual Beta rows and deployed dashboard resolver, then register the matching Level01 map from released source `3a693ca` and associate only the verified build/scene or map-version key. Do not relabel historical rows or use the Legacy map for Beta. Keep old maps and the unknown-version grid fallback. Level01 also has SAFE/NORMAL/HARD layouts and moving hazards: a static base map must not be presented as an exact replay of route or obstacle state when those states are not recorded. Audit existing payloads before proposing extra telemetry or a new build. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status).
 
 ## Data flow
 

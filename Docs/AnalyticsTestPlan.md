@@ -1,14 +1,34 @@
 # WebGL Analytics Test Plan
 
-Last updated: 2026-11-01.
+Last updated: 2026-11-02.
 
 ## Beta 0.1.0 acceptance status
 
-Player Version and source Analytics `buildVersion` now match `beta-0.1.0`. Collection remains enabled in `production`, with the existing endpoint and only Level01/Level02 tracked. The developer reported a successful local Web build after `3365e29`; a new final export is required after these Analytics/template changes. Beta publication, hosted regression and Beta Sheet delivery remain pending.
+Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [Deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). All seven hosted files matched the tested export. Player/Analytics versions are `beta-0.1.0`; the existing production endpoint and Level01/Level02 tracking configuration are unchanged.
 
-After the final export, run Level01 and Level02 and verify actual new `RawEvents_Production` rows with `build_version = beta-0.1.0`. The untracked IntroBouncyBall between Bubble and Level01 must not create a tracked level Run. Passage backtracking must not create spurious Level01 completion/death records. Record the tested source commit, publishing commit, browser/device and Sheet evidence; do not mark transport passed from Console output or page loading alone.
+| Check | Evidence / status |
+| --- | --- |
+| Final build and local gameplay | Passed, developer reported after rebuilding with the synchronized versions/template |
+| Pages deployment and payload | Passed; gh-pages `1105970`, all seven live files matched the export |
+| Hosted gameplay | Passed, developer reported; browser/device versions and an exhaustive scenario matrix were not supplied |
+| Beta records received | Developer confirmed; screenshot shows production Beta Level01 records, completion and death |
+| Level02-specific delivery and raw-row audit | Still to verify; not demonstrated by the Level01 screenshot |
+| Matching real map | Open: unrecognized/unrecorded map version; coordinate-grid fallback visible |
+| Metric correctness, deduplication and broad device coverage | Remain targeted checks below; not certified by aggregate dashboard counts |
 
-## Last recorded published release evidence
+Screenshot evidence supplied November 2: Production / `beta-0.1.0` / Level 1 / All players / Normal entries shows 2 anonymous players, 7 runs, 79 events, 1 of 7 observed starts completed (14.3%), 1 death, 13 attempts, 3 abandoned and 0 scene returns. This is a temporary filtered sample; the header's 5,334 production events is not the Beta-only count. No raw Sheet rows were directly inspected in this documentation update.
+
+### Dashboard map/version follow-up
+
+1. Inspect Beta `RawEvents_Production` rows, their build/scene identifiers and any map metadata alongside the deployed dashboard's resolver. Determine whether the issue is a missing map asset, missing build-to-map association or missing version metadata; the screenshot alone does not establish the cause.
+2. Add the map corresponding to released source `3a693ca`, preserving world coordinates, scale and orientation. Associate Beta Level01 with that map, not Level01_Legacy or the old Alpha layout. Retain historical map associations and the unknown-version grid fallback.
+3. Use a known spike death to compare its raw coordinates with the plotted position on the correct map. Check each displayed map/scene separately. Level02 needs its own verified association; do not infer it from Level01.
+4. Account for SAFE/NORMAL/HARD and moving/falling obstacles. If their runtime state is absent, label the map as a base-layout reference rather than claiming an exact obstacle-state replay. Review existing payloads before deciding whether future telemetry/schema changes are needed.
+5. After the dashboard update, confirm the same Beta filters show the correct map and consistent event totals; switching to Alpha must retain the historical map, and an unknown version must still use the grid. Preserve all recorded events.
+
+Then verify Level01 and Level02 Runs, Session/Attempt IDs, checkpoint events, deduplication and active-time calculations against actual rows. IntroBouncyBall is untracked and must not create a tracked level Run; passage backtracking must not create spurious Level01 completion/death records. Record the browsers/devices and scenarios actually tested.
+
+## Historical Alpha 0.1.2 release evidence
 
 Alpha 0.1.2 is published at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/) as `gh-pages` commit `5f62980`, with source configuration `5650250`. Player Version and Analytics buildVersion are `alpha-0.1.2`; the release uses `production`. Localhost and online gameplay tests passed according to the developer; deployment and payload/version checks also passed. The historical data validation at the end of this document is separate evidence and does not certify Alpha 0.1.2 Sheet delivery.
 

@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-01. Current source includes the IntroBouncyBall integration and Beta 0.1.0 preparation; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
+Last updated: 2026-11-02. Current source includes the IntroBouncyBall integration and the published Beta 0.1.0 release; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
 
 ## 1. Scenes and build configuration
 
@@ -117,11 +117,13 @@ Level01 uses Home instead of the old LevelCanvas standalone Restart arrangement.
 
 ## 4. Web build and GitHub Pages release
 
-Beta `beta-0.1.0` is prepared in source, not yet published. Player/Analytics versions match. `3365e29` removes the Editor-only `Texture2D.alphaIsTransparency` assignment from FanPossessionHint; the developer confirmed a successful Web build. Re-export after the Analytics version and template-label updates; final source/deployment commits and hosted/Sheet acceptance remain pending. Target `Builds/WebGL-Beta-0.1.0` and publish only to `beta/`, preserving Alpha and historical paths.
+Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. Player/Analytics versions match. [Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/); all seven hosted files matched `Builds/WebGL-Beta-0.1.0`. Publication only added `beta/`; historical paths were preserved. The earlier Web compiler fix is `3365e29`.
 
-The last recorded published release is Alpha 0.1.2 (2026-10-18): gameplay/UI `9b35f8e`, source configuration `5650250`, `gh-pages` publication `5f62980`. The developer reported localhost and hosted gameplay tests passed. Current source changes, including formal Level01 promotion, have not been established as part of that export. Alpha 0.1.2 Sheet delivery remains separately unverified.
+Beta Level01 records are visible in the supplied production-dashboard screenshot. Matching-map rendering remains open: this version currently falls back to a coordinate grid. Level02-specific delivery and detailed raw-row metric checks remain separate follow-ups.
 
-Use [publish_instructions.md](publish_instructions.md) for the build list, versioning, localhost checks and scoped Pages publication procedure. Keep exports on the publishing checkout, preserve other published paths, and do not merge gh-pages into source. Use a new version/output for the next release rather than overwriting evidence for 0.1.2.
+The historical Alpha release is 0.1.2 (2026-10-18): gameplay/UI `9b35f8e`, source configuration `5650250`, `gh-pages` publication `5f62980`. The developer reported localhost and hosted gameplay tests passed. Current source changes, including formal Level01 promotion, have not been established as part of that export. Alpha 0.1.2 Sheet delivery remains separately unverified.
+
+Use [publish_instructions.md](publish_instructions.md) for the build list, versioning, localhost checks and scoped Pages publication procedure. Keep exports on the publishing checkout, preserve other published paths, and do not merge gh-pages into source. Use a new version/output for the next release rather than overwriting the local evidence for Beta 0.1.0 or historical Alpha releases.
 
 Analytics tracks formal Level01 and Level02, not the introduction scenes. Current first-level checkpoint IDs are ADV_CP1/2/3. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md); Editor JSON is not proof of WebGL transport.
 
@@ -129,4 +131,4 @@ Analytics tracks formal Level01 and Level02, not the introduction scenes. Curren
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 
-Outstanding work is scoped separately: optional Level01 Hint/Controls UI, new-player timing/readability and browser/mobile/aspect-ratio coverage for the next export. The scene rename must not re-enable the legacy E reminder. Do not mark source changes as deployed without a tested export and publication.
+Outstanding work is scoped separately: optional Level01 Hint/Controls UI, new-player timing/readability and broader browser/mobile/aspect-ratio coverage and analytics map/version validation. The scene rename must not re-enable the legacy E reminder. Do not mark source changes as deployed without a tested export and publication.

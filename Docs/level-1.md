@@ -1,6 +1,6 @@
 # Level 1
 
-Last updated: 2026-11-01. Current source baseline: `8834a4d` (Advanced promoted to the formal first level).
+Last updated: 2026-11-02. Promotion baseline: `8834a4d`; published Beta source: `3a693ca` (gh-pages `1105970`).
 
 ## Scene identity and progression
 
@@ -14,7 +14,7 @@ Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroS
 
 - Mainmenu's Level 1 button calls `MainMenuUI.OpenLevel1()` and loads `Level01`.
 - IntroBouncyBall's Star/BouncyBall goal also loads `Level01`; IntroBubble first opens a passage to that tutorial.
-- Level01 stays at enabled build index 3; other production scene indices are unchanged. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
+- Level01 is at enabled build index 4, after IntroBouncyBall; IntroSpider, FanTutorial and Level02 follow at indices 5, 6 and 7. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
 - The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, label `Level 2 Intro`, and a 1.5-second transition. Any living controlled form can finish.
 - Completion pauses gameplay, shows `Level up! / Entering Level 2 Intro...`, clears checkpoint sessions and loads the next scene with normal time. The final wait-for-menu completion screen belongs to Level02.
 
@@ -86,4 +86,4 @@ Restart Level, returning to Mainmenu, a new menu entry and forward level progres
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 
-Further work remains separate: a dedicated optional Hint button, a dedicated Level01 Controls button, new-player timing/readability feedback, and browser/mobile/aspect-ratio testing of a new export. Existing Help UI in other scenes is not a new Level01 Hint system. Current source has not been established as a new hosted release by these changes; the last recorded publication remains Alpha 0.1.2. See [publish_instructions.md](publish_instructions.md).
+Further work remains separate: a dedicated optional Hint button, a dedicated Level01 Controls button, new-player timing/readability feedback, and broader browser/mobile/aspect-ratio coverage. Existing Help UI in other scenes is not a new Level01 Hint system. Beta 0.1.0 is now published and the developer reported local and online playtests passed. Beta Level01 records are visible in the production dashboard, but the rebuilt map is not yet matched: deaths currently appear on a coordinate grid. Correct map/version association and detailed metric checks are tracked in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status). See [publish_instructions.md](publish_instructions.md).

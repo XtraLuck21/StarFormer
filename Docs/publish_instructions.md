@@ -1,8 +1,9 @@
 # Publish StarFormer to GitHub Pages
 
-Last updated: 2026-11-01.
+Last updated: 2026-11-02.
 
-- [Current Alpha](https://xtraluck21.github.io/StarFormer/alpha/) — fixed path for tested Alpha releases.
+- [Current Beta](https://xtraluck21.github.io/StarFormer/beta/) — Beta 0.1.0, published November 2, 2026.
+- [Historical Alpha](https://xtraluck21.github.io/StarFormer/alpha/) — fixed path for tested Alpha releases.
 - [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved during Alpha publication.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
 
@@ -10,26 +11,30 @@ Alpha `alpha-0.1.2` is published at `/alpha/` on October 18, 2026. Source config
 
 ## Beta 0.1.0 release status
 
-**Prepared in source; not yet published.** Current source includes the fully rebuilt formal Level01 and IntroBouncyBall between IntroBubble and Level01. Box/Bubble and Bubble/BouncyBall support two-way passage travel; BouncyBall's flag starts Level01. Level01 continues through IntroSpider → FanTutorial → Level02.
+**Published November 2, 2026; local and hosted playtests passed according to the developer.** Current source includes the fully rebuilt formal Level01 and IntroBouncyBall between IntroBubble and Level01. Box/Bubble and Bubble/BouncyBall support two-way passage travel; BouncyBall's flag starts Level01. Level01 continues through IntroSpider → FanTutorial → Level02.
 
 | Item | Current status / target |
 | --- | --- |
 | Player Version / Analytics buildVersion | Both `beta-0.1.0` |
 | Analytics | Collection enabled; existing endpoint and `production` environment retained; only Level01 and Level02 tracked |
 | Export folder | `Builds/WebGL-Beta-0.1.0` |
-| Planned publication | `/StarFormer/beta/` on GitHub Pages; not yet verified live |
+| Publication | [Beta 0.1.0](https://xtraluck21.github.io/StarFormer/beta/), November 2, 2026 |
 | Local build evidence | Developer confirmed success after `3365e29` removed the editor-only Texture2D property from FanPossessionHint |
-| Final export | Rebuild required after this preparation changes Analytics version and template labels; previous successful build is not the final package |
-| Final source / publishing commit | Pending; record the source revision actually built and the eventual gh-pages commit |
-| Hosted gameplay / Beta Sheet delivery | Pending |
+| Final export | Rebuilt after Analytics/template updates; developer-reported local test passed; all seven deployed files matched the tested export byte for byte |
+| Final source / publishing commit | [`3a693ca`](https://github.com/XtraLuck21/StarFormer/commit/3a693ca) / [`1105970`](https://github.com/XtraLuck21/StarFormer/commit/1105970) |
+| Deployment / hosted gameplay | [Pages build and deployment succeeded](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039); developer-reported online test passed |
+| Beta analytics | Records reported received; supplied production dashboard screenshot confirms Beta Level01 events; Level02-specific and raw-row metric checks remain open |
+| Known dashboard issue | Beta Level01 map version is unrecognized/unrecorded; deaths use a coordinate grid until the matching map is available |
 
 The existing template folder remains `StarFormerAlpha`; its browser title and launch badge now use Player Version rather than hard-coded Alpha text. Folder/CSS/JS names do not determine the release label.
 
 Use `StarFormer` as the source checkout and the sibling `StarFormer-Pages` checkout on `gh-pages` for exported files. Do not merge `gh-pages` into `main`. Coordinate one publisher per release. Publish this Beta into `beta/`; preserve `alpha/`, `playtest-01/`, `alpha-progress-check/`, the root player and other existing paths. GitHub Pages is publicly accessible.
 
-The current Analytics asset uses `buildVersion: beta-0.1.0`. Existing Alpha exports keep their embedded version. Production events append to the same Sheet and are separated by `build_version`, not URL path. Confirm actual new Beta rows after release; successful loading or Editor JSON is not delivery evidence. Do not redeploy the backend or clear old rows just to publish the game.
+The current Analytics asset uses `buildVersion: beta-0.1.0`. Existing Alpha exports keep their embedded version. Production events append to the same Sheet and are separated by `build_version`, not URL path. The developer has confirmed received records and supplied Beta Level01 production-dashboard evidence. Continue raw-row/Level02 metric checks and the map/version follow-up in [AnalyticsTestPlan.md](AnalyticsTestPlan.md); successful loading or Editor JSON alone is not delivery evidence. Do not redeploy the backend or clear old rows just to publish the game.
 
 Commands use macOS/Linux shell syntax and assume the folders are siblings. You need repository push access and Unity **6000.3.22f1** with **Web Build Support**. Stop if a command fails.
+
+The procedure below remains the checklist for future releases. The rebuild, copy, push and hosted playtest for Beta 0.1.0 above are already complete; documentation-only updates do not require another build.
 
 ## 1. Update source
 
@@ -93,7 +98,7 @@ Check all four menu entries: Introductory Levels, Level 1, Level 2 Intro and Lev
 - Confirm all three Level02 top-right buttons fit: Return to Main Menu, Restart Level and Retry Checkpoint. Test Retry with no checkpoint and at CP01/CP02/CP03, automatic death recovery at each, and Restart/R after a checkpoint. Review the unassigned ShowWall callbacks described in [level-2.md](level-2.md).
 - Reach the Level02 flag: the deleted brown wall (20) should remain absent. Show Level Complete / You are a super star now! and wait for Return to Main Menu, with gameplay paused. Verify one completion event and a fresh entrance on menu re-entry.
 - Keep MobileControls on AutoDetect for the release. Test desktop hiding, phone visibility, simultaneous movement/action touches, every form, and release of held input after hiding/focus loss. The mobile Canvas is screen-fixed Overlay UI; check different browser sizes and phone aspect ratios.
-- Record the browsers/devices and checkpoint scenarios actually exercised. Alpha 0.1.2 gameplay acceptance is recorded, but a detailed device/checkpoint matrix and current-version Sheet verification are not. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md).
+- Record the browsers/devices and checkpoint scenarios actually exercised. Beta 0.1.0 local/online gameplay acceptance and Level01 dashboard records are now recorded, but a detailed device/checkpoint matrix, Level02-specific delivery and raw-row metric verification remain open. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md).
 
 Publish only after local tests pass.
 

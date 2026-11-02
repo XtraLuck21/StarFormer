@@ -1,8 +1,8 @@
 # Gameplay Specification
 
-Last updated: 2026-11-01. Current source includes the rebuilt Level01, integrated IntroBouncyBall and Beta 0.1.0 release preparation. The final export and publication remain pending.
+Last updated: 2026-11-02. Beta 0.1.0 includes the rebuilt Level01 and integrated IntroBouncyBall; it was published on November 2 from source `3a693ca` with gh-pages `1105970`.
 
-This specification describes the current code and authored scenes. The last recorded hosted release is Alpha 0.1.2; current source is not automatically deployed. Publication history and procedures are in [publish_instructions.md](publish_instructions.md).
+This specification describes the current code and authored scenes. The current hosted release is Beta 0.1.0 at source revision `3a693ca`; later source changes are not automatically deployed. Publication history and procedures are in [publish_instructions.md](publish_instructions.md).
 
 ## 1. Scenes and progression
 
@@ -126,6 +126,6 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery and existing 
 
 ## 8. Validation and remaining work
 
-Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. Final Beta re-export after version/template synchronization, hosted acceptance and backend delivery remain pending.
+Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. Production-dashboard evidence confirms Beta Level01 records, while the matching real map is still unavailable.
 
-Remaining work includes Level01 optional Hint/Controls UI, new-player route/timing/readability feedback, browser/aspect-ratio/mobile coverage and current-build analytics verification. Keep source status separate from the historical Alpha 0.1.2 deployment. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md); deployment checks are in [publish_instructions.md](publish_instructions.md).
+Remaining work includes Level01 optional Hint/Controls UI, new-player route/timing/readability feedback, broader browser/aspect-ratio/mobile coverage, analytics map/version matching and Level02/raw-row metric verification. Keep Beta evidence separate from the historical Alpha 0.1.2 deployment. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md); deployment checks are in [publish_instructions.md](publish_instructions.md).

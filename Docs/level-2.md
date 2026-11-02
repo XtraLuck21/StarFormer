@@ -1,6 +1,6 @@
 # Level 2 Progress
 
-Last updated: 2026-11-01 (shared controls and incoming progression updated; Level02 layout unchanged).
+Last updated: 2026-11-02 (shared controls and incoming progression updated; Level02 layout unchanged).
 
 Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 work through `ab68064` was integrated into `main` by PR #14 (`3714a49`). Alpha 0.1.1 (`765a1ea` in source) corrected the navigation Canvas scaling. This content is included in the published Alpha 0.1.2 release.
 
@@ -8,7 +8,7 @@ Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 w
 
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
 
-**Current shared controls:** J grows Box, K shrinks Box, Q pops Bubble or leaves Spider/Fan, and F toggles Fan wind. Space still fires the possessable spike wall. R opens restart choices. Current source differs from the recorded Alpha 0.1.2 publication. See [CheckpointGuidance.md](CheckpointGuidance.md).
+**Current shared controls:** J grows Box, K shrinks Box, Q pops Bubble or leaves Spider/Fan, and F toggles Fan wind. Space still fires the possessable spike wall. R opens restart choices. These controls are included in published Beta 0.1.0; historical Alpha 0.1.2 retains its original export. See [CheckpointGuidance.md](CheckpointGuidance.md).
 
 ## 1. Current route and progress
 
@@ -108,7 +108,7 @@ Source checks during implementation and this documentation review:
 - The saved scene has the three local navigation callbacks, AutoDetect, the accepted hint values and no `wall (20)` object.
 - The original integration preserved main's intro/Level01 scene content while adding the teammate mobile Canvas, and retained analytics, ball recovery and Box-to-Bubble handoff safeguards.
 
-**Last recorded published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Level02 navigation scaling was fixed in Alpha 0.1.1 and retained in 0.1.2. Detailed CP01/CP02/CP03 recovery coverage and current-version analytics delivery remain unverified, rather than blocking an already completed publication.
+**Historical published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Level02 navigation scaling was fixed in Alpha 0.1.1 and retained in 0.1.2. Detailed CP01/CP02/CP03 recovery coverage and current-version analytics delivery remain unverified, rather than blocking an already completed publication.
 
 ## 5. Decisions in this polish pass
 
@@ -121,11 +121,13 @@ Source checks during implementation and this documentation review:
 - Keep mobile button positions unchanged for now. Standardize script comments, Inspector labels, tooltips and diagnostics in English without changing field/method names or gameplay logic.
 - Defer top-center form identity labels and broader instruction polish.
 
+Published Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105970`). Local and online playtests passed according to the developer; the supplied analytics screenshot covers Level01 only, so Level02-specific data and map validation remain open.
+
 ## 6. Remaining work and handoff
 
 1. Test Retry before any checkpoint and at CP01, CP02 and CP03; verify position, camera state and the reachable onward route. Check the unassigned ShowWall callbacks and automatic death recovery at each stage.
 2. After a checkpoint, verify opening/cancelling R preserves the checkpoint; Return to Checkpoint resumes it. Confirm Restart Level returns to the entrance and clears it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
 4. For the next export, retest IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02, including Level01 ADV_CP1/2/3 recovery and the upper landing choice. The incoming scene chain passed isolated Unity checks and developer promotion playtests; this item is browser/device regression. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
-5. Verify Beta 0.1.0 analytics delivery using [AnalyticsTestPlan.md](AnalyticsTestPlan.md) after the final rebuild and publication described in [publish_instructions.md](publish_instructions.md). Historical Alpha 0.1.2 delivery remains a separate unconfirmed record; source changes alone do not publish a build.
-6. Level-2-to-main integration and historical Alpha 0.1.2 publication are complete. Final Beta export/publication and the browser regression above remain pending.
+5. Verify Level02-specific Beta 0.1.0 analytics delivery and raw-row metrics using [AnalyticsTestPlan.md](AnalyticsTestPlan.md). Beta is published and Level01 records are confirmed by the supplied dashboard, but that screenshot does not establish Level02 delivery or its map association. See [publish_instructions.md](publish_instructions.md) for the release record. Historical Alpha 0.1.2 delivery remains a separate unconfirmed record; source changes alone do not publish a build.
+6. Level-2-to-main integration and historical Alpha 0.1.2 publication are complete. Beta 0.1.0 export/publication is also complete (source `3a693ca`, gh-pages `1105970`), with developer-reported local and online playtests passed. The detailed device/scenario checks above remain follow-ups where no specific evidence is recorded.

@@ -2,11 +2,13 @@
 
 StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce and float as a Bouncy Ball, then learn Spider and Fan abilities.
 
-## Beta 0.1.0 preparation — not yet published
+## Play Beta 0.1.0
 
-Current source targets `beta-0.1.0`. Player Version and Analytics `buildVersion` match; analytics remains in `production` and tracks only Level01/Level02. The developer confirmed a successful local Web build after the editor-only texture-property fix (`3365e29`). **Rebuild and retest after the Analytics version and launch-page label updates in this preparation.** Final deployment and Beta Google Sheets delivery are pending.
+[Play StarFormer Beta](https://xtraluck21.github.io/StarFormer/beta/)
 
-Planned output: `Builds/WebGL-Beta-0.1.0`. Planned site path: `/StarFormer/beta/`; this is not yet a verified live release. Preserve Alpha and all historical paths. See [publishing instructions](Docs/publish_instructions.md) for the release checklist and evidence to record.
+Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded, and all seven live files matched the tested local export byte for byte. Export: `Builds/WebGL-Beta-0.1.0`. Alpha and all historical publication paths remain unchanged.
+
+Player Version and Analytics `buildVersion` are `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Known analytics follow-up:** the dashboard does not yet match this build to the rebuilt Level01 map and displays deaths on a coordinate grid. Data arrival is confirmed; map rendering, Level02-specific data and full metric validation remain separate checks. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
 
 ## Current gameplay and progression
 
@@ -18,11 +20,11 @@ Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroS
 - IntroBouncyBall teaches automatic bouncing, floating on water, resuming bounces on land and faster bounces beneath low ceilings. The main route includes the low-ceiling lesson, short contextual headlines and a spike-death reminder. Its final flag transitions into Level01.
 - Level01 was rebuilt with a new layout and form progression, replacing the original scene. It includes Star/Box route choices, a one-way lift, reversible SAFE/NORMAL/HARD choices, moving safe-route boards, a falling spike, three fixed-form checkpoints, contextual hints and Home pause/restart UI. The original map remains as disabled `Level01_Legacy`.
 - Level01 continues through IntroSpider and FanTutorial to Level02. The menu also offers direct Level 1, Level 2 Intro and Level 2 entries.
-- R opens restart choices. Optional dedicated Hint/Controls buttons for Level01 remain deferred. Browser/mobile coverage and final Beta analytics delivery still need verification.
+- R opens restart choices. Optional dedicated Hint/Controls buttons for Level01 remain deferred. Broader browser/mobile coverage and analytics map/version validation remain follow-ups.
 
 ## Published builds and history
 
-- [Alpha 0.1.2](https://xtraluck21.github.io/StarFormer/alpha/) — last recorded published release, October 18, 2026; does not contain the current rebuilt Level01 or integrated Bouncy Ball tutorial.
+- [Alpha 0.1.2](https://xtraluck21.github.io/StarFormer/alpha/) — historical release, October 18, 2026; does not contain the current rebuilt Level01 or integrated Bouncy Ball tutorial.
 - [Earlier analytics playtest](https://xtraluck21.github.io/StarFormer/playtest-01/) — preserved older build.
 - [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen October 12 All-Level V2 submission.
 - [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved separately.
