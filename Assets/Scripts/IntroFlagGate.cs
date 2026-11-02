@@ -8,6 +8,8 @@ public class IntroFlagGate : MonoBehaviour
     [SerializeField] private PossessableBody requiredBody;
     [SerializeField] private GameObject exitDoor;
 
+    [SerializeField] private bool requireGroundedBody;
+
     public bool IsOpen { get; private set; }
 
     private void Awake()
@@ -43,7 +45,8 @@ public class IntroFlagGate : MonoBehaviour
         if (!isActiveAndEnabled || IsOpen || Time.timeScale <= 0f ||
             playerController == null || playerController.IsDead ||
             requiredBody == null || exitDoor == null ||
-            playerController.CurrentBody != requiredBody)
+            playerController.CurrentBody != requiredBody ||
+            (requireGroundedBody && !requiredBody.IsGrounded()))
         {
             return;
         }

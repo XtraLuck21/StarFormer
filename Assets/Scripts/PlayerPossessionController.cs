@@ -360,7 +360,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (IntroSceneExit.TryRestoreReturn(this, out PossessableBody returnHost))
         {
             initialBody.SetOwner(null);
-            initialBody.gameObject.SetActive(false);
+            if (returnHost != initialBody) initialBody.gameObject.SetActive(false);
             currentBody = returnHost;
             currentBody.SetOwner(this);
             BlockCurrentContacts();
