@@ -5,13 +5,17 @@ Last updated: 2026-11-01.
 ## Scope
 
 The analytics layer records anonymous playtest events for `Level01` and
-`Level02`. Formal Level01 is the promoted Advanced map. IntroBox, IntroBubble, IntroSpider, FanTutorial, the old Tutorial and sandbox scenes are not
+`Level02`. Formal Level01 is the promoted Advanced map. IntroBox, IntroBubble, IntroBouncyBall, IntroSpider, FanTutorial, the old Tutorial and sandbox scenes are not
 included in the four formal metrics.
 
 The implementation does not collect names, email addresses, USC IDs, IP
 addresses or Google account information. `player_id` is a random UUID stored in
 the browser through Unity `PlayerPrefs`. Clearing site data, using a private
 window or changing browsers creates a different anonymous player.
+
+## Beta 0.1.0 configuration
+
+Source Player Version and Analytics `buildVersion` both use `beta-0.1.0`. Collection remains enabled with the existing endpoint, `production` environment and tracked scenes Level01/Level02. No backend/schema change is needed. Final Web re-export after this configuration change, deployment to `/beta/` and actual `RawEvents_Production` rows labeled `beta-0.1.0` are pending. The earlier successful local build does not verify this updated embedded configuration.
 
 ## Data flow
 
@@ -152,7 +156,7 @@ The Editor prints event JSON when `logPayloadsInEditor` is enabled and does not
 contact Google. Uploading is compiled only for WebGL outside the Editor.
 
 If `endpointUrl` is blank, WebGL logs one warning and gameplay continues without
-uploading. The current Alpha asset has a configured endpoint and collection enabled; the blank-endpoint behavior is a fallback, not the current release configuration.
+uploading. The current Beta source asset has a configured endpoint and collection enabled; the blank-endpoint behavior is a fallback, not the current release configuration.
 
 Use Unity `6000.3.22f1` and the scene/build configuration documented in
 `publish_instructions.md`. Source integration does not update GitHub Pages; a

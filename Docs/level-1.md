@@ -9,11 +9,11 @@ Last updated: 2026-11-01. Current source baseline: `8834a4d` (Advanced promoted 
 The previous scene and its original `.meta` are preserved unchanged as [Level01_Legacy.unity](../Assets/Scenes/Level01_Legacy.unity). It is excluded from builds. `Level01_Reference` is a separate, older design reference. Neither backup is the current playable map; the old G/G2, held-plate, ball-checkpoint and U2-regeneration layout must not be used as the specification for this scene.
 
 ```text
-Mainmenu → IntroBox → IntroBubble → Level01 → IntroSpider → FanTutorial → Level02
+Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
 ```
 
 - Mainmenu's Level 1 button calls `MainMenuUI.OpenLevel1()` and loads `Level01`.
-- IntroBubble's grounded-Star goal also loads `Level01`.
+- IntroBouncyBall's Star/BouncyBall goal also loads `Level01`; IntroBubble first opens a passage to that tutorial.
 - Level01 stays at enabled build index 3; other production scene indices are unchanged. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
 - The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, label `Level 2 Intro`, and a 1.5-second transition. Any living controlled form can finish.
 - Completion pauses gameplay, shows `Level up! / Entering Level 2 Intro...`, clears checkpoint sessions and loads the next scene with normal time. The final wait-for-menu completion screen belongs to Level02.

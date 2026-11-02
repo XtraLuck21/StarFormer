@@ -52,7 +52,7 @@ Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Es
 - Return to Checkpoint appears when a current-scene positional or opted-in ball checkpoint exists. Restart Level clears progress. Cancel, Escape or R closes without restarting; Cancel is initially selected.
 - The R menu also pauses automatic death recovery. Cancelling restores the remaining death-delay time.
 - Home's extra confirmation screens do not replace or change the existing R shortcut.
-- IntroBubble hides its standalone Restart button; R remains available. Its left exit returns to IntroBox's endpoint as BoxB with the door open. That scene-travel feature is not checkpoint recovery.
+- IntroBubble hides its standalone Restart button; R remains available. Its left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
 - Level02 retains CP01/CP02/CP03 and its existing Return to Main Menu, Restart Level and Retry Checkpoint buttons. Retry/death restore its saved Star position and stage events; full restart clears it. See [level-2.md](level-2.md).
 
 ## Bubble hints

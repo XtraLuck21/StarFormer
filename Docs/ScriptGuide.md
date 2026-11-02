@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-01. Current source baseline: `8834a4d`; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
+Last updated: 2026-11-01. Current source includes the IntroBouncyBall integration and Beta 0.1.0 preparation; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
 
 ## 1. Scenes and build configuration
 
@@ -8,13 +8,14 @@ Last updated: 2026-11-01. Current source baseline: `8834a4d`; current Level01 is
 | --- | --- | --- |
 | 0 | [Mainmenu](../Assets/Scenes/Mainmenu.unity) | Startup and direct entries |
 | 1 | [IntroBox](../Assets/Scenes/IntroBox.unity) | Box flag opens an exit to IntroBubble |
-| 2 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Grounded-Star goal loads Level01 |
-| 3 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
-| 4 | [Level02](../Assets/Scenes/Level02.unity) | Final completion screen with Main Menu action |
+| 2 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Grounded-Star flag opens passage to IntroBouncyBall; return to IntroBox |
+| 3 | [IntroBouncyBall](../Assets/Scenes/IntroBouncyBall.unity) | Bounce/float/compressed-bounce tutorial; return to Bubble, flag to Level01 |
+| 4 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
 | 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to FanTutorial |
 | 6 | [FanTutorial](../Assets/Scenes/FanTutorial.unity) | Continues to Level02 |
+| 7 | [Level02](../Assets/Scenes/Level02.unity) | Final completion screen with Main Menu action |
 
-Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → Level01 → IntroSpider → FanTutorial → Level02.
+Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02.
 
 [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) owns the enabled list. [WebGLBuild.cs](../Assets/Editor/WebGLBuild.cs) exports that list. Keep Level01_Legacy, Level01_Reference, Tutorial, WaterPlayground and Playground disabled. EnemyScene is a separate test scene, not part of this progression.
 
@@ -66,9 +67,12 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 | [BoxGrowHint.cs](../Assets/Scripts/BoxGrowHint.cs) | Assigned Box/area, dashed size guide and J/K hints. Visual root is separate from the moving host. |
 | [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Intro Air/Water/Q-exit, Star movement/jump, Bubble introduction and ContinueRight modes. Q-exit follows any current Bubble in its safe landing area; ordinary assigned-body hints keep their binding. |
 | [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | IntroBox form title/subtitle and Box-to-Box feedback. Disabled with old title objects in rebuilt IntroBubble, which uses world hints instead. Do not enable TutorialIntroUI alongside it. |
-| [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its separate exit door. Open() supports return travel. |
-| [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Forward IntroBox → IntroBubble; reverse IntroBubble → IntroBox endpoint as BoxB with gate open. One-shot destination setup is not a full previous-scene snapshot. |
-| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | IntroBubble's grounded living Star goal; Level01 destination, Level 1 label and 1.5-second transition. |
+| [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
+| [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Two-way IntroBox ↔ IntroBubble ↔ IntroBouncyBall passages. Return to Box uses BoxB; return to Bubble uses Star near its flag, with the destination gate open. One-shot destination setup is not a full previous-scene snapshot. |
+| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/FanTutorial. IntroBubble now uses flag + passage instead. |
+| [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion, 1.5-second Level 1 transition to Level01. |
+| [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Short anchored headlines for bounce/float/land/low ceiling and spike death; subtitle disabled. |
+| [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Map movement-key prompt for the controlled tutorial ball. |
 | [IntroSpiderCamera.cs](../Assets/Scripts/IntroSpiderCamera.cs), [IntroSpiderEntranceSeal.cs](../Assets/Scripts/IntroSpiderEntranceSeal.cs), [CameraFocusIntro.cs](../Assets/Scripts/FanSet/CameraFocusIntro.cs) | Existing Spider/Fan introduction camera and entrance behavior; retain local scene wiring. |
 | [GoalFlagVisual.prefab](../Assets/Form/GoalFlagVisual.prefab) | Visual pole/flag only; gameplay goals have separate triggers and scene references. |
 | [HeldPressurePlate.cs](../Assets/Scripts/HeldPressurePlate.cs), [BoxHeightSwitch.cs](../Assets/Scripts/BoxHeightSwitch.cs) | Retained plate/height-switch interactions for legacy layouts. G/G2 are not formal Level01 prerequisites. |
@@ -105,13 +109,15 @@ Level02 geometry and its positional checkpoint system were not replaced by Advan
 | [LevelGoaltoMenu.cs](../Assets/Scripts/LevelGoaltoMenu.cs) | Class LevelGoalToMenu: Level02 completion event and final-result overlay with Return to Main Menu. |
 | [MenuUIPlatform.cs](../Assets/Scripts/MenuUIPlatform.cs) | Aligns one-way colliders to UI rectangle tops using the menu camera. Contact does not submit buttons. |
 
-Mainmenu Level1Button and IntroBubble's goal both load formal Level01. Do not point either at Level01_Legacy. Direct Level2IntroButton and Level2Button remain separate entries. Preserve local callback targets when copying UI.
+Mainmenu Level1Button and IntroBouncyBall's goal both load formal Level01; IntroBubble's opened passage leads to IntroBouncyBall. Do not point either at Level01_Legacy. Direct Level2IntroButton and Level2Button remain separate entries. Preserve local callback targets when copying UI.
 
 The playable menu uses Screen Space - Camera, the assigned orthographic camera, reference resolution 1920 × 1080 and UI-aligned one-way platforms. The Star renders above that Canvas. Keep EventSystem navigation events disabled so gameplay movement/jump does not submit buttons. Preserve the camera/coordinate conversion together when changing menu layout.
 
 Level01 uses Home instead of the old LevelCanvas standalone Restart arrangement. IntroBox keeps its separate Restart button; IntroBubble hides that button and keeps compact Main Menu plus R. Level02 retains Menu/Restart/Retry. A reload alone does not mean a fresh session: death and Retry preserve progress; Restart Level and menu/new-level entry clear it.
 
 ## 4. Web build and GitHub Pages release
+
+Beta `beta-0.1.0` is prepared in source, not yet published. Player/Analytics versions match. `3365e29` removes the Editor-only `Texture2D.alphaIsTransparency` assignment from FanPossessionHint; the developer confirmed a successful Web build. Re-export after the Analytics version and template-label updates; final source/deployment commits and hosted/Sheet acceptance remain pending. Target `Builds/WebGL-Beta-0.1.0` and publish only to `beta/`, preserving Alpha and historical paths.
 
 The last recorded published release is Alpha 0.1.2 (2026-10-18): gameplay/UI `9b35f8e`, source configuration `5650250`, `gh-pages` publication `5f62980`. The developer reported localhost and hosted gameplay tests passed. Current source changes, including formal Level01 promotion, have not been established as part of that export. Alpha 0.1.2 Sheet delivery remains separately unverified.
 

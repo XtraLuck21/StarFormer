@@ -1,13 +1,13 @@
 # Gameplay Specification
 
-Last updated: 2026-11-01. Current source includes the main integration (`5c2496d`) and promotion of Advanced to Level01 (`8834a4d`).
+Last updated: 2026-11-01. Current source includes the rebuilt Level01, integrated IntroBouncyBall and Beta 0.1.0 release preparation. The final export and publication remain pending.
 
 This specification describes the current code and authored scenes. The last recorded hosted release is Alpha 0.1.2; current source is not automatically deployed. Publication history and procedures are in [publish_instructions.md](publish_instructions.md).
 
 ## 1. Scenes and progression
 
 ```text
-Mainmenu → IntroBox → IntroBubble → Level01 → IntroSpider → FanTutorial → Level02
+Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
 ```
 
 Mainmenu also offers direct Level 1, Level 2 Intro and Level 2 entries. These load Level01, IntroSpider and Level02 respectively. Entry from the menu starts a fresh checkpoint session.
@@ -15,14 +15,15 @@ Mainmenu also offers direct Level 1, Level 2 Intro and Level 2 entries. These lo
 | Scene | Purpose |
 | --- | --- |
 | IntroBox | Star movement/jump, automatic contact possession, Box growth/shrink and flag-opened exit |
-| IntroBubble | EntryBox, dormant Bubble, air/water control, Q pop and a grounded-Star goal; optional return to IntroBox endpoint |
+| IntroBubble | EntryBox, dormant Bubble, air/water control, Q pop and a grounded-Star flag opening the BouncyBall passage; optional return to IntroBox endpoint |
+| IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, final flag to Level01 |
 | Level01 | Former Advanced layout: two lifts, right-side Star/Box landing choice, SAVE/NORMAL/RUIN upper routes, three fixed-form checkpoints and Home menu |
 | IntroSpider / FanTutorial | Existing teaching sequence before Level02; Q releases Spider/Fan, F toggles Fan wind |
 | Level02 | Spider traversal, chase, projectiles/buttons, fan sections, positional checkpoints and final completion screen |
 | Level01_Legacy | Previous formal Level01, preserved as a disabled backup; not the current map |
 | Tutorial / Level01_Reference / WaterPlayground / Playground | Disabled legacy/reference/sandbox scenes; EnemyScene is a separate test scene |
 
-Enabled build indices are Mainmenu 0, IntroBox 1, IntroBubble 2, Level01 3, Level02 4, IntroSpider 5 and FanTutorial 6. Play order follows named destinations, not consecutive build indices.
+Enabled build indices are Mainmenu 0, IntroBox 1, IntroBubble 2, IntroBouncyBall 3, Level01 4, IntroSpider 5, FanTutorial 6 and Level02 7. Play order follows named destinations, not consecutive build indices.
 
 ## 2. Controls
 
@@ -75,6 +76,8 @@ Water membership uses the body's root position inside registered water regions, 
 
 A controlled ball automatically bounces on supporting ground. A/D steering uses acceleration/braking. It checks overhead clearance before launch; a low roof compresses the bounce and accelerates its rhythm. Open space permits the configured full bounce again. Scene-specific heights and timing override prefab defaults; the lower and upper Level01 balls must not be retuned from old Legacy-map values.
 
+IntroBouncyBall overrides bounce height to 3.2 and seconds to apex to 0.8 locally; it does not retune the Level01/Level02 balls. Its aligned water banks and continuous floor lead across separated spikes into a low-ceiling section on the forward route. Contextual headlines teach each behavior without explanatory subtitles; a spike death displays a short warning during the existing death pause.
+
 The ball floats on the highest overlapping water surface, loses vertical motion there and uses reduced horizontal speed. On land, bouncing resumes. Environmental spikes remain lethal. Possessing a ball is not a checkpoint in current Level01.
 
 ### Spider, Fan and projectiles
@@ -114,7 +117,8 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery and existing 
 ## 7. Completion and navigation
 
 - IntroBox's controlled-Box flag opens the gate; its separate exit loads IntroBubble directly. IntroBubble can also return to IntroBox's endpoint using one-shot BoxB setup.
-- IntroBubble requires grounded Star and shows Entering Level 1 before loading Level01.
+- IntroBubble requires grounded Star to open its exit door; walking right loads IntroBouncyBall directly, without a Level up overlay. The ball tutorial left exit returns to Bubble as Star at its flag with the door open. This one-shot return setup is not a full scene snapshot.
+- IntroBouncyBall accepts controlled Star or BouncyBall at its flag, then shows Entering Level 1 before loading Level01.
 - Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to FanTutorial, then Level02.
 - Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
 - Level02 alone ends this sequence with Level Complete / You are a super star now! and waits for Return to Main Menu.
@@ -122,6 +126,6 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery and existing 
 
 ## 8. Validation and remaining work
 
-Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. These checks do not establish a new WebGL release or backend delivery result.
+Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. Final Beta re-export after version/template synchronization, hosted acceptance and backend delivery remain pending.
 
 Remaining work includes Level01 optional Hint/Controls UI, new-player route/timing/readability feedback, browser/aspect-ratio/mobile coverage and current-build analytics verification. Keep source status separate from the historical Alpha 0.1.2 deployment. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md); deployment checks are in [publish_instructions.md](publish_instructions.md).

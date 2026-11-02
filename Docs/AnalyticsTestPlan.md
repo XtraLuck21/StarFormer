@@ -2,11 +2,17 @@
 
 Last updated: 2026-11-01.
 
+## Beta 0.1.0 acceptance status
+
+Player Version and source Analytics `buildVersion` now match `beta-0.1.0`. Collection remains enabled in `production`, with the existing endpoint and only Level01/Level02 tracked. The developer reported a successful local Web build after `3365e29`; a new final export is required after these Analytics/template changes. Beta publication, hosted regression and Beta Sheet delivery remain pending.
+
+After the final export, run Level01 and Level02 and verify actual new `RawEvents_Production` rows with `build_version = beta-0.1.0`. The untracked IntroBouncyBall between Bubble and Level01 must not create a tracked level Run. Passage backtracking must not create spurious Level01 completion/death records. Record the tested source commit, publishing commit, browser/device and Sheet evidence; do not mark transport passed from Console output or page loading alone.
+
 ## Last recorded published release evidence
 
 Alpha 0.1.2 is published at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/) as `gh-pages` commit `5f62980`, with source configuration `5650250`. Player Version and Analytics buildVersion are `alpha-0.1.2`; the release uses `production`. Localhost and online gameplay tests passed according to the developer; deployment and payload/version checks also passed. The historical data validation at the end of this document is separate evidence and does not certify Alpha 0.1.2 Sheet delivery.
 
-Next data check: obtain the existing Sheet link/access from the analytics owner, run Level01/Level02 in the published Alpha, and confirm new `RawEvents_Production` rows contain `build_version = alpha-0.1.2`. Retain older rows and distinguish builds by that field. Inspecting an Editor log or successful page load is insufficient.
+Historical Alpha follow-up: obtain the existing Sheet link/access from the analytics owner, run Level01/Level02 in the published Alpha, and confirm new `RawEvents_Production` rows contain `build_version = alpha-0.1.2`. Retain older rows and distinguish builds by that field. Inspecting an Editor log or successful page load is insufficient.
 
 ## Preconditions for a separate test build
 
@@ -15,8 +21,8 @@ Next data check: obtain the existing Sheet link/access from the analytics owner,
 - `endpointUrl` is the latest Google Apps Script `/exec` deployment.
 - `buildVersion` identifies the exact source revision being tested.
 - Use `RawEvents_Test` and isolate the run by version/session IDs; preserve any existing test history. The receiver can create the tab if it does not exist.
-- These test-build preconditions do not describe the already published production Alpha. Do not replace the live Alpha with a test or deliberately invalid-endpoint build.
-- Enabled build scenes, in index order: Mainmenu, IntroBox, IntroBubble, Level01, Level02, IntroSpider, FanTutorial. Legacy/reference/sandbox scenes stay disabled.
+- These test-build preconditions do not describe the production Beta release configuration or the published Alpha. Keep test and deliberately invalid-endpoint exports separate from both release paths.
+- Enabled build scenes, in index order: Mainmenu, IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial, Level02. Legacy/reference/sandbox scenes stay disabled.
 - Test current Level01 (former Advanced), not Level01_Legacy. These source scenarios do not describe the old Alpha 0.1.2 map; use a new version label for the new export.
 
 ## 1. Editor validation
@@ -92,7 +98,7 @@ of a successful append. The Sheet is the source of truth.
 
 ## 6. GitHub Pages acceptance
 
-- Use a separate path for a dedicated analytics test export. Approved Alpha releases replace only `/alpha/`; preserve `playtest-01/`, Alpha Progress Check and the root.
+- Use a separate path for a dedicated analytics test export. This Beta release uses only `/beta/`; preserve `/alpha/`, `playtest-01/`, Alpha Progress Check and the root.
 - In a private window, complete one Level 1 and one Level 2 route.
 - Verify the Sheet can reconstruct both Runs using Session, Run and Attempt IDs.
 - Verify every death has a valid level, form, cause and coordinate.
