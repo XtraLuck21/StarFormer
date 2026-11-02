@@ -27,6 +27,9 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField] private Color ruinIdleColor = new Color32(238, 100, 105, 255);
     [SerializeField] private Color ruinActivatedColor = new Color32(255, 151, 71, 255);
 
+    [Header("Button Interaction")]
+    [SerializeField, Min(0f)] private float rearmHorizontalPadding = .3f;
+
     [Header("Route Presentation")]
     [SerializeField, Min(.1f)] private float cameraMoveSeconds = .85f;
     [SerializeField, Min(0f)] private float previewHoldSeconds = 1f;
@@ -55,6 +58,10 @@ public class AdvancedRouteSwitch : MonoBehaviour
     private bool previewShown;
     private bool safeShown;
     private bool hardShown;
+    private bool saveArmed = true;
+    private bool ruinArmed = true;
+    private float savePressX;
+    private float ruinPressX;
     public RouteState CurrentRoute { get; private set; } = RouteState.Normal;
     public bool IsActivated => CurrentRoute == RouteState.Safe;
     public bool IsPresenting => ownsPresentation;
@@ -76,6 +83,8 @@ public class AdvancedRouteSwitch : MonoBehaviour
         ruinSensor.isTrigger = true;
         if (levelCamera == null) levelCamera = FindFirstObjectByType<AdvancedLevelCamera2D>();
         if (levelCamera != null) viewCamera = levelCamera.GetComponent<Camera>();
+        FitButtonLabel(label);
+        FitButtonLabel(ruinLabel);
         faceStart = buttonFace.localPosition;
         ruinFaceStart = ruinButtonFace.localPosition;
         hazards = new[]
@@ -95,12 +104,16 @@ public class AdvancedRouteSwitch : MonoBehaviour
         bool isBox = controlled == targetBox;
         bool isBall = controlled == targetBall;
         bool isStar = controlled != null && controlled.Form == BodyForm.Star;
-        if ((!isBox && !isBall && !isStar) || !controlled.isActiveAndEnabled || !controlled.IsReady || !controlled.IsControlled ||
+        if (controlled == null || !controlled.isActiveAndEnabled || !controlled.IsReady || !controlled.IsControlled ||
             !controlled.Body.simulated || controlled.Body.bodyType != RigidbodyType2D.Dynamic || !controlled.BodyCollider.enabled)
             return;
-        if (isBox && !controlled.IsGrounded()) return;
-
         Bounds body = controlled.BodyCollider.bounds;
+        // Vertical bounces and held Box contact never rearm a button. The whole
+        // controlled body must leave its horizontal band, with a little margin.
+        if (!saveArmed && HasLeftHorizontally(sensor, body, savePressX)) saveArmed = true;
+        if (!ruinArmed && HasLeftHorizontally(ruinSensor, body, ruinPressX)) ruinArmed = true;
+        if ((!isBox && !isBall && !isStar) || (isBox && !controlled.IsGrounded())) return;
+
         if (isBox && !previewShown && CurrentRoute == RouteState.Normal &&
             body.center.y < sensor.bounds.min.y && Mathf.Abs(body.center.x - sensor.bounds.center.x) <= previewHalfWidth)
         {
@@ -111,10 +124,31 @@ public class AdvancedRouteSwitch : MonoBehaviour
                 return;
             }
         }
-        if (CurrentRoute != RouteState.Safe && TouchesFromBelow(sensor, controlled))
-            SelectRoute(RouteState.Safe);
-        else if (isBall && CurrentRoute != RouteState.Hard && ruinGuard.CanActivate && TouchesFromBelow(ruinSensor, controlled))
-            SelectRoute(RouteState.Hard);
+        if (saveArmed && TouchesFromBelow(sensor, controlled))
+        {
+            if (SelectRoute(CurrentRoute == RouteState.Safe ? RouteState.Normal : RouteState.Safe))
+            {
+                savePressX = body.center.x;
+                saveArmed = false;
+            }
+        }
+        else if (ruinArmed && isBall && ruinGuard.CanActivate && TouchesFromBelow(ruinSensor, controlled))
+        {
+            if (SelectRoute(CurrentRoute == RouteState.Hard ? RouteState.Normal : RouteState.Hard))
+            {
+                ruinPressX = body.center.x;
+                ruinArmed = false;
+            }
+        }
+    }
+
+    private bool HasLeftHorizontally(Collider2D button, Bounds body, float pressX)
+    {
+        // Shrinking at a button's edge must not count as walking away.
+        if (Mathf.Abs(body.center.x - pressX) <= rearmHorizontalPadding) return false;
+        Bounds area = button.bounds;
+        return body.max.x < area.min.x - rearmHorizontalPadding ||
+            body.min.x > area.max.x + rearmHorizontalPadding;
     }
 
     private static bool TouchesFromBelow(Collider2D button, PossessableBody body)
@@ -125,20 +159,22 @@ public class AdvancedRouteSwitch : MonoBehaviour
             form.max.y >= target.min.y && form.max.x > target.min.x && form.min.x < target.max.x;
     }
 
-    private void SelectRoute(RouteState state)
+    private bool SelectRoute(RouteState state)
     {
         // Only one camera presentation may own the pause at a time.
-        if (levelCamera != null && levelCamera.IsCinematic) return;
-        bool brief = state == RouteState.Safe ? safeShown : hardShown;
+        if (levelCamera != null && levelCamera.IsCinematic) return false;
+        bool brief = state == RouteState.Normal || (state == RouteState.Safe ? safeShown : hardShown);
         CurrentRoute = state;
         if (state == RouteState.Safe) safeShown = true;
-        else hardShown = true;
+        else if (state == RouteState.Hard) hardShown = true;
+        previewShown = true;
         UpdateButtons();
         routeB.SetActive(false);
         for (int i = 0; i < hazards.Length; i++) hazards[i].PrepareAnimation(ShouldShow(i));
         changingRoute = true;
         if (BeginPresentation()) StartCoroutine(RevealRoute(brief));
         else FinishRouteChange();
+        return true;
     }
 
     private bool BeginPresentation()
@@ -198,6 +234,15 @@ public class AdvancedRouteSwitch : MonoBehaviour
         UpdateButtons();
     }
 
+    private static void FitButtonLabel(TMP_Text buttonLabel)
+    {
+        if (buttonLabel == null) return;
+        // Keep the longer undo caption inside the existing button face.
+        buttonLabel.fontSizeMax = buttonLabel.fontSize;
+        buttonLabel.fontSizeMin = buttonLabel.fontSize * .7f;
+        buttonLabel.enableAutoSizing = true;
+    }
+
     private void UpdateButtons()
     {
         bool safe = CurrentRoute == RouteState.Safe;
@@ -206,8 +251,8 @@ public class AdvancedRouteSwitch : MonoBehaviour
         ruinRenderer.color = hard ? ruinActivatedColor : ruinIdleColor;
         buttonFace.localPosition = faceStart + (safe ? Vector3.up * buttonPressDistance : Vector3.zero);
         ruinButtonFace.localPosition = ruinFaceStart + (hard ? Vector3.up * buttonPressDistance : Vector3.zero);
-        if (label != null) label.text = safe ? "LIFE SAVED" : "SAVE MY LIFE";
-        if (ruinLabel != null) ruinLabel.text = hard ? "LIFE RUINED" : "RUIN MY LIFE";
+        if (label != null) label.text = safe ? "BACK TO NORMAL" : "SAVE MY LIFE";
+        if (ruinLabel != null) ruinLabel.text = hard ? "BACK TO NORMAL" : "RUIN MY LIFE";
     }
 
     private float FramedSize(float size) => size * Mathf.Max(1f, (16f / 9f) / Mathf.Max(.1f, viewCamera.aspect));
