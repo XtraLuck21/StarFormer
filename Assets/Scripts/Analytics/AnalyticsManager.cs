@@ -18,6 +18,10 @@ public sealed class AnalyticsManager : MonoBehaviour
     private bool runPaused;
     private bool awaitingDeathRespawn;
     private string activeLevelName;
+    private string mapVersion = "";
+    private string entryReason = "normal";
+    private string pendingReturnScene;
+    private AnalyticsMapCatalog mapCatalog;
     private int activeSceneHandle;
     private string levelRunId;
     private string attemptId;
@@ -85,6 +89,8 @@ public sealed class AnalyticsManager : MonoBehaviour
         }
 
         playerId = LoadOrCreatePlayerId();
+        TextAsset catalog = Resources.Load<TextAsset>("AnalyticsMapCatalog");
+        if (catalog != null) mapCatalog = JsonUtility.FromJson<AnalyticsMapCatalog>(catalog.text);
         sessionId = NewId();
         SceneManager.sceneLoaded += HandleSceneLoaded;
 
@@ -113,6 +119,7 @@ public sealed class AnalyticsManager : MonoBehaviour
         if (snapshotElapsedSeconds >= settings.SnapshotIntervalSeconds)
         {
             snapshotElapsedSeconds = 0f;
+            FlushCurrentForm("interval");
             EmitSnapshot("interval");
         }
     }
@@ -292,9 +299,16 @@ public sealed class AnalyticsManager : MonoBehaviour
         FlushTransport();
     }
 
-    public void TrackManualRestart()
+    public void TrackManualRestart(string reason = "manual_restart")
     {
-        EndRun("restart", "manual_restart");
+        EndRun("restart", reason);
+    }
+
+    // A return exit is navigation, not completion or abandonment.
+    public void TrackSceneReturn(string destination)
+    {
+        EndRun("scene_return", "return_to_previous_scene");
+        pendingReturnScene = destination;
     }
 
     public void TrackAbandoned(string reason = "return_to_menu")
@@ -319,6 +333,9 @@ public sealed class AnalyticsManager : MonoBehaviour
         string startingCheckpoint)
     {
         activeLevelName = scene.name;
+        mapVersion = mapCatalog?.Find(scene.name)?.map_version ?? "unmapped";
+        entryReason = pendingReturnScene == scene.name ? "return" : "normal";
+        pendingReturnScene = null;
         activeSceneHandle = scene.handle;
         levelRunId = NewId();
         checkpointId = startingCheckpoint;
@@ -498,7 +515,9 @@ public sealed class AnalyticsManager : MonoBehaviour
             end_reason = endReason ?? "",
             result = result ?? "",
             build_version = settings.BuildVersion,
-            details = details ?? ""
+            details = details ?? "",
+            map_version = runActive ? mapVersion : "",
+            entry_reason = runActive ? entryReason : ""
         };
 
         string payload = JsonUtility.ToJson(analyticsEvent);
@@ -559,6 +578,7 @@ public sealed class AnalyticsManager : MonoBehaviour
         pageActive = hasFocus;
         if (!hasFocus && runActive)
         {
+            FlushCurrentForm("focus_lost");
             EmitSnapshot("focus_lost");
             FlushTransport();
         }
@@ -569,6 +589,7 @@ public sealed class AnalyticsManager : MonoBehaviour
         pageActive = !pauseStatus;
         if (pauseStatus && runActive)
         {
+            FlushCurrentForm("application_paused");
             EmitSnapshot("application_paused");
             FlushTransport();
         }
@@ -578,6 +599,7 @@ public sealed class AnalyticsManager : MonoBehaviour
     {
         if (runActive)
         {
+            FlushCurrentForm("application_quit");
             EmitSnapshot("application_quit");
         }
 

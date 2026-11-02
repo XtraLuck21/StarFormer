@@ -1,5 +1,8 @@
 # WebGL Analytics Test Plan
 
+For the seven-scene analytics v2 integration, real maps and test/production
+rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
+
 Last updated: 2026-11-02.
 
 ## Beta 0.1.0 acceptance status
@@ -68,7 +71,7 @@ Sheets transport.
 - Open/cancel R and Home during normal play; test R during the death pause. Opening/cancelling must not emit restart `level_end` or create a new Run. Confirm full restart: expect `result = restart`, a new Run and cleared gameplay checkpoints/route progress. Confirm Return to Checkpoint: expect the same restart event category and a new Run, but retained gameplay progress. Manual retry is not a death.
 - Home's checkpoint action is disabled before a save. Cancel both full-restart and menu confirmations without changing gameplay/analytics state. Confirm Main Menu from an unfinished run: expect abandonment and cleared checkpoint state.
 - During SAVE previews, hazard transitions and paused menus, active timers must not advance. SAFE's full alternating-board demonstration should not add form time.
-- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete` before IntroSpider. IntroSpider → FanTutorial remains untracked; Level02 later starts a different Run in the same Session. Returning to Mainmenu after completion must not append abandonment to the completed Level01 Run.
+- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete` before IntroSpider. In the new source, IntroSpider → FanTutorial is also tracked; Level02 later starts a different Run in the same Session. Returning to Mainmenu after completion must not append abandonment to the completed Level01 Run.
 
 ## 3. Level 2 scenarios
 
@@ -139,6 +142,25 @@ of a successful append. The Sheet is the source of truth.
 - Each completed Run produces exactly one `level_complete`.
 - Google Sheets contains no duplicate `event_id` rows.
 
+## 7. Dashboard acceptance
+
+After deploying `AnalyticsBackend/Dashboard.html` and the updated `Code.gs`:
+
+1. Open the Web App `/exec` URL and confirm the dashboard loads without a
+   Google Sheet share link.
+2. Open `/exec?health=1` and confirm the receiver still reports `ok: true`.
+3. Compare the selected build/level counts with `RawEvents_Production`.
+4. Confirm death points, completion-time distributions, checkpoint travel-time
+   averages and form-duration totals match representative source rows.
+5. Create a new production event and keep the page open. Confirm it appears
+   after the 30-second cache and refresh cycle without redeploying.
+6. Change Build and Level while a refresh is running. Confirm the page does not
+   issue overlapping requests or display a stale selection.
+7. Test the intended access policy in a signed-out/private window.
+
+See [AnalyticsDashboard.md](AnalyticsDashboard.md) for definitions and the
+manual deployment checklist.
+
 ## Historical October 18 data validation (before Alpha 0.1.2)
 
 Level 1 was verified from the published WebGL test data in `RawEvents_Test`.
@@ -160,3 +182,27 @@ temporary Play Mode validation runner was removed after the passing run; it is
 not production code. Google Sheets transport remains covered by the published
 WebGL test, while the Level 2 Play Mode check validates gameplay-to-analytics
 wiring without uploading editor events.
+
+
+## November 2: aggregate dashboard acceptance
+
+See [AnalyticsDashboard.md](AnalyticsDashboard.md) for current four-metric
+calculations, release-map provenance and cloud test results. The normal-entry
+view always combines all players. Regression tests cover first-try success,
+multiple respawns before passing, incomplete/missing-start intervals, out-of-order
+and duplicate uploads, completion distributions and exact historical backgrounds.
+The /dev preview uses real production reads; synthetic browser fixtures remain
+local and are never uploaded. The owner approved publication; Web App Version 7 was released November 2,
+2026 at 13:52 Los Angeles time using the original URL.
+
+
+## Main integration verification (November 2)
+
+This source adds the new IntroBouncyBall scene to the earlier six-scene collector.
+The Editor-only verification exercises all seven scenes without POST requests,
+including run identity across death respawns, checkpoint clocks, return exits,
+manual-restart reasons and once-only completion. Backend tests validate the four
+current metrics, historical maps and zero-event tutorial previews. Integration
+scope validation compares gameplay/assets/settings to the fetched main baseline;
+only literal analytics-hook insertions are allowed in shared gameplay scripts.
+Evidence and commands are recorded in AnalyticsAllLevels.md after execution.

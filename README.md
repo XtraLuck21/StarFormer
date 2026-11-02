@@ -8,7 +8,7 @@ StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possess
 
 Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded, and all seven live files matched the tested local export byte for byte. Export: `Builds/WebGL-Beta-0.1.0`. Alpha and all historical publication paths remain unchanged.
 
-Player Version and Analytics `buildVersion` are `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Known analytics follow-up:** the dashboard does not yet match this build to the rebuilt Level01 map and displays deaths on a coordinate grid. Data arrival is confirmed; map rendering, Level02-specific data and full metric validation remain separate checks. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
+Player Version and Analytics `buildVersion` are `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Analytics source update:** the current source adds schema-v2 collection for all seven gameplay scenes, including the five tutorials. The live Apps Script dashboard is on Version 9 with release-matched base maps and the four aggregate metrics. The already-hosted Beta retains its embedded Level01/Level02-only collector until a new game build is published; Level02-specific raw-row and broader playtest checks remain separate acceptance work. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
 
 ## Current gameplay and progression
 
@@ -43,6 +43,8 @@ Alpha 0.1.2 source configuration: `5650250`; gameplay/UI changes: `9b35f8e`; pub
 - [Checkpoint guidance](Docs/CheckpointGuidance.md)
 - [WebGL analytics implementation](Docs/AnalyticsImplementation.md)
 - [WebGL analytics test plan](Docs/AnalyticsTestPlan.md)
+- [Analytics dashboard](Docs/AnalyticsDashboard.md) — four aggregate metrics, verified real maps and Apps Script deployment.
+- [All-level analytics and real maps](Docs/AnalyticsAllLevels.md) — all seven gameplay scenes, schema v2, map exports and validation.
 - [Publish to GitHub Pages](Docs/publish_instructions.md)
 
 ![Historical Tutorial gameplay; predates the introductory levels](Docs/Game_screenshot.png)

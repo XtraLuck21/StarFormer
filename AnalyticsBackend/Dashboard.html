@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <base target="_top"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>StarFormer Analytics</title>
+  <style>
+    :root{color-scheme:light;--bg:#f5f6f8;--ink:#171a21;--muted:#687080;--line:#d9dde5;--purple:#6657d9;--red:#d94c58}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px system-ui,-apple-system,sans-serif}
+    main{max-width:1240px;margin:auto;padding:28px 24px 56px}header,.section-head{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    h1{margin:0;font-size:30px;letter-spacing:-1px}h2{font-size:19px;margin:0 0 5px}h3{font-size:14px;margin:0 0 8px}p{margin:5px 0;color:var(--muted);font-size:12px;line-height:1.6}
+    .brand{display:flex;align-items:center;gap:14px}.star{background:var(--purple);color:white;border-radius:14px;padding:9px 14px;font-size:28px}
+    .filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0 12px}label{display:grid;gap:5px;font-size:11px;color:var(--muted);font-weight:650}
+    select,button{font:inherit;color:var(--ink);background:white;border:1px solid var(--line);border-radius:9px;min-height:38px;padding:6px 10px;max-width:100%}select{width:100%}
+    button{cursor:pointer;font-weight:650}button:hover{border-color:var(--purple)}button:disabled{opacity:.5;cursor:wait}button:focus-visible,select:focus-visible{outline:3px solid #cfc8ff}
+    .status{font-size:12px;color:var(--muted);margin:12px 0 18px}.status.error{color:var(--red)}.notice{padding:12px 15px;background:#fff4d8;border:1px solid #edcf83;border-radius:10px;font-size:12px;line-height:1.6;margin:10px 0}
+    .card{background:white;border:1px solid var(--line);border-radius:17px;box-shadow:0 10px 28px #18202508}.padded{padding:22px}
+    section{margin-top:32px;padding-top:8px}.section-head{margin-bottom:14px;align-items:flex-start}.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.tools select{width:auto}.metric-no{color:var(--purple);font-size:12px;font-weight:750;margin-bottom:6px;letter-spacing:1px}
+    .map-frame{height:500px;overflow:hidden;position:relative;border-radius:15px;background:#e6e8ed;border:1px solid var(--line)}#death-map{display:block;width:100%;height:100%;touch-action:none;cursor:grab}#death-map:active{cursor:grabbing}
+    .map-mark{vector-effect:non-scaling-stroke;stroke:white;stroke-width:1.2}.map-caption{font-size:12px;color:var(--muted);margin-top:8px}.columns{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .chart .section-head{align-items:center}.chart .section-head h3{margin:0;white-space:nowrap}.chart .section-head select{width:auto;min-width:0;max-width:60%;flex:1}.chart{padding:22px;min-height:210px}.histogram{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;height:185px;align-items:end}.histogram>.empty{grid-column:1/-1;align-self:center}.hist-column{text-align:center;min-width:0;font-size:11px}.hist-bar{background:var(--red);border-radius:5px 5px 0 0;margin:8px auto;width:72%}.hist-count{font-weight:700}.histogram.purple .hist-bar{background:var(--purple)}.histogram.blue .hist-bar{background:#4386d7}
+    .summary{display:flex;flex-wrap:wrap;gap:20px 32px;margin:6px 0 18px}.summary strong{display:block;font-size:27px;letter-spacing:-.6px}.summary span{font-size:11px;color:var(--muted)}
+    .duration-track{height:6px;max-width:320px;min-width:90px;margin-top:7px;background:#eeecfb;border-radius:3px}.duration-fill{height:100%;border-radius:3px;background:var(--purple)}.table-wrap{overflow:auto;max-height:400px}table{border-collapse:collapse;width:100%;font-size:12px}th,td{padding:12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--muted);background:#fafbfc;position:sticky;top:0}tbody tr:last-child td{border-bottom:0}
+    .stack{display:flex;height:36px;border-radius:10px;overflow:hidden;background:#e9ecf0;margin:12px 0 18px}.legend{display:flex;flex-wrap:wrap;gap:12px 24px;font-size:13px}.swatch{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px}.empty{padding:35px 16px;color:var(--muted);text-align:center}.muted{color:var(--muted)}
+    [hidden]{display:none!important}@media(max-width:850px){.filters{grid-template-columns:repeat(2,1fr)}.columns{grid-template-columns:1fr}.map-frame{height:400px}.section-head{flex-direction:column}}
+    @media(max-width:520px){main{padding:20px 12px}.brand .star{display:none}h1{font-size:25px}.map-frame{height:330px}.chart,.padded{padding:16px}.summary{gap:14px 20px}}
+  </style>
+</head>
+<body><main>
+  <header><div class="brand"><span class="star" aria-hidden="true">★</span><div><h1>StarFormer Analytics</h1><p>Four metrics · all players combined</p></div></div><button id="refresh">Refresh now</button></header>
+  <div class="filters" aria-label="Dashboard filters">
+    <label>DATA SOURCE<select id="environment" aria-label="Data source"><option value="production">Production</option><option value="test">Test</option></select></label>
+    <label>BUILD<select id="build" aria-label="Build"></select></label>
+    <label>LEVEL<select id="level" aria-label="Level"></select></label>
+    <label>MAP VERSION<select id="map-version" aria-label="Map version"></select></label>
+  </div>
+  <div id="status" class="status" role="status" aria-live="polite">Loading analytics…</div>
+  <div id="data-notice" class="notice" hidden></div>
+  <section aria-labelledby="locations-title">
+    <div class="section-head"><div><div class="metric-no">01 / DEATH LOCATIONS</div><h2 id="locations-title">Where players died</h2><p>All recorded deaths on the matching level map.</p></div><div class="tools"><button id="zoom-in" aria-label="Zoom in">+</button><button id="zoom-out" aria-label="Zoom out">−</button><button id="reset-map">Fit map</button></div></div>
+    <div id="map-notice" class="notice">Loading map…</div>
+    <div class="map-frame"><svg id="death-map" role="img" aria-label="Real level map and death locations"></svg></div>
+    <p id="map-caption" class="map-caption"></p><p>Red dots show deaths. Drag to pan; scroll or use + / − to zoom. The map shows the initial layout; moving objects and doors may change during play.</p>
+  </section>
+  <section aria-labelledby="checkpoint-title">
+    <div class="section-head"><div><div class="metric-no">02 / CHECKPOINT TRAVEL TIME</div><h2 id="checkpoint-title">Time between checkpoints</h2><p>How long it takes to reach the next checkpoint, including active play across death retries.</p></div></div>
+    <div class="card table-wrap"><table><thead><tr><th>Route</th><th>Average time</th><th>Completed samples</th></tr></thead><tbody id="checkpoint-intervals"></tbody></table></div>
+    <p>Level start → first checkpoint, checkpoint → next checkpoint, and last checkpoint → finish. Paused and unfocused time is excluded.</p><p id="interval-note"></p>
+  </section>
+  <section aria-labelledby="completion-title">
+    <div class="section-head"><div><div class="metric-no">03 / COMPLETION TIME</div><h2 id="completion-title">Level completion time</h2><p>Active play time across death respawns, grouped by duration.</p></div></div>
+    <div class="card padded"><div id="completion-summary" class="summary"></div><div id="completion-chart" class="histogram purple" role="img" aria-label="Level completion time distribution"></div><p id="completion-note"></p></div>
+  </section>
+  <section aria-labelledby="form-title"><div class="section-head"><div><div class="metric-no">04 / FORM USAGE</div><h2 id="form-title">Time in each form</h2><p>Total control time and share across all players, including Spider and Fan when used.</p></div><p id="form-total"></p></div><div class="card padded"><div id="form-stack" class="stack" role="img" aria-label="Time in each form"></div><div id="form-legend" class="legend"></div></div></section>
+</main>
+<script>
+(function(){
+  'use strict';
+  const $=id=>document.getElementById(id);
+  const names={IntroBox:'Box tutorial',IntroBubble:'Bubble tutorial',IntroBouncyBall:'Bouncing Ball tutorial',Level01:'Level 1',IntroSpider:'Spider tutorial',FanTutorial:'Fan tutorial',Level02:'Level 2'};
+  const colors={Star:'#6657d9',Box:'#4386d7',Bubble:'#35a37a',BouncyBall:'#a860cb',Spider:'#d27b36',Fan:'#7a879a'};
+  let latest=null,inFlight=false,queued=false,revision=0,activeMap=null,mapKey='',mapBounds=null,viewport=null,drag=null;
+  const mapCache=new Map();
+  function text(id,value){$(id).textContent=value;}
+  function time(value){if(value===null||value===undefined)return '—';const n=Math.round(Number(value)||0);return n<60?n+'s':Math.floor(n/60)+'m '+String(n%60).padStart(2,'0')+'s';}
+  function number(value){return value===null||value===undefined?'—':Number(value).toFixed(1).replace('.0','');}
+  function label(id){const match=/^ADV_CP(\d+)$/.exec(id||'');return match?'Checkpoint '+match[1]:id==='START'?'Level start':id==='FINISH'?'Finish':String(id||'').replace(/_/g,' ').replace('BouncyBall','Ball');}
+  function intervalLabel(item){return label(item.from)+' → '+label(item.to);}
+  function options(id,items,selected){const el=$(id);el.replaceChildren();items.forEach(item=>{const option=document.createElement('option');option.value=typeof item==='string'?item:item.id;option.textContent=typeof item==='string'?item:item.label;el.appendChild(option);});if(selected!==undefined)el.value=selected;}
+  function selectedRequest(){return {environment:$('environment').value,build:$('build').value,level:$('level').value,map_version:$('map-version').value};}
+  function refresh(){
+    if(inFlight){queued=true;return;}inFlight=true;$('refresh').disabled=true;
+    $('status').className='status';text('status',latest?'Refreshing analytics…':'Loading analytics…');
+    if(typeof google==='undefined'||!google.script||!google.script.run){failure(new Error('Open the deployed Apps Script Web App to load live data.'));return;}
+    const requestedRevision=revision;
+    google.script.run.withSuccessHandler(response=>{
+      inFlight=false;$('refresh').disabled=false;
+      if(requestedRevision!==revision){queued=false;refresh();return;}
+      latest=response;
+      options('build',response.builds,response.selected_build);
+      options('level',response.levels.map(id=>({id:id,label:names[id]||id})),response.selected_level);
+      options('map-version',response.map_versions.map(id=>({id:id,label:id==='legacy'?'Historical build':id==='legacy-layout-conflict'?'Historical layout — not verified':id==='unmapped'?'Map not exported':id})),response.selected_map_version);
+      text('status','All players combined · '+response.view.event_count+' selected events · updated '+new Date(response.generated_at).toLocaleTimeString()+' · refresh every 30s');
+      render();loadMap();if(queued){queued=false;refresh();}
+    }).withFailureHandler(failure).getDashboardData(selectedRequest());
+  }
+  function failure(error){inFlight=false;$('refresh').disabled=false;$('status').className='status error';text('status','Refresh failed: '+(error.message||String(error))+'. Use Refresh now to retry.');if(queued){queued=false;refresh();}}
+  function notice(id,message){$(id).hidden=!message;text(id,message||'');}
+  function render(){
+    const v=latest.view,messages=[];
+    if(!v.event_count)messages.push(latest.release_collects_level===false?'This game version does not collect data for this tutorial yet. Its map is shown below; a game update is needed to collect tutorial play data.':'No gameplay events have been received for this selection yet. The map, when available, is a reference layout.');
+    if(latest.selected_map_version==='legacy-layout-conflict')messages.push('This build label was used with a different layout from its published release. These runs are kept separate; their matching map is not yet verified.');
+    if(v.invalid_death_positions)messages.push(v.invalid_death_positions+' deaths have no valid position and cannot be plotted.');
+    if(v.orphan_completions)messages.push(v.orphan_completions+' completions have no matching start and are excluded from completion statistics.');
+    if(v.invalid_completion_times)messages.push(v.invalid_completion_times+' completed runs have no valid duration.');
+    notice('data-notice',messages.join(' '));
+    renderCompletions(v);renderIntervals(v);renderForms(v);drawMap(false);
+  }
+  function tableRow(values,parent){const row=document.createElement('tr');values.forEach(value=>{const cell=document.createElement('td');cell.textContent=value;row.appendChild(cell);});parent.appendChild(row);return row;}
+  function empty(container,message){container.replaceChildren();const p=document.createElement('p');p.className='empty';p.textContent=message;container.appendChild(p);}
+  function summary(id,items){const target=$(id);target.replaceChildren();items.forEach(([name,value])=>{const block=document.createElement('div'),strong=document.createElement('strong'),caption=document.createElement('span');strong.textContent=value;caption.textContent=name;block.append(strong,caption);target.appendChild(block);});}
+  function histogram(id,bins,emptyMessage){const target=$(id);target.replaceChildren();
+    const total=bins.reduce((n,b)=>n+b.count,0);target.setAttribute('aria-label',bins.map(bin=>bin.label+': '+bin.count).join(', '));
+    if(!total){empty(target,emptyMessage);return;}
+    const max=Math.max(1,...bins.map(bin=>bin.count));bins.forEach(bin=>{const column=document.createElement('div');column.className='hist-column';const count=document.createElement('div'),bar=document.createElement('div'),label=document.createElement('span');count.className='hist-count';count.textContent=bin.count;bar.className='hist-bar';bar.style.height=bin.count/max*115+'px';label.textContent=bin.label;column.title=bin.label+' · '+bin.count;column.append(count,bar,label);target.appendChild(column);});
+  }
+  function renderCompletions(v){
+    const rate=v.runs?number(v.completes/v.runs*100)+'%':'—';
+    summary('completion-summary',[['Average time',time(v.completion.mean_seconds)],['Median time',time(v.completion.median_seconds)],['Completion rate',rate],['Completed runs',v.completes]]);
+    histogram('completion-chart',v.completion.distribution,'No completed runs in this selection.');
+    text('completion-note',v.completes+' of '+v.runs+' observed runs completed. Each completed run counts once; unfinished runs do not enter the time distribution. Paused and unfocused time is excluded.');
+  }
+  function renderIntervals(v){const body=$('checkpoint-intervals');body.replaceChildren();
+    const maximum=Math.max(1,...v.checkpoint_intervals.map(item=>item.mean_seconds||0));
+    v.checkpoint_intervals.forEach(item=>{
+      const row=tableRow([intervalLabel(item),time(item.mean_seconds),item.sample_count],body);
+      if(item.mean_seconds!==null){const track=document.createElement('div'),fill=document.createElement('div');track.className='duration-track';fill.className='duration-fill';fill.style.width=item.mean_seconds/maximum*100+'%';track.appendChild(fill);row.children[1].appendChild(track);}
+    });
+    if(!body.children.length)tableRow(['No completed checkpoint segments yet.','—','0'],body);
+    const unfinished=v.unpassed_intervals.reduce((sum,item)=>sum+item.count,0),notes=['Only completed segments with both recorded endpoints enter the average.'];
+    if(unfinished)notes.push(unfinished+' unfinished segments excluded.');
+    if(v.unverified_intervals)notes.push(v.unverified_intervals+' completed segments have missing timing data and are excluded.');
+    text('interval-note',notes.join(' '));
+  }
+  function renderForms(v){const stack=$('form-stack'),legend=$('form-legend');stack.replaceChildren();legend.replaceChildren();
+    const entries=Object.entries(v.form_durations).filter(e=>e[1]>0).sort((a,b)=>b[1]-a[1]),total=entries.reduce((sum,e)=>sum+e[1],0);
+    text('form-total',time(total)+' recorded');stack.setAttribute('aria-label',entries.map(e=>e[0]+' '+time(e[1])).join(', '));
+    if(!total){empty(legend,'No completed control segments yet.');return;}
+    entries.forEach(([name,seconds])=>{const color=colors[name]||'#7a879a',percent=seconds/total*100;const segment=document.createElement('div');segment.style.width=percent+'%';segment.style.background=color;segment.title=name+' · '+time(seconds)+' · '+percent.toFixed(1)+'%';stack.appendChild(segment);
+      const entry=document.createElement('span'),swatch=document.createElement('i');swatch.className='swatch';swatch.style.background=color;entry.append(swatch,document.createTextNode(name+' '+time(seconds)+' · '+percent.toFixed(1)+'%'));legend.appendChild(entry);
+    });
+  }
+  function loadMap(){
+    const key=JSON.stringify([latest.selected_build,latest.selected_level,latest.selected_map_version]);
+    if(key===mapKey)return;mapKey=key;activeMap=null;viewport=null;mapBounds=null;
+    notice('map-notice','Loading matching map…');drawMap(true);
+    if(mapCache.has(key)){acceptMap(key,mapCache.get(key));return;}
+    google.script.run.withSuccessHandler(map=>{mapCache.set(key,map);acceptMap(key,map);}).withFailureHandler(error=>{if(key===mapKey){notice('map-notice','Map could not load: '+error.message);mapKey='';drawMap(true);}}).getDashboardMap(latest.selected_level,latest.selected_map_version,latest.selected_build);
+  }
+  function acceptMap(key,map){if(key!==mapKey)return;activeMap=map;viewport=null;
+    notice('map-notice',map?(map.historical_build?'Map background matched to '+map.historical_build+'.':''):'No verified map is available for this build/version. Death positions remain visible on the coordinate grid.');drawMap(true);
+  }
+  function svg(name,attributes,parent){const node=document.createElementNS('http://www.w3.org/2000/svg',name);Object.entries(attributes||{}).forEach(([key,value])=>node.setAttribute(key,value));if(parent)parent.appendChild(node);return node;}
+  function drawMap(reset){
+    if(!latest)return;const target=$('death-map'),points=latest.view.death_points.filter(p=>Number.isFinite(p.x)&&Number.isFinite(p.y));target.replaceChildren();
+    const map=activeMap;
+    const xs=points.map(p=>p.x),ys=points.map(p=>p.y);
+    if(map){xs.push(map.min_x,map.max_x);ys.push(map.min_y,map.max_y);}
+    if(!xs.length){xs.push(-5,5);ys.push(-5,5);}
+    let minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+    const pad=Math.max(.5,(maxX-minX)*.02);mapBounds={x:minX-pad,y:-maxY-pad,w:Math.max(2,maxX-minX+2*pad),h:Math.max(2,maxY-minY+2*pad)};
+    if(reset||!viewport)viewport=Object.assign({},mapBounds);
+    const title=svg('title',{},target);title.textContent=(names[latest.selected_level]||latest.selected_level)+' · recorded deaths';
+    if(map)svg('image',{href:map.image_data_url,x:map.min_x,y:-map.max_y,width:map.max_x-map.min_x,height:map.max_y-map.min_y,preserveAspectRatio:'none'},target);
+    else{
+      svg('rect',{x:mapBounds.x,y:mapBounds.y,width:mapBounds.w,height:mapBounds.h,fill:'#eef0f4'},target);
+      for(let i=0;i<=8;i++){const x=mapBounds.x+mapBounds.w*i/8,y=mapBounds.y+mapBounds.h*i/8;svg('line',{x1:x,y1:mapBounds.y,x2:x,y2:mapBounds.y+mapBounds.h,stroke:'#d7dce4','vector-effect':'non-scaling-stroke'},target);svg('line',{x1:mapBounds.x,y1:y,x2:mapBounds.x+mapBounds.w,y2:y,stroke:'#d7dce4','vector-effect':'non-scaling-stroke'},target);}
+    }
+    const frame=$('death-map').getBoundingClientRect(),unit=Math.max(mapBounds.w/Math.max(320,frame.width),mapBounds.h/Math.max(330,frame.height));
+    points.forEach(p=>{const mark=svg('circle',{cx:p.x,cy:-p.y,r:unit*4,'data-screen-radius':4,fill:'#ed354b','fill-opacity':.75,class:'map-mark'},target);svg('title',{},mark).textContent='Death';});
+    text('map-caption',points.length+' deaths shown'+(map?' · '+(names[latest.selected_level]||latest.selected_level)+' · real initial layout':' · coordinate-only view'));applyViewport();
+  }
+  function applyViewport(){if(!viewport)return;const target=$('death-map');target.setAttribute('viewBox',[viewport.x,viewport.y,viewport.w,viewport.h].join(' '));
+    const rect=target.getBoundingClientRect(),unit=Math.max(viewport.w/Math.max(1,rect.width),viewport.h/Math.max(1,rect.height));
+    target.querySelectorAll('[data-screen-radius]').forEach(mark=>mark.setAttribute('r',Number(mark.dataset.screenRadius)*unit));
+    target.querySelectorAll('[data-screen-font]').forEach(mark=>mark.setAttribute('font-size',Number(mark.dataset.screenFont)*unit));
+  }
+  function zoom(factor,point){if(!viewport||!mapBounds)return;const nextWidth=viewport.w*factor;if(nextWidth<mapBounds.w/40||nextWidth>mapBounds.w*5)return;point=point||{x:viewport.x+viewport.w/2,y:viewport.y+viewport.h/2};viewport.x=point.x-(point.x-viewport.x)*factor;viewport.y=point.y-(point.y-viewport.y)*factor;viewport.w*=factor;viewport.h*=factor;applyViewport();}
+  function world(event){const matrix=$('death-map').getScreenCTM();if(!matrix)return null;return new DOMPoint(event.clientX,event.clientY).matrixTransform(matrix.inverse());}
+  $('death-map').addEventListener('wheel',event=>{event.preventDefault();zoom(event.deltaY>0?1.15:1/1.15,world(event));},{passive:false});
+  $('death-map').addEventListener('pointerdown',event=>{drag=world(event);$('death-map').setPointerCapture(event.pointerId);});
+  $('death-map').addEventListener('pointermove',event=>{if(!drag||!viewport)return;const point=world(event);viewport.x+=drag.x-point.x;viewport.y+=drag.y-point.y;applyViewport();});
+  ['pointerup','pointercancel','lostpointercapture'].forEach(name=>$('death-map').addEventListener(name,()=>drag=null));
+  $('zoom-in').onclick=()=>zoom(1/1.4);$('zoom-out').onclick=()=>zoom(1.4);$('reset-map').onclick=()=>{viewport=null;drawMap(true);};
+  ['environment','build','level','map-version'].forEach(id=>$(id).addEventListener('change',()=>{
+    if(id==='environment'){$('build').value='';$('map-version').value='';mapKey='';}
+    if(id==='build'){$('map-version').value='';mapKey='';}
+    if(id==='level'){$('map-version').value='';mapKey='';viewport=null;}
+    revision++;refresh();
+  }));
+  $('refresh').onclick=refresh;document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
+  window.setInterval(()=>{if(!document.hidden)refresh();},30000);refresh();
+}());
+</script></body></html>
