@@ -74,7 +74,22 @@ public class PossessableBody : MonoBehaviour
     private void Awake()
     {
         Body = GetComponent<Rigidbody2D>();
-        BodyCollider = GetComponent<Collider2D>();
+
+        // Prefer the first enabled collider: a prefab may keep a disabled
+        // legacy collider (e.g. StarPlayer's old capsule) before the live one.
+        foreach (Collider2D candidate in GetComponents<Collider2D>())
+        {
+            if (candidate.enabled)
+            {
+                BodyCollider = candidate;
+                break;
+            }
+        }
+
+        if (BodyCollider == null)
+        {
+            BodyCollider = GetComponent<Collider2D>();
+        }
 
         if (!IsReady)
         {
@@ -123,7 +138,13 @@ public class PossessableBody : MonoBehaviour
             Body.WakeUp();
         }
 
-        controlVisual.SetActive(owner != null);
+        // Spider uses its googly eyes without the possession star overlay.
+        controlVisual.SetActive(owner != null && form != BodyForm.Spider);
+
+        if (TryGetComponent(out SpiderGooglyEyes spiderEyes))
+        {
+            spiderEyes.RefreshVisibility();
+        }
 
         if (TryGetComponent(out BodyWaterPhysics waterPhysics))
         {

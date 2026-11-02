@@ -5,6 +5,7 @@ using UnityEngine;
 public class LevelGoal : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController playerController;
+    [Tooltip("Optional gate that must open before this goal can be reached.")]
     [SerializeField] private GameObject requiredGate;
     [SerializeField] private TMP_Text statusText;
     [SerializeField] private string nextSceneName = "Level02";
@@ -19,10 +20,10 @@ public class LevelGoal : MonoBehaviour
     {
         GetComponent<BoxCollider2D>().isTrigger = true;
 
-        if (playerController == null || requiredGate == null ||
+        if (playerController == null ||
             string.IsNullOrWhiteSpace(nextSceneName))
         {
-            Debug.LogError("Assign the player controller, gate, and next scene name.", this);
+            Debug.LogError("Assign the player controller and next scene name.", this);
             enabled = false;
             return;
         }
@@ -36,7 +37,7 @@ public class LevelGoal : MonoBehaviour
     private void CheckGoal(Collider2D other)
     {
         if (!isActiveAndEnabled || isCompleted ||
-            playerController.IsDead || Time.timeScale <= 0f || requiredGate.activeSelf)
+            playerController.IsDead || Time.timeScale <= 0f || (requiredGate != null && requiredGate.activeSelf))
         {
             return;
         }
@@ -49,7 +50,7 @@ public class LevelGoal : MonoBehaviour
             return;
         }
 
-        // Any controlled form can finish Level 1 after its final gate opens.
+        // Any controlled form can finish once the optional gate opens.
         if (!Application.CanStreamedLevelBeLoaded(nextSceneName))
         {
             if (!reportedMissingScene)

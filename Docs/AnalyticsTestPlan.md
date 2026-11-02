@@ -1,8 +1,8 @@
 # WebGL Analytics Test Plan
 
-Last updated: 2026-10-18.
+Last updated: 2026-11-01.
 
-## Current release evidence
+## Last recorded published release evidence
 
 Alpha 0.1.2 is published at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/) as `gh-pages` commit `5f62980`, with source configuration `5650250`. Player Version and Analytics buildVersion are `alpha-0.1.2`; the release uses `production`. Localhost and online gameplay tests passed according to the developer; deployment and payload/version checks also passed. The historical data validation at the end of this document is separate evidence and does not certify Alpha 0.1.2 Sheet delivery.
 
@@ -16,8 +16,8 @@ Next data check: obtain the existing Sheet link/access from the analytics owner,
 - `buildVersion` identifies the exact source revision being tested.
 - Use `RawEvents_Test` and isolate the run by version/session IDs; preserve any existing test history. The receiver can create the tab if it does not exist.
 - These test-build preconditions do not describe the already published production Alpha. Do not replace the live Alpha with a test or deliberately invalid-endpoint build.
-- Build scenes are Mainmenu, IntroBox, IntroBubble, Level01 and Level02 in that
-  order.
+- Enabled build scenes, in index order: Mainmenu, IntroBox, IntroBubble, Level01, Level02, IntroSpider, FanTutorial. Legacy/reference/sandbox scenes stay disabled.
+- Test current Level01 (former Advanced), not Level01_Legacy. These source scenarios do not describe the old Alpha 0.1.2 map; use a new version label for the new export.
 
 ## 1. Editor validation
 
@@ -34,23 +34,15 @@ Sheets transport.
 
 ## 2. Level 1 scenarios
 
-- Die on an ordinary spike while controlling Star. Expect one `death` with
-  `death_cause = Spike` and the Star's world coordinates.
-- Possess the lower Bouncy Ball. Expect one `checkpoint_reached` whose ID is
-  the ball instance name and a new `attempt_start`.
-- Die while controlling that ball. Expect the same Run ID after scene reload,
-  a new Attempt ID and Bouncy Ball form at respawn.
-- Possess the upper ball and repeat the checkpoint/death test.
-- Pop Bubble with E. Expect Bubble `form_duration` and Star `form_change`, but
-  no `death`.
-- Pop Bubble on a Bubble-only hazard. Expect no `death`.
-- Touch the same water hazard as Box. Expect one `death` with
-  `UnderwaterHazard`.
-- Press R during normal play and during the death pause. Expect `level_end` with
-  `result = restart`; the reloaded level must use a new Run ID.
-- Click Level01 Restart Level after a ball checkpoint. Expect `level_end` with `result = restart`, a new Run ID and a fresh level entrance with cleared checkpoints; it must not resume the ball.
-- Finish the level. Expect exactly one `level_complete`; Level 2 must start with
-  a different Run ID in the same Session.
+- Reach each hollow-star marker in order. Expect one `checkpoint_reached` with `ADV_CP1`, `ADV_CP2`, then `ADV_CP3`, and a new `attempt_start` at each accepted save. Possessing R1/R2 alone and revisiting old markers must not create additional checkpoints/attempts.
+- Die after each checkpoint. Expect one `death`, the same Run ID across automatic reload, a new Attempt ID and the configured Box / BouncyBall / Star respawn respectively. At CP3, arriving as Box still restores Star; Bubble flying overhead does not save.
+- In NORMAL or HARD, die on an ordinary spike. Expect `death_cause = Spike` and the controlled form's coordinates. Trigger the HARD falling spike and test contact during descent and after landing; each death must emit once. Retry rearms the trap.
+- Select SAFE/HARD and raise the upper lift/break the RUIN cover, then die or use Return to Checkpoint. Confirm the completed route/lift/cover progress survives while loose bodies, lower door and motion/trap cycles reset. Earlier markers cannot replace a later save.
+- Pop Bubble with Q. Expect Bubble `form_duration` and Star `form_change`, not `death`. Check both three-second Q lessons and the first-tank R lesson; no old generic E reminder should appear. Bubble-only hazard behavior is a separate shared/legacy fixture, not a current Level01 terrain prerequisite.
+- Open/cancel R and Home during normal play; test R during the death pause. Opening/cancelling must not emit restart `level_end` or create a new Run. Confirm full restart: expect `result = restart`, a new Run and cleared gameplay checkpoints/route progress. Confirm Return to Checkpoint: expect the same restart event category and a new Run, but retained gameplay progress. Manual retry is not a death.
+- Home's checkpoint action is disabled before a save. Cancel both full-restart and menu confirmations without changing gameplay/analytics state. Confirm Main Menu from an unfinished run: expect abandonment and cleared checkpoint state.
+- During SAVE previews, hazard transitions and paused menus, active timers must not advance. SAFE's full alternating-board demonstration should not add form time.
+- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete` before IntroSpider. IntroSpider → FanTutorial remains untracked; Level02 later starts a different Run in the same Session. Returning to Mainmenu after completion must not append abandonment to the completed Level01 Run.
 
 ## 3. Level 2 scenarios
 
@@ -115,7 +107,7 @@ of a successful append. The Sheet is the source of truth.
 - No Analytics failure blocks movement, possession, death recovery or scene
   navigation.
 - Level 1 and Level 2 share one schema and one Session when played consecutively.
-- Automatic death reload retains the Run; R, Restart Level and Retry Checkpoint create a new Run. Retry alone preserves gameplay checkpoint state.
+- Automatic death reload retains the Run; confirmed Restart Level, Return to Checkpoint and Retry Checkpoint create a new Run. The latter two preserve gameplay checkpoint state; opening/cancelling R does not create a new Run.
 - Bubble popping never counts as death.
 - Immediate Level 2 hazards no longer lose death events.
 - Each completed Run produces exactly one `level_complete`.

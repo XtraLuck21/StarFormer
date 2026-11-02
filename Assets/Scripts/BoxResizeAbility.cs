@@ -21,10 +21,14 @@ public class BoxResizeAbility : MonoBehaviour
 
     private Vector3 originalScale;
     private float currentSize = 1f;
-    private float resizeInput;
 
     private readonly List<Collider2D> overlaps =
         new List<Collider2D>(16);
+    private readonly List<Collider2D> growthContacts =
+        new List<Collider2D>(16);
+
+    private readonly List<RatchetingCeiling> liftableCeilings =
+        new List<RatchetingCeiling>(2);
 
     private void Awake()
     {
@@ -32,18 +36,30 @@ public class BoxResizeAbility : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
 
+        // Dynamic hosts must scale independently, even when grouped in a scene.
+        // Detach before capturing the baseline scale, preserving world pose and size.
+        if (possessable.Form == BodyForm.Box && transform.parent != null)
+        {
+            transform.SetParent(null, true);
+        }
+
         originalScale = transform.localScale;
 
-        if (possessable.Form != BodyForm.Box ||
-            transform.parent != null ||
-            Mathf.Abs(Mathf.DeltaAngle(body.rotation, 0f)) > 0.01f ||
-            originalScale.x <= 0f ||
-            originalScale.y <= 0f ||
-            boxCollider.edgeRadius > 0f)
+        var problems = new List<string>();
+        if (possessable.Form != BodyForm.Box)
+            problems.Add($"Form is {possessable.Form}; expected Box");
+        if (Mathf.Abs(Mathf.DeltaAngle(body.rotation, 0f)) > 0.01f)
+            problems.Add($"world rotation Z is {body.rotation}; expected 0 degrees");
+        if (originalScale.x <= 0f || originalScale.y <= 0f)
+            problems.Add($"scale is {originalScale}; X and Y must be positive");
+        if (boxCollider.edgeRadius > 0f)
+            problems.Add($"BoxCollider2D Edge Radius is {boxCollider.edgeRadius}; expected 0");
+
+        if (problems.Count > 0)
         {
             Debug.LogError(
-                "Box resizing requires an upright, unparented box " +
-                "with positive scale and zero collider edge radius.",
+                $"Box resizing disabled on '{name}' in scene '{gameObject.scene.name}': " +
+                string.Join("; ", problems) + ".",
                 this
             );
 
@@ -51,16 +67,16 @@ public class BoxResizeAbility : MonoBehaviour
         }
     }
 
-    private void Update()
+    // The controller captures grounding before resizing invalidates contacts,
+    // then applies movement to the resized body in the same physics step.
+    public void Tick(bool isGrounded)
     {
-        resizeInput = 0f;
-
-        if (!possessable.IsControlled)
+        if (!isActiveAndEnabled || !possessable.IsControlled)
         {
             return;
         }
 
-        // The controller combines W/S and the on-screen Grow/Shrink buttons
+        // The controller combines J/K and the on-screen Grow/Shrink buttons
         // into one VerticalInput value (-1 to 1); use it directly here.
         // Desktop and mobile share the same input path, so resizing still works
         // when Keyboard.current is null on a mobile device.
@@ -71,12 +87,10 @@ public class BoxResizeAbility : MonoBehaviour
             return;
         }
 
-        resizeInput = Mathf.Clamp(owner.VerticalInput, -1f, 1f);
-    }
-
-    private void FixedUpdate()
-    {
-        if (!possessable.IsControlled || resizeInput == 0f)
+        // Read the current owner's input in the physics step. A cached Update
+        // value can resize a newly entered host after TransferTo clears input.
+        float resizeInput = Mathf.Clamp(owner.VerticalInput, -1f, 1f);
+        if (resizeInput == 0f)
         {
             return;
         }
@@ -95,13 +109,15 @@ public class BoxResizeAbility : MonoBehaviour
         Physics2D.SyncTransforms();
 
         Bounds originalBounds = boxCollider.bounds;
-        bool keepBottom = possessable.IsGrounded();
+        bool keepBottom = isGrounded;
+        growthContacts.Clear();
 
         // Shrinking stays inside the current occupied space.
         // Growing requires enough room for the proposed collider.
         if (requestedSize > currentSize &&
             !HasRoom(requestedSize, originalBounds, keepBottom))
         {
+            growthContacts.AddRange(overlaps);
             float lower = currentSize;
             float upper = requestedSize;
 
@@ -123,7 +139,26 @@ public class BoxResizeAbility : MonoBehaviour
             requestedSize = lower;
         }
 
+        // Commit ceiling movement only after all obstacles accept the final size.
+        if (requestedSize > currentSize &&
+            !HasRoom(requestedSize, originalBounds, keepBottom, true))
+            return;
+
         ApplySize(requestedSize, originalBounds, keepBottom);
+
+        // A safe resize stops just before contact. Report a reached host even
+        // when no collision callback is generated for that small clearance.
+        foreach (Collider2D other in growthContacts)
+        {
+            if (other == null || other.attachedRigidbody == body ||
+                Physics2D.GetIgnoreCollision(boxCollider, other)) continue;
+
+            ColliderDistance2D distance = Physics2D.Distance(boxCollider, other);
+            if (distance.isValid && distance.distance <= ContactTolerance * 2f)
+            {
+                possessable.RequestSurfacePossession(other);
+            }
+        }
     }
 
     private void GetProposedBounds(
@@ -147,7 +182,8 @@ public class BoxResizeAbility : MonoBehaviour
     private bool HasRoom(
         float targetSize,
         Bounds originalBounds,
-        bool keepBottom)
+        bool keepBottom,
+        bool moveCeilings = false)
     {
         GetProposedBounds(
             targetSize,
@@ -157,9 +193,14 @@ public class BoxResizeAbility : MonoBehaviour
             out Vector2 size
         );
 
-        // Allow normal surface contact without treating it as penetration.
-        size.x = Mathf.Max(0.001f, size.x - ContactTolerance * 2f);
-        size.y = Mathf.Max(0.001f, size.y - ContactTolerance * 2f);
+        float requiredCeilingBottom = center.y + size.y * 0.5f + ContactTolerance;
+        liftableCeilings.Clear();
+
+        // Keep clearance around ordinary obstacles to avoid pushing hosts while
+        // growing. Liftable panels are checked separately and moved only after
+        // every obstacle accepts the final size.
+        size.x = Mathf.Max(0.001f, size.x + ContactTolerance * 2f);
+        size.y = Mathf.Max(0.001f, size.y + ContactTolerance * 2f);
 
         ContactFilter2D filter = new ContactFilter2D();
         filter.SetLayerMask(
@@ -192,7 +233,20 @@ public class BoxResizeAbility : MonoBehaviour
                 continue;
             }
 
+            if (keepBottom && other.TryGetComponent(out RatchetingCeiling lift) &&
+                lift.CanLiftForBox(boxCollider, requiredCeilingBottom))
+            {
+                liftableCeilings.Add(lift);
+                continue;
+            }
+
             return false;
+        }
+
+        if (moveCeilings)
+        {
+            foreach (RatchetingCeiling lift in liftableCeilings)
+                lift.LiftForBox(requiredCeilingBottom);
         }
 
         return true;
@@ -235,6 +289,12 @@ public class BoxResizeAbility : MonoBehaviour
 
         Physics2D.SyncTransforms();
         body.WakeUp();
+    }
+
+    public void RestoreSceneEntrySize(float size)
+    {
+        Physics2D.SyncTransforms();
+        ApplySize(Mathf.Clamp(size, minimumSize, maximumSize), boxCollider.bounds, false);
     }
 
     private void OnValidate()

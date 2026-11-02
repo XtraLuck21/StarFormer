@@ -142,6 +142,7 @@ MonoBehaviour:
   maxRange: 5
   pushForce: 22
   airflowWidth: 1.2
+  startBlowing: 0
 --- !u!1 &210000110
 GameObject:
   m_ObjectHideFlags: 0

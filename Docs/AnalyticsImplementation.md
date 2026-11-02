@@ -1,11 +1,11 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-10-18.
+Last updated: 2026-11-01.
 
 ## Scope
 
 The analytics layer records anonymous playtest events for `Level01` and
-`Level02`. IntroBox, IntroBubble, the old Tutorial and sandbox scenes are not
+`Level02`. Formal Level01 is the promoted Advanced map. IntroBox, IntroBubble, IntroSpider, FanTutorial, the old Tutorial and sandbox scenes are not
 included in the four formal metrics.
 
 The implementation does not collect names, email addresses, USC IDs, IP
@@ -58,12 +58,9 @@ uses `DontDestroyOnLoad`. Do not add separate copies to Level 1 or Level 2.
 - `level_run_id`: new on fresh level entry or a manual restart, including Retry Checkpoint.
 - `attempt_id`: new at level start, checkpoint activation and death respawn.
 
-Automatic death reload retains the current Level Run. Pressing R, using the
-Restart Level button, or entering the level again starts a new Run. Level02 Retry Checkpoint also calls `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death, and the event schema does not distinguish those button choices. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
+Automatic death reload retains the current Level Run. Opening/cancelling the R menu or Level01 Home menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in R/Home and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death, and the event schema does not distinguish those button choices. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
 
-Level 1 uses `BouncyBall_Lower` and `BouncyBall_Upper` as checkpoint IDs. Level
-2 uses the existing `CP01`, `CP02` and `CP03` IDs. The attempt timer resets when
-a checkpoint is activated and again when the player respawns there.
+Current Level01 uses `ADV_CP1`, `ADV_CP2` and `ADV_CP3`, restoring Box, BouncyBall and Star respectively. Possessing a ball alone no longer records a checkpoint in this scene. Level02 retains `CP01`, `CP02` and `CP03`. The attempt timer resets on accepted checkpoint activation and again on respawn. Historical `BouncyBall_Lower`/`BouncyBall_Upper` rows describe the old first-level layout; distinguish them by build version rather than rewriting historical data.
 
 ## Formal metrics
 
@@ -144,9 +141,10 @@ not upload production rows.
   `SpikeWallEnemyChase` provide explicit death causes.
 - Immediate Level 2 hazards now use zero-delay `KillControlledBody` rather than
   bypassing death handling with `RequestRestart`.
-- `LevelGoal` records Level 1 completion before the transition overlay.
+- `AdvancedCheckpointController` reports accepted monotonic Level01 checkpoint activations through `PlayerPossessionController.SetCheckpoint`; old markers do not create a new attempt.
+- `LevelGoal` records Level 1 completion before transitioning to IntroSpider. IntroSpider and FanTutorial are untracked teaching scenes; Level02 starts its own Run when entered.
 - `LevelGoalToMenu` records Level 2 completion when the flag is reached, then shows the final overlay. Return to Main Menu happens only after its button is selected.
-- `LevelNavigationUI` records restart/abandonment before loading another scene.
+- `LevelNavigationUI` records restart/abandonment before loading another scene. Level01 Home and R use the same controller restart/menu paths. Opening/cancelling a confirmation emits no restart; confirming manual retry still starts a new analytics Run even when gameplay progress is retained.
 
 ## Editor and release behavior
 

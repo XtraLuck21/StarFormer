@@ -1,13 +1,60 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Place beyond the opened flag gate, on the continuation of the floor.
+// Place on a scene exit; forward routes can require an opened flag gate.
 [RequireComponent(typeof(BoxCollider2D))]
 public class IntroSceneExit : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private IntroFlagGate requiredFlagGate;
+    [SerializeField] private bool requireFlagGate = true;
     [SerializeField] private string nextSceneName = "IntroBubble";
+
+    [SerializeField] private bool returnToPreviousExit;
+    [SerializeField] private PossessableBody returnBody;
+    [SerializeField] private Vector2 returnPosition;
+    [SerializeField] private float returnBoxSize = 0.5f;
+
+    private static string pendingReturnScene;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetReturnState()
+    {
+        pendingReturnScene = null;
+    }
+
+    // Consumed once during player initialization, so a later restart is a fresh run.
+    public static bool TryRestoreReturn(PlayerPossessionController controller,
+        out PossessableBody body)
+    {
+        body = null;
+        if (pendingReturnScene != controller.gameObject.scene.name)
+            return false;
+
+        pendingReturnScene = null;
+        foreach (IntroSceneExit exit in FindObjectsByType<IntroSceneExit>(FindObjectsSortMode.None))
+        {
+            if (exit.playerController != controller || exit.returnBody == null ||
+                !exit.returnBody.isActiveAndEnabled || !exit.returnBody.IsReady)
+                continue;
+
+            body = exit.returnBody;
+            if (body.TryGetComponent(out BoxResizeAbility resize))
+                resize.RestoreSceneEntrySize(exit.returnBoxSize);
+
+            body.transform.position = new Vector3(exit.returnPosition.x,
+                exit.returnPosition.y, body.transform.position.z);
+            body.Body.position = exit.returnPosition;
+            body.Body.linearVelocity = Vector2.zero;
+            body.Body.angularVelocity = 0f;
+            exit.requiredFlagGate?.Open();
+            Physics2D.SyncTransforms();
+            return true;
+        }
+
+        Debug.LogError("The return scene needs an exit with a configured return body.", controller);
+        return false;
+    }
 
     private bool isLoading;
     private bool reportedMissingScene;
@@ -15,10 +62,10 @@ public class IntroSceneExit : MonoBehaviour
     private void Awake()
     {
         GetComponent<BoxCollider2D>().isTrigger = true;
-        if (playerController == null || requiredFlagGate == null ||
+        if (playerController == null || (requireFlagGate && requiredFlagGate == null) ||
             string.IsNullOrWhiteSpace(nextSceneName))
         {
-            Debug.LogError("IntroSceneExit requires a player controller, flag gate, and next scene name.", this);
+            Debug.LogError("IntroSceneExit requires a player controller, next scene name, and a flag gate when gate checking is enabled.", this);
             enabled = false;
         }
     }
@@ -37,7 +84,7 @@ public class IntroSceneExit : MonoBehaviour
     {
         if (!isActiveAndEnabled || isLoading || Time.timeScale <= 0f ||
             playerController == null || playerController.IsDead ||
-            requiredFlagGate == null || !requiredFlagGate.IsOpen)
+            (requireFlagGate && (requiredFlagGate == null || !requiredFlagGate.IsOpen)))
         {
             return;
         }
@@ -60,6 +107,7 @@ public class IntroSceneExit : MonoBehaviour
         }
 
         isLoading = true;
+        pendingReturnScene = returnToPreviousExit ? nextSceneName : null;
         PlayerPossessionController.ResetCheckpointSession();
         Time.timeScale = 1f;
         SceneManager.LoadScene(nextSceneName);

@@ -1,12 +1,14 @@
 # Publish StarFormer to GitHub Pages
 
-Last updated: 2026-10-18.
+Last updated: 2026-11-01.
 
 - [Current Alpha](https://xtraluck21.github.io/StarFormer/alpha/) — fixed path for tested Alpha releases.
 - [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved during Alpha publication.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
 
 Alpha `alpha-0.1.2` is published at `/alpha/` on October 18, 2026. Source configuration `5650250` includes the Level 1 restart and intro-control changes from `9b35f8e`. Export: `Builds/WebGL-Alpha-0.1.2`; publishing commit: `5f62980`. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/39173067360) succeeded. The deployed HTML/version and game-data payload matched the tested export. The developer reported both localhost and online tests passed. Analytics Sheet delivery for this version is still awaiting confirmation.
+
+**Current source through November 1, not established as a new publication:** Advanced is now formal Level01 (`8834a4d`), with a disabled Level01_Legacy backup. It adds three route modes, three fixed-form checkpoints, timed Q hints and Home pause/restart UI, and finishes into IntroSpider → FanTutorial → Level02. The integrated IntroBubble retains its rebuilt tank, map hints, return travel and spare Bubble. Controls are J/K for Box, Q for Bubble pop or Spider/Fan release, F for wind; R opens restart choices. This checklist targets current source, not the old Alpha 0.1.2 map. Choose a new version before exporting; this docs update neither builds nor publishes it.
 
 The instructions below are the repeatable release procedure, using 0.1.2 as the completed example. For the next release, choose a new version and output folder, update both Player and Analytics versions, rebuild and retest before replacing `/alpha/`.
 
@@ -40,9 +42,11 @@ Open Unity, wait for imports and compilation, and test from `Mainmenu`. Resolve 
 2  IntroBubble
 3  Level01
 4  Level02
+5  IntroSpider
+6  FanTutorial
 ```
 
-Keep the old Tutorial, reference scenes and sandboxes unchecked. Open **Scene List** to edit or drag the order; Mainmenu must remain the startup scene.
+Keep Level01_Legacy, the old Tutorial, reference scenes and sandboxes unchecked. Level01 is the promoted Advanced scene; do not add a duplicate Advanced entry. Forward progression is name-based, not build-index order. Open **Scene List** to edit or drag the order; Mainmenu must remain the startup scene.
 
 In **Player Settings → Resolution and Presentation**, choose the **StarFormerAlpha** Web template and set the default canvas size to **1920 × 1080**. In the Player settings set **Version** to `alpha-0.1.2`. Keep **Gzip**, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**. Enable **Name Files As Hashes** to give changed build payloads distinct URLs when replacing `alpha/`.
 
@@ -52,17 +56,26 @@ After loading, **Play Fullscreen** requests fullscreen from a user gesture; **Pl
 
 The template uses relative asset paths and needs no edits after export. The Player Version is used to version its CSS/JS URLs; increment it together with Analytics `buildVersion` for later releases. Keep the complete exported payload together.
 
-Choose **Build And Run** with a new output folder, such as `Builds/WebGL-Alpha-0.1.2`. Test through localhost, not by double-clicking `index.html`. After integrating the October 18 Level 1 update, also check Box-to-Bubble escape and restored contact after separation, ball checkpoint death recovery versus R full restart, and U2 regeneration after E/hazard pops. Check the Introductory Levels, Level 1 and Level 2 buttons, and play the complete Mainmenu → IntroBox → IntroBubble → Level01 → Level02 route. Verify dormant bubbles activate on possession, E pops bubbles while Space does not, hazard-triggered popping still works, hint visibility and drawing order are correct, and goals/reset/return navigation work. Review existing levels for the shared bubble changes. Alpha 0.1.2 localhost and online tests passed according to the developer. Repeat the following regression checks for subsequent exports; the general acceptance report does not enumerate every scenario:
+Choose **Build And Run** with a new version-specific output folder. `Builds/WebGL-Alpha-0.1.2` is the historical completed example, not the destination for this source update. Test through localhost, not by double-clicking `index.html`.
 
-- For 0.1.2, verify the Level01 Restart Level button reloads the level from its entrance after reaching a checkpoint. Confirm Return to Main Menu still works.
+Check all four menu entries: Introductory Levels, Level 1, Level 2 Intro and Level 2. Play Mainmenu → IntroBox → IntroBubble → Level01 → IntroSpider → FanTutorial → Level02. Verify the new first level is loaded both directly and from IntroBubble. Repeat the following checks for the new export; previous general gameplay acceptance does not enumerate every device/scenario:
+
+- Level01: test blue-to-yellow checkpoint stars in order; death/Return to Checkpoint restores Box at ADV_CP1, BouncyBall at ADV_CP2 and Star at ADV_CP3. Earlier points must not overwrite later ones. Ball possession alone is not a save.
+- Test completed route selection, raised upper platform and broken RUIN cover surviving retry; loose bodies/lower door reset. Full restart clears everything. Mainmenu re-entry starts fresh.
+- Test Star and Box upper-landing routes, Box growth/shrink, the one-way lift, R2 transfer, and two separate jumps for the protected RUIN button. Preserve Box-to-Bubble escape and fresh-contact reacquisition after separation.
+- Test initial SAVE warning as Star and Box; SAFE/NORMAL/HARD changes; horizontal exit before BACK TO NORMAL; no repeat toggles during vertical bouncing. SAFE boards must remain black/fixed-length, move in opposite phase and stop together for anti-crush protection; left-board low/high passages must be traversable. The preview demonstrates the full alternating cycle.
+- Test HARD spike reveal/hiding without stray visible edges. Its falling tooth triggers only on controlled upper-route approach, stays landed/lethal and rearms on retry. Recheck existing projectiles in Level02.
+- Open Home: tooltip Home · Restart, Continue Playing, disabled checkpoint action before a save, and confirmation/cancel for Restart Level/Main Menu. Test R separately, including death-pause cancellation; no stuck time scale, duplicate modal or held input after resuming.
 - In IntroBox, verify the lowered Left/Right/Jump controls on a real phone. In IntroBubble, verify the compact 120 × 120 controls retain their directional arrangement and 35% background opacity, with readable labels and the original camera framing. Check Box growth/shrink, Bubble swimming in all four directions, Pop and Star jump, including simultaneous touches.
 - IntroBox starts with contextual A/D and SPACE prompts; BoxA possession shows the contact explanation, and BoxA → BoxB shows New box. Same little star. Subtitles remain readable at the intended browser sizes.
-- IntroBubble explains automatic rise in air, four-direction movement underwater and renewed rise after leaving the water; E exits to Star. Old circle/up-arrow and follow-the-flag text should not appear.
-- Restart (R) and R both restart the current scene; IntroBubble returns to EntryBox rather than IntroBox. Return to Main Menu still works during ordinary gameplay.
-- IntroBox's arrow appears only after the flag opens the door; walking right loads IntroBubble without a Level up overlay.
-- IntroBubble and Level01 show Level up! / Entering Level 1... or Level 2... for about 1.5 seconds, load the correct scene exactly once, and restore movement/time afterward. The outgoing gameplay and pointer interaction with its UI should pause during the overlay.
+- In IntroBubble, verify the ceiling-guided air ascent, water inlet without an air gap, underwater divider route and right exit shaft. Confirm the plain You are a Bubble / A-D hint, WASD / Move freely underwater hint, and Q / Pop Bubble hint appear in their intended regions; the top-center messages and old cards stay hidden. Verify J grows and K shrinks Box, and that IntroBox/IntroBubble hints match.
+- Open/cancel R without reloading, confirm Restart Level returns to the current scene entrance, and test Return to Checkpoint when a checkpoint is available. IntroBubble's standalone Restart button stays hidden and compact Main Menu button works. A full restart of IntroBubble starts in EntryBox; walking through its left exit instead returns to IntroBox's endpoint as BoxB with the door open.
+- IntroBox's arrow appears only after the flag opens the door; walking right loads IntroBubble without a Level up overlay. Also test direct IntroBubble entry → left exit → IntroBox endpoint → forward return to IntroBubble, then confirm a full restart consumes no old return setup.
+- Pop over safe ground, fall back into the tank as Star, possess BackupBubble and return upward. The Q hint must appear for either Bubble only once safely above the landing floor. Check the spare stays dormant before possession; neither intro Bubble automatically regenerates. Test one and both bubbles consumed, and verify Restart is available.
+- Level01: first-tank ceiling contact for 1.5 seconds displays the R lesson; water-exit and upper-right ceiling contact for 3 seconds each displays Press Q to pop once per scene load. The old generic E reminder is suppressed for AdvancedCheckpointController and must stay hidden after promotion. Test READY? → LET'S GO! plus repeated Star bounce/sparkle feedback.
+- IntroBubble shows Entering Level 1 and loads Level01; Level01 accepts any living controlled form, shows Entering Level 2 Intro and loads IntroSpider. Test IntroSpider → FanTutorial → Level02. Each timed transition loads once, clears checkpoint state and restores movement/time; outgoing gameplay and pointer interaction pause during the overlay.
 - The two intros retain the updated gray/dark palette, visible Bubble outline and correct hint/body drawing order.
-- In Level02, E / Leave releases Spider and Fan, W / Blow toggles Fan wind, and Space / Fire still fires the possessable spike wall. Confirm the single-line upper-center Spider hint and two-line Fan hint are readable.
+- In Level02, Q / Leave releases Spider and Fan, F / Blow toggles Fan wind, and Space / Fire still fires the possessable spike wall. Confirm the single-line upper-center Spider hint and two-line Fan hint are readable.
 - Confirm all three Level02 top-right buttons fit: Return to Main Menu, Restart Level and Retry Checkpoint. Test Retry with no checkpoint and at CP01/CP02/CP03, automatic death recovery at each, and Restart/R after a checkpoint. Review the unassigned ShowWall callbacks described in [level-2.md](level-2.md).
 - Reach the Level02 flag: the deleted brown wall (20) should remain absent. Show Level Complete / You are a super star now! and wait for Return to Main Menu, with gameplay paused. Verify one completion event and a fresh entrance on menu re-entry.
 - Keep MobileControls on AutoDetect for the release. Test desktop hiding, phone visibility, simultaneous movement/action touches, every form, and release of held input after hiding/focus loss. The mobile Canvas is screen-fixed Overlay UI; check different browser sizes and phone aspect ratios.

@@ -75,10 +75,12 @@ public class PlayerPossessionController : MonoBehaviour
     private float deathRestartTime;
 
     public bool IsDead => isDead;
+    public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
 
     /// <summary>
-    /// This frame's vertical input (-1 to 1), combining W/S and touch Up/Down.
+    /// This frame's vertical input (-1 to 1): J/K for Box resizing, W/S otherwise,
+    /// combined with touch Up/Down (Grow/Shrink for Box).
     /// Box resizing reads this value instead of polling the keyboard separately.
     /// </summary>
     public float VerticalInput => verticalInput;
@@ -124,7 +126,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
-    // E / Release handles bubble popping and leaving Spider or Fan.
+    // Q pops Bubble; E leaves Spider or Fan. Touch controls share this request.
     private bool releaseRequested;
     // Queue hazard-triggered bubble pops separately from player input.
     private bool bubblePopRequested;
@@ -167,9 +169,10 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointId = null;
         checkpointPosition = Vector3.zero;
         BouncyBallCheckpointSession.ClearCurrent();
+        AdvancedCheckpointController.ClearSession();
     }
 
-    public void SetCheckpoint(string id, Vector3 position)
+    public void SetCheckpoint(string id, Vector3 position, bool showFeedback = true)
     {
         if (isDead || restartRequested || string.IsNullOrWhiteSpace(id))
         {
@@ -183,7 +186,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         Debug.Log($"check point activated:{id}", this);
         AnalyticsManager.Instance?.TrackCheckpoint(id, currentBody);
-        CheckpointFeedback.ShowSaved();
+        if (showFeedback) CheckpointFeedback.ShowSaved();
     }
 
     // ===================================================================
@@ -207,7 +210,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// E / Release: leave the current form.
+    /// Q / Release: leave the current form.
     /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
     /// </summary>
     public void RequestRelease()
@@ -230,7 +233,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggle the Fan's wind (W on the keyboard): press once for on, again for off.
+    /// Toggle the Fan's wind (F on the keyboard): press once for on, again for off.
     /// Only applies while possessing Fan, matching the form-specific firing behavior.
     /// </summary>
     public void PressTouchBlow()
@@ -317,6 +320,20 @@ public class PlayerPossessionController : MonoBehaviour
             CheckpointFeedback.Initialize(this);
         }
 
+        // Advanced checkpoints choose a fixed host and restore completed mechanisms.
+        // All scene Awakes have finished before this startup-only ownership handoff.
+        if (TryGetComponent(out AdvancedCheckpointController advancedCheckpoints) &&
+            advancedCheckpoints.TryRestore(out PossessableBody checkpointBody))
+        {
+            initialBody.SetOwner(null);
+            if (checkpointBody != initialBody) initialBody.gameObject.SetActive(false);
+            currentBody = checkpointBody;
+            currentBody.SetOwner(this);
+            BlockCurrentContacts();
+            BeginAnalyticsForCurrentBody();
+            return;
+        }
+
         if (enableBouncyBallCheckpoints)
         {
             checkpointSession = BouncyBallCheckpointSession.Instance;
@@ -337,6 +354,17 @@ public class PlayerPossessionController : MonoBehaviour
             initialBody.Body.angularVelocity = 0f;
 
             Physics2D.SyncTransforms();
+        }
+
+        if (IntroSceneExit.TryRestoreReturn(this, out PossessableBody returnHost))
+        {
+            initialBody.SetOwner(null);
+            initialBody.gameObject.SetActive(false);
+            currentBody = returnHost;
+            currentBody.SetOwner(this);
+            BlockCurrentContacts();
+            BeginAnalyticsForCurrentBody();
+            return;
         }
 
         // Existing checkpoint respawns keep their original Star behavior.
@@ -425,19 +453,20 @@ public class PlayerPossessionController : MonoBehaviour
                 horizontalInput += 1f;
             }
 
-            if (keyboard.wKey.isPressed)
+            bool isBox = currentBody != null && currentBody.Form == BodyForm.Box;
+            if (isBox ? keyboard.jKey.isPressed : keyboard.wKey.isPressed)
             {
                 verticalInput += 1f;
             }
 
-            if (keyboard.sKey.isPressed)
+            if (isBox ? keyboard.kKey.isPressed : keyboard.sKey.isPressed)
             {
                 verticalInput -= 1f;
             }
 
-            if (keyboard.eKey.wasPressedThisFrame)
+            if (keyboard.qKey.wasPressedThisFrame)
             {
-                // E consistently means Release: pop Bubble or leave Spider/Fan.
+                // Q consistently means Release: pop Bubble or leave Spider/Fan.
                 RequestRelease();
             }
 
@@ -593,7 +622,15 @@ public class PlayerPossessionController : MonoBehaviour
 
             case BodyForm.Box:
                 {
-                    if (currentBody.IsGrounded())
+                    // Scaling rebuilds physics contacts. Read grounding first
+                    // so holding J/K cannot cancel this step's movement input.
+                    bool isGrounded = currentBody.IsGrounded();
+                    if (currentBody.TryGetComponent(out BoxResizeAbility resize))
+                    {
+                        resize.Tick(isGrounded);
+                    }
+
+                    if (isGrounded)
                     {
                         float speed = currentBody.MoveSpeed;
 
@@ -707,6 +744,11 @@ public class PlayerPossessionController : MonoBehaviour
 
                     break;
                 }
+        }
+
+        if (currentBody.Form == BodyForm.Box)
+        {
+            velocity = RemoveLockedBoxPush(velocity);
         }
 
         body.linearVelocity = velocity;
@@ -967,6 +1009,14 @@ public class PlayerPossessionController : MonoBehaviour
     {
         bubblePopRequested = false;
         PossessableBody previousBody = currentBody;
+
+        if (previousBody.Form == BodyForm.Box)
+        {
+            // Leaving a host ends its horizontal drive, including during J + move.
+            Vector2 previousVelocity = previousBody.Body.linearVelocity;
+            previousVelocity.x = 0f;
+            previousBody.Body.linearVelocity = previousVelocity;
+        }
 
         if (previousBody.TryGetComponent(
             out HexagonSurfaceMovement previousHexagon))
@@ -1323,6 +1373,37 @@ public class PlayerPossessionController : MonoBehaviour
         separationFrames[target] = 0;
     }
 
+    private Vector2 RemoveLockedBoxPush(Vector2 velocity)
+    {
+        // A continuously touching old host stays locked to prevent ping pong.
+        // Do not turn movement input into a force that shoves that host away.
+        foreach (PossessableBody target in blockedTargets)
+        {
+            if (target == null || target.Form != BodyForm.Box || !target.isActiveAndEnabled ||
+                target.BodyCollider == null || !target.BodyCollider.enabled ||
+                Physics2D.GetIgnoreCollision(currentBody.BodyCollider, target.BodyCollider))
+            {
+                continue;
+            }
+
+            ColliderDistance2D separation = Physics2D.Distance(currentBody.BodyCollider, target.BodyCollider);
+            float towardTarget = target.BodyCollider.bounds.center.x - currentBody.BodyCollider.bounds.center.x;
+            if (!separation.isValid || Mathf.Abs(separation.normal.x) < 0.65f ||
+                velocity.x * towardTarget <= 0f)
+            {
+                continue;
+            }
+
+            float nextStepDistance = Mathf.Abs(velocity.x * separation.normal.x) * Time.fixedDeltaTime;
+            if (separation.distance <= nextStepDistance + Physics2D.defaultContactOffset)
+            {
+                velocity.x = 0f;
+            }
+        }
+
+        return velocity;
+    }
+
     private void UpdateContactLocks()
     {
         if (blockedTargets.Count == 0 || currentBody == null)
@@ -1344,10 +1425,25 @@ public class PlayerPossessionController : MonoBehaviour
                 continue;
             }
 
-            Bounds separationBounds = currentBody.BodyCollider.bounds;
-            separationBounds.Expand(possessionSeparationDistance * 2f);
+            bool stillClose;
+            if (currentBody.Form == BodyForm.Box && target.Form == BodyForm.Box)
+            {
+                // Resizing changes the AABB every step. Rearm a box after real
+                // surface separation instead of requiring a 0.35-unit AABB gap.
+                ColliderDistance2D separation = Physics2D.Distance(
+                    currentBody.BodyCollider, target.BodyCollider);
+                float clearance = Mathf.Min(possessionSeparationDistance,
+                    Physics2D.defaultContactOffset * 2f);
+                stillClose = !separation.isValid || separation.distance <= clearance;
+            }
+            else
+            {
+                Bounds separationBounds = currentBody.BodyCollider.bounds;
+                separationBounds.Expand(possessionSeparationDistance * 2f);
+                stillClose = separationBounds.Intersects(target.BodyCollider.bounds);
+            }
 
-            if (separationBounds.Intersects(target.BodyCollider.bounds))
+            if (stillClose)
             {
                 separationFrames[target] = 0;
                 continue;

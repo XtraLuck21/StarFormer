@@ -1,12 +1,14 @@
 # Level 2 Progress
 
-Last updated: 2026-10-18.
+Last updated: 2026-11-01 (shared controls and incoming progression updated; Level02 layout unchanged).
 
 Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 work through `ab68064` was integrated into `main` by PR #14 (`3714a49`). Alpha 0.1.1 (`765a1ea` in source) corrected the navigation Canvas scaling. This content is included in the published Alpha 0.1.2 release.
 
 **October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. Alpha 0.1.2 later passed developer-reported localhost and online tests; an exhaustive checkpoint/device matrix is not recorded.
 
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
+
+**Current shared controls:** J grows Box, K shrinks Box, Q pops Bubble or leaves Spider/Fan, and F toggles Fan wind. Space still fires the possessable spike wall. R opens restart choices. Current source differs from the recorded Alpha 0.1.2 publication. See [CheckpointGuidance.md](CheckpointGuidance.md).
 
 ## 1. Current route and progress
 
@@ -15,10 +17,10 @@ The table describes the authored stage groups and major mechanics; it is not a n
 | Area | Intended play sequence | Current state |
 | --- | --- | --- |
 | Opening / `level2Begin` | Start as Star, use the opening boxes and transfer into Spider for surface traversal | Shared contact possession and form controls are integrated; the developer completed a keyboard pass before the latest presentation fixes |
-| Spider / chase | Traverse connected surfaces; the height trigger reveals the enemy spike wall, followed by the chase and collapsing blocks | `level2Camera`, `spikeWallSpawn`, `SpikeWallEnemyChase` and `StepCollapseBlock` coordinate the sequence. E / Leave returns to Star; the small upper-center release hint passed developer testing |
+| Spider / chase | Traverse connected surfaces; the height trigger reveals the enemy spike wall, followed by the chase and collapsing blocks | `level2Camera`, `spikeWallSpawn`, `SpikeWallEnemyChase` and `StepCollapseBlock` coordinate the sequence. Q / Leave returns to Star; the small upper-center release hint passed developer testing |
 | Drop / `level2Transit` | Pass through the falling-camera section, then continue with the transition area's forms and obstacles | CP01 resumes at the transition entrance; the bubble spawner supplies a replacement after the previous bubble is gone or inactive |
-| Fan and bubble traversal | Toggle Fan airflow to move eligible obstacles, leave with E, and use Bubble for the ascent | Fan hint reads W / Blow and E / Leave; developer reports the hint is correct. Airflow affects eligible non-possessable rigidbodies, not possessed forms |
-| `JumpOrDie` / `ShootOrDie` | Traverse platform hazards and use the possessable spike wall's projectiles with switches/doors | Moving platforms, lethal hazards and firing interactions remain in the scene. Space / Fire remains the shooting action; it was not replaced by E |
+| Fan and bubble traversal | Toggle Fan airflow to move eligible obstacles, leave with Q, and use Bubble for the ascent | Fan hint reads F / Blow and Q / Leave; developer reports the hint is correct. Airflow affects eligible non-possessable rigidbodies, not possessed forms |
+| `JumpOrDie` / `ShootOrDie` | Traverse platform hazards and use the possessable spike wall's projectiles with switches/doors | Moving platforms, lethal hazards and firing interactions remain in the scene. Space / Fire remains the shooting action; it was not replaced by Q |
 | Later route / `MickeyMiaoMiaoRoom` | Continue through the later platform route toward the final flag | CP02 and CP03 provide later entry points; the camera's remaining-area follow tracks the current body |
 | Finish | Touch the flag with the current living controlled body | No gate/plate or Star-only prerequisite. Display Level Complete and wait for Return to Main Menu. The unused brown `wall (20)` is deleted; completion and menu return passed the developer's subsequent test |
 
@@ -44,7 +46,7 @@ The table describes the authored stage groups and major mechanics; it is not a n
 
 **Completion:** the goal checks that the player is alive and the entering body is currently controlled. It validates the destination, records completion once, pauses gameplay and disables the player controller. The generated overlay shows **Level Complete**, **You are a super star now!**, and **Return to Main Menu**. It stays open until clicked/tapped, then clears checkpoints and loads Mainmenu with normal time scale. IntroBubble and Level01 retain their timed next-level overlays.
 
-**Recovery:** Restart Level and R clear both checkpoint systems and reload Level02 from the entrance. Retry Checkpoint reloads while preserving the active checkpoint; without one it starts at the entrance. Automatic death reload also retains the checkpoint. Scene reload resets bodies and puzzle objects; checkpoint events restore selected stage behavior, not a complete snapshot of puzzle state. Returning to Mainmenu and re-entering starts a fresh checkpoint session. Both manual buttons currently use `TrackManualRestart`, so analytics records a manual restart rather than a death and does not distinguish the two button choices.
+**Recovery:** R opens the restart menu. Confirming Restart Level, or using its standalone button, clears both checkpoint systems and reloads Level02 from the entrance. Retry Checkpoint reloads while preserving the active checkpoint; without one it starts at the entrance. Automatic death reload also retains the checkpoint. Scene reload resets bodies and puzzle objects; checkpoint events restore selected stage behavior, not a complete snapshot of puzzle state. Returning to Mainmenu and re-entering starts a fresh checkpoint session. Both manual buttons currently use `TrackManualRestart`, so analytics records a manual restart rather than a death and does not distinguish the two button choices.
 
 **Checkpoint callback follow-up:** the saved CP01, CP02 and CP03 `onRespawnHere` lists each contain a `WallSlideOnDrop.ShowWall` callback with an unassigned target (`fileID: 0`), in addition to the valid camera callback. This entry cannot restore a wall. Determine whether it is obsolete or needs a target during checkpoint regression testing; it was not repaired in this documentation pass and is not established as a current gameplay failure.
 
@@ -56,9 +58,9 @@ Values below describe the saved scene rather than recommended new tuning. World 
 
 | Object / setting | Saved value | Purpose |
 | --- | --- | --- |
-| Spider hint `cancleSpider` | Text `E / Leave: return to star`; font 3; position `(-70, 15.2)`; size `10 × 1` | One centered line in the upper middle of the fixed Spider view; no Star-jump subtitle |
+| Spider hint `cancleSpider` | Text `Q / Leave: return to star`; font 3; position `(-70, 15.2)`; size `10 × 1` | One centered line in the upper middle of the fixed Spider view; no Star-jump subtitle |
 | Spider hint reveal / hide delay | `5` units / `3` seconds | Proximity-based visibility |
-| FanHint | `W / Blow: wind on/off` and `E / Leave: return to star`; font 5; size `10 × 2` | Explain wind toggle and release separately |
+| FanHint | `F / Blow: wind on/off` and `Q / Leave: return to star`; font 5; size `10 × 2` | Explain wind toggle and release separately |
 | Fan hint reveal / hide delay | `4` units / `2` seconds | Proximity-based visibility |
 | Opening camera region | X `[-92, -75]`, Y `[10, 18]`, size `2` | Close follow during opening traversal |
 | Fixed Spider camera | Position `(-70, 13, -10)`, size `4`; X `[-75, -64]` | Frame the Spider teaching/chase setup |
@@ -106,11 +108,11 @@ Source checks during implementation and this documentation review:
 - The saved scene has the three local navigation callbacks, AutoDetect, the accepted hint values and no `wall (20)` object.
 - The original integration preserved main's intro/Level01 scene content while adding the teammate mobile Canvas, and retained analytics, ball recovery and Box-to-Bubble handoff safeguards.
 
-**Current release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Level02 navigation scaling was fixed in Alpha 0.1.1 and retained in 0.1.2. Detailed CP01/CP02/CP03 recovery coverage and current-version analytics delivery remain unverified, rather than blocking an already completed publication.
+**Last recorded published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Level02 navigation scaling was fixed in Alpha 0.1.1 and retained in 0.1.2. Detailed CP01/CP02/CP03 recovery coverage and current-version analytics delivery remain unverified, rather than blocking an already completed publication.
 
 ## 5. Decisions in this polish pass
 
-- Use E / Leave for Spider and Fan, E / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
+- Use Q / Leave for Spider and Fan, Q / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
 - Use a short upper-center Spider release hint; omit the redundant Star-jump line. Keep the accepted Fan hint.
 - Finish on touching the flag in any living controlled form. Do not require a final pressure plate or an unprompted return to Star.
 - Keep an explicit completion screen with the celebratory subtitle and a user-selected return to Mainmenu.
@@ -122,8 +124,8 @@ Source checks during implementation and this documentation review:
 ## 6. Remaining work and handoff
 
 1. Test Retry before any checkpoint and at CP01, CP02 and CP03; verify position, camera state and the reachable onward route. Check the unassigned ShowWall callbacks and automatic death recovery at each stage.
-2. After a checkpoint, verify Restart Level and R return to the entrance and clear it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
+2. After a checkpoint, verify opening/cancelling R preserves the checkpoint; Return to Checkpoint resumes it. Confirm Restart Level returns to the entrance and clears it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
-4. Retest IntroBox → IntroBubble → Level01 → Level02 after integration, including Level01 handoff/ball/U2 recovery. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
+4. For the next export, retest IntroBox → IntroBubble → Level01 → IntroSpider → FanTutorial → Level02, including Level01 ADV_CP1/2/3 recovery and the upper landing choice. The incoming scene chain passed isolated Unity checks and developer promotion playtests; this item is browser/device regression. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
 5. Verify Alpha 0.1.2 analytics delivery using [AnalyticsTestPlan.md](AnalyticsTestPlan.md). For later changes, rebuild and follow [publish_instructions.md](publish_instructions.md); source changes alone do not publish a build.
 6. Level-2-to-main integration and Alpha 0.1.2 publication are complete. Remaining items above are regression and usability follow-ups, not pending merge/build steps.

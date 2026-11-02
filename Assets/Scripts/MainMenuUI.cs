@@ -19,6 +19,11 @@ public class MainMenuUI : MonoBehaviour
         LoadLevel("Level01");
     }
 
+    public void OpenLevel2Intro()
+    {
+        LoadLevel("IntroSpider");
+    }
+
     public void OpenLevel2()
     {
         LoadLevel("Level02");

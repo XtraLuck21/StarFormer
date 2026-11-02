@@ -54,6 +54,12 @@ public class IntroFlagGate : MonoBehaviour
             return;
         }
 
+        Open();
+    }
+
+    public void Open()
+    {
+        if (exitDoor == null) return;
         IsOpen = true;
         exitDoor.SetActive(false);
     }

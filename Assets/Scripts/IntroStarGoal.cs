@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Only the controlled, grounded Star can finish the bubble introduction.
+// IntroBubble requires a grounded Star; other intro goals can accept any controlled form.
 [RequireComponent(typeof(BoxCollider2D))]
 public class IntroStarGoal : MonoBehaviour
 {
@@ -9,6 +9,7 @@ public class IntroStarGoal : MonoBehaviour
 
     [SerializeField] private string nextLevelLabel = "Level 1";
     [SerializeField, Min(0.1f)] private float transitionSeconds = 1.5f;
+    [SerializeField] private bool requireGroundedStar = true;
 
     private bool isLoading;
     private bool reportedMissingScene;
@@ -34,10 +35,10 @@ public class IntroStarGoal : MonoBehaviour
             return;
         }
 
-        PossessableBody star = playerController.CurrentBody;
-        if (star == null || !star.isActiveAndEnabled || !star.IsControlled ||
-            star.Form != BodyForm.Star || other.attachedRigidbody == null ||
-            other.attachedRigidbody != star.Body || !star.IsGrounded())
+        PossessableBody playerBody = playerController.CurrentBody;
+        if (playerBody == null || !playerBody.isActiveAndEnabled || !playerBody.IsControlled ||
+            other.attachedRigidbody == null || other.attachedRigidbody != playerBody.Body ||
+            (requireGroundedStar && (playerBody.Form != BodyForm.Star || !playerBody.IsGrounded())))
         {
             return;
         }
