@@ -9147,8 +9147,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IntroStarGoal
   playerController: {fileID: 1643171616}
-  nextSceneName: Level01
-  nextLevelLabel: Level 1
+  nextSceneName: IntroBouncyBall
+  nextLevelLabel: Bouncy Ball Tutorial
   transitionSeconds: 1.5
 --- !u!61 &1527559127
 BoxCollider2D:
