@@ -10,6 +10,7 @@ public class FanBlower : MonoBehaviour
     // heavy obstacles still get shoved while the star cannot.
     [SerializeField] private float pushForce = 22f;
     [SerializeField] private float airflowWidth = 1.2f;
+    [SerializeField] private bool startBlowing = false;
 
     public bool IsBlowing => isBlowing;
     public float MaxRange => maxRange;
@@ -29,6 +30,7 @@ public class FanBlower : MonoBehaviour
     {
         possessable = GetComponent<PossessableBody>();
         body = GetComponent<Rigidbody2D>();
+        isBlowing = startBlowing;
     }
 
     private void Update()
@@ -47,11 +49,11 @@ public class FanBlower : MonoBehaviour
             facing = owner.HorizontalInput > 0f ? 1 : -1;
         }
 
-        // Keyboard W toggles wind directly; touch calls ToggleBlow() through
+        // Keyboard F toggles wind directly; touch calls ToggleBlow() through
         // the controller's PressTouchBlow. Both update the same isBlowing state.
         Keyboard keyboard = Keyboard.current;
 
-        if (keyboard != null && keyboard.wKey.wasPressedThisFrame)
+        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
         {
             isBlowing = !isBlowing;
         }

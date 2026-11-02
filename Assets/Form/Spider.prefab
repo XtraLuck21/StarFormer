@@ -209,6 +209,7 @@ GameObject:
   - component: {fileID: 5753162252097184349}
   - component: {fileID: 6896853863633847359}
   - component: {fileID: 3799781869917660986}
+  - component: {fileID: 7788203956102451001}
   m_Layer: 6
   m_Name: Spider
   m_TagString: Untagged
@@ -331,3 +332,24 @@ MonoBehaviour:
   searchDistance: 0.15
   surfaceGap: 0.02
   correctionSpeed: 10
+--- !u!114 &7788203956102451001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8487251107228437932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdb8510ca2ec4af5a89cdba81cc67f12, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpiderGooglyEyes
+  eyeCenter: {x: 0, y: 0.12}
+  eyeSpacing: 0.25
+  eyeDiameter: 0.23
+  pupilSize: 0.42
+  springStrength: 85
+  damping: 5
+  gravityInfluence: 0.035
+  accelerationInfluence: 0.008
+  movementWiggle: 0.018

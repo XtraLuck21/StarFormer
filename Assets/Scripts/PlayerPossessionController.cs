@@ -210,7 +210,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// Release the current form (Q for Bubble, E for Spider/Fan, or touch).
+    /// Q / Release: leave the current form.
     /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
     /// </summary>
     public void RequestRelease()
@@ -233,7 +233,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>
-    /// Toggle the Fan's wind (W on the keyboard): press once for on, again for off.
+    /// Toggle the Fan's wind (F on the keyboard): press once for on, again for off.
     /// Only applies while possessing Fan, matching the form-specific firing behavior.
     /// </summary>
     public void PressTouchBlow()
@@ -464,12 +464,9 @@ public class PlayerPossessionController : MonoBehaviour
                 verticalInput -= 1f;
             }
 
-            if (currentBody != null &&
-                ((currentBody.Form == BodyForm.Bubble && keyboard.qKey.wasPressedThisFrame) ||
-                 ((currentBody.Form == BodyForm.Spider || currentBody.Form == BodyForm.Fan) &&
-                  keyboard.eKey.wasPressedThisFrame)))
+            if (keyboard.qKey.wasPressedThisFrame)
             {
-                // Bubble uses Q to pop; Spider and Fan keep E to leave.
+                // Q consistently means Release: pop Bubble or leave Spider/Fan.
                 RequestRelease();
             }
 
@@ -625,7 +622,15 @@ public class PlayerPossessionController : MonoBehaviour
 
             case BodyForm.Box:
                 {
-                    if (currentBody.IsGrounded())
+                    // Scaling rebuilds physics contacts. Read grounding first
+                    // so holding J/K cannot cancel this step's movement input.
+                    bool isGrounded = currentBody.IsGrounded();
+                    if (currentBody.TryGetComponent(out BoxResizeAbility resize))
+                    {
+                        resize.Tick(isGrounded);
+                    }
+
+                    if (isGrounded)
                     {
                         float speed = currentBody.MoveSpeed;
 
@@ -739,6 +744,11 @@ public class PlayerPossessionController : MonoBehaviour
 
                     break;
                 }
+        }
+
+        if (currentBody.Form == BodyForm.Box)
+        {
+            velocity = RemoveLockedBoxPush(velocity);
         }
 
         body.linearVelocity = velocity;
@@ -999,6 +1009,14 @@ public class PlayerPossessionController : MonoBehaviour
     {
         bubblePopRequested = false;
         PossessableBody previousBody = currentBody;
+
+        if (previousBody.Form == BodyForm.Box)
+        {
+            // Leaving a host ends its horizontal drive, including during J + move.
+            Vector2 previousVelocity = previousBody.Body.linearVelocity;
+            previousVelocity.x = 0f;
+            previousBody.Body.linearVelocity = previousVelocity;
+        }
 
         if (previousBody.TryGetComponent(
             out HexagonSurfaceMovement previousHexagon))
@@ -1355,6 +1373,37 @@ public class PlayerPossessionController : MonoBehaviour
         separationFrames[target] = 0;
     }
 
+    private Vector2 RemoveLockedBoxPush(Vector2 velocity)
+    {
+        // A continuously touching old host stays locked to prevent ping pong.
+        // Do not turn movement input into a force that shoves that host away.
+        foreach (PossessableBody target in blockedTargets)
+        {
+            if (target == null || target.Form != BodyForm.Box || !target.isActiveAndEnabled ||
+                target.BodyCollider == null || !target.BodyCollider.enabled ||
+                Physics2D.GetIgnoreCollision(currentBody.BodyCollider, target.BodyCollider))
+            {
+                continue;
+            }
+
+            ColliderDistance2D separation = Physics2D.Distance(currentBody.BodyCollider, target.BodyCollider);
+            float towardTarget = target.BodyCollider.bounds.center.x - currentBody.BodyCollider.bounds.center.x;
+            if (!separation.isValid || Mathf.Abs(separation.normal.x) < 0.65f ||
+                velocity.x * towardTarget <= 0f)
+            {
+                continue;
+            }
+
+            float nextStepDistance = Mathf.Abs(velocity.x * separation.normal.x) * Time.fixedDeltaTime;
+            if (separation.distance <= nextStepDistance + Physics2D.defaultContactOffset)
+            {
+                velocity.x = 0f;
+            }
+        }
+
+        return velocity;
+    }
+
     private void UpdateContactLocks()
     {
         if (blockedTargets.Count == 0 || currentBody == null)
@@ -1376,10 +1425,25 @@ public class PlayerPossessionController : MonoBehaviour
                 continue;
             }
 
-            Bounds separationBounds = currentBody.BodyCollider.bounds;
-            separationBounds.Expand(possessionSeparationDistance * 2f);
+            bool stillClose;
+            if (currentBody.Form == BodyForm.Box && target.Form == BodyForm.Box)
+            {
+                // Resizing changes the AABB every step. Rearm a box after real
+                // surface separation instead of requiring a 0.35-unit AABB gap.
+                ColliderDistance2D separation = Physics2D.Distance(
+                    currentBody.BodyCollider, target.BodyCollider);
+                float clearance = Mathf.Min(possessionSeparationDistance,
+                    Physics2D.defaultContactOffset * 2f);
+                stillClose = !separation.isValid || separation.distance <= clearance;
+            }
+            else
+            {
+                Bounds separationBounds = currentBody.BodyCollider.bounds;
+                separationBounds.Expand(possessionSeparationDistance * 2f);
+                stillClose = separationBounds.Intersects(target.BodyCollider.bounds);
+            }
 
-            if (separationBounds.Intersects(target.BodyCollider.bounds))
+            if (stillClose)
             {
                 separationFrames[target] = 0;
                 continue;

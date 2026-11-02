@@ -17,10 +17,10 @@ The table describes the authored stage groups and major mechanics; it is not a n
 | Area | Intended play sequence | Current state |
 | --- | --- | --- |
 | Opening / `level2Begin` | Start as Star, use the opening boxes and transfer into Spider for surface traversal | Shared contact possession and form controls are integrated; the developer completed a keyboard pass before the latest presentation fixes |
-| Spider / chase | Traverse connected surfaces; the height trigger reveals the enemy spike wall, followed by the chase and collapsing blocks | `level2Camera`, `spikeWallSpawn`, `SpikeWallEnemyChase` and `StepCollapseBlock` coordinate the sequence. E / Leave returns to Star; the small upper-center release hint passed developer testing |
+| Spider / chase | Traverse connected surfaces; the height trigger reveals the enemy spike wall, followed by the chase and collapsing blocks | `level2Camera`, `spikeWallSpawn`, `SpikeWallEnemyChase` and `StepCollapseBlock` coordinate the sequence. Q / Leave returns to Star; the small upper-center release hint passed developer testing |
 | Drop / `level2Transit` | Pass through the falling-camera section, then continue with the transition area's forms and obstacles | CP01 resumes at the transition entrance; the bubble spawner supplies a replacement after the previous bubble is gone or inactive |
-| Fan and bubble traversal | Toggle Fan airflow to move eligible obstacles, leave with E, and use Bubble for the ascent | Fan hint reads W / Blow and E / Leave; developer reports the hint is correct. Airflow affects eligible non-possessable rigidbodies, not possessed forms |
-| `JumpOrDie` / `ShootOrDie` | Traverse platform hazards and use the possessable spike wall's projectiles with switches/doors | Moving platforms, lethal hazards and firing interactions remain in the scene. Space / Fire remains the shooting action; it was not replaced by E |
+| Fan and bubble traversal | Toggle Fan airflow to move eligible obstacles, leave with Q, and use Bubble for the ascent | Fan hint reads F / Blow and Q / Leave; developer reports the hint is correct. Airflow affects eligible non-possessable rigidbodies, not possessed forms |
+| `JumpOrDie` / `ShootOrDie` | Traverse platform hazards and use the possessable spike wall's projectiles with switches/doors | Moving platforms, lethal hazards and firing interactions remain in the scene. Space / Fire remains the shooting action; it was not replaced by Q |
 | Later route / `MickeyMiaoMiaoRoom` | Continue through the later platform route toward the final flag | CP02 and CP03 provide later entry points; the camera's remaining-area follow tracks the current body |
 | Finish | Touch the flag with the current living controlled body | No gate/plate or Star-only prerequisite. Display Level Complete and wait for Return to Main Menu. The unused brown `wall (20)` is deleted; completion and menu return passed the developer's subsequent test |
 
@@ -58,9 +58,9 @@ Values below describe the saved scene rather than recommended new tuning. World 
 
 | Object / setting | Saved value | Purpose |
 | --- | --- | --- |
-| Spider hint `cancleSpider` | Text `E / Leave: return to star`; font 3; position `(-70, 15.2)`; size `10 × 1` | One centered line in the upper middle of the fixed Spider view; no Star-jump subtitle |
+| Spider hint `cancleSpider` | Text `Q / Leave: return to star`; font 3; position `(-70, 15.2)`; size `10 × 1` | One centered line in the upper middle of the fixed Spider view; no Star-jump subtitle |
 | Spider hint reveal / hide delay | `5` units / `3` seconds | Proximity-based visibility |
-| FanHint | `W / Blow: wind on/off` and `E / Leave: return to star`; font 5; size `10 × 2` | Explain wind toggle and release separately |
+| FanHint | `F / Blow: wind on/off` and `Q / Leave: return to star`; font 5; size `10 × 2` | Explain wind toggle and release separately |
 | Fan hint reveal / hide delay | `4` units / `2` seconds | Proximity-based visibility |
 | Opening camera region | X `[-92, -75]`, Y `[10, 18]`, size `2` | Close follow during opening traversal |
 | Fixed Spider camera | Position `(-70, 13, -10)`, size `4`; X `[-75, -64]` | Frame the Spider teaching/chase setup |
@@ -112,7 +112,7 @@ Source checks during implementation and this documentation review:
 
 ## 5. Decisions in this polish pass
 
-- Use E / Leave for Spider and Fan, Q / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
+- Use Q / Leave for Spider and Fan, Q / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
 - Use a short upper-center Spider release hint; omit the redundant Star-jump line. Keep the accepted Fan hint.
 - Finish on touching the flag in any living controlled form. Do not require a final pressure plate or an unprompted return to Star.
 - Keep an explicit completion screen with the celebratory subtitle and a user-selected return to Mainmenu.

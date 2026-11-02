@@ -220,6 +220,12 @@ The menu starts IntroBox, followed by IntroBubble. IntroBox teaches Star movemen
 IntroBubble now uses a rectangular enclosed water tank: EntryBox → dormant Bubble → air ascent and ceiling passage → underwater descent and traversal beneath a divider → right exit shaft → Q pop above safe ground → Star jump to the flag. The grounded-Star goal advances to Level01. A spare Bubble in the right water tank supports recovery after falling back in as Star. It is not an unlimited respawn source.
 
 IntroBubble disables top-center form messages and uses plain map text with key icons/arrows: `You are a Bubble` beside the ascent, `Move freely underwater` within the left water area, and `Pop Bubble / Return to Star` at the safe landing area. Only the pop hint follows any currently possessed Bubble; air/water hints remain bound to the original Bubble. Box hints in both intros show J for growth and K for shrinking.
+| Scene | Teaching sequence | Completion |
+| --- | --- | --- |
+| IntroBox | Start as Star, move and jump over a low step, possess BoxA, grow into elevated BoxB, then shrink through a gap and walk through the low tunnel | Controlled BoxB touches the flag to open the exit door and reveal a right arrow; walking through the separate exit loads IntroBubble without a completion overlay |
+| IntroBubble | Start in EntryBox at the tunnel entrance, grow into a dormant bubble, steer in air, swim down/across/up around the divider, then exit the water | Press Q above the right platform, land as Star and walk to the flag; only the grounded controlled Star triggers the Level up / Entering Level 1 overlay, followed by Level01 |
+
+Box hints show W/grow and S/shrink only while their target body is controlled and inside the configured region. Bubble hints show A/D in air, WASD in water, and Q above the landing platform. The water prompt sits beneath the divider while its activation area still covers the whole pool. The speculative automatic-rise circle/arrow stays removed; the subtitle now explains `You float up. You steer sideways.` In water it changes to `Underwater, every direction is yours.`, and leaving water shows `Back in the air. Up you go!`
 
 The bottom-left entrance also returns to IntroBox's endpoint as BoxB, with its exit door open. This is a one-use destination setup, not a saved snapshot of the whole prior scene. Full restart remains a fresh start of the current scene. IntroBubble hides its standalone Restart button and uses a smaller Main Menu button; R opens restart options.
 
