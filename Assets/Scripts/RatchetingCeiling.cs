@@ -15,6 +15,8 @@ public class RatchetingCeiling : MonoBehaviour
     [Tooltip("Only Box growth moves this panel. Ball impacts never raise or lower it.")]
     [SerializeField] private bool boxOnlyLift;
 
+    public float CurrentBottom => ceiling.bounds.min.y;
+
     public bool BallRaisesCeiling => !boxOnlyLift && !ballPushesDown;
 
     private BoxCollider2D ceiling;

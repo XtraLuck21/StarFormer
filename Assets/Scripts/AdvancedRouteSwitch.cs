@@ -37,6 +37,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField, Min(.7f)] private float spikeSinkDistance = 1f;
     [SerializeField, Min(0f)] private float buttonPressDistance = .12f;
     [SerializeField, Min(.1f)] private float previewHalfWidth = 1.4f;
+    [SerializeField] private float previewMinimumY = 11.25f;
     [SerializeField] private Vector2 previewCenter = new Vector2(8f, 13.7f);
     [SerializeField] private Vector2 overviewCenter = new Vector2(8.3f, 14.25f);
     [SerializeField, Min(1f)] private float previewSize = 3.4f;
@@ -65,6 +66,9 @@ public class AdvancedRouteSwitch : MonoBehaviour
     public RouteState CurrentRoute { get; private set; } = RouteState.Normal;
     public bool IsActivated => CurrentRoute == RouteState.Safe;
     public bool IsPresenting => ownsPresentation;
+    public bool HasShownPreview => previewShown;
+    public bool HasShownSafe => safeShown;
+    public bool HasShownHard => hardShown;
 
     private void Awake()
     {
@@ -114,12 +118,15 @@ public class AdvancedRouteSwitch : MonoBehaviour
         if (!ruinArmed && HasLeftHorizontally(ruinSensor, body, ruinPressX)) ruinArmed = true;
         if ((!isBox && !isBall && !isStar) || (isBox && !controlled.IsGrounded())) return;
 
-        if (isBox && !previewShown && CurrentRoute == RouteState.Normal &&
-            body.center.y < sensor.bounds.min.y && Mathf.Abs(body.center.x - sensor.bounds.center.x) <= previewHalfWidth)
+        // Both upper-route entry forms share one preview. The floor bound keeps
+        // a Star in the lower room from triggering it through the shared ceiling.
+        if ((isBox || isStar) && !previewShown && CurrentRoute == RouteState.Normal &&
+            body.center.y >= previewMinimumY && body.center.y < sensor.bounds.min.y &&
+            Mathf.Abs(body.center.x - sensor.bounds.center.x) <= previewHalfWidth)
         {
-            previewShown = true;
             if (BeginPresentation())
             {
+                previewShown = true;
                 StartCoroutine(PreviewRoute());
                 return;
             }
@@ -157,6 +164,18 @@ public class AdvancedRouteSwitch : MonoBehaviour
         Bounds target = button.bounds;
         return button.IsTouching(body.BodyCollider) && form.center.y < target.min.y &&
             form.max.y >= target.min.y && form.max.x > target.min.x && form.min.x < target.max.x;
+    }
+
+    // Scene-reload recovery applies final geometry without replaying the cinematic.
+    public void RestoreCheckpointRoute(RouteState state, bool seenPreview = false,
+        bool seenSafe = false, bool seenHard = false)
+    {
+        CurrentRoute = state;
+        previewShown = seenPreview;
+        safeShown = seenSafe;
+        hardShown = seenHard;
+        saveArmed = ruinArmed = true;
+        FinishRouteChange();
     }
 
     private bool SelectRoute(RouteState state)

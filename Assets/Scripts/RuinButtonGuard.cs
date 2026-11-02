@@ -44,6 +44,15 @@ public class RuinButtonGuard : MonoBehaviour
         }
     }
 
+    // Recovery preserves the completed break without debris or another first-hit lock.
+    public void RestoreBrokenState()
+    {
+        IsBroken = CanActivate = true;
+        cover.enabled = false;
+        visual.enabled = false;
+        if (cracks != null) cracks.SetActive(false);
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (IsBroken || targetBall == null || !targetBall.IsControlled ||
