@@ -35,6 +35,8 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField, Min(0f)] private float previewHoldSeconds = 1f;
     [SerializeField, Min(.1f)] private float spikeSinkSeconds = 1.6f;
     [SerializeField, Min(.7f)] private float spikeSinkDistance = 1f;
+    [SerializeField, Min(.1f)] private float safeRevealSeconds = 1.2f;
+    [SerializeField, Min(0f)] private float safeDemonstrationSeconds = 5.3f;
     [SerializeField, Min(0f)] private float buttonPressDistance = .12f;
     [SerializeField, Min(.1f)] private float previewHalfWidth = 1.4f;
     [SerializeField] private float previewMinimumY = 11.25f;
@@ -49,6 +51,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
     private Vector3 faceStart;
     private Vector3 ruinFaceStart;
     private HazardGroup[] hazards;
+    private SafeRouteObstacles safeObstacles;
     private Camera viewCamera;
     private Vector3 returnPosition;
     private float returnSize;
@@ -83,6 +86,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
             enabled = false;
             return;
         }
+        safeObstacles = routeB.GetComponent<SafeRouteObstacles>();
         sensor.isTrigger = true;
         ruinSensor.isTrigger = true;
         if (levelCamera == null) levelCamera = FindFirstObjectByType<AdvancedLevelCamera2D>();
@@ -236,19 +240,47 @@ public class AdvancedRouteSwitch : MonoBehaviour
                 hazards[i].MoveDuringAnimation(Vector3.Lerp(starts[i], hazards[i].Position(ShouldShow(i)), progress));
             yield return null;
         }
-        FinishRouteChange();
-        yield return new WaitForSecondsRealtime(brief ? .2f : .6f);
+        bool revealSafe = CurrentRoute == RouteState.Safe && safeObstacles != null;
+        if (revealSafe)
+        {
+            // Bury every spike completely before the safe panels emerge.
+            for (int i = 0; i < hazards.Length; i++) hazards[i].Finish(false);
+            routeB.SetActive(true);
+            safeObstacles.BeginReveal();
+            float revealTime = 0f;
+            while (revealTime < safeRevealSeconds)
+            {
+                revealTime += Time.unscaledDeltaTime;
+                safeObstacles.SetRevealAmount(Mathf.SmoothStep(0f, 1f,
+                    Mathf.Clamp01(revealTime / safeRevealSeconds)));
+                yield return null;
+            }
+            safeObstacles.BeginDemonstration();
+            yield return new WaitForSecondsRealtime(
+                Mathf.Max(safeDemonstrationSeconds, safeObstacles.MinimumPreviewSeconds));
+            FinishRouteChange(preserveSafeMotion: true);
+        }
+        else
+        {
+            FinishRouteChange();
+            yield return new WaitForSecondsRealtime(brief ? .2f : .6f);
+        }
         yield return MoveCamera(returnPosition, returnSize, moveSeconds);
         RestorePresentation();
     }
 
     private bool ShouldShow(int index) => index == 0 ? CurrentRoute != RouteState.Safe : CurrentRoute == RouteState.Hard;
 
-    private void FinishRouteChange()
+    private void FinishRouteChange(bool preserveSafeMotion = false)
     {
         if (hazards == null) return;
         for (int i = 0; i < hazards.Length; i++) hazards[i].Finish(ShouldShow(i));
         routeB.SetActive(CurrentRoute == RouteState.Safe);
+        if (CurrentRoute == RouteState.Safe && safeObstacles != null)
+        {
+            if (preserveSafeMotion) safeObstacles.FinishDemonstration();
+            else safeObstacles.RestoreLayout();
+        }
         changingRoute = false;
         UpdateButtons();
     }
