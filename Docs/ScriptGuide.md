@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-02. Current source includes the IntroBouncyBall integration and the published Beta 0.1.0 release; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
+Last updated: 2026-11-03. Current source prepares Beta 0.1.1 with seven-scene analytics, refreshed maps and the Level01 movable-door hint; Beta 0.1.0 remains the recorded published release; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
 
 ## 1. Scenes and build configuration
 
@@ -125,7 +125,7 @@ The historical Alpha release is 0.1.2 (2026-10-18): gameplay/UI `9b35f8e`, sourc
 
 Use [publish_instructions.md](publish_instructions.md) for the build list, versioning, localhost checks and scoped Pages publication procedure. Keep exports on the publishing checkout, preserve other published paths, and do not merge gh-pages into source. Use a new version/output for the next release rather than overwriting the local evidence for Beta 0.1.0 or historical Alpha releases.
 
-Analytics tracks formal Level01 and Level02, not the introduction scenes. Current first-level checkpoint IDs are ADV_CP1/2/3. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md); Editor JSON is not proof of WebGL transport.
+Current source tracks all seven gameplay scenes (IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial and Level02), excluding Mainmenu. Player/Analytics versions are `beta-0.1.1`; the already-published 0.1.0 export still tracks only Level01/Level02. Current first-level checkpoint IDs are ADV_CP1/2/3. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md); Editor JSON is not proof of WebGL transport.
 
 ## 5. Verification and remaining work
 

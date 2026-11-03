@@ -2,13 +2,19 @@
 
 StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce and float as a Bouncy Ball, then learn Spider and Fan abilities.
 
-## Play Beta 0.1.0
+## Beta 0.1.1 — prepared locally, publication pending
+
+Player Version and Analytics `buildVersion` are now `beta-0.1.1`. This release includes schema-v2 analytics for all seven gameplay scenes and the Level01 contextual movable-door hint (source changes through `2d8738d`). The hint appears after 20 seconds without door movement, is activated by deliberate player contact and briefly previews lifting the door. Analytics maps were re-exported against the current scenes, preserving previous map versions.
+
+Build into `Builds/WebGL-Beta-0.1.1` after committing the release preparation. Build/local gameplay, production event delivery and website publication remain pending. Sync the refreshed `AnalyticsBackend/MapCatalog.html` to the existing Apps Script deployment before verifying map rendering. See [release preparation and checklist](Docs/publish_instructions.md#beta-011-release-preparation).
+
+## Published Beta 0.1.0
 
 [Play StarFormer Beta](https://xtraluck21.github.io/StarFormer/beta/)
 
 Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded, and all seven live files matched the tested local export byte for byte. Export: `Builds/WebGL-Beta-0.1.0`. Alpha and all historical publication paths remain unchanged.
 
-Player Version and Analytics `buildVersion` are `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Analytics source update:** the current source adds schema-v2 collection for all seven gameplay scenes, including the five tutorials. The live Apps Script dashboard is on Version 9 with release-matched base maps and the four aggregate metrics. The already-hosted Beta retains its embedded Level01/Level02-only collector until a new game build is published; Level02-specific raw-row and broader playtest checks remain separate acceptance work. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
+The published 0.1.0 export embeds Player Version and Analytics `buildVersion` `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Analytics source update:** the current source adds schema-v2 collection for all seven gameplay scenes, including the five tutorials. The live Apps Script dashboard is on Version 9 with release-matched base maps and the four aggregate metrics. The already-hosted Beta retains its embedded Level01/Level02-only collector until a new game build is published; Level02-specific raw-row and broader playtest checks remain separate acceptance work. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
 
 ## Current gameplay and progression
 

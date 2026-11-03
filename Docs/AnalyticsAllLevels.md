@@ -174,10 +174,11 @@ then observe refresh without reloading. Verify older builds still upload.
 7. Verify signed-out dashboard access, Production rows and both old/new builds.
    Commit source, map assets, tests and docs to the repository after review.
 
-The main integration preserves its existing production endpoint/environment and
-`beta-0.1.0` analytics identity. Test overrides belong in a disposable verification
-copy. The next game publisher must assign matching new Player/Analytics release
-versions; merging source alone does not update the already-hosted Beta.
+The November 3 release preparation preserves the production endpoint/environment
+and assigns matching Player/Analytics versions `beta-0.1.1`. Maps were re-exported
+against the current scenes; sync the updated backend catalog before live map
+validation. Test overrides belong in a disposable verification copy. Merging
+source alone does not update the already-hosted Beta 0.1.0.
 The existing published game and deployed Apps Script do not change merely from
 these local source edits. A rollout is only complete after the live checks.
 

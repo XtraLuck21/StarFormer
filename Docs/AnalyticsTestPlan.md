@@ -3,7 +3,19 @@
 For the seven-scene analytics v2 integration, real maps and test/production
 rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
 
-Last updated: 2026-11-02.
+Last updated: 2026-11-03.
+
+## Beta 0.1.1 pre-publication checks
+
+Local Player/Analytics versions are `beta-0.1.1`; collection stays enabled in `production` with the existing endpoint. All seven gameplay scenes are tracked. Maps have been re-exported from the current scenes, including the new Level01 door hint. Build and runtime acceptance remain pending.
+
+- Build a fresh `Builds/WebGL-Beta-0.1.1` export. Confirm the browser title/badge and new event rows use `beta-0.1.1`.
+- Play Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02. Verify each gameplay scene creates its own run and completion; Mainmenu stays untracked.
+- Test backward passages and `scene_return` / `entry_reason = return`, full restart, checkpoint retry, death, pause/focus loss and form-duration totals. Check actual Sheet rows and duplicate handling.
+- Test the Level01 20-second door hint, deliberate contact activation, paused preview/resume and once-per-scene-load behavior on desktop and touch.
+- Sync the refreshed backend map catalog to the existing deployment. Confirm new `map_version` values resolve correctly, historical builds keep their maps and unknown versions still show a coordinate grid.
+- Record local and hosted browser/device results, source/publishing commits and URL after publication. Historical 0.1.0 acceptance below is separate evidence.
+
 
 ## Beta 0.1.0 acceptance status
 
