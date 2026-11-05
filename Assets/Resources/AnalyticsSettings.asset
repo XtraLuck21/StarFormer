@@ -19,5 +19,10 @@ MonoBehaviour:
   logPayloadsInEditor: 1
   snapshotIntervalSeconds: 30
   trackedScenes:
+  - IntroBox
+  - IntroBubble
+  - IntroBouncyBall
   - Level01
+  - IntroSpider
+  - FanTutorial
   - Level02

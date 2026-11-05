@@ -56,6 +56,7 @@ public class IntroStarGoal : MonoBehaviour
         }
 
         isLoading = true;
+        AnalyticsManager.Instance?.TrackLevelComplete(playerBody);
         if (showTransitionOverlay)
         {
             LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);

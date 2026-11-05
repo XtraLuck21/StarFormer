@@ -14,7 +14,8 @@ public sealed class AnalyticsSettings : ScriptableObject
     [SerializeField] private string buildVersion = "e457e87";
     [SerializeField] private bool logPayloadsInEditor = true;
     [SerializeField, Min(5f)] private float snapshotIntervalSeconds = 30f;
-    [SerializeField] private string[] trackedScenes = { "Level01", "Level02" };
+    [SerializeField] private string[] trackedScenes =
+        { "IntroBox", "IntroBubble", "IntroBouncyBall", "Level01", "IntroSpider", "FanTutorial", "Level02" };
 
     public bool CollectionEnabled => collectionEnabled;
     public string EndpointUrl => endpointUrl == null ? "" : endpointUrl.Trim();

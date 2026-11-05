@@ -3306,6 +3306,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 10000241}
+  - component: {fileID: 1450000001}
   m_Layer: 0
   m_Name: 04_LowCeilingRoom_And_ExitWindow
   m_TagString: Untagged
@@ -3313,6 +3314,33 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1450000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 10000240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c30289fd2fc44f6ca83a210c5a8ad120, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MovableDoorContactHint
+  player: {fileID: 20000101}
+  door: {fileID: 21000000}
+  levelCamera: {fileID: 10000005}
+  squareSprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  room:
+    serializedVersion: 2
+    x: 21
+    y: 0.8
+    width: 17.2
+    height: 6.2
+  buttonPosition: {x: 35, y: 3.8}
+  captionPosition: {x: 35.6, y: 5.8}
+  stuckSeconds: 20
+  solvedRise: 0.8
+  demonstrationSeconds: 2.8
 --- !u!4 &10000241
 Transform:
   m_ObjectHideFlags: 0

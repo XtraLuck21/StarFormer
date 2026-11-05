@@ -278,7 +278,7 @@ public class PlayerPossessionController : MonoBehaviour
             return false;
         }
         if (!clearCheckpoint && !HasSavedCheckpoint) return false;
-        AnalyticsManager.Instance?.TrackManualRestart();
+        AnalyticsManager.Instance?.TrackManualRestart(clearCheckpoint ? "restart_level" : "retry_checkpoint");
         if (clearCheckpoint) ResetCheckpointSession();
         RequestRestart();
         return true;
