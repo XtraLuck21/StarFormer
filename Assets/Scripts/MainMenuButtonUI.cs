@@ -55,7 +55,7 @@ public sealed class MainMenuButtonUI : MonoBehaviour
         home.onClick.AddListener(Show);
         var tooltip = ImageRect("Home tooltip", hud.transform, new Color(.07f, .09f, .12f, .97f));
         tooltip.anchorMin = tooltip.anchorMax = tooltip.pivot = Vector2.one;
-        tooltip.anchoredPosition = new Vector2(-24, -122);
+        tooltip.anchoredPosition = new Vector2(-128, -44);
         tooltip.sizeDelta = new Vector2(230, 48);
         tooltip.GetComponent<Image>().raycastTarget = false;
         Label("Home · Restart", tooltip, 25, Vector2.zero, tooltip.sizeDelta);
@@ -220,6 +220,7 @@ public sealed class MainMenuButtonUI : MonoBehaviour
             Debug.LogError($"Add and enable scene '{menuSceneName}' in the Build Profile.", this);
             return;
         }
+        AnalyticsManager.Instance?.TrackAbandoned("return_to_menu");
         PlayerPossessionController.ResetCheckpointSession();
         ContinuePlaying();
         Time.timeScale = 1;
