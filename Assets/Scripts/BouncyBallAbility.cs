@@ -99,6 +99,7 @@ public class BouncyBallAbility : MonoBehaviour
             bodyCollider.bounds.extents.y
         );
 
+        // Casts must respect temporary host-release exclusions as well as contacts.
         RaycastHit2D[] hits = Physics2D.CircleCastAll(
             body.position,
             castRadius,
@@ -114,6 +115,7 @@ public class BouncyBallAbility : MonoBehaviour
             if (hit.collider == null ||
                 hit.collider == bodyCollider ||
                 hit.collider.isTrigger ||
+                Physics2D.GetIgnoreCollision(bodyCollider, hit.collider) ||
                 hit.normal.y > -0.5f)
             {
                 continue;
@@ -166,7 +168,8 @@ public class BouncyBallAbility : MonoBehaviour
     {
         if (possessable == null ||
             !possessable.IsControlled ||
-            possessable.IsInWater)
+            possessable.IsInWater ||
+            Physics2D.GetIgnoreCollision(bodyCollider, collision.collider))
         {
             return;
         }
