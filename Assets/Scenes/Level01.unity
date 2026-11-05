@@ -1178,8 +1178,8 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!61 &10000073
-BoxCollider2D:
+--- !u!60 &10000073
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -1222,8 +1222,14 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.5, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.5, y: 0.44666666}
+      - {x: 0.49899876, y: 0.5}
+      - {x: -0.5, y: 0.5}
+  m_UseDelaunayMesh: 1
 --- !u!1 &10000080
 GameObject:
   m_ObjectHideFlags: 0
@@ -11682,8 +11688,8 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!61 &990000003
-BoxCollider2D:
+--- !u!60 &990000003
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -11726,8 +11732,14 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.5, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.5, y: 0.5}
+      - {x: -0.47037038, y: 0.5}
+      - {x: -0.5, y: 0.3857143}
+  m_UseDelaunayMesh: 1
 --- !u!114 &1003090278
 MonoBehaviour:
   m_ObjectHideFlags: 0
