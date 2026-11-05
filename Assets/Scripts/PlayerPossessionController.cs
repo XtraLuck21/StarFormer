@@ -75,6 +75,8 @@ public class PlayerPossessionController : MonoBehaviour
     private float deathRestartTime;
 
     public bool IsDead => isDead;
+    public AnalyticsDeathCause LastDeathCause { get; private set; } = AnalyticsDeathCause.Unknown;
+    public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
 
     /// <summary>
@@ -168,9 +170,10 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointId = null;
         checkpointPosition = Vector3.zero;
         BouncyBallCheckpointSession.ClearCurrent();
+        AdvancedCheckpointController.ClearSession();
     }
 
-    public void SetCheckpoint(string id, Vector3 position)
+    public void SetCheckpoint(string id, Vector3 position, bool showFeedback = true)
     {
         if (isDead || restartRequested || string.IsNullOrWhiteSpace(id))
         {
@@ -184,7 +187,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         Debug.Log($"check point activated:{id}", this);
         AnalyticsManager.Instance?.TrackCheckpoint(id, currentBody);
-        CheckpointFeedback.ShowSaved();
+        if (showFeedback) CheckpointFeedback.ShowSaved();
     }
 
     // ===================================================================
@@ -269,7 +272,7 @@ public class PlayerPossessionController : MonoBehaviour
             return false;
         }
         if (!clearCheckpoint && !HasSavedCheckpoint) return false;
-        AnalyticsManager.Instance?.TrackManualRestart();
+        AnalyticsManager.Instance?.TrackManualRestart(clearCheckpoint ? "restart_level" : "retry_checkpoint");
         if (clearCheckpoint) ResetCheckpointSession();
         RequestRestart();
         return true;
@@ -318,6 +321,20 @@ public class PlayerPossessionController : MonoBehaviour
             CheckpointFeedback.Initialize(this);
         }
 
+        // Advanced checkpoints choose a fixed host and restore completed mechanisms.
+        // All scene Awakes have finished before this startup-only ownership handoff.
+        if (TryGetComponent(out AdvancedCheckpointController advancedCheckpoints) &&
+            advancedCheckpoints.TryRestore(out PossessableBody checkpointBody))
+        {
+            initialBody.SetOwner(null);
+            if (checkpointBody != initialBody) initialBody.gameObject.SetActive(false);
+            currentBody = checkpointBody;
+            currentBody.SetOwner(this);
+            BlockCurrentContacts();
+            BeginAnalyticsForCurrentBody();
+            return;
+        }
+
         if (enableBouncyBallCheckpoints)
         {
             checkpointSession = BouncyBallCheckpointSession.Instance;
@@ -343,7 +360,7 @@ public class PlayerPossessionController : MonoBehaviour
         if (IntroSceneExit.TryRestoreReturn(this, out PossessableBody returnHost))
         {
             initialBody.SetOwner(null);
-            initialBody.gameObject.SetActive(false);
+            if (returnHost != initialBody) initialBody.gameObject.SetActive(false);
             currentBody = returnHost;
             currentBody.SetOwner(this);
             BlockCurrentContacts();
@@ -781,6 +798,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         AnalyticsManager.Instance?.TrackDeath(hitBody, deathCause);
 
+        LastDeathCause = deathCause;
         isDead = true;
         bubblePopRequested = false;
         pendingSource = null;

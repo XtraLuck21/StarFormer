@@ -145,7 +145,9 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
         bool reachedSecondCheckpoint = session != null &&
             session.HasReachedCheckpoint(gameObject.scene.path, secondCheckpointName);
 
-        if (gameObject.scene.name != "Level01" || !player.isActiveAndEnabled || player.IsDead ||
+        // The promoted Level 1 has its own timed, world-space Bubble hints.
+        if (player.TryGetComponent<AdvancedCheckpointController>(out _) ||
+            gameObject.scene.name != "Level01" || !player.isActiveAndEnabled || player.IsDead ||
             Time.timeScale <= 0f || reachedSecondCheckpoint || body == null ||
             !body.isActiveAndEnabled || body.Form != BodyForm.Bubble || body.Body == null)
         {

@@ -15,9 +15,14 @@ MonoBehaviour:
   collectionEnabled: 1
   endpointUrl: https://script.google.com/macros/s/AKfycbwvouGhWcYK46treKMiCgguVT5qMNZkds9Ig5Iq56gEYUEypdGokJI9yAGdEzZUdxNY/exec
   environment: production
-  buildVersion: alpha-0.1.2
+  buildVersion: beta-0.1.0
   logPayloadsInEditor: 1
   snapshotIntervalSeconds: 30
   trackedScenes:
+  - IntroBox
+  - IntroBubble
+  - IntroBouncyBall
   - Level01
+  - IntroSpider
+  - FanTutorial
   - Level02

@@ -11,6 +11,8 @@ public class IntroStarGoal : MonoBehaviour
     [SerializeField, Min(0.1f)] private float transitionSeconds = 1.5f;
     [SerializeField] private bool requireGroundedStar = true;
 
+    [SerializeField] private bool showTransitionOverlay = true;
+
     private bool isLoading;
     private bool reportedMissingScene;
 
@@ -54,6 +56,17 @@ public class IntroStarGoal : MonoBehaviour
         }
 
         isLoading = true;
-        LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
+        AnalyticsManager.Instance?.TrackLevelComplete(playerBody);
+        if (showTransitionOverlay)
+        {
+            LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
+        }
+        else
+        {
+            // Continue between tutorial rooms without announcing a new level.
+            PlayerPossessionController.ResetCheckpointSession();
+            Time.timeScale = 1f;
+            UnityEngine.SceneManagement.SceneManager.LoadScene(nextSceneName);
+        }
     }
 }

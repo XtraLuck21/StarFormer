@@ -1,0 +1,95 @@
+{
+    "maps": [
+        {
+            "level_name": "IntroBox",
+            "map_version": "map-33c2d4635eeb-d519bf3343b6",
+            "image_file": "Maps/IntroBox/map-33c2d4635eeb-d519bf3343b6.png",
+            "source_scene_hash": "33c2d4635eebfdadde25364a90a209e761f1378c6aaf17a07438b87871bf1f8a",
+            "image_data_url": "",
+            "min_x": -15.0,
+            "max_x": 11.0,
+            "min_y": -5.0020833015441898,
+            "max_y": 2.602083206176758,
+            "width": 1248,
+            "height": 365
+        },
+        {
+            "level_name": "IntroBubble",
+            "map_version": "map-33d3f8f7fde4-13d9a8802c64",
+            "image_file": "Maps/IntroBubble/map-33d3f8f7fde4-13d9a8802c64.png",
+            "source_scene_hash": "33d3f8f7fde421d0e66a7402efa90d64c803ed0d10a7d3ec64909ec6cb2975ed",
+            "image_data_url": "",
+            "min_x": -13.0,
+            "max_x": 12.0,
+            "min_y": -5.036998748779297,
+            "max_y": 7.004668235778809,
+            "width": 1200,
+            "height": 578
+        },
+        {
+            "level_name": "IntroBouncyBall",
+            "map_version": "map-1588010abde6-da8fbd61d819",
+            "image_file": "Maps/IntroBouncyBall/map-1588010abde6-da8fbd61d819.png",
+            "source_scene_hash": "1588010abde69a1a3b70eb40148ed94fd90f2af52f9be789dbfc3e79fcc3f57a",
+            "image_data_url": "",
+            "min_x": -10.607264518737793,
+            "max_x": 10.746901512145996,
+            "min_y": -4.821000099182129,
+            "max_y": 7.178999900817871,
+            "width": 1025,
+            "height": 576
+        },
+        {
+            "level_name": "Level01",
+            "map_version": "map-990d365e2ac4-86300a7d6f63",
+            "image_file": "Maps/Level01/map-990d365e2ac4-86300a7d6f63.png",
+            "source_scene_hash": "990d365e2ac4b3a0f26ffcdb52c68918a0c9390700dccdc9f6d314f38e9d81e1",
+            "image_data_url": "",
+            "min_x": -1.0,
+            "max_x": 45.0,
+            "min_y": -1.0,
+            "max_y": 19.0,
+            "width": 2208,
+            "height": 960
+        },
+        {
+            "level_name": "IntroSpider",
+            "map_version": "map-5624518b9147-7bf73f4ea763",
+            "image_file": "Maps/IntroSpider/map-5624518b9147-7bf73f4ea763.png",
+            "source_scene_hash": "5624518b9147ef1352d670fc8218a744d1f8acedb974a00b7880682d1009e9ce",
+            "image_data_url": "",
+            "min_x": -14.408333778381348,
+            "max_x": 23.00833511352539,
+            "min_y": -6.5,
+            "max_y": 7.0,
+            "width": 1796,
+            "height": 648
+        },
+        {
+            "level_name": "FanTutorial",
+            "map_version": "map-6d73edb4b525-50d97a7e8708",
+            "image_file": "Maps/FanTutorial/map-6d73edb4b525-50d97a7e8708.png",
+            "source_scene_hash": "6d73edb4b5257ddef046269abc4dd949a9511df9363dc430a1cc4077d5f71bdf",
+            "image_data_url": "",
+            "min_x": -5.412951946258545,
+            "max_x": 13.692949295043946,
+            "min_y": -4.836737632751465,
+            "max_y": 4.757838249206543,
+            "width": 918,
+            "height": 461
+        },
+        {
+            "level_name": "Level02",
+            "map_version": "map-016d66aa0cbc-63f786c65786",
+            "image_file": "Maps/Level02/map-016d66aa0cbc-63f786c65786.png",
+            "source_scene_hash": "016d66aa0cbcb6ddbc6c8651053f28d2b58dbd24c2ddc07177f1ffe3f2d4111a",
+            "image_data_url": "",
+            "min_x": -95.65090942382813,
+            "max_x": 74.83149719238281,
+            "min_y": -134.5695343017578,
+            "max_y": 54.15910339355469,
+            "width": 3700,
+            "height": 4096
+        }
+    ]
+}

@@ -107,6 +107,10 @@ public class IntroSceneExit : MonoBehaviour
         }
 
         isLoading = true;
+        if (returnToPreviousExit)
+            AnalyticsManager.Instance?.TrackSceneReturn(nextSceneName);
+        else
+            AnalyticsManager.Instance?.TrackLevelComplete(controlledBody);
         pendingReturnScene = returnToPreviousExit ? nextSceneName : null;
         PlayerPossessionController.ResetCheckpointSession();
         Time.timeScale = 1f;

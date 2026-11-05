@@ -1,37 +1,50 @@
 # StarFormer
 
-StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a box, rise through the air and swim underwater as a bubble, and leave bodies in useful positions while transferring control.
+StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce and float as a Bouncy Ball, then learn Spider and Fan abilities.
 
-## Play the published build
+## Play Beta 0.1.0
 
-- [Play Alpha 0.1.2](https://xtraluck21.github.io/StarFormer/alpha/) — current Alpha; later tested Alpha releases replace this path.
+[Play StarFormer Beta](https://xtraluck21.github.io/StarFormer/beta/)
+
+Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded, and all seven live files matched the tested local export byte for byte. Export: `Builds/WebGL-Beta-0.1.0`. Alpha and all historical publication paths remain unchanged.
+
+Player Version and Analytics `buildVersion` are `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Analytics source update:** the current source adds schema-v2 collection for all seven gameplay scenes, including the five tutorials. The live Apps Script dashboard is on Version 9 with release-matched base maps and the four aggregate metrics. The already-hosted Beta retains its embedded Level01/Level02-only collector until a new game build is published; Level02-specific raw-row and broader playtest checks remain separate acceptance work. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
+
+## Current gameplay and progression
+
+```text
+Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
+```
+
+- IntroBox and IntroBubble teach contact possession, J/K resizing, air ascent, underwater steering and Q pop. Flag-opened passages support return travel between IntroBox/IntroBubble and IntroBubble/IntroBouncyBall without a Level up overlay between those scenes.
+- IntroBouncyBall teaches automatic bouncing, floating on water, resuming bounces on land and faster bounces beneath low ceilings. The main route includes the low-ceiling lesson, short contextual headlines and a spike-death reminder. Its final flag transitions into Level01.
+- Level01 was rebuilt with a new layout and form progression, replacing the original scene. It includes Star/Box route choices, a one-way lift, reversible SAFE/NORMAL/HARD choices, moving safe-route boards, a falling spike, three fixed-form checkpoints, contextual hints and Home pause/restart UI. The original map remains as disabled `Level01_Legacy`.
+- Level01 continues through IntroSpider and FanTutorial to Level02. The menu also offers direct Level 1, Level 2 Intro and Level 2 entries.
+- R opens restart choices. Optional dedicated Hint/Controls buttons for Level01 remain deferred. Broader browser/mobile coverage and analytics map/version validation remain follow-ups.
+
+## Published builds and history
+
+- [Alpha 0.1.2](https://xtraluck21.github.io/StarFormer/alpha/) — historical release, October 18, 2026; does not contain the current rebuilt Level01 or integrated Bouncy Ball tutorial.
 - [Earlier analytics playtest](https://xtraluck21.github.io/StarFormer/playtest-01/) — preserved older build.
 - [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen October 12 All-Level V2 submission.
-- [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved separately from Alpha.
+- [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved separately.
 
-Alpha **0.1.2** was published on October 18, 2026, with Mainmenu → IntroBox → IntroBubble → Level01 → Level02. It includes the Level 1 Restart Level button, lowered IntroBox movement/jump controls, and compact, semi-transparent IntroBubble controls with the original camera framing. Level 2 retains its completion screen, corrected Spider/Fan hints and Restart/Retry navigation. The Alpha template provides a fitted 16:9 view, resolution scaling and fullscreen/windowed launch choices.
-
-Source release configuration: `5650250`; gameplay/UI changes: `9b35f8e`; publishing commit: `5f62980`. Localhost and online tests passed according to the developer, and the deployed HTML/version and game-data payload were verified. Player and Analytics versions are both `alpha-0.1.2`. Collection remains in `production` for Level01/Level02; current-version Sheet delivery still needs confirmation by the analytics owner.
-
-Publish future Alpha updates only into `alpha/`; preserve the older paths. Source changes do not update the hosted game until rebuilt and published. See the [release history](Docs/ScriptGuide.md#4-web-build-and-github-pages-release) and [publishing instructions](Docs/publish_instructions.md).
-
-## Current branch source (October 31)
-
-The IntroBubble rebuild is newer than the published Alpha: an enclosed water-tank route, contextual map hints, a spare Bubble, and a left exit returning to IntroBox's endpoint as BoxB with its door open. Box now uses **hold J to grow / hold K to shrink**; Bubble uses **Q to pop**. IntroBubble hides its standalone Restart button and uses a smaller Main Menu button; **R opens restart choices**.
-
-These changes require a new build and publication. The existing Alpha links and `alpha-0.1.2` version remain unchanged. See [intro-levels.md](Docs/intro-levels.md) for the route and recovery limits, and [CheckpointGuidance.md](Docs/CheckpointGuidance.md) for restart behavior and the remaining Level01 E/Q reminder mismatch.
+Alpha 0.1.2 source configuration: `5650250`; gameplay/UI changes: `9b35f8e`; publishing commit: `5f62980`. Developer-reported localhost/online tests and deployed payload/version checks passed. Its embedded Player/Analytics version remains `alpha-0.1.2`; Sheet delivery for that version remains separately unconfirmed. Source updates do not change published exports.
 
 ## Development references
 
 - Unity editor: `6000.3.22f1`, with Web Build Support.
-- Enabled build scenes: `Mainmenu` (0), `IntroBox` (1), `IntroBubble` (2), `Level01` (3), `Level02` (4). The old `Tutorial` remains in the repository but is excluded from builds.
-- [Introductory levels](Docs/intro-levels.md) — rebuilt IntroBubble route, current hints/controls, return travel, spare Bubble and mobile layout.
+- Enabled build scenes: Mainmenu (0), IntroBox (1), IntroBubble (2), IntroBouncyBall (3), Level01 (4), IntroSpider (5), FanTutorial (6), Level02 (7). Legacy/reference/sandbox entries stay disabled.
+- [Introductory levels](Docs/intro-levels.md) — tutorials, controls, contextual hints and two-way passages.
 - [Gameplay specification](Docs/GameplaySpec.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)
-- [Level 1 progress](Docs/level-1.md) — ball checkpoints, U2 regeneration, possession recovery and the added Restart Level button.
-- [Level 2 progress](Docs/level-2.md) — integrated route, final completion UI, hints, responsive navigation and checkpoint follow-ups.
-- [WebGL analytics implementation](Docs/AnalyticsImplementation.md) — Level 1/2 event collection and Google Sheets pipeline.
-- [WebGL analytics test plan](Docs/AnalyticsTestPlan.md) — recorded evidence and remaining data checks.
+- [Level 1](Docs/level-1.md) — rebuilt map, route modes, lifts, checkpoints and Home menu.
+- [Level 2](Docs/level-2.md) — integrated route, completion, hints and navigation.
+- [Checkpoint guidance](Docs/CheckpointGuidance.md)
+- [WebGL analytics implementation](Docs/AnalyticsImplementation.md)
+- [WebGL analytics test plan](Docs/AnalyticsTestPlan.md)
+- [Analytics dashboard](Docs/AnalyticsDashboard.md) — four aggregate metrics, verified real maps and Apps Script deployment.
+- [All-level analytics and real maps](Docs/AnalyticsAllLevels.md) — all seven gameplay scenes, schema v2, map exports and validation.
 - [Publish to GitHub Pages](Docs/publish_instructions.md)
 
 ![Historical Tutorial gameplay; predates the introductory levels](Docs/Game_screenshot.png)

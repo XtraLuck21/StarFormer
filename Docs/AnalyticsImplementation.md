@@ -1,17 +1,30 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-10-31.
+Last updated: 2026-11-02.
 
 ## Scope
 
-The analytics layer records anonymous playtest events for `Level01` and
-`Level02`. IntroBox, IntroBubble, the old Tutorial and sandbox scenes are not
-included in the four formal metrics.
+Current source records anonymous playtest events for `IntroBox`, `IntroBubble`,
+`IntroBouncyBall`, `Level01`, `IntroSpider`, `FanTutorial` and `Level02`. Formal
+Level01 is the promoted Advanced map. Mainmenu, legacy/reference scenes, the old
+Tutorial and sandboxes are excluded. See [AnalyticsAllLevels.md](AnalyticsAllLevels.md)
+for schema v2, real maps and deployment. The already-published Beta export still
+contains its original Level01/Level02-only collector until the next game build.
 
 The implementation does not collect names, email addresses, USC IDs, IP
 addresses or Google account information. `player_id` is a random UUID stored in
 the browser through Unity `PlayerPrefs`. Clearing site data, using a private
 window or changing browsers creates a different anonymous player.
+
+## Beta 0.1.0 release and dashboard status
+
+Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. Player Version and Analytics `buildVersion` both use `beta-0.1.0`; the existing endpoint, `production` environment and tracked scenes Level01/Level02 were retained. Publication required no receiver/schema change.
+
+The developer confirmed records are arriving. The supplied November 2 production-dashboard screenshot is filtered to `beta-0.1.0` / Level 1 / All players / Normal entries, showing 2 anonymous players, 7 level runs, 79 events, 1 completed start out of 7 (14.3%), and 1 death. These are a point-in-time filtered sample, not a complete metric audit or a player-difficulty conclusion. The header's 5,334 production events is a separate overall count, not the Beta sample count. Level02-specific delivery and direct raw-row verification were not established by this screenshot.
+
+**Historical Beta publication issue (resolved by dashboard Version 9): matching map/version.** The dashboard shows a historical/unrecognized map-version selection and warns that no matching real map is available. It correctly falls back to a coordinate grid rather than substituting a different map. This does not mean event upload failed. The checked-in `AnalyticsEvent` schema includes `build_version`, coordinates and `details`, but no dedicated `map_version` field; the deployed dashboard's map registry/resolver has not been inspected, so the exact cause is not yet established.
+
+Follow up by inspecting the actual Beta rows and deployed dashboard resolver, then register the matching Level01 map from released source `3a693ca` and associate only the verified build/scene or map-version key. Do not relabel historical rows or use the Legacy map for Beta. Keep old maps and the unknown-version grid fallback. Level01 also has SAFE/NORMAL/HARD layouts and moving hazards: a static base map must not be presented as an exact replay of route or obstacle state when those states are not recorded. Audit existing payloads before proposing extra telemetry or a new build. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status).
 
 ## Data flow
 
@@ -21,6 +34,8 @@ Unity gameplay event
   -> AnalyticsWebGL.jslib persistent browser queue
   -> Google Apps Script Web App
   -> RawEvents_Test or RawEvents_Production in Google Sheets
+  -> Apps Script dashboard aggregate and 30-second cache
+  -> Public analytics dashboard
 ```
 
 The Apps Script routes `environment: test` events to `RawEvents_Test` and
@@ -46,7 +61,8 @@ Acceptance testing must inspect the Sheet and Apps Script execution history.
 | `Assets/Scripts/Analytics/AnalyticsSettings.cs` | Web endpoint, environment, build label and tracked scenes |
 | `Assets/Resources/AnalyticsSettings.asset` | Saved runtime configuration loaded before the first scene |
 | `Assets/Plugins/WebGL/AnalyticsWebGL.jslib` | Non-blocking WebGL upload and browser retry queue |
-| `AnalyticsBackend/Code.gs` | Google Apps Script receiver, validation, locking and duplicate protection |
+| `AnalyticsBackend/Code.gs` | Google Apps Script receiver, validation, locking, duplicate protection and dashboard aggregation |
+| `AnalyticsBackend/Dashboard.html` | Read-only dashboard UI with build/level filters and 30-second refresh |
 
 `AnalyticsManager` is created by a runtime bootstrap before the first scene and
 uses `DontDestroyOnLoad`. Do not add separate copies to Level 1 or Level 2.
@@ -57,19 +73,23 @@ uses `DontDestroyOnLoad`. Do not add separate copies to Level 1 or Level 2.
 - `session_id`: new every time the WebGL page loads.
 - `level_run_id`: new on fresh level entry or a manual restart, including Retry Checkpoint.
 - `attempt_id`: new at level start, checkpoint activation and death respawn.
+- `map_version`: matches the exported real-map image and world-coordinate bounds.
+- `entry_reason`: `normal` or `return`; a scene-return exit is recorded separately
+  from completion and abandonment. The dashboard defaults to normal entries.
 
-Automatic death reload retains the current Level Run. Opening/cancelling the R menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in the R menu and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death, and the event schema does not distinguish those button choices. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
+Automatic death reload retains the current Level Run. Opening/cancelling the R menu or Level01 Home menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in R/Home and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death; new v2 runs distinguish `restart_level` and `retry_checkpoint` in `end_reason`. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
 
-Level 1 uses `BouncyBall_Lower` and `BouncyBall_Upper` as checkpoint IDs. Level
-2 uses the existing `CP01`, `CP02` and `CP03` IDs. The attempt timer resets when
-a checkpoint is activated and again when the player respawns there.
+Current Level01 uses `ADV_CP1`, `ADV_CP2` and `ADV_CP3`, restoring Box, BouncyBall and Star respectively. Possessing a ball alone no longer records a checkpoint in this scene. Level02 retains `CP01`, `CP02` and `CP03`. The attempt timer resets on accepted checkpoint activation and again on respawn. Historical `BouncyBall_Lower`/`BouncyBall_Upper` rows describe the old first-level layout; distinguish them by build version rather than rewriting historical data.
 
 ## Formal metrics
 
 1. **Death locations:** use `death.position_x`, `death.position_y`,
    `controlled_form`, `death_cause` and `level_name`.
-2. **Time to death after the latest start/checkpoint:** use
-   `death.attempt_active_seconds`.
+2. **Checkpoint travel time:** subtract consecutive arrival
+   `level_active_seconds` values in the same Run. Include start-to-first-checkpoint
+   and last-checkpoint-to-finish; include active time across death retries. Average
+   completed segments by route; exclude unfinished or missing-time samples. See
+   [AnalyticsDashboard.md](AnalyticsDashboard.md) for the November 2 redefinition.
 3. **Level completion time:** use `level_complete.level_active_seconds`; this
    includes active time across death reloads in the same Run.
 4. **Time in each controlled form:** sum `form_duration.duration_seconds` by
@@ -117,6 +137,13 @@ Death causes currently include `Spike`, `UnderwaterHazard`, `MovingSpike`,
 8. Create a new deployment version after changing `Code.gs`; editing the source
    alone does not update an existing deployment.
 
+The default GET URL now serves the analytics dashboard. Use `?health=1` or
+`?format=json` for the JSON health response. The existing POST endpoint and
+Unity configuration do not change. Add the repository's `Dashboard.html` to
+the bound Apps Script project as an HTML file named `Dashboard`, then create a
+new deployment version. See [AnalyticsDashboard.md](AnalyticsDashboard.md) for
+metric definitions, manual deployment and dashboard acceptance tests.
+
 The endpoint is visible in the public WebGL files and must not be treated as a
 secret. Do not place API keys, OAuth tokens or account credentials in Unity.
 
@@ -143,9 +170,10 @@ not upload production rows.
   `SpikeWallEnemyChase` provide explicit death causes.
 - Immediate Level 2 hazards now use zero-delay `KillControlledBody` rather than
   bypassing death handling with `RequestRestart`.
-- `LevelGoal` records Level 1 completion before the transition overlay.
+- `AdvancedCheckpointController` reports accepted monotonic Level01 checkpoint activations through `PlayerPossessionController.SetCheckpoint`; old markers do not create a new attempt.
+- `LevelGoal` records Level 1 completion before transitioning to IntroSpider. All five tutorials now record accepted forward exits/goals before scene loading, including `IntroBouncyBallGoal`. Backward exits record scene returns. Each tracked scene starts its own Run.
 - `LevelGoalToMenu` records Level 2 completion when the flag is reached, then shows the final overlay. Return to Main Menu happens only after its button is selected.
-- `LevelNavigationUI` records restart/abandonment before loading another scene.
+- `LevelNavigationUI` records restart/abandonment before loading another scene. Level01 Home and R use the same controller restart/menu paths. Opening/cancelling a confirmation emits no restart; confirming manual retry still starts a new analytics Run even when gameplay progress is retained.
 
 ## Editor and release behavior
 
@@ -153,8 +181,24 @@ The Editor prints event JSON when `logPayloadsInEditor` is enabled and does not
 contact Google. Uploading is compiled only for WebGL outside the Editor.
 
 If `endpointUrl` is blank, WebGL logs one warning and gameplay continues without
-uploading. The current Alpha asset has a configured endpoint and collection enabled; the blank-endpoint behavior is a fallback, not the current release configuration.
+uploading. The current Beta source asset has a configured endpoint and collection enabled; the blank-endpoint behavior is a fallback, not the current release configuration.
 
 Use Unity `6000.3.22f1` and the scene/build configuration documented in
 `publish_instructions.md`. Source integration does not update GitHub Pages; a
 new WebGL export and separate `gh-pages` publication are required for future source changes. Alpha 0.1.2 publication is already complete.
+
+
+## November 2 source integration against latest main
+
+The v2 integration preserves current gameplay, seven enabled gameplay scenes,
+checkpoint restore rules and all published game packages. Production endpoint,
+environment and existing Beta identity remain as configured on main; only the
+tracked-scene list is expanded. Before the next game release, the publisher
+should set matching new Player/Analytics version labels under the existing
+release process. No new game is published by merging this code.
+
+The dashboard at its existing URL is already on Version 9, with exact released
+map bindings, five zero-event Beta tutorial previews and aggregate-only views.
+Its four metrics are death locations, checkpoint travel time (including active
+death retries), completion time and form-control time. This supersedes the
+historical map follow-up above without relabeling or rewriting old Sheet rows.
