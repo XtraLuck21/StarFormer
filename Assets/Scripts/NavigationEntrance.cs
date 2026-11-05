@@ -1,10 +1,12 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // Animate the artwork separately from the fixed collider so the bounce cannot trap the star.
 [RequireComponent(typeof(BoxCollider2D))]
 public class NavigationEntrance : MonoBehaviour
 {
     [SerializeField] private string destinationLabel;
+    [SerializeField] private string destinationScene;
     [SerializeField] private bool hitFromBelow;
     [SerializeField] private Transform artwork;
     [SerializeField] private Renderer plaqueFace;
@@ -22,6 +24,7 @@ public class NavigationEntrance : MonoBehaviour
     private Vector2 burstOrigin;
     private NavigationStarController player;
     private float elapsed;
+    private bool loading;
     public bool IsAnimating { get; private set; }
     public bool IsShowingEntering => IsAnimating && elapsed >= animationSeconds;
 
@@ -55,6 +58,22 @@ public class NavigationEntrance : MonoBehaviour
         bool correctDirection = hitFromBelow ? verticalSpeed > .1f && normalY < -.65f :
             verticalSpeed < -.1f && normalY > .65f;
         if (!correctDirection) return false;
+        return Activate(star, contact);
+    }
+
+    public bool ActivateFromPointer(NavigationStarController star, Vector2 contact)
+    {
+        return Activate(star, contact);
+    }
+
+    private bool Activate(NavigationStarController star, Vector2 contact)
+    {
+        if (!isActiveAndEnabled || IsAnimating || loading || star == null || star.IsPreviewing) return false;
+        if (string.IsNullOrWhiteSpace(destinationScene) || !Application.CanStreamedLevelBeLoaded(destinationScene))
+        {
+            Debug.LogWarning($"Navigation destination '{destinationScene}' is not enabled in the build scene list.", this);
+            return false;
+        }
         player = star;
         burstOrigin = contact;
         elapsed = 0f;
@@ -66,7 +85,7 @@ public class NavigationEntrance : MonoBehaviour
 
     private void Update()
     {
-        if (!IsAnimating) return;
+        if (!IsAnimating || loading) return;
         elapsed += Time.deltaTime;
         if (elapsed < animationSeconds)
         {
@@ -75,15 +94,32 @@ public class NavigationEntrance : MonoBehaviour
         }
         ResetArtwork();
         float enteringTime = elapsed - animationSeconds;
-        float fade = Mathf.Min(Mathf.Clamp01(enteringTime / .18f),
-            Mathf.Clamp01((enteringSeconds - enteringTime) / .2f));
+        float fade = Mathf.Clamp01(enteringTime / .18f);
         player.ShowEntering(destinationLabel, fade);
         if (enteringTime >= enteringSeconds)
         {
-            IsAnimating = false;
-            player.ReturnToRoute(previewReturnPosition);
-            player = null;
+            // Keep the overlay and input lock until the destination scene takes over.
+            loading = true;
+            PlayerPossessionController.ResetCheckpointSession();
+            Time.timeScale = 1f;
+            try
+            {
+                if (SceneManager.LoadSceneAsync(destinationScene) == null) CancelTransition();
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogException(exception, this);
+                CancelTransition();
+            }
         }
+    }
+
+    private void CancelTransition()
+    {
+        loading = false;
+        IsAnimating = false;
+        if (player != null) player.ReturnToRoute(previewReturnPosition);
+        player = null;
     }
 
     private void Animate(float progress)
@@ -121,7 +157,7 @@ public class NavigationEntrance : MonoBehaviour
     private void OnDisable()
     {
         if (artwork != null && plaqueFace != null) ResetArtwork();
-        if (player != null) player.ReturnToRoute(previewReturnPosition);
+        if (player != null && !loading) player.ReturnToRoute(previewReturnPosition);
         player = null;
         IsAnimating = false;
     }

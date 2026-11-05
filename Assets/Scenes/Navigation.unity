@@ -7652,6 +7652,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::NavigationEntrance
   destinationLabel: Kindergarten
+  destinationScene: IntroBox
   hitFromBelow: 1
   artwork: {fileID: 383346606}
   plaqueFace: {fileID: 2062832396}
@@ -11380,6 +11381,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::NavigationEntrance
   destinationLabel: Level 2
+  destinationScene: Level02
   hitFromBelow: 0
   artwork: {fileID: 537423196}
   plaqueFace: {fileID: 2019019415}
@@ -15241,6 +15243,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::NavigationEntrance
   destinationLabel: Elementary School
+  destinationScene: IntroSpider
   hitFromBelow: 0
   artwork: {fileID: 2028714318}
   plaqueFace: {fileID: 1894598262}
@@ -16160,6 +16163,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::NavigationEntrance
   destinationLabel: Level 1
+  destinationScene: Level01
   hitFromBelow: 1
   artwork: {fileID: 430704425}
   plaqueFace: {fileID: 1700649436}

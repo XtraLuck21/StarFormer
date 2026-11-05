@@ -52,6 +52,14 @@ public class NavigationStarController : MonoBehaviour
             (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
         if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
             jumpUntil = Time.time + .12f;
+        var mouse = Mouse.current;
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame && Camera.main != null)
+        {
+            Vector2 point = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
+            var hit = Physics2D.OverlapPoint(point);
+            if (hit != null)
+                hit.GetComponent<NavigationEntrance>()?.ActivateFromPointer(this, point);
+        }
     }
 
     private void FixedUpdate()
@@ -116,7 +124,7 @@ public class NavigationStarController : MonoBehaviour
 
     public void ShowEntering(string destination, float alpha)
     {
-        // Preview only: intentionally no SceneManager or persistent progression calls.
+        // The entrance owns loading; the player holds still until the new scene takes over.
         body.linearVelocity = Vector2.zero;
         body.simulated = false;
         enteringLabel.text = "Entering " + destination + "...";
