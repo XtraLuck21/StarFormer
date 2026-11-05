@@ -56,6 +56,7 @@ public class IntroStarGoal : MonoBehaviour
         }
 
         isLoading = true;
+        ShapeClosetProgress.RecordCompletion(gameObject.scene.name);
         AnalyticsManager.Instance?.TrackLevelComplete(playerBody);
         if (showTransitionOverlay)
         {

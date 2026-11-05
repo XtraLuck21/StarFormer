@@ -56,7 +56,7 @@
 (function(){
   'use strict';
   const $=id=>document.getElementById(id);
-  const names={IntroBox:'Box tutorial',IntroBubble:'Bubble tutorial',IntroBouncyBall:'Bouncing Ball tutorial',Level01:'Level 1',IntroSpider:'Spider tutorial',FanTutorial:'Fan tutorial',Level02:'Level 2'};
+  const names={IntroBox:'Box tutorial',IntroBubble:'Bubble tutorial',IntroBouncyBall:'Bouncing Ball tutorial',Level01:'Level 1',IntroSpider:'Spider tutorial',IntroFan:'Fan tutorial',FanTutorial:'Fan tutorial (legacy)',Level02:'Level 2'};
   const colors={Star:'#6657d9',Box:'#4386d7',Bubble:'#35a37a',BouncyBall:'#a860cb',Spider:'#d27b36',Fan:'#7a879a'};
   let latest=null,inFlight=false,queued=false,revision=0,activeMap=null,mapKey='',mapBounds=null,viewport=null,drag=null;
   const mapCache=new Map();

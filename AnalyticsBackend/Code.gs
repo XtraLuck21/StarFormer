@@ -2,7 +2,7 @@ const ANALYTICS_SCHEMA_VERSION = 2;
 const MAX_REQUEST_CHARACTERS = 20000;
 const DASHBOARD_CACHE_SECONDS = 30;
 const ANALYTICS_SHEET_NAMES = Object.freeze({test:'RawEvents_Test', production:'RawEvents_Production'});
-const ANALYTICS_LEVELS = ['IntroBox', 'IntroBubble', 'IntroBouncyBall', 'Level01', 'IntroSpider', 'FanTutorial', 'Level02'];
+const ANALYTICS_LEVELS = ['IntroBox', 'IntroBubble', 'IntroBouncyBall', 'Level01', 'IntroSpider', 'IntroFan', 'FanTutorial', 'Level02'];
 
 // New columns are appended, never inserted into the existing v1 column order.
 const ANALYTICS_COLUMNS = [

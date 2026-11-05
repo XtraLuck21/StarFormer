@@ -25,13 +25,13 @@ Beta 0.1.0 was published November 2 from source `3a693ca` as `gh-pages` commit `
 ## Current gameplay and progression
 
 ```text
-Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
+Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
 - IntroBox and IntroBubble teach contact possession, J/K resizing, air ascent, underwater steering and Q pop. Flag-opened passages support return travel between IntroBox/IntroBubble and IntroBubble/IntroBouncyBall without a Level up overlay between those scenes.
 - IntroBouncyBall teaches automatic bouncing, floating on water, resuming bounces on land and faster bounces beneath low ceilings. The main route includes the low-ceiling lesson, short contextual headlines and a spike-death reminder. Its final flag transitions into Level01.
 - Level01 was rebuilt with a new layout and form progression, replacing the original scene. It includes Star/Box route choices, a one-way lift, reversible SAFE/NORMAL/HARD choices, moving safe-route boards, a falling spike, three fixed-form checkpoints, contextual hints and Home pause/restart UI. The original map remains as disabled `Level01_Legacy`.
-- Level01 continues through IntroSpider and FanTutorial to Level02. The menu also offers direct Level 1, Level 2 Intro and Level 2 entries.
+- Level01 continues through IntroSpider and IntroFan to Level02. The menu also offers direct Level 1, Level 2 Intro and Level 2 entries.
 - R opens restart choices. The Level01 contact-activated door hint is included in Beta 0.1.1; a dedicated Level01 Controls panel remains deferred. Broader browser/mobile coverage and 0.1.1 analytics delivery/map validation remain follow-ups.
 
 ## Published builds and history
@@ -46,7 +46,7 @@ Alpha 0.1.2 source configuration: `5650250`; gameplay/UI changes: `9b35f8e`; pub
 ## Development references
 
 - Unity editor: `6000.3.22f1`, with Web Build Support.
-- Enabled build scenes: Mainmenu (0), IntroBox (1), IntroBubble (2), IntroBouncyBall (3), Level01 (4), IntroSpider (5), FanTutorial (6), Level02 (7). Legacy/reference/sandbox entries stay disabled.
+- Enabled build scenes: Mainmenu (0), IntroBox (1), IntroBubble (2), IntroBouncyBall (3), Level01 (4), IntroSpider (5), IntroFan (6), Level02 (7). Legacy/reference/sandbox entries stay disabled.
 - [Introductory levels](Docs/intro-levels.md) — tutorials, controls, contextual hints and two-way passages.
 - [Gameplay specification](Docs/GameplaySpec.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)

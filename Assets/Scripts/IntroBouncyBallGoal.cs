@@ -98,6 +98,7 @@ public class IntroBouncyBallGoal : MonoBehaviour
 
         // 防止重复触发。
         isLoading = true;
+        ShapeClosetProgress.RecordCompletion(gameObject.scene.name);
         AnalyticsManager.Instance?.TrackLevelComplete(body);
 
         // 复用项目已有的过关提示和场景跳转。
