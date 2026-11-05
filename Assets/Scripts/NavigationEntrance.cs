@@ -68,7 +68,7 @@ public class NavigationEntrance : MonoBehaviour
 
     private bool Activate(NavigationStarController star, Vector2 contact)
     {
-        if (!isActiveAndEnabled || IsAnimating || loading || star == null || star.IsPreviewing) return false;
+        if (!isActiveAndEnabled || IsAnimating || loading || star == null || star.IsPreviewing || star.ControlsBlocked) return false;
         if (string.IsNullOrWhiteSpace(destinationScene) || !Application.CanStreamedLevelBeLoaded(destinationScene))
         {
             Debug.LogWarning($"Navigation destination '{destinationScene}' is not enabled in the build scene list.", this);

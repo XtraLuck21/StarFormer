@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -25,7 +27,24 @@ public class NavigationStarController : MonoBehaviour
     private float groundedUntil = -1f;
     private Vector2 approachVelocity;
 
+    private readonly List<RaycastResult> uiHits = new List<RaycastResult>();
+    public bool ControlsBlocked { get; private set; }
     public bool IsPreviewing { get; private set; }
+
+    public void SetControlsBlocked(bool blocked)
+    {
+        ControlsBlocked = blocked;
+        horizontal = 0f;
+        jumpUntil = groundedUntil = -1f;
+    }
+
+    private bool PointerIsOverUI(Vector2 position)
+    {
+        if (EventSystem.current == null) return false;
+        uiHits.Clear();
+        EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = position }, uiHits);
+        return uiHits.Count > 0;
+    }
     public bool IsGrounded { get; private set; }
     public Rigidbody2D Body => body;
 
@@ -46,14 +65,14 @@ public class NavigationStarController : MonoBehaviour
 
     private void Update()
     {
-        if (IsPreviewing) return;
+        if (IsPreviewing || ControlsBlocked) return;
         var keyboard = Keyboard.current;
         horizontal = keyboard == null ? 0f :
             (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
         if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
             jumpUntil = Time.time + .12f;
         var mouse = Mouse.current;
-        if (mouse != null && mouse.leftButton.wasPressedThisFrame && Camera.main != null)
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame && Camera.main != null && !PointerIsOverUI(mouse.position.ReadValue()))
         {
             Vector2 point = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
             var hit = Physics2D.OverlapPoint(point);
@@ -69,7 +88,7 @@ public class NavigationStarController : MonoBehaviour
         for (int i = 0; i < count; i++)
             if (groundHits[i].normal.y > .65f) IsGrounded = true;
 
-        if (IsPreviewing) return;
+        if (IsPreviewing || ControlsBlocked) return;
         if (body.position.y < 4.3f || body.position.x < 1f || body.position.x > 31f)
         {
             ReturnToRoute(lastSafePosition);
@@ -97,7 +116,7 @@ public class NavigationStarController : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (IsPreviewing) return;
+        if (IsPreviewing || ControlsBlocked) return;
         var entrance = collision.collider.GetComponent<NavigationEntrance>();
         if (entrance == null) return;
         for (int i = 0; i < collision.contactCount; i++)
@@ -154,6 +173,7 @@ public class NavigationStarController : MonoBehaviour
 
     private void OnDisable()
     {
+        ControlsBlocked = false;
         if (enteringOverlay != null) enteringOverlay.alpha = 0f;
         if (starVisual != null) starVisual.SetPropertyBlock(null);
         if (body != null) { body.simulated = true; body.linearVelocity = Vector2.zero; }
