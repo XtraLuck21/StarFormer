@@ -2031,7 +2031,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -85, y: -80}
-  m_SizeDelta: {x: 60, y: 60}
+  m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1075462597
 MonoBehaviour:
@@ -2340,10 +2340,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28
-  m_fontSizeBase: 28
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 28
   m_fontStyle: 1
@@ -3346,7 +3346,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 0, y: 120}
+  m_AnchoredPosition: {x: 0, y: 130}
   m_SizeDelta: {x: 140, y: 50}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &1787940599
@@ -3404,8 +3404,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 26
-  m_fontSizeBase: 26
+  m_fontSize: 38
+  m_fontSizeBase: 38
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -3852,8 +3852,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 80
+  m_fontSizeBase: 80
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -4149,7 +4149,7 @@ MonoBehaviour:
   pages:
   - title: Star
     icon: {fileID: 4815476061570213978, guid: ee2f7f1399d47c944bb52ddc0ae5be8a, type: 3}
-    keys: "A/D\t\tMove\nSpace \tJump"
+    keys: "\nA/D\t\tMove\nSpace \tJump"
     demoFrames:
     - {fileID: 2508377696237932411, guid: 6e8e925d6db64e944b7a103f3f9de9fb, type: 3}
     - {fileID: -6707455237547917888, guid: 3cfb2cb311014f24cbb37b92e2d38385, type: 3}
@@ -4218,7 +4218,7 @@ MonoBehaviour:
     caption: Touch a possessable body to become it.
   - title: BOX
     icon: {fileID: -3795119470717004479, guid: 0725892d4be3d25498a72892a6c14516, type: 3}
-    keys: "A/D\t\tMove\nHold J\tGrow\nHold K\tShrink"
+    keys: "\nA/D\t\tMove\nHold J\tGrow\nHold K\tShrink"
     demoFrames:
     - {fileID: 6433370066142020047, guid: a6f911309bf952f47a3c2bc9647c397f, type: 3}
     - {fileID: 1523970343703753843, guid: c767c5585695707469092857b353d3ba, type: 3}
@@ -4323,7 +4323,7 @@ MonoBehaviour:
     caption: Touch another body to switch.
   - title: BUBBLE
     icon: {fileID: -9136834448258697486, guid: 742349fc218e00c44a6cfa4a8ed37bbf, type: 3}
-    keys: "A/D\t\tIn air\nW A S D\tUnderwater\nQ            \tPop"
+    keys: "\nA/D\t\tIn air\nW A S D\tUnderwater\nQ            \tPop"
     demoFrames:
     - {fileID: -4635462619414486771, guid: 438f803fc2cc20344807f3688f57bf8f, type: 3}
     - {fileID: -5320128014491312838, guid: 3c6f503875e11154fac58dc0449d0b1d, type: 3}
@@ -4483,7 +4483,7 @@ MonoBehaviour:
       switch.
   - title: Spider
     icon: {fileID: 1059239481293130509, guid: d544ee28e31a764419c0f8dd59f8e589, type: 3}
-    keys: "A/D\t\tMove along surfaces"
+    keys: "\nA/D\t\tMove along surfaces"
     demoFrames:
     - {fileID: -6305132657140846530, guid: 5f0da1aa75a687347b74096f16899917, type: 3}
     - {fileID: 4822457737482689105, guid: 38ab12f1437ceb4418faf07a8e6235c0, type: 3}
@@ -4568,7 +4568,7 @@ MonoBehaviour:
     caption: Moves along walls and ceilings. Touch another body to switch.
   - title: Fan
     icon: {fileID: 1710981365271166214, guid: a172090fcb0c23e40b4f2993592d1abb, type: 3}
-    keys: "A/D\t\tMove / face direction\nF\t\tWind ON / OFF\nQ\t\tReturn to Star"
+    keys: "\nA/D\t\tMove / face direction\nF\t\tWind ON / OFF\nQ\t\tReturn to Star"
     demoFrames:
     - {fileID: 2597025747279460382, guid: 061b9615356630e4c89c96c30361cf54, type: 3}
     - {fileID: 8766669409027979516, guid: 2a76bfc7f84fd384f88717b170bd1a20, type: 3}
@@ -4654,9 +4654,9 @@ MonoBehaviour:
   closeButton: {fileID: 1075462597}
   backdropButton: {fileID: 877161444}
   closeWithKeyboard: 1
-  flipWithArrowKeys: 1
+  flipWithArrowKeys: 0
   wrapAround: 1
-  pauseWhileOpen: 0
+  pauseWhileOpen: 1
   resetToFirstPageOnOpen: 1
 --- !u!1 &2102000100
 GameObject:
@@ -5136,13 +5136,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 48
-  m_fontSizeBase: 48
+  m_fontSize: 60
+  m_fontSizeBase: 60
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
