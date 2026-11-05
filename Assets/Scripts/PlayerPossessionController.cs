@@ -75,6 +75,11 @@ public class PlayerPossessionController : MonoBehaviour
     private float deathRestartTime;
 
     public bool IsDead => isDead;
+    public static int IntroSpiderDeathCount { get; private set; }
+    public bool IsFirstIntroSpiderDeath { get; private set; }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetIntroSpiderDeaths() => IntroSpiderDeathCount = 0;
     public AnalyticsDeathCause LastDeathCause { get; private set; } = AnalyticsDeathCause.Unknown;
     public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
@@ -127,7 +132,7 @@ public class PlayerPossessionController : MonoBehaviour
     private float horizontalInput;
     private float verticalInput;
     private bool actionRequested;
-    // Q pops Bubble; E leaves Spider or Fan. Touch controls share this request.
+    // Q pops Bubble or leaves Fan. Spider cannot manually return to Star.
     private bool releaseRequested;
     // Queue hazard-triggered bubble pops separately from player input.
     private bool bubblePopRequested;
@@ -212,10 +217,11 @@ public class PlayerPossessionController : MonoBehaviour
 
     /// <summary>
     /// Q / Release: leave the current form.
-    /// Bubble and Spider use PopBubble to restore Star; Fan uses LeaveFan.
+    /// Bubble uses PopBubble to restore Star; Fan uses LeaveFan. Spider cannot release.
     /// </summary>
     public void RequestRelease()
     {
+        if (currentBody != null && currentBody.Form == BodyForm.Spider) return;
         if (!isActiveAndEnabled ||
             isDead ||
             restartRequested ||
@@ -467,7 +473,7 @@ public class PlayerPossessionController : MonoBehaviour
 
             if (keyboard.qKey.wasPressedThisFrame)
             {
-                // Q consistently means Release: pop Bubble or leave Spider/Fan.
+                // Q pops Bubble or leaves Fan; Spider ignores this request.
                 RequestRelease();
             }
 
@@ -548,11 +554,10 @@ public class PlayerPossessionController : MonoBehaviour
         bool shouldRelease = releaseRequested;
         releaseRequested = false;
 
-        // Bubble and Spider both return to Star through the same release method.
+        // Only Bubble can pop back to Star.
         bool releaseToStar =
             shouldRelease &&
-            (currentBody.Form == BodyForm.Bubble ||
-             currentBody.Form == BodyForm.Spider);
+            currentBody.Form == BodyForm.Bubble;
 
         if (shouldPopBubble || releaseToStar)
         {
@@ -799,6 +804,11 @@ public class PlayerPossessionController : MonoBehaviour
         AnalyticsManager.Instance?.TrackDeath(hitBody, deathCause);
 
         LastDeathCause = deathCause;
+        if (gameObject.scene.name == "IntroSpider")
+        {
+            IntroSpiderDeathCount++;
+            IsFirstIntroSpiderDeath = IntroSpiderDeathCount == 1;
+        }
         isDead = true;
         bubblePopRequested = false;
         pendingSource = null;

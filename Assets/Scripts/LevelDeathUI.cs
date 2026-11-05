@@ -36,6 +36,12 @@ public class LevelDeathUI : MonoBehaviour
 
         deathShown = true;
 
+        if (gameObject.scene.name == "IntroSpider" && playerController.IsFirstIntroSpiderDeath)
+        {
+            statusText.text = "cake is a lie";
+            return;
+        }
+
         statusText.text =
             playerController.HasSavedCheckpoint
                 ? "You died.\nReturning to checkpoint..."

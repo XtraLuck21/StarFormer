@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
@@ -7,14 +8,41 @@ using UnityEngine.InputSystem;
 public class BubbleMovementHint : MonoBehaviour
 {
     // Append modes to preserve existing scene values: Air=0, Water=1, ExitBubble=2.
-    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction, SpiderIntroduction, SpiderBlockedExit, SpiderControls }
+    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction, SpiderIntroduction, SpiderBlockedExit, SpiderControls, SpiderSpikeWarning, SpiderMoveRight, SpiderUpReminder }
 
     [SerializeField] private HintMode mode;
+    [SerializeField] private IntroSpiderCake spikeCake;
+    private TextMeshPro spikeWarningText;
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private PossessableBody targetBody;
     [SerializeField] private bool previewInEditor = true;
     [Tooltip("Only used by Continue Right: show the arrow after this flag opens its gate.")]
     [SerializeField] private IntroFlagGate flagGate;
+
+    [Header("Spider Movement Lesson")]
+    [SerializeField] private Vector2 spiderControlsOffset = new Vector2(0f, 1.5f);
+    [SerializeField, Min(0.01f)] private float directionPracticeSeconds = 0.5f;
+    [SerializeField] private Color practicedColor = new Color(0.3f, 0.9f, 0.4f, 1f);
+    [SerializeField, Min(0f)] private float bottomReminderSeconds = 7f;
+
+    private float leftPracticeSeconds;
+    private float rightPracticeSeconds;
+    private float controlsCompleteAge;
+    private float bottomSeconds;
+    private Transform leftControlVisuals;
+    private Transform rightControlVisuals;
+    private Transform controlVisualParent;
+    private readonly List<LetterFillStroke> leftLetterFill = new List<LetterFillStroke>();
+    private readonly List<LetterFillStroke> rightLetterFill = new List<LetterFillStroke>();
+    private List<LetterFillStroke> capturingLetter;
+    private struct LetterFillStroke
+    {
+        public Transform overlay;
+        public Vector2 start, end;
+    }
+    [SerializeField] private BubbleMovementHint spiderUpReminder;
+    public bool SpiderControlsCompleted => leftPracticeSeconds >= directionPracticeSeconds &&
+        rightPracticeSeconds >= directionPracticeSeconds && controlsCompleteAge >= 0.35f;
 
     [Header("Spider Q Reminder")]
     [SerializeField, Min(0.1f)] private float blockedKeyHintSeconds = 3f;
@@ -89,11 +117,31 @@ public class BubbleMovementHint : MonoBehaviour
         bool visible = !Application.IsPlaying(gameObject) && previewInEditor;
         if (Application.IsPlaying(gameObject))
         {
-            if (mode == HintMode.SpiderControls)
+            if (mode == HintMode.SpiderUpReminder)
+            {
+                PossessableBody body = playerController != null ? playerController.CurrentBody : null;
+                bool inBottom = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+                    !playerController.IsDead && IsInsideArea(body);
+                bottomSeconds = inBottom ? bottomSeconds + Time.deltaTime : 0f;
+                visible = inBottom && bottomSeconds > bottomReminderSeconds;
+            }
+            else if (mode == HintMode.SpiderSpikeWarning || mode == HintMode.SpiderMoveRight)
+            {
+                PossessableBody body = playerController != null ? playerController.CurrentBody : null;
+                visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+                    !playerController.IsDead && IsInsideArea(body);
+            }
+            else if (mode == HintMode.SpiderControls)
             {
                 PossessableBody body = playerController != null ? playerController.CurrentBody : null;
                 visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
                     !playerController.IsDead;
+                if (visible)
+                {
+                    UpdateSpiderControls();
+                    visuals.transform.position = body.transform.position + (Vector3)spiderControlsOffset;
+                    visible = !SpiderControlsCompleted;
+                }
             }
             else if (mode == HintMode.ContinueRight)
             {
@@ -131,7 +179,72 @@ public class BubbleMovementHint : MonoBehaviour
                     (starMode || body.IsInWater == (mode == HintMode.Water)) && IsInsideArea(body);
             }
         }
+        if (spikeWarningText != null)
+            spikeWarningText.text = spikeCake != null && spikeCake.IsRevealed ? "spike?" : "cake or spike?";
         if (visuals.activeSelf != visible) visuals.SetActive(visible);
+    }
+
+    private void UpdateSpiderControls()
+    {
+        if (Time.timeScale > 0f)
+        {
+            float input = playerController.HorizontalInput;
+            if (input < -0.1f) leftPracticeSeconds += Time.deltaTime;
+            if (input > 0.1f) rightPracticeSeconds += Time.deltaTime;
+            if (leftPracticeSeconds >= directionPracticeSeconds && rightPracticeSeconds >= directionPracticeSeconds)
+                controlsCompleteAge += Time.deltaTime;
+        }
+        SetControlColor(leftControlVisuals, leftPracticeSeconds >= directionPracticeSeconds);
+        SetControlColor(rightControlVisuals, rightPracticeSeconds >= directionPracticeSeconds);
+        UpdateLetterFill(leftLetterFill, leftPracticeSeconds, -0.5f, true);
+        UpdateLetterFill(rightLetterFill, rightPracticeSeconds, 0.5f, false);
+    }
+
+    private void UpdateLetterFill(List<LetterFillStroke> strokes, float seconds, float centerX, bool rightToLeft)
+    {
+        float progress = Mathf.Clamp01(seconds / Mathf.Max(0.01f, directionPracticeSeconds));
+        foreach (LetterFillStroke stroke in strokes)
+        {
+            Vector2 start = stroke.start, end = stroke.end;
+            // A fills toward the left; D fills toward the right.
+            float minX = rightToLeft ? centerX + 0.13f - 0.26f * progress : centerX - 0.13f;
+            float maxX = rightToLeft ? centerX + 0.13f : centerX - 0.13f + 0.26f * progress;
+            float deltaX = end.x - start.x;
+            float from = 0f, to = 1f;
+            bool visible = progress > 0f;
+            if (Mathf.Abs(deltaX) < 0.00001f)
+            {
+                visible &= start.x >= minX - 0.00001f && start.x <= maxX + 0.00001f;
+            }
+            else
+            {
+                float first = (minX - start.x) / deltaX;
+                float second = (maxX - start.x) / deltaX;
+                from = Mathf.Max(0f, Mathf.Min(first, second));
+                to = Mathf.Min(1f, Mathf.Max(first, second));
+                visible &= to > from;
+            }
+            stroke.overlay.gameObject.SetActive(visible);
+            if (!visible) continue;
+            Vector2 originalStart = start;
+            start = Vector2.Lerp(originalStart, end, from);
+            end = Vector2.Lerp(originalStart, end, to);
+            Vector2 delta = end - start;
+            stroke.overlay.localPosition = (start + end) * 0.5f;
+            stroke.overlay.localScale = new Vector3(delta.magnitude, 0.03f, 1f);
+            stroke.overlay.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+        }
+    }
+
+    private void SetControlColor(Transform root, bool practiced)
+    {
+        if (root == null) return;
+        foreach (SpriteRenderer renderer in root.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            // Preserve the dark keycap fill; color the letter, outline and arrow.
+            if (renderer.sortingOrder == sortingOrder + 1)
+                renderer.color = practiced ? practicedColor : inkColor;
+        }
     }
 
     private bool ShouldShowSpiderIntroduction(PossessableBody body)
@@ -197,6 +310,16 @@ public class BubbleMovementHint : MonoBehaviour
 
         if (introductionSubtitle != null)
         {
+            bool showUpReminder = spiderUpReminder != null &&
+                spiderUpReminder.bottomSeconds > spiderUpReminder.bottomReminderSeconds;
+            introductionSubtitle.text = showUpReminder ? "only way is up" : spiderSubtitle;
+            if (showUpReminder)
+            {
+                introductionSubtitle.alpha = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(
+                    (spiderUpReminder.bottomSeconds - spiderUpReminder.bottomReminderSeconds) /
+                    Mathf.Max(0.01f, spiderIntroductionFadeInSeconds)));
+                return;
+            }
             introductionSubtitle.alpha = fadeIn * (1f - Mathf.Clamp01(
                 (introductionSubtitleAge - fadeInDuration - spiderSubtitleHoldSeconds) /
                 Mathf.Max(0.01f, spiderSubtitleFadeSeconds)));
@@ -225,7 +348,21 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(0.5f, 0.5f), texture.width, 0, SpriteMeshType.FullRect);
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
 
-        if (mode == HintMode.BubbleIntroduction || mode == HintMode.SpiderIntroduction)
+        if (mode == HintMode.SpiderUpReminder)
+        {
+            // This area's timer drives the introduction subtitle; it has no separate label.
+        }
+        else if (mode == HintMode.SpiderSpikeWarning)
+        {
+            spikeWarningText = AddHintText("SpikeWarning", "cake or spike?", Vector2.zero, new Vector2(5.5f, 0.8f));
+        }
+        else if (mode == HintMode.SpiderMoveRight)
+        {
+            AddKey('D', new Vector2(-0.5f, 0));
+            Arrow(new Vector2(0f, 0), new Vector2(1.2f, 0));
+            AddHintText("MoveRightDescription", "Go right", new Vector2(0.25f, -0.65f), new Vector2(3f, 0.6f));
+        }
+        else if (mode == HintMode.BubbleIntroduction || mode == HintMode.SpiderIntroduction)
         {
             BuildBubbleIntroduction();
         }
@@ -233,7 +370,25 @@ public class BubbleMovementHint : MonoBehaviour
         {
             Arrow(new Vector2(-0.6f, 0), new Vector2(0.6f, 0));
         }
-        else if (mode == HintMode.Air || mode == HintMode.StarMove || mode == HintMode.SpiderControls)
+        else if (mode == HintMode.SpiderControls)
+        {
+            leftControlVisuals = CreateControlGroup("A Direction");
+            controlVisualParent = leftControlVisuals;
+            AddKeyFrame(new Vector2(-0.5f, 0), Vector2.one * 0.5f);
+            capturingLetter = leftLetterFill;
+            AddLetter('A', new Vector2(-0.5f, 0));
+            capturingLetter = null;
+            Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
+            rightControlVisuals = CreateControlGroup("D Direction");
+            controlVisualParent = rightControlVisuals;
+            AddKeyFrame(new Vector2(0.5f, 0), Vector2.one * 0.5f);
+            capturingLetter = rightLetterFill;
+            AddLetter('D', new Vector2(0.5f, 0));
+            capturingLetter = null;
+            Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
+            controlVisualParent = null;
+        }
+        else if (mode == HintMode.Air || mode == HintMode.StarMove)
         {
             AddKey('A', new Vector2(-0.5f, 0));
             AddKey('D', new Vector2(0.5f, 0));
@@ -280,6 +435,14 @@ public class BubbleMovementHint : MonoBehaviour
             else if (!string.IsNullOrWhiteSpace(popDescription))
                 AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);
         }
+    }
+
+    private Transform CreateControlGroup(string groupName)
+    {
+        var group = new GameObject(groupName);
+        group.hideFlags = HideFlags.HideAndDontSave;
+        group.transform.SetParent(visuals.transform, false);
+        return group.transform;
     }
 
     private void BuildBubbleIntroduction()
@@ -410,13 +573,20 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(delta.magnitude, mode == HintMode.ContinueRight
                 ? Mathf.Max(0.01f, continueArrowWidth) : 0.03f), inkColor, sortingOrder + 1);
         segment.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+        if (capturingLetter != null)
+        {
+            Transform overlay = Rectangle((start + end) * 0.5f, new Vector2(delta.magnitude, 0.03f),
+                practicedColor, sortingOrder + 2);
+            overlay.gameObject.SetActive(false);
+            capturingLetter.Add(new LetterFillStroke { overlay = overlay, start = start, end = end });
+        }
     }
 
     private Transform Rectangle(Vector2 position, Vector2 size, Color color, int order)
     {
         GameObject part = new GameObject("HintStroke");
         part.hideFlags = HideFlags.HideAndDontSave;
-        part.transform.SetParent(visuals.transform, false);
+        part.transform.SetParent(controlVisualParent != null ? controlVisualParent : visuals.transform, false);
         part.transform.localPosition = position;
         part.transform.localScale = new Vector3(size.x, size.y, 1);
         SpriteRenderer renderer = part.AddComponent<SpriteRenderer>();
@@ -436,6 +606,11 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void ReleaseVisuals()
     {
+        spikeWarningText = null;
+        leftControlVisuals = rightControlVisuals = controlVisualParent = null;
+        leftLetterFill.Clear();
+        rightLetterFill.Clear();
+        capturingLetter = null;
         introductionTitle = null;
         introductionSubtitle = null;
         introductionBody = null;

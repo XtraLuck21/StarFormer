@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 ///   Box         Left/Right + Grow/Shrink (BoxResizeAbility)
 ///   Bubble      Left/Right + Pop; also Up/Down while in water
 ///   SpikeWall   Left/Right + Fire
-///   Spider      Left/Right + Leave
+///   Spider      Left/Right
 ///   Fan         Left/Right + Blow/Leave
 ///   BouncyBall  Left/Right
 ///   gravityBall All hidden (no player control)
@@ -41,7 +41,7 @@ public class MobileControlsUI : MonoBehaviour
     [Header("Form-Specific Action Buttons")]
     [SerializeField] private GameObject jumpButton;   // Star, Kind = Action.
     [SerializeField] private GameObject fireButton;   // SpikeWall, Kind = Action.
-    [SerializeField] private GameObject leaveButton;  // Fan / Spider, Kind = Release.
+    [SerializeField] private GameObject leaveButton;  // Fan, Kind = Release.
     [SerializeField] private GameObject popButton;    // Bubble, Kind = Release.
     [SerializeField] private GameObject blowButton;   // Fan wind, Kind = Blow.
 
@@ -169,7 +169,7 @@ public class MobileControlsUI : MonoBehaviour
         SetActive(jumpButton, form == BodyForm.Star);
         SetActive(fireButton, form == BodyForm.SpikeWall);
         SetActive(leaveButton,
-            form == BodyForm.Fan || form == BodyForm.Spider);
+            form == BodyForm.Fan);
         SetActive(popButton, form == BodyForm.Bubble);
         SetActive(blowButton, form == BodyForm.Fan);
     }
