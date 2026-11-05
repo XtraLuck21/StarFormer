@@ -1,10 +1,12 @@
 # Introductory Levels
 
-Last updated: 2026-11-02.
+Last updated: 2026-11-05.
+
+**Current published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. See [the current release record](publish_instructions.md#beta-011-release-status).
 
 **Historical published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
 
-**Published Beta 0.1.0 (November 2):** IntroBouncyBall is integrated after IntroBubble, with two-way passages, shorter bounces, brief contextual lessons and aligned terrain. Player/Analytics versions are `beta-0.1.0`; the final package was rebuilt, published and accepted in developer-reported local/online tests (source `3a693ca`, gh-pages `1105970`). In addition, the integrated IntroBubble keeps its rebuilt tank, map hints, return travel to IntroBox and spare Bubble. Controls are **J = Grow, K = Shrink, Q = Pop Bubble**; Q also releases Spider/Fan and F toggles Fan wind. R opens restart choices. Advanced is now formal Level01; its flag continues through IntroSpider and FanTutorial before Level02. See [the release record](publish_instructions.md#beta-010-release-status) for deployment evidence.
+**Historical Beta 0.1.0 (November 2):** IntroBouncyBall is integrated after IntroBubble, with two-way passages, shorter bounces, brief contextual lessons and aligned terrain. Player/Analytics versions are `beta-0.1.0`; the final package was rebuilt, published and accepted in developer-reported local/online tests (source `3a693ca`, gh-pages `1105970`). In addition, the integrated IntroBubble keeps its rebuilt tank, map hints, return travel to IntroBox and spare Bubble. Controls are **J = Grow, K = Shrink, Q = Pop Bubble**; Q also releases Spider/Fan and F toggles Fan wind. R opens restart choices. Advanced is now formal Level01; its flag continues through IntroSpider and FanTutorial before Level02. See [the release record](publish_instructions.md#beta-010-release-status) for deployment evidence.
 
 ## Purpose and progression
 
@@ -146,7 +148,7 @@ For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [Ga
 
 ## Verification and remaining work
 
-Latest integration: developer playtests accepted the BouncyBall route, hints, terrain alignment and two-way Bubble passage. After the Fan hint texture fix (`3365e29`), the final package was rebuilt with the synchronized versions/template and published as Beta 0.1.0. The developer confirmed local and hosted tests passed. Beta Level01 production records are visible in the dashboard; map/version matching, Level02-specific data and broader device coverage remain follow-ups.
+Historical November 2 integration: developer playtests accepted the BouncyBall route, hints, terrain alignment and two-way Bubble passage. After the Fan hint texture fix (`3365e29`), the final package was rebuilt with the synchronized versions/template and published as Beta 0.1.0. The developer confirmed local and hosted tests passed. The historical 0.1.0 Level01 production records are visible in the dashboard; Version 9 subsequently resolved historical map matching. Current 0.1.1 raw-row/map acceptance and broader device coverage remain follow-ups.
 
 Earlier November 1 Level01-promotion verification (before BouncyBall integration): developer playtests and isolated Unity checks passed Mainmenu entries, the then-direct IntroBubble → formal Level01 transition, Level01 completion in all four forms → IntroSpider, then FanTutorial → Level02. Legacy scene/meta preservation and current Level01 checkpoint/Home behavior were also verified. These earlier checks are distinct from the November 2 Beta release acceptance above; detailed mobile coverage remains a follow-up.
 

@@ -3,21 +3,35 @@
 For the seven-scene analytics v2 integration, real maps and test/production
 rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
 
-Last updated: 2026-11-03.
+Last updated: 2026-11-05.
 
-## Beta 0.1.1 pre-publication checks
+## Beta 0.1.1 acceptance status
 
-Local Player/Analytics versions are `beta-0.1.1`; collection stays enabled in `production` with the existing endpoint. All seven gameplay scenes are tracked. Maps have been re-exported from the current scenes, including the new Level01 door hint. Build and runtime acceptance remain pending.
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. The completed export is `Builds/WebGL-Beta-0.1.1`. Player/Analytics versions are `beta-0.1.1`; the released source enables production collection for all seven gameplay scenes and contains refreshed maps and the Level01 door hint.
 
-- Build a fresh `Builds/WebGL-Beta-0.1.1` export. Confirm the browser title/badge and new event rows use `beta-0.1.1`.
-- Play Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02. Verify each gameplay scene creates its own run and completion; Mainmenu stays untracked.
+On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/WebGL-Beta-0.1.1` and the publishing checkout byte for byte. This confirms the deployed package, not a new gameplay playtest or production analytics acceptance.
+
+| Check | Evidence / status |
+| --- | --- |
+| Build and publication | Complete: owner confirmation, source/publishing record and live package comparison |
+| Live version and payload | Passed November 5: all seven files match the completed 0.1.1 export |
+| Detailed desktop/touch gameplay | Not newly exercised in this documentation update |
+| Production event delivery and raw-row metrics | Not yet verified for 0.1.1; 0.1.0 evidence does not certify this release |
+| Refreshed backend map deployment/rendering | Not verified; the game deployment does not deploy Apps Script |
+
+Remaining checks against the published export:
+
+- Confirm new event rows use `beta-0.1.1`. Play Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02. Each gameplay scene should create its own run and completion; Mainmenu stays untracked.
 - Test backward passages and `scene_return` / `entry_reason = return`, full restart, checkpoint retry, death, pause/focus loss and form-duration totals. Check actual Sheet rows and duplicate handling.
 - Test the Level01 20-second door hint, deliberate contact activation, paused preview/resume and once-per-scene-load behavior on desktop and touch.
-- Sync the refreshed backend map catalog to the existing deployment. Confirm new `map_version` values resolve correctly, historical builds keep their maps and unknown versions still show a coordinate grid.
-- Record local and hosted browser/device results, source/publishing commits and URL after publication. Historical 0.1.0 acceptance below is separate evidence.
+- Verify the refreshed backend map catalog is deployed; synchronize it if needed. Confirm new `map_version` values resolve correctly, historical builds keep their maps and unknown versions still show a coordinate grid.
+- Record the browsers/devices and scenarios actually tested. Preserve the 0.1.1 export and keep historical evidence separate.
 
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Test those features in a future build with a new agreed version; they are not acceptance requirements for the already-published 0.1.1 package.
 
 ## Beta 0.1.0 acceptance status
+
+Historical evidence below refers to the November 2 export; `/beta/` now serves 0.1.1. The map-binding follow-up was subsequently resolved by dashboard Version 9; retain the original observation and distinguish it from current 0.1.1 map checks.
 
 Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [Deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). All seven hosted files matched the tested export. Player/Analytics versions are `beta-0.1.0`; the existing production endpoint and Level01/Level02 tracking configuration are unchanged.
 
@@ -28,12 +42,12 @@ Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as 
 | Hosted gameplay | Passed, developer reported; browser/device versions and an exhaustive scenario matrix were not supplied |
 | Beta records received | Developer confirmed; screenshot shows production Beta Level01 records, completion and death |
 | Level02-specific delivery and raw-row audit | Still to verify; not demonstrated by the Level01 screenshot |
-| Matching real map | Open: unrecognized/unrecorded map version; coordinate-grid fallback visible |
+| Matching real map | Initially showed a grid; Version 9 subsequently supplied release-matched maps (see AnalyticsDashboard.md) |
 | Metric correctness, deduplication and broad device coverage | Remain targeted checks below; not certified by aggregate dashboard counts |
 
 Screenshot evidence supplied November 2: Production / `beta-0.1.0` / Level 1 / All players / Normal entries shows 2 anonymous players, 7 runs, 79 events, 1 of 7 observed starts completed (14.3%), 1 death, 13 attempts, 3 abandoned and 0 scene returns. This is a temporary filtered sample; the header's 5,334 production events is not the Beta-only count. No raw Sheet rows were directly inspected in this documentation update.
 
-### Dashboard map/version follow-up
+### Historical dashboard map/version follow-up
 
 1. Inspect Beta `RawEvents_Production` rows, their build/scene identifiers and any map metadata alongside the deployed dashboard's resolver. Determine whether the issue is a missing map asset, missing build-to-map association or missing version metadata; the screenshot alone does not establish the cause.
 2. Add the map corresponding to released source `3a693ca`, preserving world coordinates, scale and orientation. Associate Beta Level01 with that map, not Level01_Legacy or the old Alpha layout. Retain historical map associations and the unknown-version grid fallback.
@@ -41,7 +55,7 @@ Screenshot evidence supplied November 2: Production / `beta-0.1.0` / Level 1 / A
 4. Account for SAFE/NORMAL/HARD and moving/falling obstacles. If their runtime state is absent, label the map as a base-layout reference rather than claiming an exact obstacle-state replay. Review existing payloads before deciding whether future telemetry/schema changes are needed.
 5. After the dashboard update, confirm the same Beta filters show the correct map and consistent event totals; switching to Alpha must retain the historical map, and an unknown version must still use the grid. Preserve all recorded events.
 
-Then verify Level01 and Level02 Runs, Session/Attempt IDs, checkpoint events, deduplication and active-time calculations against actual rows. IntroBouncyBall is untracked and must not create a tracked level Run; passage backtracking must not create spurious Level01 completion/death records. Record the browsers/devices and scenarios actually tested.
+For the historical 0.1.0 collector only, verify Level01 and Level02 Runs, Session/Attempt IDs, checkpoint events, deduplication and active-time calculations against actual rows. IntroBouncyBall is untracked in 0.1.0 and must not create a tracked level Run; passage backtracking must not create spurious Level01 completion/death records. Record the browsers/devices and scenarios actually tested.
 
 ## Historical Alpha 0.1.2 release evidence
 

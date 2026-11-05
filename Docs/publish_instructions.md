@@ -1,59 +1,69 @@
 # Publish StarFormer to GitHub Pages
 
-Last updated: 2026-11-03.
+Last updated: 2026-11-05.
 
-- [Current Beta](https://xtraluck21.github.io/StarFormer/beta/) — Beta 0.1.0, published November 2, 2026.
+- [Current Beta](https://xtraluck21.github.io/StarFormer/beta/) — Beta 0.1.1, published November 3, 2026.
 - [Historical Alpha](https://xtraluck21.github.io/StarFormer/alpha/) — fixed path for tested Alpha releases.
-- [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved during Alpha publication.
+- [Root Beta 0.1.0](https://xtraluck21.github.io/StarFormer/) — published at the root by `f6eaf9e` on November 2; unchanged by the 0.1.1 deployment.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
 
 Alpha `alpha-0.1.2` is published at `/alpha/` on October 18, 2026. Source configuration `5650250` includes the Level 1 restart and intro-control changes from `9b35f8e`. Export: `Builds/WebGL-Alpha-0.1.2`; publishing commit: `5f62980`. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/39173067360) succeeded. The deployed HTML/version and game-data payload matched the tested export. The developer reported both localhost and online tests passed. Analytics Sheet delivery for this version is still awaiting confirmation.
 
-## Beta 0.1.1 release preparation
+## Beta 0.1.1 release status
 
-**November 3, 2026: local source prepared; build, playtest and publication pending.** The published Beta link above remains the recorded 0.1.0 release until the new export is deployed.
+**Published November 3, 2026; deployed files verified November 5.** The owner confirms publication at `/beta/`.
 
-| Item | Prepared state / next action |
+| Item | Recorded state |
 | --- | --- |
 | Player Version / Analytics buildVersion | Both `beta-0.1.1` |
-| Analytics | Existing endpoint, collection enabled, `production`; schema v2 tracks all seven gameplay scenes |
-| Changes since 0.1.0 | All-level analytics/dashboard integration and Level01 contextual movable-door hint (`2d8738d`) |
-| Maps | Re-exported from current scenes; runtime catalog, manifest, versioned PNGs and backend catalog updated together; old maps retained |
-| Export folder | `Builds/WebGL-Beta-0.1.1` (fresh build required) |
-| Source commit | Record the maintainer's commit after these local changes are reviewed and pushed to main |
-| Publication / URL | Pending; existing procedure replaces `/beta/`. Confirm a separate destination before using a new version-specific URL |
-| Acceptance | New build, local/hosted gameplay and production raw-row/map checks pending; 0.1.0 evidence does not certify 0.1.1 |
+| Analytics configuration | Existing endpoint, collection enabled, `production`; schema v2 tracks all seven gameplay scenes |
+| Changes since 0.1.0 | All-level analytics integration, refreshed maps and Level01 contextual movable-door hint (`2d8738d`) |
+| Maps | Runtime catalog, manifest, versioned PNGs and backend catalog refreshed; old maps retained |
+| Export folder | `Builds/WebGL-Beta-0.1.1` (completed export; preserve as release evidence) |
+| Built source | [`9451511`](https://github.com/XtraLuck21/StarFormer/commit/9451511), before the November 4 UI commits |
+| Publishing commit | [`e81097e`](https://github.com/XtraLuck21/StarFormer/commit/e81097e), November 3 at 14:46 Los Angeles time; changed only `beta/` |
+| Published URL | [Beta 0.1.1](https://xtraluck21.github.io/StarFormer/beta/) |
+| Deployment verification | November 5: all seven live files HTTP 200, byte-identical to the local export and publishing checkout |
+| Remaining acceptance | Detailed local/hosted gameplay scenarios, production raw rows and refreshed backend map deployment/rendering are not verified by the package comparison |
 
-Before building, run **Analytics → Export all real level maps** again if any scene has changed since this preparation. `Build → Build WebGL` checks scene hashes; the standard Build Profiles button does not call that custom validation. The catalog must match all seven current scenes either way.
+The source release-preparation commit was rebased to `2caffd9` on November 5, after the four UI commits had landed. That commit is the integrated main tip at documentation time, **not** the built source revision. The live export remains the one built from `9451511`.
 
-The map refresh also produced new rendered image versions for IntroSpider and Level02. Retain the complete generated set. Sync `AnalyticsBackend/MapCatalog.html` to the existing Apps Script project and update that deployment before validating new map versions; keep its endpoint, historical maps and recorded rows. This local preparation does not deploy the backend. Verify production rows carry `beta-0.1.1` and that each `map_version` resolves to the matching image. Use [the 0.1.1 acceptance checklist](AnalyticsTestPlan.md#beta-011-pre-publication-checks).
+### Main-only changes awaiting a new release
 
-## Beta 0.1.0 release status (historical)
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Main still carries version label `beta-0.1.1`, so do not infer release contents from the label or latest source history. The next release needs a new agreed Player/Analytics version, a fresh export and gameplay checks, including Help UI in other scenes that still have the old configuration.
 
-**Published November 2, 2026; local and hosted playtests passed according to the developer.** Current source includes the fully rebuilt formal Level01 and IntroBouncyBall between IntroBubble and Level01. Box/Bubble and Bubble/BouncyBall support two-way passage travel; BouncyBall's flag starts Level01. Level01 continues through IntroSpider → FanTutorial → Level02.
+### Remaining analytics acceptance
+
+Publication of the game does not deploy Apps Script. Verify whether the refreshed `AnalyticsBackend/MapCatalog.html` has been deployed to the existing project before claiming new map rendering works. If it has not, synchronize it through the existing backend deployment process while retaining the endpoint, historical maps and recorded rows. Verify production rows carry `beta-0.1.1` and each `map_version` resolves to the matching image. See [the 0.1.1 acceptance checklist](AnalyticsTestPlan.md#beta-011-acceptance-status).
+
+Before a future build, run **Analytics → Export all real level maps** again if gameplay scenes have changed. `Build → Build WebGL` checks scene hashes; the standard Build Profiles button does not call that custom validation. Preserve the completed 0.1.1 export.
+
+## Beta 0.1.0 release status
+
+**Historical release: published November 2, 2026; local and hosted playtests passed according to the developer.** This export includes the fully rebuilt formal Level01 and IntroBouncyBall between IntroBubble and Level01. Box/Bubble and Bubble/BouncyBall support two-way passage travel; BouncyBall's flag starts Level01. Level01 continues through IntroSpider → FanTutorial → Level02.
 
 | Item | Current status / target |
 | --- | --- |
 | Player Version / Analytics buildVersion | Both `beta-0.1.0` |
 | Analytics | Collection enabled; existing endpoint and `production` environment retained; only Level01 and Level02 tracked |
 | Export folder | `Builds/WebGL-Beta-0.1.0` |
-| Publication | [Beta 0.1.0](https://xtraluck21.github.io/StarFormer/beta/), November 2, 2026 |
+| Publication | Originally `/beta/` on November 2; that path now serves 0.1.1. The root still serves 0.1.0 via `f6eaf9e` |
 | Local build evidence | Developer confirmed success after `3365e29` removed the editor-only Texture2D property from FanPossessionHint |
 | Final export | Rebuilt after Analytics/template updates; developer-reported local test passed; all seven deployed files matched the tested export byte for byte |
 | Final source / publishing commit | [`3a693ca`](https://github.com/XtraLuck21/StarFormer/commit/3a693ca) / [`1105970`](https://github.com/XtraLuck21/StarFormer/commit/1105970) |
 | Deployment / hosted gameplay | [Pages build and deployment succeeded](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039); developer-reported online test passed |
 | Beta analytics | Records reported received; supplied production dashboard screenshot confirms Beta Level01 events; Level02-specific and raw-row metric checks remain open |
-| Known dashboard issue | Beta Level01 map version is unrecognized/unrecorded; deaths use a coordinate grid until the matching map is available |
+| Historical dashboard issue | Initial Beta Level01 grid fallback was subsequently resolved by Version 9 release-map bindings; see AnalyticsDashboard.md |
 
 The existing template folder remains `StarFormerAlpha`; its browser title and launch badge now use Player Version rather than hard-coded Alpha text. Folder/CSS/JS names do not determine the release label.
 
 Use `StarFormer` as the source checkout and the sibling `StarFormer-Pages` checkout on `gh-pages` for exported files. Do not merge `gh-pages` into `main`. Coordinate one publisher per release. Publish this Beta into `beta/`; preserve `alpha/`, `playtest-01/`, `alpha-progress-check/`, the root player and other existing paths. GitHub Pages is publicly accessible.
 
-The current Analytics asset uses `buildVersion: beta-0.1.1` and tracks all seven gameplay scenes. The published 0.1.0 export retains its embedded Level01/Level02-only collector. Existing Alpha exports keep their embedded version. Production events append to the same Sheet and are separated by `build_version`, not URL path. The developer has confirmed received records and supplied Beta Level01 production-dashboard evidence. Continue raw-row/Level02 metric checks and the map/version follow-up in [AnalyticsTestPlan.md](AnalyticsTestPlan.md); successful loading or Editor JSON alone is not delivery evidence. For 0.1.1, update the backend map resource as described above; retain the endpoint and all old rows. Publishing the game alone does not deploy that resource.
+The published 0.1.1 collector tracks all seven gameplay scenes; the historical 0.1.0 and Alpha exports retain their embedded configuration. Production events append to the same Sheet and are separated by `build_version`, not URL path. The November 2 dashboard evidence applies to 0.1.0 only. Continue the 0.1.1 raw-row/map checks in [AnalyticsTestPlan.md](AnalyticsTestPlan.md); successful loading or Editor JSON alone is not delivery evidence.
 
 Commands use macOS/Linux shell syntax and assume the folders are siblings. You need repository push access and Unity **6000.3.22f1** with **Web Build Support**. Stop if a command fails.
 
-The procedure below remains the checklist for future releases. The rebuild, copy, push and hosted playtest for Beta 0.1.0 above are already complete; documentation-only updates do not require another build.
+The procedure below is for a future release. Beta 0.1.1 build/publication are complete; documentation-only updates do not require rebuilding it. Commands use `beta-0.1.2` / `WebGL-Beta-0.1.2` as examples: confirm the next version before executing them. These examples do not claim 0.1.2 is prepared or published. Preserve both older local exports.
 
 ## 1. Update source
 
@@ -84,7 +94,7 @@ Open Unity, wait for imports and compilation, and test from `Mainmenu`. Resolve 
 
 Keep Level01_Legacy, the old Tutorial, reference scenes and sandboxes unchecked. Level01 is the promoted Advanced scene; do not add a duplicate Advanced entry. Forward progression is name-based, not build-index order. Open **Scene List** to edit or drag the order; Mainmenu must remain the startup scene.
 
-In **Player Settings → Resolution and Presentation**, choose the **StarFormerAlpha** Web template and set the default canvas size to **1920 × 1080**. In the Player settings set **Version** to `beta-0.1.1` and match `Assets/Resources/AnalyticsSettings.asset` → `buildVersion`. Keep **Gzip**, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**. Enable **Name Files As Hashes** to give changed build payloads distinct URLs when replacing `beta/`.
+In **Player Settings → Resolution and Presentation**, choose the **StarFormerAlpha** Web template and set the default canvas size to **1920 × 1080**. In the Player settings set **Version** to `beta-0.1.2` and match `Assets/Resources/AnalyticsSettings.asset` → `buildVersion`. Keep **Gzip**, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**. Enable **Name Files As Hashes** to give changed build payloads distinct URLs when replacing `beta/`.
 
 The custom template lives at `Assets/WebGLTemplates/StarFormerAlpha/`. It keeps a 16:9 canvas inside the available safe area, with letterboxing rather than stretched gameplay. The render buffer follows viewport size and device pixel density, capped at 2× / 2560 × 1440 on desktop and 1.5× / 1920 × 1080 on touch/mobile devices. These are upper limits, not forced resolutions on smaller screens. It does not change camera behavior, textures, mobile AutoDetect, or scene UI wiring.
 
@@ -92,7 +102,7 @@ After loading, **Play Fullscreen** requests fullscreen from a user gesture; **Pl
 
 The template uses relative asset paths and needs no edits after export. The Player Version is used to version its CSS/JS URLs; increment it together with Analytics `buildVersion` for later releases. Keep the complete exported payload together.
 
-Choose **Build And Run** with a new version-specific output folder. Use `Builds/WebGL-Beta-0.1.1` for this release. Rebuild after changes to runtime settings or the template; retain the full final export together. Test through localhost, not by double-clicking `index.html`.
+Choose **Build And Run** with a new version-specific output folder. Use `Builds/WebGL-Beta-0.1.2` for this release. Rebuild after changes to runtime settings or the template; retain the full final export together. Test through localhost, not by double-clicking `index.html`.
 
 Check all four menu entries: Introductory Levels, Level 1, Level 2 Intro and Level 2. Play Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02. Verify the new first level is loaded both directly and from IntroBouncyBall. Repeat the following checks for the new export; previous general gameplay acceptance does not enumerate every device/scenario:
 
@@ -142,7 +152,7 @@ Confirm `gh-pages` and a clean working tree, then:
 
 ```bash
 git pull --ff-only origin gh-pages
-release_build_dir='../StarFormer/Builds/WebGL-Beta-0.1.1'
+release_build_dir='../StarFormer/Builds/WebGL-Beta-0.1.2'
 ls -a "$release_build_dir"
 ```
 
@@ -194,7 +204,7 @@ git diff --cached --stat
 Confirm that only `beta/` and, if needed, `.nojekyll` changed. There must be no changes or deletions inside `alpha/`, `playtest-01/`, `alpha-progress-check/`, the root player, or other preserved folders. If unexpected files are staged, stop and correct the staging before committing.
 
 ```bash
-git commit -m "Publish StarFormer Beta 0.1.1"
+git commit -m "Publish StarFormer Beta 0.1.2"
 git push origin gh-pages
 ```
 
@@ -206,7 +216,7 @@ Pages remains **Settings → Pages → Deploy from a branch → gh-pages → / (
 
 Wait for **GitHub Actions** deployment success. Open `/StarFormer/beta/` in a private window on desktop and on a real phone. Check loading, fullscreen entry/exit, resize, orientation changes, crisp text, and every form with simultaneous touch inputs. Test navigation, changed behavior, and restart/return paths; also confirm `alpha/`, the old `playtest-01/`, Alpha Progress Check and the root player still load unchanged. Deployment success alone does not confirm gameplay correctness.
 
-Use `/beta/` for this Beta release and subsequent tested Beta fixes; keep `/alpha/` unchanged. Record the release name/date, source commit, publishing commit (`git rev-parse --short HEAD`), URL, Player Version, Analytics build version, and local/online test results. Verify new Sheet rows carry `beta-0.1.1`. Browser sessions already open may continue reporting the old version until reloaded. Return to the source checkout:
+Use `/beta/` for this Beta release and subsequent tested Beta fixes; keep `/alpha/` unchanged. Record the release name/date, source commit, publishing commit (`git rev-parse --short HEAD`), URL, Player Version, Analytics build version, and local/online test results. Verify new Sheet rows carry `beta-0.1.2`. Browser sessions already open may continue reporting the old version until reloaded. Return to the source checkout:
 
 ```bash
 cd ../StarFormer
