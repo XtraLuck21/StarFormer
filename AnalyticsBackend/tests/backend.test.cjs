@@ -100,7 +100,7 @@ assert.equal(invalidTimes.invalid_death_positions,1);assert.equal(invalidTimes.d
 const data=rows.concat(event({map_version:'map-b'}),event({entry_reason:'return',level_run_id:'return-run'}));
 rt.sheets.RawEvents_Production=rt.sheet('RawEvents_Production',[Array.from(api.columns),...data.map(row=>Array.from(api.columns).map(c=>row[c]??''))]);
 const normal=api.getDashboardData({build:'test-build',level:'Level01',map_version:'map-a'});
-assert.equal(normal.view.runs,3);assert.equal(normal.levels.length,7);assert.equal(normal.view.event_count,rows.length);
+assert.equal(normal.view.runs,3);assert.equal(normal.levels.length,8);assert.equal(normal.view.event_count,rows.length);
 const attemptedFilters=api.getDashboardData({level:'Level01',map_version:'map-a',entry:'return',player:'Player 01'});
 assert.equal(attemptedFilters.view.runs,3);assert.equal(attemptedFilters.players,undefined);assert.equal(attemptedFilters.selected_player,undefined);
 assert.equal(api.getDashboardData({level:'Level01',map_version:'map-b'}).view.deaths,0);
@@ -150,3 +150,15 @@ const html=fs.readFileSync(path.join(root,'Dashboard.html'),'utf8');new Function
 assert.ok(!html.includes('id="player"'));assert.ok(!html.includes('id="entry"'));assert.ok(!html.includes('form-filter'));assert.ok(!html.includes('death-checkpoint'));assert.ok(!html.includes('retry-interval'));assert.ok(html.includes('Time between checkpoints'));assert.equal((html.match(/<section aria-labelledby=/g)||[]).length,4);
 console.log('PASS: ingestion/migration, aggregate-only privacy, checkpoint travel durations across retries, unfinished/missing-time intervals, completion distribution, cache, map matching and four-metric frontend.');
 module.exports={runtime,event};
+
+// IntroFan is the current name; old published events and maps still use FanTutorial.
+assert.ok(api.levels.includes('IntroFan'));assert.ok(api.levels.includes('FanTutorial'));
+assert.equal(api.validatePayload_(event({level_name:'IntroFan'})),'');
+const renamedFan=JSON.parse(fs.readFileSync(path.join(root,'Maps/manifest.json'),'utf8')).maps.find(m=>m.level_name==='IntroFan');
+assert.ok(renamedFan);
+const currentFanMap=api.getDashboardMap('IntroFan',renamedFan.map_version);
+const legacyFanMap=api.getDashboardMap('FanTutorial',renamedFan.map_version);
+assert.equal(currentFanMap.level_name,'IntroFan');assert.equal(legacyFanMap.level_name,'FanTutorial');
+assert.equal(currentFanMap.image_data_url,legacyFanMap.image_data_url);
+assert.equal(api.getDashboardMap('IntroFan','missing-map-version'),null);
+console.log('PASS: IntroFan accepted alongside FanTutorial; exact-version map compatibility preserved.');

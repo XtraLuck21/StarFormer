@@ -5296,8 +5296,8 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::IntroStarGoal
   playerController: {fileID: 1168412333}
-  nextSceneName: FanTutorial
-  nextLevelLabel: Fan Tutorial
+  nextSceneName: IntroFan
+  nextLevelLabel: Intro Fan
   transitionSeconds: 1.5
   requireGroundedStar: 0
 --- !u!61 &2123000403

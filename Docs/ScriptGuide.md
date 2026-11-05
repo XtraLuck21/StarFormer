@@ -11,11 +11,13 @@ Last updated: 2026-11-05. Published Beta 0.1.1 uses source `9451511` (gh-pages `
 | 2 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Grounded-Star flag opens passage to IntroBouncyBall; return to IntroBox |
 | 3 | [IntroBouncyBall](../Assets/Scenes/IntroBouncyBall.unity) | Bounce/float/compressed-bounce tutorial; return to Bubble, flag to Level01 |
 | 4 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
-| 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to FanTutorial |
-| 6 | [FanTutorial](../Assets/Scenes/FanTutorial.unity) | Continues to Level02 |
+| 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to IntroFan |
+| 6 | [IntroFan](../Assets/Scenes/IntroFan.unity) | Continues to Level02 |
 | 7 | [Level02](../Assets/Scenes/Level02.unity) | Final completion screen with Main Menu action |
 
-Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02.
+The current source names the Fan tutorial `IntroFan` (formerly `FanTutorial`), preserving its scene GUID. Published builds and historical analytics retain the old name. Deploy the local analytics compatibility update with the next game release; this rename does not update the hosted build.
+
+Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02.
 
 [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) owns the enabled list. [WebGLBuild.cs](../Assets/Editor/WebGLBuild.cs) exports that list. Keep Level01_Legacy, Level01_Reference, Tutorial, WaterPlayground and Playground disabled. EnemyScene is a separate test scene, not part of this progression.
 
@@ -70,7 +72,7 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 | [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | IntroBox form title/subtitle and Box-to-Box feedback. Disabled with old title objects in rebuilt IntroBubble, which uses world hints instead. Do not enable TutorialIntroUI alongside it. |
 | [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
 | [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Two-way IntroBox ↔ IntroBubble ↔ IntroBouncyBall passages. Return to Box uses BoxB; return to Bubble uses Star near its flag, with the destination gate open. One-shot destination setup is not a full previous-scene snapshot. |
-| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/FanTutorial. IntroBubble now uses flag + passage instead. |
+| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/IntroFan. IntroBubble now uses flag + passage instead. |
 | [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion, 1.5-second Level 1 transition to Level01. |
 | [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Short anchored headlines for bounce/float/land/low ceiling and spike death; subtitle disabled. |
 | [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Map movement-key prompt for the controlled tutorial ball. |
