@@ -41,6 +41,6 @@ public class LevelNavigationUI : MonoBehaviour
         AnalyticsManager.Instance?.TrackAbandoned("return_to_menu");
         PlayerPossessionController.ResetCheckpointSession();
         Time.timeScale = 1f;
-        SceneManager.LoadScene("Mainmenu");
+        SceneManager.LoadScene("Navigation");
     }
 }

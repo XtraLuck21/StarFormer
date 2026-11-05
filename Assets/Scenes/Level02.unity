@@ -20138,7 +20138,7 @@ MonoBehaviour:
   clearedMessage: "\u5173\u5361\u5B8C\u6210\uFF01"
   blockedMessage: "\u8FD8\u6709\u95E8\u6CA1\u6253\u5F00\u3002"
   blockedMessageTime: 2
-  menuSceneName: Mainmenu
+  menuSceneName: Navigation
   waitForMenuButton: 1
   returnDelay: 1.5
   onLevelCleared:

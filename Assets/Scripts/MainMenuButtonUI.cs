@@ -11,7 +11,7 @@ using UnityEngine.UI;
 public sealed class MainMenuButtonUI : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
-    [SerializeField] private string menuSceneName = "Mainmenu";
+    [SerializeField] private string menuSceneName = "Navigation";
     private GameObject hud;
     private GameObject dialog;
     private Button home;
