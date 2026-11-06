@@ -5,8 +5,8 @@ using TMPro;
 using UnityEngine.InputSystem;
 
 /// <summary>
-/// 翻书式帮助面板：一页一个形态，每页显示标题、键位说明图、以及一段循环演示动画。
-/// 替代原来的 HelpPanelUI（开关逻辑都保留了，可以直接换掉）。
+/// 翻书式帮助面板：一页一个形态，每页显示标题、按键说明、以及一段循环演示动画。
+/// 支持按页解锁：未解锁的页显示问号和提示，不剧透内容。
 ///
 /// 场景结构：
 ///   Canvas
@@ -14,12 +14,13 @@ using UnityEngine.InputSystem;
 ///   └── HelpPanel                （遮罩，默认关闭）
 ///       ├── BookFrame            （书页背景）
 ///       │   ├── PageTitle        （TextMeshProUGUI）
-///       │   ├── ControlsImage    （Image，显示该形态的键位）
+///       │   ├── IconImage        （Image，形态图标）
+///       │   ├── KeysText         （TextMeshProUGUI，按键说明）
 ///       │   ├── DemoImage        （Image + SpriteSequencePlayer，演示动画）
-///       │   └── PageCaption      （TextMeshProUGUI，一句话说明，选填）
+///       │   └── CaptionText      （TextMeshProUGUI，一句话说明，选填）
 ///       ├── PrevButton
 ///       ├── NextButton
-///       ├── PageIndicator        （TextMeshProUGUI，显示 "3 / 8"）
+///       ├── PageIndicator        （TextMeshProUGUI，显示 "3 / 6"）
 ///       └── CloseButton
 ///
 /// 注意：只需要一套页面控件，翻页时换的是内容，不是换 GameObject。
@@ -49,10 +50,20 @@ public class HelpBookUI : MonoBehaviour
         [Tooltip("一句话补充说明，选填。比如「泡泡在空气中会自动上升」。")]
         [TextArea(1, 3)]
         public string caption;
+
+        [Header("解锁")]
+        [Tooltip("解锁标识。留空表示这页一直可见（比如 Star）。\n" +
+                 "填形态名（Box / Bubble / BouncingBall / Spider / Fan），" +
+                 "玩家第一次附身该形态后这页才解锁。\n" +
+                 "大小写必须和 BodyForm 枚举完全一致。")]
+        public string unlockId;
+
+        [Tooltip("未解锁时显示的图标，比如一个锁或问号。留空则不显示图标。")]
+        public Sprite lockedIcon;
     }
 
     [Header("页面内容")]
-    [Tooltip("按你希望的阅读顺序排列。建议：Star → Box → Bubble → BouncingBall → Spider → Fan → SpikeWall → Restart。")]
+    [Tooltip("按你希望的阅读顺序排列。建议：Star → Box → Bubble → BouncingBall → Spider → Fan。")]
     [SerializeField] private HelpPage[] pages;
     [SerializeField] private HelpBookContent content;
 
@@ -85,13 +96,30 @@ public class HelpBookUI : MonoBehaviour
     [Header("翻页控件")]
     [SerializeField] private Button prevButton;
     [SerializeField] private Button nextButton;
-    [Tooltip("显示「3 / 8」的文本，选填。")]
+    [Tooltip("显示「3 / 6」的文本，选填。")]
     [SerializeField] private TextMeshProUGUI pageIndicatorText;
 
     [Header("关闭控件")]
     [SerializeField] private Button closeButton;
     [Tooltip("遮罩上的 Button。点空白处也能关闭。")]
     [SerializeField] private Button backdropButton;
+
+    [Header("未解锁时的显示")]
+    [Tooltip("未解锁页的标题。")]
+    [SerializeField] private string lockedTitle = "???";
+
+    [Tooltip("未解锁页在按键区显示的文字。")]
+    [TextArea(1, 3)]
+    [SerializeField] private string lockedKeys = "Not yet discovered";
+
+    [Tooltip("未解锁页在底部显示的提示。")]
+    [TextArea(1, 3)]
+    [SerializeField]
+    private string lockedCaption =
+        "Possess this form in a level to unlock this page.";
+
+    [Tooltip("页码后面附加「已发现 x/y」。勾上能驱动玩家去收集。")]
+    [SerializeField] private bool showDiscoveredCount = true;
 
     [Header("行为设置")]
     [Tooltip("按 Esc 关闭弹窗。")]
@@ -285,6 +313,20 @@ public class HelpBookUI : MonoBehaviour
         ShowPage(currentPageIndex);
     }
 
+    /// <summary>
+    /// 解锁一页并立即刷新显示。
+    /// 书本打开着的时候解锁（比如玩家边看边玩），当前页会马上更新。
+    /// </summary>
+    public void UnlockPage(string unlockId)
+    {
+        HelpBookUnlocks.Unlock(unlockId);
+
+        if (isOpen)
+        {
+            ShowPage(currentPageIndex);
+        }
+    }
+
     private void ShowPage(int index)
     {
         if (ActivePages == null || ActivePages.Length == 0)
@@ -295,39 +337,48 @@ public class HelpBookUI : MonoBehaviour
         index = Mathf.Clamp(index, 0, ActivePages.Length - 1);
         HelpPage page = ActivePages[index];
 
+        // unlockId 留空的页永远算已解锁。
+        bool unlocked = HelpBookUnlocks.IsUnlocked(page.unlockId);
+
         if (pageTitleText != null)
         {
-            pageTitleText.text = page.title;
+            pageTitleText.text = unlocked ? page.title : lockedTitle;
         }
 
         if (iconImage != null)
         {
-            bool hasIcon = page.icon != null;
+            Sprite sprite = unlocked ? page.icon : page.lockedIcon;
+
             // 用 enabled 而不是 SetActive：没有图标时隐藏这块 Image，
             // 但物体还在，布局占位不变，其他元素不会跳位置。
-            iconImage.enabled = hasIcon;
+            iconImage.enabled = sprite != null;
 
-            if (hasIcon)
+            if (sprite != null)
             {
-                iconImage.sprite = page.icon;
+                iconImage.sprite = sprite;
             }
         }
 
         if (keysText != null)
         {
-            keysText.text = page.keys;
+            keysText.text = unlocked ? page.keys : lockedKeys;
         }
 
         if (captionText != null)
         {
-            captionText.text = page.caption;
+            string caption = unlocked ? page.caption : lockedCaption;
+            captionText.text = caption;
             // 没有说明文字时整行隐藏，避免留下一块空白。
-            captionText.gameObject.SetActive(!string.IsNullOrWhiteSpace(page.caption));
+            captionText.gameObject.SetActive(!string.IsNullOrWhiteSpace(caption));
         }
 
         if (demoPlayer != null)
         {
-            bool hasDemo = page.demoFrames != null && page.demoFrames.Length > 0;
+            // 未解锁时不播演示动画，否则等于直接把答案给了玩家。
+            bool hasDemo = unlocked &&
+                page.demoFrames != null &&
+                page.demoFrames.Length > 0;
+
             demoPlayer.gameObject.SetActive(hasDemo);
 
             if (hasDemo)
@@ -341,9 +392,23 @@ public class HelpBookUI : MonoBehaviour
 
     private void UpdateNavigationState()
     {
+        HelpPage[] activePages = ActivePages;
+
+        if (activePages == null || activePages.Length == 0)
+        {
+            return;
+        }
+
         if (pageIndicatorText != null)
         {
-            pageIndicatorText.text = $"{currentPageIndex + 1} / {ActivePages.Length}";
+            string indicator = $"{currentPageIndex + 1} / {activePages.Length}";
+
+            if (showDiscoveredCount)
+            {
+                indicator += $"　({CountUnlocked(activePages)}/{activePages.Length} discovered)";
+            }
+
+            pageIndicatorText.text = indicator;
         }
 
         // 不循环时，到头了就把按钮置灰，告诉玩家没有更多页了。
@@ -356,9 +421,24 @@ public class HelpBookUI : MonoBehaviour
 
             if (nextButton != null)
             {
-                nextButton.interactable = currentPageIndex < ActivePages.Length - 1;
+                nextButton.interactable = currentPageIndex < activePages.Length - 1;
             }
         }
+    }
+
+    private static int CountUnlocked(HelpPage[] activePages)
+    {
+        int count = 0;
+
+        foreach (HelpPage page in activePages)
+        {
+            if (page != null && HelpBookUnlocks.IsUnlocked(page.unlockId))
+            {
+                count++;
+            }
+        }
+
+        return count;
     }
 
     private void OnDisable()
