@@ -47,11 +47,13 @@ The old `ShapeClosetProgress`/`ShapeClosetView` scripts, serialized view compone
 
 Opening a book cannot discover a form. A successful starting-host transfer counts consistently; the old per-scene `unlockStartingHostPage` opt-in and suppression path were removed. Book/Closet listeners refresh from the shared event instead of polling every frame. Launch reset uses `SubsystemRegistration`, including Editor Play with domain reload disabled.
 
-### Gameplay help migration needs a check
+### Gameplay Help cleanup and deferred Level02 work
 
-IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider and IntroFan contain six-page `HelpBookUI` configurations with form unlock IDs. IntroBox, IntroBubble and IntroSpider also retain enabled legacy help components on active scene objects with no page content. Level02's saved help component references the current HelpBookUI script GUID but retains the old HelpPanelUI serialized layout with no pages/content.
+IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider and IntroFan contain six-page `HelpBookUI` configurations with form unlock IDs. The obsolete Help components in IntroBox, IntroBubble and IntroSpider had empty pages and missing button references, producing initialization errors. Those three components and their owner-list entries have been removed; the configured books, tutorial canvases, child objects and all other teaching UI are unchanged.
 
-Inspect these scenes in Play Mode and check the Console. Verify whether the legacy panels still serve a purpose; migrate or disable obsolete components after review. Specifically open Level02 Help and confirm it has real content, page controls and correct pause behavior before claiming help is complete in every scene. The session-discovery regression reproduced missing-button/panel errors from retained legacy gameplay Help components. Level02’s page-content migration remains unverified. These existing Help issues are separate from the passing Closet/Navigation book discovery checks.
+November 6 isolated Unity 6000.3.22f1 Play Mode verification passed for all three cleaned scenes: exactly one configured book per scene; opening and pausing; next/previous pages; close button, backdrop and Escape; restored gameplay time; preservation of an existing pause or non-default speed; disable/re-enable and scene exit with the book open. No runtime errors or Help warnings were reported during this focused check. This is Editor runtime evidence, not Web/browser acceptance.
+
+Level02 retains the old HelpPanelUI serialized layout without pages/content. Its repair and verification are explicitly deferred until the replacement Level02 scene arrives; it was not modified or tested in this cleanup. Do not describe Help as verified in every gameplay scene.
 
 ### Analytics maps must be regenerated
 

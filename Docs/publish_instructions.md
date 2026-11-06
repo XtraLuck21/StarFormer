@@ -4,7 +4,7 @@
 
 Player Version and Analytics buildVersion are synchronized to `beta-0.1.2` for current main `5e7105c` plus local preparation changes. **No new build, commit, push or publication has been performed.** Use `Builds/WebGL-Beta-0.1.2` for the tested export; Navigation is already saved at enabled index 0. The old Mainmenu stays in source but is disabled in builds.
 
-Read [Beta-0.1.2.md](Beta-0.1.2.md) before building: all seven analytics maps are stale; Closet and Navigation book now share session-only discovery and need new-build acceptance; legacy Help components and Level02 page content need checking. That document covers Level01 fixes, Navigation, shared Home/Book, IntroFan and latest Spider teaching changes. Do not mark this release ready solely because its version settings are updated.
+Read [Beta-0.1.2.md](Beta-0.1.2.md) before building: all seven analytics maps are stale; Closet and Navigation book now share session-only discovery and need new-build acceptance; obsolete Help components in IntroBox/IntroBubble/IntroSpider have been removed and checked in the Editor; Level02 Help work is deferred to its replacement scene. That document covers Level01 fixes, Navigation, shared Home/Book, IntroFan and latest Spider teaching changes. Do not mark this release ready solely because its version settings are updated.
 
 Last updated: 2026-11-06.
 

@@ -14509,7 +14509,6 @@ GameObject:
   - component: {fileID: 2043469421}
   - component: {fileID: 2043469422}
   - component: {fileID: 2043469423}
-  - component: {fileID: 2043469424}
   m_Layer: 5
   m_Name: TutorialCanvas
   m_TagString: Untagged
@@ -14649,41 +14648,6 @@ MonoBehaviour:
   subtitleText: {fileID: 1342776487}
   subtitleHoldSeconds: 4
   subtitleFadeSeconds: 0.75
---- !u!114 &2043469424
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2043469416}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba5a67b392f73564bac6abbc235f7b7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HelpPanelUI
-  pages: []
-  content: {fileID: 0}
-  helpButton: {fileID: 0}
-  helpPanel: {fileID: 1528301717}
-  pageTitleText: {fileID: 0}
-  iconImage: {fileID: 0}
-  keysText: {fileID: 0}
-  demoPlayer: {fileID: 0}
-  captionText: {fileID: 0}
-  prevButton: {fileID: 0}
-  nextButton: {fileID: 0}
-  pageIndicatorText: {fileID: 0}
-  closeButton: {fileID: 1589870995}
-  backdropButton: {fileID: 1528301719}
-  lockedTitle: ???
-  lockedKeys: Not yet discovered
-  lockedCaption: Possess this form in a level to unlock this page.
-  showDiscoveredCount: 1
-  closeWithKeyboard: 1
-  flipWithArrowKeys: 1
-  wrapAround: 1
-  pauseWhileOpen: 0
-  resetToFirstPageOnOpen: 1
 --- !u!1 &2052661012
 GameObject:
   m_ObjectHideFlags: 0

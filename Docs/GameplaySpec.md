@@ -38,7 +38,7 @@ Enabled build indices are Navigation 0, IntroBox 1, IntroBubble 2, IntroBouncyBa
 
 R opens restart choices, not an immediate reset. All seven gameplay scenes have the shared Home pause menu. Q is not a universal exit for Box/BouncyBall. Space remains jump/fire, not Bubble pop. Fan's F toggle is handled by its ability script.
 
-Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. Home is shared across the seven gameplay scenes. Six scenes have the newer paged Help configuration; Level02 and retained legacy components need the migration check in the release checklist. These UI changes do not establish complete mobile navigation support.
+Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. Home is shared across the seven gameplay scenes. Six scenes have the newer paged Help configuration. Obsolete Help components were removed from IntroBox, IntroBubble and IntroSpider, with focused Editor open/close/pause checks passing. Level02 Help work is deferred to its replacement scene. These UI changes do not establish complete mobile navigation support.
 
 ## 3. Possession and body behavior
 
