@@ -1,8 +1,10 @@
 # Introductory Levels
 
-Last updated: 2026-11-05.
+Current source target: `beta-0.1.2`, build/publication pending. Navigation, shared Home/Help, IntroFan naming and revised Spider teaching are covered by the [release checklist](Beta-0.1.2.md).
 
-**Current published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. See [the current release record](publish_instructions.md#beta-011-release-status).
+Last updated: 2026-11-06.
+
+**Recorded published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. See [the current release record](publish_instructions.md#beta-011-release-status).
 
 **Historical published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
 
@@ -13,10 +15,10 @@ Last updated: 2026-11-05.
 Replace the old Tutorial with three short introductions that teach contact possession through experimentation: Box growth/shrink, Bubble air/water control and pop, then BouncyBall bounce/float and low-ceiling rhythm. Spider and Fan tutorials follow Level01.
 
 ```text
-Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
+Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
-The menu's **Introductory Levels** button starts IntroBox; direct Level 1, Level 2 Intro and Level 2 entries remain available. The old Tutorial scene stays in the repository but is unchecked in the build list.
+Navigation's **Kindergarten** entrance starts IntroBox; **Level 1** starts Level01, **Elementary School** starts IntroSpider and **Level 2** starts Level02. Schools remain optional. The old Tutorial scene stays in the repository but is unchecked in the build list.
 
 ## IntroBox
 
@@ -64,6 +66,14 @@ Scene: [IntroBouncyBall.unity](../Assets/Scenes/IntroBouncyBall.unity).
 
 Walking left through IntroBouncyBall's opening returns to IntroBubble as Star at `(8.2, 3.95)` near the flag with its exit door open, even when leaving as BouncyBall. This is a fresh destination scene with one-shot return setup, not a persistent snapshot. The original Star remains active when it is the return body. Walking right can enter the tutorial again; spawning outside the exit trigger avoids an automatic loading loop. Restarting IntroBubble later starts normally in EntryBox with the gate closed.
 
+## IntroSpider and IntroFan updates
+
+Elementary School begins at IntroSpider and continues to IntroFan, then Level02. The saved IntroSpider goal targets `IntroFan`; the renamed scene retains its original GUID. Historical releases/maps still use `FanTutorial`.
+
+Current Spider teaching includes contextual climb prompts, directional wall arrows and a climb-surface lesson. The center prompt changes from `Climb over it` to `No floor, no problem.` after the qualifying climb, with an upward reminder when appropriate. Cake-disguised spikes reveal after contact; the first contact displays `cake is a lie`, while later spike deaths use `you are dead`. The center hint owns this feedback so the separate death caption does not duplicate it. The cake contact memory is session-local, not a persistent achievement.
+
+Gameplay Collection Book pages are discovered through possession and retained across scene changes for the current launch. Navigation’s shared book remains unrestricted. Do not describe tutorial completion as the sole unlock trigger in latest main: the [Closet state conflict](Beta-0.1.2.md#shape-closet-has-two-competing-state-sources) must be reviewed before release. Check retained legacy Help components in IntroBox, IntroBubble and IntroSpider alongside the newly configured books.
+
 ## Controls and hints
 
 | Controlled form | Movement | Ability / exit |
@@ -74,7 +84,7 @@ Walking left through IntroBouncyBall's opening returns to IntroBubble as Star at
 | Bubble underwater | WASD, including diagonals | Q returns to Star |
 | BouncyBall | A/D; automatic land bounce | Floats on water; no manual jump or release |
 
-R opens the restart menu; choose Restart Level for a fresh start, Return to Checkpoint when available, or Cancel. See [CheckpointGuidance.md](CheckpointGuidance.md). IntroBubble hides its standalone Restart button and uses a compact **Main Menu** button. IntroBox retains its explicit full-restart button. Q / Pop exits Bubble; Q / Leave releases Fan/Spider and F toggles Fan wind. Space remains Star jump and SpikeWall fire.
+R opens the restart menu; choose Restart Level for a fresh start, Return to Checkpoint when available, or Cancel. See [CheckpointGuidance.md](CheckpointGuidance.md). The shared top-right Home menu provides Continue, Return to Checkpoint where available, Restart Level and return to Navigation; old standalone menu/restart controls are disabled. Q / Pop exits Bubble; Q / Leave releases Fan/Spider and F toggles Fan wind. Space remains Star jump and SpikeWall fire.
 
 - **Star:** boxed A/D appears in the opening movement region; boxed SPACE and a jump arc appear near the low step. These prompts require control of the assigned Star and disappear after possession.
 - **Box:** `BoxGrowHint` also gives EntryBox a growth reminder beneath the Bubble.
@@ -129,7 +139,7 @@ Box-to-Box feedback detects a changed body reference in the Box sequence; stayin
 
 - IntroBox ↔ IntroBubble ↔ IntroBouncyBall: passage-based scene loads without a Level up overlay; return travel uses the destination endpoint setup described above.
 - IntroBouncyBall → Level01: `Level up!` and `Entering Level 1...`.
-- Level01 → IntroSpider: `Level up!` and `Entering Level 2 Intro...`; IntroSpider then continues through FanTutorial to Level02.
+- Level01 → IntroSpider: `Level up!` and `Entering Level 2 Intro...`; IntroSpider then continues through IntroFan to Level02.
 - The goal validates its destination and starts `LevelTransitionUI` once. The generated screen-space overlay pauses gameplay and disables the player controller for a default 1.5 seconds measured in real time, then clears checkpoints and loads the next scene with normal time scale. It requires no manually placed completion Canvas or TMP labels.
 - The backdrop intercepts pointer input and the old UI selection is cleared during the transition. This is an automatic transition, not a completion screen waiting for input. `Next Level Label` and `Transition Seconds` are configurable on the goal component; `Next Scene Name` remains the actual scene name.
 
@@ -142,7 +152,7 @@ Box-to-Box feedback detects a changed body reference in the Box sequence; stayin
 - `GoalFlagVisual.prefab` is visual only. Keep scene-specific goal triggers and controller references separate from the shared flag asset.
 - Hint roots stay separate from moving bodies. `BubbleMovementHint` has Air, Water, ExitBubble, StarMove, StarJump, ContinueRight and BubbleIntroduction modes with optional edit-mode preview; `BoxGrowHint` creates its full visuals at runtime. Moving a body-dependent hint may require adjusting Activation Area Offset to preserve where it activates. ContinueRight only needs Flag Gate; Continue Arrow Width affects that mode alone.
 - On IntroBox's `TutorialCanvas`, disable the legacy `TutorialIntroUI` component and enable `IntroFormHintUI`. Assign local PlayerControl, TutorialTitle and TutorialInstructions references; choose Box for IntroBox. In IntroBox, keep both TMP objects active and clear obsolete saved instructional text; IntroFormHintUI owns their runtime text. IntroBubble instead keeps both form-message scripts disabled and its old title/instruction objects inactive.
-- Each active standalone Restart button calls the local Canvas's `LevelNavigationUI.RestartLevel()`; replace a copied ReturnToMainMenu event rather than leaving both callbacks attached.
+- Shared Home uses the local player controller and returns to Navigation; retain R as a separate restart-choice shortcut. Do not re-enable legacy standalone buttons over the new Home/Help layout.
 
 For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [GameplaySpec.md](GameplaySpec.md).
 

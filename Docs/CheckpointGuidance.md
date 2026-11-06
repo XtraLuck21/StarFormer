@@ -1,6 +1,6 @@
 # Checkpoints, restart and pause menus
 
-Last updated: 2026-11-05. This describes the rebuilt Level01 checkpoint behavior retained in published Beta 0.1.1 (source `9451511`, gh-pages `e81097e`, November 3). The later help-book/Mainmenu UI changes are main-only; they do not change the published checkpoint specification.
+Last updated: 2026-11-06. Current source target: `beta-0.1.2`, pending build/publication. The Level01 recovery model remains; PR #21 improves traversal and PR #22 applies its Home menu across all seven gameplay scenes. See [release preparation](Beta-0.1.2.md). Published Beta 0.1.1 evidence remains historical.
 
 ## Level01 checkpoints
 
@@ -31,18 +31,18 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | HARD falling spike | Restored to its ceiling and rearmed when HARD is active | Hidden in NORMAL |
 | READY interaction and local timed Bubble hints | Fresh scene-local state | Fresh scene-local state |
 
-The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Mainmenu entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
+The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
 
-## Level01 Home menu
+## Shared Home menu
 
-The top-right house-and-Star square has no permanent text. Hover shows `Home · Restart`. Clicking opens `Paused` and freezes gameplay.
+Each of the seven enabled gameplay scenes has the top-right house-and-Star square, sized 88 × 88 at a 24-pixel inset on the reference Canvas. It has no permanent text. Hover shows `Home · Restart`. Clicking opens `Paused` and freezes gameplay.
 
 | Choice | Behavior |
 | --- | --- |
 | Continue Playing | Close the menu and restore play; initially selected |
 | Return to Checkpoint | Disabled with `No checkpoint yet` before a save; otherwise reload using the retained recovery state |
 | Restart Level | Confirmation before clearing progress and reloading the current scene |
-| Main Menu | Confirmation before clearing the session and loading Mainmenu |
+| Main Menu | Confirmation before clearing the session and loading Navigation |
 
 Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Escape from Paused resumes. The menu blocks background interaction, does not stack over the R menu or a route cinematic, and restores its owned pause when disabled. It does not add Hint/Controls actions.
 
@@ -52,14 +52,16 @@ Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Es
 - Return to Checkpoint appears when a current-scene positional or opted-in ball checkpoint exists. Restart Level clears progress. Cancel, Escape or R closes without restarting; Cancel is initially selected.
 - The R menu also pauses automatic death recovery. Cancelling restores the remaining death-delay time.
 - Home's extra confirmation screens do not replace or change the existing R shortcut.
-- IntroBubble hides its standalone Restart button; R remains available. Its left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
-- Level02 retains CP01/CP02/CP03 and its existing Return to Main Menu, Restart Level and Retry Checkpoint buttons. Retry/death restore its saved Star position and stage events; full restart clears it. See [level-2.md](level-2.md).
+- Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
+- Level02 retains CP01/CP02/CP03 and uses Home for menu, restart and checkpoint retry actions. Retry/death restore its saved Star position and stage events; full restart clears it. See [level-2.md](level-2.md).
 
 ## Bubble hints
 
 Formal Level01 uses assigned ceiling contact and teaching regions, not generic stationary detection. The first tank displays its R lesson after 1.5 seconds. The water-exit and upper-right ceilings each display a once-per-scene-load `Press Q to pop` lesson after 3 seconds of continuous qualifying contact. Sideways movement under the ceiling can still count. Paused time does not advance the pop lessons.
 
 The generic E-pop reminder still exists in the legacy feedback script but is suppressed for scenes with `AdvancedCheckpointController`. It must not appear beside the current Level01 Q hints. This suppression is part of the scene-promotion fix, not an outstanding first-level copy bug.
+
+Shape Closet discovery/completion is separate from checkpoint state. The current source has two Closet state writers; see [the release finding](Beta-0.1.2.md#shape-closet-has-two-competing-state-sources). A menu return clears checkpoint sessions, not necessarily form discovery or persistent completion flags.
 
 ## Verification
 

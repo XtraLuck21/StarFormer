@@ -1,5 +1,11 @@
 # Analytics: all gameplay scenes and real maps
 
+## Beta 0.1.2 source preparation
+
+Current source target: `beta-0.1.2` (November 6, main baseline `5e7105c` plus local release preparation). Build, publication and production-data acceptance are pending. The seven gameplay scenes are IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan and Level02; Navigation is the startup/menu scene and is not a tracked gameplay level. Preserve historical FanTutorial names/maps for older exports.
+
+All seven current scene hashes differ from the runtime map catalog. Run **Analytics → Export all real level maps** after saving scenes, before building; retain historical PNGs/catalog entries. Separately deploy the refreshed catalog and current IntroFan-compatible backend to the existing Apps Script deployment. Do not change the endpoint or rewrite old rows. Verify `beta-0.1.2` events and exact map matches on the built player; prior Version 9 and 0.1.1 evidence does not certify the new export. See [release preparation](Beta-0.1.2.md) and [current acceptance](AnalyticsTestPlan.md#beta-012-acceptance-status).
+
 Initial implementation: November 1, 2026. Main integration: November 2, 2026,
 based on fetched `main` revision `c9a43c2`. Historical test/deployment evidence
 below retains its original six-scene scope and dates.
@@ -13,9 +19,9 @@ The November 4 paged help book, six-form demo animations, Unity Recorder package
 
 ## Coverage and lifecycle
 
-Track IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial
+Track IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan
 and Level02 (all seven enabled gameplay scenes).
-Exclude Mainmenu, Tutorial, reference scenes and sandboxes. Keep the existing
+Exclude Navigation, Mainmenu, Tutorial, reference scenes and sandboxes. Keep the existing
 anonymous browser ID; a page load creates a session and each fresh scene entry
 creates a run. Death respawns retain that run and start a new attempt.
 

@@ -3,7 +3,25 @@
 For the seven-scene analytics v2 integration, real maps and test/production
 rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
 
-Last updated: 2026-11-05.
+Last updated: 2026-11-06.
+
+## Beta 0.1.2 acceptance status
+
+Prepared November 6 from main `5e7105c` plus local version/docs edits. Player and Analytics versions are `beta-0.1.2`; collection remains production on the existing endpoint. No new Web build, hosted playtest or production-row verification is claimed here. The [release checklist](Beta-0.1.2.md) records concrete source findings.
+
+| Check | Status / required evidence |
+| --- | --- |
+| Version and scene list | Source prepared: Navigation 0, seven gameplay scenes 1–7, IntroFan at 6 |
+| Map freshness | All seven saved-scene hashes differ; re-export in Unity before build |
+| Closet behavior | Two state writers remain; reconcile persistent completion versus session discovery, then test clean and existing saves |
+| Help migration | Six scenes have discovery pages; inspect retained legacy Help components and Level02’s missing page/content data |
+| Gameplay | Recheck PR #21 Level01 fixes, Navigation contact/click entries, shared Home/Help, current Spider hints and forward/return passages |
+| Web build and publication | Pending; intended folder `Builds/WebGL-Beta-0.1.2`, eventual `/beta/` deployment |
+| Data and dashboard | Pending; actual rows must carry beta-0.1.2 and the matching exported map version; verify IntroFan and historical FanTutorial separately |
+
+Navigation may participate in session initialization but must not create a tracked gameplay Run. Each selected gameplay destination must create its own Run; verify forward completions, backward returns, death, restart/retry, abandonment and paused/focus time as below. Collection Book pause must not add active gameplay time. Recording/rehearsal on the release configuration can add production events; keep that fact in mind when interpreting the dataset.
+
+Use [Beta-0.1.2.md](Beta-0.1.2.md#unity-and-browser-acceptance-before-recording) for the gameplay/recording checklist. Leave the historical evidence below attached to its original release.
 
 ## Beta 0.1.1 acceptance status
 
@@ -71,12 +89,12 @@ Historical Alpha follow-up: obtain the existing Sheet link/access from the analy
 - `buildVersion` identifies the exact source revision being tested.
 - Use `RawEvents_Test` and isolate the run by version/session IDs; preserve any existing test history. The receiver can create the tab if it does not exist.
 - These test-build preconditions do not describe the production Beta release configuration or the published Alpha. Keep test and deliberately invalid-endpoint exports separate from both release paths.
-- Enabled build scenes, in index order: Mainmenu, IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial, Level02. Legacy/reference/sandbox scenes stay disabled.
+- Enabled build scenes, in index order: Navigation, IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan, Level02. Legacy/reference/sandbox scenes stay disabled.
 - Test current Level01 (former Advanced), not Level01_Legacy. These source scenarios do not describe the old Alpha 0.1.2 map; use a new version label for the new export.
 
 ## 1. Editor validation
 
-1. Enter Play Mode from Mainmenu.
+1. Enter Play Mode from Navigation.
 2. Confirm the Console prints one `session_start` JSON event.
 3. Open Level 1 and confirm `level_start` and `attempt_start` share one
    `level_run_id`.
@@ -97,7 +115,7 @@ Sheets transport.
 - Open/cancel R and Home during normal play; test R during the death pause. Opening/cancelling must not emit restart `level_end` or create a new Run. Confirm full restart: expect `result = restart`, a new Run and cleared gameplay checkpoints/route progress. Confirm Return to Checkpoint: expect the same restart event category and a new Run, but retained gameplay progress. Manual retry is not a death.
 - Home's checkpoint action is disabled before a save. Cancel both full-restart and menu confirmations without changing gameplay/analytics state. Confirm Main Menu from an unfinished run: expect abandonment and cleared checkpoint state.
 - During SAVE previews, hazard transitions and paused menus, active timers must not advance. SAFE's full alternating-board demonstration should not add form time.
-- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete` before IntroSpider. In the new source, IntroSpider → FanTutorial is also tracked; Level02 later starts a different Run in the same Session. Returning to Mainmenu after completion must not append abandonment to the completed Level01 Run.
+- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete` before IntroSpider. In the new source, IntroSpider → IntroFan is also tracked; Level02 later starts a different Run in the same Session. Returning to Navigation after completion must not append abandonment to the completed Level01 Run.
 
 ## 3. Level 2 scenarios
 

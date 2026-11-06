@@ -1,8 +1,14 @@
 # Publish StarFormer to GitHub Pages
 
-Last updated: 2026-11-05.
+## Beta 0.1.2 release preparation
 
-- [Current Beta](https://xtraluck21.github.io/StarFormer/beta/) — Beta 0.1.1, published November 3, 2026.
+Player Version and Analytics buildVersion are synchronized to `beta-0.1.2` for current main `5e7105c` plus local preparation changes. **No new build, commit, push or publication has been performed.** Use `Builds/WebGL-Beta-0.1.2` for the tested export; Navigation is already saved at enabled index 0. The old Mainmenu stays in source but is disabled in builds.
+
+Read [Beta-0.1.2.md](Beta-0.1.2.md) before building: all seven analytics maps are stale; Closet still has competing completion/discovery controllers; legacy Help components and Level02 page content need checking. That document covers Level01 fixes, Navigation, shared Home/Book, IntroFan and latest Spider teaching changes. Do not mark this release ready solely because its version settings are updated.
+
+Last updated: 2026-11-06.
+
+- [Beta URL](https://xtraluck21.github.io/StarFormer/beta/) — last recorded release: Beta 0.1.1, published November 3 and package verified November 5. Beta 0.1.2 is being prepared locally.
 - [Historical Alpha](https://xtraluck21.github.io/StarFormer/alpha/) — fixed path for tested Alpha releases.
 - [Root Beta 0.1.0](https://xtraluck21.github.io/StarFormer/) — published at the root by `f6eaf9e` on November 2; unchanged by the 0.1.1 deployment.
 - [Alpha Progress Check](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen All-Level V2 submission, preserved by `5a7f043` on October 12, 2026.
@@ -26,11 +32,11 @@ Alpha `alpha-0.1.2` is published at `/alpha/` on October 18, 2026. Source config
 | Deployment verification | November 5: all seven live files HTTP 200, byte-identical to the local export and publishing checkout |
 | Remaining acceptance | Detailed local/hosted gameplay scenarios, production raw rows and refreshed backend map deployment/rendering are not verified by the package comparison |
 
-The source release-preparation commit was rebased to `2caffd9` on November 5, after the four UI commits had landed. That commit is the integrated main tip at documentation time, **not** the built source revision. The live export remains the one built from `9451511`.
+The source release-preparation commit was rebased to `2caffd9` on November 5, after the four UI commits had landed. That commit was the integrated main tip at the earlier documentation checkpoint, **not** the built source revision. The live export remains the one built from `9451511`.
 
-### Main-only changes awaiting a new release
+### Source changes after this export
 
-The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Main still carries version label `beta-0.1.1`, so do not infer release contents from the label or latest source history. The next release needs a new agreed Player/Analytics version, a fresh export and gameplay checks, including Help UI in other scenes that still have the old configuration.
+The November 4–6 help, navigation, Level01 and Spider changes are not in the recorded 0.1.1 export. They are now part of the beta-0.1.2 preparation above. The rebased `2caffd9` patch is historical integrated source, not the built revision for 0.1.1. Preserve the completed export and its verification record.
 
 ### Remaining analytics acceptance
 
@@ -63,11 +69,11 @@ The published 0.1.1 collector tracks all seven gameplay scenes; the historical 0
 
 Commands use macOS/Linux shell syntax and assume the folders are siblings. You need repository push access and Unity **6000.3.22f1** with **Web Build Support**. Stop if a command fails.
 
-The procedure below is for a future release. Beta 0.1.1 build/publication are complete; documentation-only updates do not require rebuilding it. Commands use `beta-0.1.2` / `WebGL-Beta-0.1.2` as examples: confirm the next version before executing them. These examples do not claim 0.1.2 is prepared or published. Preserve both older local exports.
+The procedure below targets Beta 0.1.2. Version/docs preparation is complete locally; map export, runtime review, build and deployment remain pending. Preserve both older local exports. The publishing commands are maintainer instructions, not actions performed by editing these documents.
 
 ## 1. Update source
 
-Close Unity. In `StarFormer`, run `git status`. Review local changes and commit intended changes or stash them before continuing; do not discard unfamiliar changes. With a clean working tree:
+The current preparation started on main `5e7105c`, already synchronized with origin. Do not pull over the unreviewed release edits. For a later source refresh, close Unity and run `git status` in `StarFormer`. Review local changes and commit intended changes or stash them before continuing; do not discard unfamiliar changes. With a clean working tree:
 
 ```bash
 git switch main
@@ -79,22 +85,22 @@ Record the source commit and any intentional local settings used for the build.
 
 ## 2. Build and test locally
 
-Open Unity, wait for imports and compilation, and test from `Mainmenu`. Resolve Console errors. In **File → Build Profiles → Web**, enable only:
+Open Unity, wait for imports and compilation, and test from `Navigation`. Resolve Console errors. In **File → Build Profiles → Web**, enable only:
 
 ```text
-0  Mainmenu
+0  Navigation
 1  IntroBox
 2  IntroBubble
 3  IntroBouncyBall
 4  Level01
 5  IntroSpider
-6  FanTutorial
+6  IntroFan
 7  Level02
 ```
 
-Keep Level01_Legacy, the old Tutorial, reference scenes and sandboxes unchecked. Level01 is the promoted Advanced scene; do not add a duplicate Advanced entry. Forward progression is name-based, not build-index order. Open **Scene List** to edit or drag the order; Mainmenu must remain the startup scene.
+Keep Mainmenu, Level01_Legacy, the old Tutorial, reference scenes and sandboxes unchecked. Level01 is the promoted Advanced scene; do not add a duplicate Advanced entry. Forward progression is name-based, not build-index order. Open **Scene List** to edit or drag the order; Navigation must remain the startup scene.
 
-In **Player Settings → Resolution and Presentation**, choose the **StarFormerAlpha** Web template and set the default canvas size to **1920 × 1080**. In the Player settings set **Version** to `beta-0.1.2` and match `Assets/Resources/AnalyticsSettings.asset` → `buildVersion`. Keep **Gzip**, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**. Enable **Name Files As Hashes** to give changed build payloads distinct URLs when replacing `beta/`.
+In **Player Settings → Resolution and Presentation**, choose the **StarFormerAlpha** Web template and set the default canvas size to **1920 × 1080**. Player **Version** is already prepared as `beta-0.1.2`; verify it matches `Assets/Resources/AnalyticsSettings.asset` → `buildVersion`. Keep **Gzip**, **Decompression Fallback on**, **Development Build off**, and **Threads Support off**. Enable **Name Files As Hashes** to give changed build payloads distinct URLs when replacing `beta/`.
 
 The custom template lives at `Assets/WebGLTemplates/StarFormerAlpha/`. It keeps a 16:9 canvas inside the available safe area, with letterboxing rather than stretched gameplay. The render buffer follows viewport size and device pixel density, capped at 2× / 2560 × 1440 on desktop and 1.5× / 1920 × 1080 on touch/mobile devices. These are upper limits, not forced resolutions on smaller screens. It does not change camera behavior, textures, mobile AutoDetect, or scene UI wiring.
 
@@ -102,12 +108,14 @@ After loading, **Play Fullscreen** requests fullscreen from a user gesture; **Pl
 
 The template uses relative asset paths and needs no edits after export. The Player Version is used to version its CSS/JS URLs; increment it together with Analytics `buildVersion` for later releases. Keep the complete exported payload together.
 
+Before building, stop Play Mode, save the intended scenes and run **Analytics → Export all real level maps**. All seven maps are stale at this preparation baseline. Review the runtime/backend catalogs and new PNGs, retaining historical maps. Standard Build Profiles does not run the custom hash validator; the custom **Build → Build WebGL** does, but defaults to `Builds/WebGL` unless `-customBuildPath` is provided.
+
 Choose **Build And Run** with a new version-specific output folder. Use `Builds/WebGL-Beta-0.1.2` for this release. Rebuild after changes to runtime settings or the template; retain the full final export together. Test through localhost, not by double-clicking `index.html`.
 
-Check all four menu entries: Introductory Levels, Level 1, Level 2 Intro and Level 2. Play Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02. Verify the new first level is loaded both directly and from IntroBouncyBall. Repeat the following checks for the new export; previous general gameplay acceptance does not enumerate every device/scenario:
+Check all four menu entries: Kindergarten, Level 1, Elementary School and Level 2. Play Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02. Verify the new first level is loaded both directly and from IntroBouncyBall. Repeat the following checks for the new export; previous general gameplay acceptance does not enumerate every device/scenario:
 
 - Level01: test blue-to-yellow checkpoint stars in order; death/Return to Checkpoint restores Box at ADV_CP1, BouncyBall at ADV_CP2 and Star at ADV_CP3. Earlier points must not overwrite later ones. Ball possession alone is not a save.
-- Test completed route selection, raised upper platform and broken RUIN cover surviving retry; loose bodies/lower door reset. Full restart clears everything. Mainmenu re-entry starts fresh.
+- Test completed route selection, raised upper platform and broken RUIN cover surviving retry; loose bodies/lower door reset. Full restart clears everything. Navigation re-entry starts fresh.
 - Test Star and Box upper-landing routes, Box growth/shrink, the one-way lift, R2 transfer, and two separate jumps for the protected RUIN button. Preserve Box-to-Bubble escape and fresh-contact reacquisition after separation.
 - Test initial SAVE warning as Star and Box; SAFE/NORMAL/HARD changes; horizontal exit before BACK TO NORMAL; no repeat toggles during vertical bouncing. SAFE boards must remain black/fixed-length, move in opposite phase and stop together for anti-crush protection; left-board low/high passages must be traversable. The preview demonstrates the full alternating cycle.
 - Test HARD spike reveal/hiding without stray visible edges. Its falling tooth triggers only on controlled upper-route approach, stays landed/lethal and rearms on retry. Recheck existing projectiles in Level02.
@@ -115,23 +123,23 @@ Check all four menu entries: Introductory Levels, Level 1, Level 2 Intro and Lev
 - In IntroBox, verify the lowered Left/Right/Jump controls on a real phone. In IntroBubble, verify the compact 120 × 120 controls retain their directional arrangement and 35% background opacity, with readable labels and the original camera framing. Check Box growth/shrink, Bubble swimming in all four directions, Pop and Star jump, including simultaneous touches.
 - IntroBox starts with contextual A/D and SPACE prompts; BoxA possession shows the contact explanation, and BoxA → BoxB shows New box. Same little star. Subtitles remain readable at the intended browser sizes.
 - In IntroBubble, verify the ceiling-guided air ascent, water inlet without an air gap, underwater divider route and right exit shaft. Confirm the plain You are a Bubble / A-D hint, WASD / Move freely underwater hint, and Q / Pop Bubble hint appear in their intended regions; the top-center messages and old cards stay hidden. Verify J grows and K shrinks Box, and that IntroBox/IntroBubble hints match.
-- Open/cancel R without reloading, confirm Restart Level returns to the current scene entrance, and test Return to Checkpoint when a checkpoint is available. IntroBubble's standalone Restart button stays hidden and compact Main Menu button works. A full restart of IntroBubble starts in EntryBox; walking through its left exit instead returns to IntroBox's endpoint as BoxB with the door open.
+- Open/cancel R without reloading, confirm Restart Level returns to the current scene entrance, and test Return to Checkpoint when a checkpoint is available. The old standalone buttons stay disabled and shared Home returns to Navigation. A full restart of IntroBubble starts in EntryBox; walking through its left exit instead returns to IntroBox's endpoint as BoxB with the door open.
 - IntroBox's arrow appears only after the flag opens the door; walking right loads IntroBubble without a Level up overlay. Also test direct IntroBubble entry → left exit → IntroBox endpoint → forward return to IntroBubble, then confirm a full restart consumes no old return setup.
 - Pop over safe ground, fall back into the tank as Star, possess BackupBubble and return upward. The Q hint must appear for either Bubble only once safely above the landing floor. Check the spare stays dormant before possession; neither intro Bubble automatically regenerates. Test one and both bubbles consumed, and verify Restart is available.
 - Level01: first-tank ceiling contact for 1.5 seconds displays the R lesson; water-exit and upper-right ceiling contact for 3 seconds each displays Press Q to pop once per scene load. The old generic E reminder is suppressed for AdvancedCheckpointController and must stay hidden after promotion. Test READY? → LET'S GO! plus repeated Star bounce/sparkle feedback.
-- IntroBouncyBall accepts controlled Star/BouncyBall at the flag, shows Entering Level 1 and loads Level01; Level01 accepts any living controlled form, shows Entering Level 2 Intro and loads IntroSpider. Test IntroSpider → FanTutorial → Level02. Each timed transition loads once, clears checkpoint state and restores movement/time; outgoing gameplay and pointer interaction pause during the overlay.
+- IntroBouncyBall accepts controlled Star/BouncyBall at the flag, shows Entering Level 1 and loads Level01; Level01 accepts any living controlled form, shows Entering Level 2 Intro and loads IntroSpider. Test IntroSpider → IntroFan → Level02. Each timed transition loads once, clears checkpoint state and restores movement/time; outgoing gameplay and pointer interaction pause during the overlay.
 - IntroBubble's grounded-Star flag opens a door; walking right loads IntroBouncyBall without a Level up overlay. Walk back through the ball tutorial's left opening as Star and as BouncyBall: return to IntroBubble as active Star near its flag with the door open. Confirm immediate re-entry works without a loading loop, and a full Bubble restart starts in EntryBox with the door closed.
 - IntroBouncyBall: test its lower bounce height, water floating, land bounce recovery, separated spikes, continuous floor and mandatory low-ceiling route. Check short headlines, map keys and the spike-death reminder; text must not overlap the roof. Left wall stays inset from the viewport. Check both banks/water alignment.
 - The intros retain the gray/dark palette, visible form outlines and correct hint/body drawing order.
 - In Level02, Q / Leave releases Spider and Fan, F / Blow toggles Fan wind, and Space / Fire still fires the possessable spike wall. Confirm the single-line upper-center Spider hint and two-line Fan hint are readable.
-- Confirm all three Level02 top-right buttons fit: Return to Main Menu, Restart Level and Retry Checkpoint. Test Retry with no checkpoint and at CP01/CP02/CP03, automatic death recovery at each, and Restart/R after a checkpoint. Review the unassigned ShowWall callbacks described in [level-2.md](level-2.md).
+- Confirm the shared Level02 Home button fits and its menu has Continue, Return to Checkpoint, Restart Level and Main Menu. Check Return to Checkpoint is disabled without a save; test retry at CP01/CP02/CP03, automatic death recovery at each, and Restart/R after a checkpoint. Review the unassigned ShowWall callbacks described in [level-2.md](level-2.md).
 - Reach the Level02 flag: the deleted brown wall (20) should remain absent. Show Level Complete / You are a super star now! and wait for Return to Main Menu, with gameplay paused. Verify one completion event and a fresh entrance on menu re-entry.
 - Keep MobileControls on AutoDetect for the release. Test desktop hiding, phone visibility, simultaneous movement/action touches, every form, and release of held input after hiding/focus loss. The mobile Canvas is screen-fixed Overlay UI; check different browser sizes and phone aspect ratios.
 - Record the browsers/devices and checkpoint scenarios actually exercised. Beta 0.1.0 local/online gameplay acceptance and Level01 dashboard records are now recorded, but a detailed device/checkpoint matrix, Level02-specific delivery and raw-row metric verification remain open. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md).
 - Level01 movable-door hint: wait 20 seconds without door movement, activate the Hint button by Box growth or BouncyBall contact, verify “A little lift?” and the paused preview, then confirm time/movement resumes. It must show only once per scene load and must not auto-activate from spawn overlap.
-- Verify analytics for all seven gameplay scenes, including completion, backward passage returns, restart/checkpoint actions and matching map versions. Mainmenu must remain untracked.
+- Verify analytics for all seven gameplay scenes, including completion, backward passage returns, restart/checkpoint actions and matching map versions. Navigation must remain untracked.
 
-Publish only after local tests pass.
+Run the additional [beta-0.1.2 checks](Beta-0.1.2.md#unity-and-browser-acceptance-before-recording), especially Closet state ownership, Help migration, Level01 playtest fixes and latest Spider guidance. Publish only after local tests pass.
 
 ## 3. Prepare the publishing checkout
 
@@ -156,7 +164,7 @@ release_build_dir='../StarFormer/Builds/WebGL-Beta-0.1.2'
 ls -a "$release_build_dir"
 ```
 
-Replace the example build name with the tested output. Confirm it contains `index.html`, `Build/`, `TemplateData/`, and only exported runtime files.
+Use the tested beta-0.1.2 output, not an earlier export with a manually edited version label. Confirm it contains `index.html`, `Build/`, `TemplateData/`, and only exported runtime files.
 
 ## 4. Publish or replace only Beta
 

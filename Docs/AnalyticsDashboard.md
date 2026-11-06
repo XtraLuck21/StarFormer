@@ -1,11 +1,17 @@
 # Analytics Dashboard
 
-Last updated: 2026-11-05. This replaces the earlier individual-player dashboard.
+## Beta 0.1.2 source preparation
+
+Current source target: `beta-0.1.2` (November 6, main baseline `5e7105c` plus local release preparation). Build, publication and production-data acceptance are pending. The seven gameplay scenes are IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan and Level02; Navigation is the startup/menu scene and is not a tracked gameplay level. Preserve historical FanTutorial names/maps for older exports.
+
+All seven current scene hashes differ from the runtime map catalog. Run **Analytics → Export all real level maps** after saving scenes, before building; retain historical PNGs/catalog entries. Separately deploy the refreshed catalog and current IntroFan-compatible backend to the existing Apps Script deployment. Do not change the endpoint or rewrite old rows. Verify `beta-0.1.2` events and exact map matches on the built player; prior Version 9 and 0.1.1 evidence does not certify the new export. See [release preparation](Beta-0.1.2.md) and [current acceptance](AnalyticsTestPlan.md#beta-012-acceptance-status).
+
+Last updated: 2026-11-06. This replaces the earlier individual-player dashboard.
 See [AnalyticsAllLevels.md](AnalyticsAllLevels.md) for the seven-scene Unity collector,
 v2 migration and runtime map export. This change updates dashboard code/assets;
 it does not publish a new game or rewrite Sheet rows.
 
-## Current game publication
+## Recorded Beta 0.1.1 publication
 
 Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. It includes seven-scene v2 collection. The Version 9 dashboard evidence below predates this game release; do not treat its historical map tests as verification of the refreshed 0.1.1 backend catalog or production events. Those remain [acceptance follow-ups](AnalyticsTestPlan.md#beta-011-acceptance-status). The November 4 help-book UI is main-only and is not part of the published 0.1.1 game.
 
@@ -136,7 +142,7 @@ provenance before adding a binding.
 
 ## Source and deployment
 
-- Code.gs: existing POST receiver and GET/health routes; the scene whitelist also accepts IntroBouncyBall for a future game update.
+- Code.gs: existing POST receiver and GET/health routes; the current scene whitelist accepts all seven gameplay scenes, including IntroBouncyBall and IntroFan, while retaining historical FanTutorial compatibility.
 - DashboardData.gs: aggregate-only API, interval reconstruction, verified legacy
   map bindings, read-only cloud check, 30-second sharded cache (new v3 key namespace).
 - Dashboard.html: four metric sections, responsive UI, safe text rendering and

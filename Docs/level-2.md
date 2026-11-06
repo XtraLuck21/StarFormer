@@ -1,12 +1,14 @@
 # Level 2 Progress
 
-Last updated: 2026-11-05 (release status updated; Level02 layout unchanged).
+Current source target: `beta-0.1.2`, build/publication pending. Shared Home and Navigation replace the earlier standalone menu presentation. Level02’s saved Help component still needs migration verification; see [release findings](Beta-0.1.2.md#gameplay-help-migration-needs-a-check).
+
+Last updated: 2026-11-06 (release status updated; Level02 layout unchanged).
 
 Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 work through `ab68064` was integrated into `main` by PR #14 (`3714a49`). Alpha 0.1.1 (`765a1ea` in source) corrected the navigation Canvas scaling. This content is included in the published Alpha 0.1.2 release.
 
 **October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. Alpha 0.1.2 later passed developer-reported localhost and online tests; an exhaustive checkpoint/device matrix is not recorded.
 
-**Current published release:** Beta 0.1.1 (November 3), source `9451511`, gh-pages `e81097e`, at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It retains the Level02 gameplay described here, with refreshed maps and seven-scene analytics. Later help-book/Mainmenu changes in main are not included. A separate remote Level-2 branch is not automatically included in main or this release. See [the release record](publish_instructions.md#beta-011-release-status).
+**Recorded published release:** Beta 0.1.1 (November 3), source `9451511`, gh-pages `e81097e`, at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It retains the Level02 gameplay described here, with refreshed maps and seven-scene analytics. Later help-book/Mainmenu changes in main are not included. A separate remote Level-2 branch is not automatically included in main or this release. See [the release record](publish_instructions.md#beta-011-release-status).
 
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
 
@@ -39,16 +41,16 @@ The table describes the authored stage groups and major mechanics; it is not a n
 | `Check_Mickey` | `level2Checkpoint`, ID `CP03` | Its separate assigned `respownJump` transform; do not select by name alone |
 | All three checkpoint objects | Reached / respawn events | Main Camera → `BeginRemainingFollow`; see the unassigned legacy callback note below |
 | `bubbleSpawner` | `BubbleSpawner.bubblePrefab` / `spawnPoint` | Shared BubbleBody prefab / unassigned, so the spawner's own position is used |
-| `LevelGoal` | Player / required gate / menu scene | PlayerControl / None / `Mainmenu` |
+| `LevelGoal` | Player / required gate / menu scene | PlayerControl / None / `Navigation` |
 | `LevelGoal` | `waitForMenuButton` | Enabled; `LevelTransitionUI.ShowFinalResult` creates the completion overlay |
-| `Canvas/ReturnToMainMenuButton` | One OnClick callback | Its own LevelNavigationUI → `ReturnToMainMenu()` |
-| `Canvas/RestartLevelButton` | One OnClick callback | Its own LevelNavigationUI → `RestartLevel()` |
-| `Canvas/RetryCheckpointButton` | One OnClick callback | Its own LevelNavigationUI → `RetryCheckpoint()` |
+| Shared Home | Menu action | Confirm and return to Navigation |
+| Shared Home | Restart Level | Confirmation; clear checkpoint session and reload |
+| Shared Home | Return to Checkpoint | Disabled until a checkpoint exists; preserve saved position/stage |
 | `Canvas (1)/MobileControls` | `MobileControlsUI.controller` / button references | PlayerControl / authored direction, action and resize buttons; saved Show Mode is AutoDetect |
 
-**Completion:** the goal checks that the player is alive and the entering body is currently controlled. It validates the destination, records completion once, pauses gameplay and disables the player controller. The generated overlay shows **Level Complete**, **You are a super star now!**, and **Return to Main Menu**. It stays open until clicked/tapped, then clears checkpoints and loads Mainmenu with normal time scale. IntroBouncyBall and Level01 use timed next-level overlays; IntroBubble instead opens a direct passage into IntroBouncyBall.
+**Completion:** the goal checks that the player is alive and the entering body is currently controlled. It validates the destination, records completion once, pauses gameplay and disables the player controller. The generated overlay shows **Level Complete**, **You are a super star now!**, and **Return to Main Menu**. It stays open until clicked/tapped, then clears checkpoints and loads Navigation with normal time scale. IntroBouncyBall and Level01 use timed next-level overlays; IntroBubble instead opens a direct passage into IntroBouncyBall.
 
-**Recovery:** R opens the restart menu. Confirming Restart Level, or using its standalone button, clears both checkpoint systems and reloads Level02 from the entrance. Retry Checkpoint reloads while preserving the active checkpoint; without one it starts at the entrance. Automatic death reload also retains the checkpoint. Scene reload resets bodies and puzzle objects; checkpoint events restore selected stage behavior, not a complete snapshot of puzzle state. Returning to Mainmenu and re-entering starts a fresh checkpoint session. Both manual buttons currently use `TrackManualRestart`, so analytics records a manual restart rather than a death and does not distinguish the two button choices.
+**Recovery:** R opens the restart menu. Confirming Restart Level, or the confirmed Home action, clears both checkpoint systems and reloads Level02 from the entrance. Home’s Return to Checkpoint reloads while preserving the active checkpoint and is disabled without one; the retained legacy callback falls back to the entrance if called without a save. Automatic death reload also retains the checkpoint. Scene reload resets bodies and puzzle objects; checkpoint events restore selected stage behavior, not a complete snapshot of puzzle state. Returning to Navigation and re-entering starts a fresh checkpoint session. Both manual actions use `TrackManualRestart`; schema v2 distinguishes `restart_level` and `retry_checkpoint` in `end_reason`. Neither is a death.
 
 **Checkpoint callback follow-up:** the saved CP01, CP02 and CP03 `onRespawnHere` lists each contain a `WallSlideOnDrop.ShowWall` callback with an unassigned target (`fileID: 0`), in addition to the valid camera callback. This entry cannot restore a wall. Determine whether it is obsolete or needs a target during checkpoint regression testing; it was not repaired in this documentation pass and is not established as a current gameplay failure.
 
@@ -56,7 +58,7 @@ The table describes the authored stage groups and major mechanics; it is not a n
 
 ## 3. Saved layout and tuning reference
 
-Values below describe the saved scene rather than recommended new tuning. World positions are used for gameplay objects; button positions are Canvas anchored coordinates.
+Values below describe scene tuning; the old standalone navigation rows are historical/disabled. Current Home uses an 88 × 88 house/Star at a 24-pixel top-right inset. World positions are used for gameplay objects; button positions are Canvas anchored coordinates.
 
 | Object / setting | Saved value | Purpose |
 | --- | --- | --- |
@@ -72,8 +74,8 @@ Values below describe the saved scene rather than recommended new tuning. World 
 | CP01 / CP02 / CP03 respawn positions | Approximately `(-20.54, -25.74)` / `(11.26, 16.69)` / `(57.43, 11.88)` | Scene-authored checkpoint entrances |
 | Bubble replacement delay | `0.5s` | Replacement after the current spawned bubble is absent/inactive |
 | LevelGoal | Position `(-1.28, 18.22)`; trigger `1.4 × 1.6`, Y offset `0.8` | Reachable flag trigger, widened from the thin pole |
-| Three navigation buttons | Anchors `(1, 1)`, pivot `(1, 0.5)`, size `360 × 70`, Pos X `-30` | Top-right alignment |
-| Menu / Restart / Retry Pos Y | `-57` / `-142` / `-227` | Accepted spacing; do not replace with the earlier proposed Y values |
+| Disabled legacy navigation buttons | Anchors `(1, 1)`, pivot `(1, 0.5)`, size `360 × 70`, Pos X `-30` | Top-right alignment |
+| Disabled legacy Menu / Restart / Retry Pos Y | `-57` / `-142` / `-227` | Historical spacing, superseded by Home |
 | Navigation Canvas | Screen Space - Overlay; Scale With Screen Size, reference `1920 × 1080`, match `0.5` | Alpha 0.1.1 fix for oversized navigation buttons on mobile |
 | Mobile Canvas | Screen Space - Overlay; Scale With Screen Size, reference resolution `1920 × 1080`, match `0.5` | Screen-fixed UI independent of gameplay-camera motion |
 
@@ -112,7 +114,7 @@ Source checks during implementation and this documentation review:
 
 **Historical published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. Level02 navigation scaling was fixed in Alpha 0.1.1 and retained in 0.1.2. Detailed CP01/CP02/CP03 recovery coverage and current-version analytics delivery remain unverified, rather than blocking an already completed publication.
 
-## 5. Decisions in this polish pass
+## 5. Historical October polish decisions
 
 - Use Q / Leave for Spider and Fan, Q / Pop for Bubble. Keep Space for Star jump and SpikeWall fire.
 - Use a short upper-center Spider release hint; omit the redundant Star-jump line. Keep the accepted Fan hint.
@@ -127,9 +129,10 @@ Historical Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105
 
 ## 6. Remaining work and handoff
 
-1. Test Retry before any checkpoint and at CP01, CP02 and CP03; verify position, camera state and the reachable onward route. Check the unassigned ShowWall callbacks and automatic death recovery at each stage.
-2. After a checkpoint, verify opening/cancelling R preserves the checkpoint; Return to Checkpoint resumes it. Confirm Restart Level returns to the entrance and clears it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
+1. Confirm Home’s Return to Checkpoint is disabled before any checkpoint; test it at CP01, CP02 and CP03, verifying position, camera state and the reachable onward route. Check the unassigned ShowWall callbacks and automatic death recovery at each stage.
+2. After a checkpoint, verify opening/cancelling R or Home preserves it; Return to Checkpoint resumes it. Confirm Restart Level clears it and Home disables its checkpoint action. Test Navigation re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
-4. For the next export, retest IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02, including Level01 ADV_CP1/2/3 recovery and the upper landing choice. The incoming scene chain passed isolated Unity checks and developer promotion playtests; this item is browser/device regression. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
-5. Verify Level02-specific Beta 0.1.1 production delivery, raw-row metrics and refreshed map rendering using [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-011-acceptance-status). The November 2 screenshot only establishes 0.1.0 Level01 records. Historical Alpha 0.1.2 delivery remains a separate unconfirmed record.
+4. For the next export, retest IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02, including Level01 ADV_CP1/2/3 recovery and the upper landing choice. The incoming scene chain passed isolated Unity checks and developer promotion playtests; this item is browser/device regression. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
+5. Verify Level02-specific Beta 0.1.2 production delivery, raw-row metrics and refreshed map rendering using [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). The November 2 screenshot only establishes 0.1.0 Level01 records. Historical Alpha 0.1.2 delivery remains a separate unconfirmed record.
 6. Beta 0.1.1 build/publication are complete (source `9451511`, gh-pages `e81097e`); all seven hosted files matched the completed export on November 5. Detailed device/scenario gameplay and analytics acceptance remain follow-ups where no specific evidence is recorded. The later main-only UI changes require a new export before publication.
+7. Open Level02 Help and inspect its missing page/content configuration before recording or claiming shared Collection Book coverage across all seven scenes. Test overlap with Home, R and final completion.

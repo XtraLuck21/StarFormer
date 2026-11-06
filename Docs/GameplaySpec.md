@@ -1,16 +1,14 @@
 # Gameplay Specification
 
-Last updated: 2026-11-05. Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`.
-
-This specification describes current gameplay and authored scenes. Beta 0.1.1 includes the rebuilt Level01, integrated IntroBouncyBall, seven-scene analytics and the contextual door hint. The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Publication history and procedures are in [publish_instructions.md](publish_instructions.md).
+Last updated: 2026-11-06. Current source target: `beta-0.1.2`, based on main `5e7105c`; build/publication pending. The last recorded published Beta is 0.1.1, source `9451511`, gh-pages `e81097e` (November 3; package verified November 5). See [release preparation](Beta-0.1.2.md) for new features and unresolved source findings; historical acceptance is not acceptance of the new export.
 
 ## 1. Scenes and progression
 
 ```text
-Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
+Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
-Mainmenu also offers direct Level 1, Level 2 Intro and Level 2 entries. These load Level01, IntroSpider and Level02 respectively. Entry from the menu starts a fresh checkpoint session.
+Navigation offers Kindergarten → IntroBox, Level 1 → Level01, Elementary School → IntroSpider and Level 2 → Level02. The Star jumps into the upper entrances and drops onto the lower entrances; click selection is also supported. Bounce/flash feedback finishes before the Entering overlay and scene load. Menu entry starts a fresh checkpoint session. Mainmenu remains a disabled legacy scene.
 
 | Scene | Purpose |
 | --- | --- |
@@ -18,12 +16,12 @@ Mainmenu also offers direct Level 1, Level 2 Intro and Level 2 entries. These lo
 | IntroBubble | EntryBox, dormant Bubble, air/water control, Q pop and a grounded-Star flag opening the BouncyBall passage; optional return to IntroBox endpoint |
 | IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, final flag to Level01 |
 | Level01 | Former Advanced layout: two lifts, right-side Star/Box landing choice, SAVE/NORMAL/RUIN upper routes, three fixed-form checkpoints and Home menu |
-| IntroSpider / FanTutorial | Existing teaching sequence before Level02; Q releases Spider/Fan, F toggles Fan wind |
+| IntroSpider / IntroFan | Existing teaching sequence before Level02; Q releases Spider/Fan, F toggles Fan wind |
 | Level02 | Spider traversal, chase, projectiles/buttons, fan sections, positional checkpoints and final completion screen |
 | Level01_Legacy | Previous formal Level01, preserved as a disabled backup; not the current map |
 | Tutorial / Level01_Reference / WaterPlayground / Playground | Disabled legacy/reference/sandbox scenes; EnemyScene is a separate test scene |
 
-Enabled build indices are Mainmenu 0, IntroBox 1, IntroBubble 2, IntroBouncyBall 3, Level01 4, IntroSpider 5, FanTutorial 6 and Level02 7. Play order follows named destinations, not consecutive build indices.
+Enabled build indices are Navigation 0, IntroBox 1, IntroBubble 2, IntroBouncyBall 3, Level01 4, IntroSpider 5, IntroFan 6 and Level02 7. Play order follows named destinations, not consecutive build indices.
 
 ## 2. Controls
 
@@ -38,16 +36,16 @@ Enabled build indices are Mainmenu 0, IntroBox 1, IntroBubble 2, IntroBouncyBall
 | Fan | A/D while grounded/facing | F: toggle airflow; Q: leave |
 | Possessable spike wall | A/D while grounded/facing | Space: fire |
 
-R opens restart choices, not an immediate reset. Level01 additionally has the Home pause menu. Q is not a universal exit for Box/BouncyBall. Space remains jump/fire, not Bubble pop. Fan's F toggle is handled by its ability script.
+R opens restart choices, not an immediate reset. All seven gameplay scenes have the shared Home pause menu. Q is not a universal exit for Box/BouncyBall. Space remains jump/fire, not Bubble pop. Fan's F toggle is handled by its ability script.
 
-Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. The Advanced promotion did not add new mobile controls or a dedicated Controls panel to Level01. Beta 0.1.1 subsequently added the contact-activated door hint described below.
+Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. Home is shared across the seven gameplay scenes. Six scenes have the newer paged Help configuration; Level02 and retained legacy components need the migration check in the release checklist. These UI changes do not establish complete mobile navigation support.
 
 ## 3. Possession and body behavior
 
 - Contact with an eligible existing host requests possession; there is no possession key or duplicate body spawned at the old location.
 - The original Star becomes inactive while hosted. The controlled host displays a centered Star. Q release restores the original Star for Bubble, Spider or Fan.
 - Contacts are validated before transfer. Nearby previous hosts must separate before reacquisition; Box growth cannot continuously flip between touching hosts. An abandoned Box stops receiving horizontal drive.
-- Box-to-Bubble handoff temporarily ignores that body's old Box collider until separation, allowing escape without disabling unrelated collisions.
+- Box-to-Bubble handoff temporarily ignores that body's old Box collider until separation, allowing escape without disabling unrelated collisions. PR #21 also handles Box-to-BouncyBall recovery so the abandoned Box does not trap the controlled ball.
 - Untouched Bubbles wait motionless until first possession. Activated Bubbles retain environmental physics after transfer; abandoned BouncyBalls stop and wait.
 - `Starting Host` is optional: IntroBubble starts in EntryBox while retaining StarPlayer as its Initial Body. Scene return setup is distinct from checkpoints.
 - Box, Bubble and BouncyBall glow identifies possessable hosts; outlines and a centered Star improve readability. Terrain, doors, water and environmental spikes are not possessable.
@@ -86,7 +84,7 @@ Spider traverses connected surfaces through HexagonSurfaceMovement. Fan retains 
 
 ## 5. Level01 route and presentation
 
-See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn positions.
+See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn positions. PR #21 adds bidirectional upper-gap clearance, a wider checkpoint-2 approach and steadier BouncyBall camera framing.
 
 | Mode | Geometry and interaction |
 | --- | --- |
@@ -100,7 +98,7 @@ The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. After
 
 The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE sinks hazards, reveals boards and demonstrates a complete alternating cycle before returning the camera. HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
 
-The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives an R reminder after 1.5 seconds; the water-exit and upper-right ceilings each give a once-per-scene-load Q-pop hint after 3 seconds. Beta 0.1.1 adds an optional star hint above the lower movable-door path after 20 seconds without door movement. Deliberate Box growth or Ball contact activates a brief paused door-lift preview with “A little lift?”; it is shown once per scene load and avoids activation from spawn overlap. A dedicated Level01 Controls panel remains deferred.
+The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives an R reminder after 1.5 seconds; the water-exit and upper-right ceilings each give a once-per-scene-load Q-pop hint after 3 seconds. Beta 0.1.1 adds an optional star hint above the lower movable-door path after 20 seconds without door movement. Deliberate Box growth or Ball contact activates a brief paused door-lift preview with “A little lift?”; it is shown once per scene load and avoids activation from spawn overlap. Current source also includes paged form Help in Level01.
 
 ## 6. Death, checkpoints and menus
 
@@ -112,20 +110,21 @@ Retry/death retains the latest completed mode, raised upper platform, broken RUI
 
 The Level01 Home square shows a house outline with a small Star. Its Home · Restart tooltip leads to Paused: Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled without a save; full restart and Main Menu require confirmation. R retains its own restart-choice menu. Opening/cancelling menus changes no progress, and the R menu pauses the death countdown.
 
-Level02 retains its CP01/CP02/CP03 stage-based positional recovery and existing Menu/Restart/Retry buttons. See [CheckpointGuidance.md](CheckpointGuidance.md) and [level-2.md](level-2.md).
+Level02 retains its CP01/CP02/CP03 stage-based positional recovery, now exposed through the shared Home menu; the former standalone Menu/Restart/Retry controls are disabled. See [CheckpointGuidance.md](CheckpointGuidance.md) and [level-2.md](level-2.md).
 
 ## 7. Completion and navigation
 
 - IntroBox's controlled-Box flag opens the gate; its separate exit loads IntroBubble directly. IntroBubble can also return to IntroBox's endpoint using one-shot BoxB setup.
 - IntroBubble requires grounded Star to open its exit door; walking right loads IntroBouncyBall directly, without a Level up overlay. The ball tutorial left exit returns to Bubble as Star at its flag with the door open. This one-shot return setup is not a full scene snapshot.
 - IntroBouncyBall accepts controlled Star or BouncyBall at its flag, then shows Entering Level 1 before loading Level01.
-- Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to FanTutorial, then Level02.
+- Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to IntroFan, then Level02.
 - Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
 - Level02 alone ends this sequence with Level Complete / You are a super star now! and waits for Return to Main Menu.
-- Mainmenu's optional playable Star can jump through and land on UI-aligned one-way platforms. Landing does not select a level; buttons retain their click actions.
+- Navigation replaces the old playable Mainmenu as startup and return destination. It uses authored entrance interactions, not the legacy UI-platform landing behavior. Coming Soon has no destination.
+- Collection Book uses reusable UI assets and blocks Navigation movement while open. Gameplay books reveal pages after possession through session-only `HelpBookUnlocks`; the Navigation book uses unrestricted shared content. Shape Closet has both persistent completion and session-discovery writers attached; see [the release finding](Beta-0.1.2.md#shape-closet-has-two-competing-state-sources) before treating either policy as final.
 
 ## 8. Validation and remaining work
 
 Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. That November 2 evidence confirms Beta 0.1.0 Level01 records. Dashboard Version 9 subsequently resolved historical release-map matching; it does not certify 0.1.1 event delivery or its refreshed map deployment.
 
-Beta 0.1.1 publication is complete and its seven live files match the recorded export. Remaining work includes a dedicated Level01 Controls panel, new-player route/timing/readability feedback, broader browser/aspect-ratio/mobile coverage and 0.1.1 raw-row/map verification. The main-only help-book UI also needs cross-scene regression before a future release. Keep Beta evidence separate from the historical Alpha 0.1.2 deployment. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md); deployment checks are in [publish_instructions.md](publish_instructions.md).
+The November 5 package check applies only to Beta 0.1.1. PR #21/#22 had developer-reported playtest acceptance, but the later discovery/help/Spider updates and the beta-0.1.2 export need the [current release checks](Beta-0.1.2.md). Broader browser/mobile coverage and production analytics/map acceptance remain separate. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md).

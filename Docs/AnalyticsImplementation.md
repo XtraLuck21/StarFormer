@@ -1,12 +1,18 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-11-05.
+## Beta 0.1.2 source preparation
+
+Current source target: `beta-0.1.2` (November 6, main baseline `5e7105c` plus local release preparation). Build, publication and production-data acceptance are pending. The seven gameplay scenes are IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan and Level02; Navigation is the startup/menu scene and is not a tracked gameplay level. Preserve historical FanTutorial names/maps for older exports.
+
+All seven current scene hashes differ from the runtime map catalog. Run **Analytics → Export all real level maps** after saving scenes, before building; retain historical PNGs/catalog entries. Separately deploy the refreshed catalog and current IntroFan-compatible backend to the existing Apps Script deployment. Do not change the endpoint or rewrite old rows. Verify `beta-0.1.2` events and exact map matches on the built player; prior Version 9 and 0.1.1 evidence does not certify the new export. See [release preparation](Beta-0.1.2.md) and [current acceptance](AnalyticsTestPlan.md#beta-012-acceptance-status).
+
+Last updated: 2026-11-06.
 
 ## Scope
 
 Current source records anonymous playtest events for `IntroBox`, `IntroBubble`,
-`IntroBouncyBall`, `Level01`, `IntroSpider`, `FanTutorial` and `Level02`. Formal
-Level01 is the promoted Advanced map. Mainmenu, legacy/reference scenes, the old
+`IntroBouncyBall`, `Level01`, `IntroSpider`, `IntroFan` and `Level02`. Formal
+Level01 is the promoted Advanced map. Navigation, Mainmenu, legacy/reference scenes, the old
 Tutorial and sandboxes are excluded. See [AnalyticsAllLevels.md](AnalyticsAllLevels.md)
 for schema v2, real maps and deployment. Published Beta 0.1.1 includes this seven-scene collector; historical Beta 0.1.0 and Alpha exports retain their embedded Level01/Level02-only collectors.
 
@@ -82,7 +88,7 @@ uses `DontDestroyOnLoad`. Do not add separate copies to Level 1 or Level 2.
 - `entry_reason`: `normal` or `return`; a scene-return exit is recorded separately
   from completion and abandonment. The dashboard defaults to normal entries.
 
-Automatic death reload retains the current Level Run. Opening/cancelling the R menu or Level01 Home menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in R/Home and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death; new v2 runs distinguish `restart_level` and `retry_checkpoint` in `end_reason`. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
+Automatic death reload retains the current Level Run. Opening/cancelling the R menu or shared Home menu does not restart the Run. Confirming either restart choice, using a standalone Restart Level button, or entering the level again starts a new Run. Return to Checkpoint in R/Home and Level02 Retry Checkpoint also call `TrackManualRestart`: it ends the old Run and creates a new Run even though the gameplay checkpoint is retained. Neither manual button emits a death; new v2 runs distinguish `restart_level` and `retry_checkpoint` in `end_reason`. Returning to the menu records an unfinished active Run as `abandoned`; returning after completion does not append an abandonment event for that completed Run.
 
 Current Level01 uses `ADV_CP1`, `ADV_CP2` and `ADV_CP3`, restoring Box, BouncyBall and Star respectively. Possessing a ball alone no longer records a checkpoint in this scene. Level02 retains `CP01`, `CP02` and `CP03`. The attempt timer resets on accepted checkpoint activation and again on respawn. Historical `BouncyBall_Lower`/`BouncyBall_Upper` rows describe the old first-level layout; distinguish them by build version rather than rewriting historical data.
 
