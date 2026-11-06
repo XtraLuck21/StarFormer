@@ -53,7 +53,7 @@ public class HelpBookUI : MonoBehaviour
 
         [Header("解锁")]
         [Tooltip("解锁标识。留空表示这页一直可见（比如 Star）。\n" +
-                 "填形态名（Box / Bubble / BouncingBall / Spider / Fan），" +
+                 "填形态名（Box / Bubble / BouncyBall / Spider / Fan），" +
                  "玩家第一次附身该形态后这页才解锁。\n" +
                  "大小写必须和 BodyForm 枚举完全一致。")]
         public string unlockId;
@@ -313,18 +313,14 @@ public class HelpBookUI : MonoBehaviour
         ShowPage(currentPageIndex);
     }
 
-    /// <summary>
-    /// 解锁一页并立即刷新显示。
-    /// 书本打开着的时候解锁（比如玩家边看边玩），当前页会马上更新。
-    /// </summary>
-    public void UnlockPage(string unlockId)
+    private void OnEnable()
     {
-        HelpBookUnlocks.Unlock(unlockId);
+        HelpBookUnlocks.Changed += RefreshDiscovery;
+    }
 
-        if (isOpen)
-        {
-            ShowPage(currentPageIndex);
-        }
+    private void RefreshDiscovery()
+    {
+        if (isOpen) ShowPage(currentPageIndex);
     }
 
     private void ShowPage(int index)
@@ -443,6 +439,7 @@ public class HelpBookUI : MonoBehaviour
 
     private void OnDisable()
     {
+        HelpBookUnlocks.Changed -= RefreshDiscovery;
         // A reusable panel can be disabled independently of its scene.
         Close();
     }

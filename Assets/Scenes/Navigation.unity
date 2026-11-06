@@ -5982,7 +5982,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 652867200}
-  - component: {fileID: 652867201}
   m_Layer: 0
   m_Name: 06_Playground
   m_TagString: Untagged
@@ -6019,34 +6018,6 @@ Transform:
   - {fileID: 879102973}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &652867201
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 652867199}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0e29b42f9e024f9e8df01663af01c4c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShapeClosetView
-  slots:
-  - form: 1
-    lockedVisual: {fileID: 1773461668}
-    unlockedVisual: {fileID: 622460616}
-  - form: 2
-    lockedVisual: {fileID: 821500048}
-    unlockedVisual: {fileID: 1920599826}
-  - form: 7
-    lockedVisual: {fileID: 934279907}
-    unlockedVisual: {fileID: 1891065152}
-  - form: 4
-    lockedVisual: {fileID: 1882488161}
-    unlockedVisual: {fileID: 1313973268}
-  - form: 5
-    lockedVisual: {fileID: 1791197046}
-    unlockedVisual: {fileID: 615412566}
 --- !u!1 &660802791
 GameObject:
   m_ObjectHideFlags: 0

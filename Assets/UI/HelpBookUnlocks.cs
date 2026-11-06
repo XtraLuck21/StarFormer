@@ -1,65 +1,34 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// 记录帮助书里哪些页已经解锁。
-///
-/// 只在本次游戏期间有效：数据存在内存里，不写硬盘。
-/// 关掉游戏重新打开，所有页都回到锁定状态，玩家要重新发现一遍。
-/// 关卡之间切换场景不会清零，因为 static 字段跨场景保留。
-///
-/// 这是个 static 类（静态类）：不需要挂在任何物体上，任何脚本直接
-/// HelpBookUnlocks.Unlock("Box") 就能调用。
-/// </summary>
+// One discovery record for gameplay help, Navigation's book and Shape Closet.
+// Scene changes/retries retain it; a new player/Editor Play session clears it.
 public static class HelpBookUnlocks
 {
-    // HashSet 是一个「不重复的集合」，查找某个元素在不在里面非常快。
-    // 比 List 适合这种「只关心有没有」的场景。
-    private static readonly HashSet<string> unlocked = new HashSet<string>();
+    private static readonly HashSet<BodyForm> discovered = new HashSet<BodyForm>();
+    public static event Action Changed;
 
-    /// <summary>
-    /// 每次进入 Play 模式前清空。
-    ///
-    /// static 字段在 Unity 编辑器里不会随着停止播放自动重置，
-    /// 不加这个的话，编辑器里测试时上一次的解锁记录会残留，
-    /// 表现得像还在存盘。打包后的游戏每次启动本来就是干净的。
-    /// </summary>
-    [RuntimeInitializeOnLoadMethod(
-        RuntimeInitializeLoadType.SubsystemRegistration)]
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetOnLaunch()
     {
-        unlocked.Clear();
+        discovered.Clear();
+        Changed = null;
     }
 
-    /// <summary>这一页解锁了吗。id 为空视为「不需要解锁」，直接返回 true。</summary>
+    // Blank IDs are reserved for always-available general help (the Star page).
     public static bool IsUnlocked(string id)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            return true;
-        }
-
-        return unlocked.Contains(id);
+        if (string.IsNullOrWhiteSpace(id)) return true;
+        return Enum.TryParse(id, out BodyForm form) &&
+            (form == BodyForm.Star || discovered.Contains(form));
     }
 
-    /// <summary>解锁一页。重复调用无害。</summary>
-    public static void Unlock(string id)
+    // Call only after the player has successfully taken control of a body.
+    // Completion, opening help and selecting a scene never grant a form group.
+    public static void RecordPossession(BodyForm form)
     {
-        if (string.IsNullOrWhiteSpace(id))
-        {
-            return;
-        }
-
-        // Add 在元素已存在时返回 false，正好用来判断这次是不是新解锁。
-        if (unlocked.Add(id))
-        {
-            Debug.Log($"帮助书解锁了新的一页：{id}");
-        }
-    }
-
-    /// <summary>手动清空所有解锁记录。可以接到「重新开始」之类的按钮上。</summary>
-    public static void ResetAll()
-    {
-        unlocked.Clear();
+        if (form == BodyForm.Star || !Enum.IsDefined(typeof(BodyForm), form)) return;
+        if (discovered.Add(form)) Changed?.Invoke();
     }
 }

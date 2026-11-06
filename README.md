@@ -14,7 +14,7 @@ On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/W
 
 Player Version and Analytics buildVersion are now `beta-0.1.2`, prepared from main `5e7105c` on November 6. **This is source preparation, not a completed build or publication.** The last recorded deployed Beta remains 0.1.1; the current branch contains substantial later changes.
 
-The next release includes interactive Navigation, school/level entrances, Collection Book integration, shared Home menus, the IntroFan rename, Level01 traversal/camera/possession fixes, and new Spider tutorial guidance. Later main commits also introduced session-based per-form discovery. Shape Closet still has both the old persistent completion view and the new discovery views attached, so its final behavior requires review. Gameplay help migration also needs checking, especially Level02.
+The next release includes interactive Navigation, school/level entrances, Collection Book integration, shared Home menus, the IntroFan rename, Level01 traversal/camera/possession fixes, and new Spider tutorial guidance. Shape Closet and Navigation’s Collection Book now share session-only per-form discovery: taking control of a form reveals its icon/help, scene changes and retries retain it, and a new game launch clears it. Completion no longer grants groups, and old persistent unlock saves are ignored. Gameplay help migration also needs checking, especially Level02.
 
 All seven analytics maps are stale against the saved scenes and must be exported in Unity before building. See the [Beta 0.1.2 preparation and Unity checklist](Docs/Beta-0.1.2.md) for scope, concrete findings and uncompleted release steps. Preserve the recorded 0.1.1 export and historical evidence below.
 

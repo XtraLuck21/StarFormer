@@ -4,7 +4,7 @@
 
 Player Version and Analytics buildVersion are synchronized to `beta-0.1.2` for current main `5e7105c` plus local preparation changes. **No new build, commit, push or publication has been performed.** Use `Builds/WebGL-Beta-0.1.2` for the tested export; Navigation is already saved at enabled index 0. The old Mainmenu stays in source but is disabled in builds.
 
-Read [Beta-0.1.2.md](Beta-0.1.2.md) before building: all seven analytics maps are stale; Closet still has competing completion/discovery controllers; legacy Help components and Level02 page content need checking. That document covers Level01 fixes, Navigation, shared Home/Book, IntroFan and latest Spider teaching changes. Do not mark this release ready solely because its version settings are updated.
+Read [Beta-0.1.2.md](Beta-0.1.2.md) before building: all seven analytics maps are stale; Closet and Navigation book now share session-only discovery and need new-build acceptance; legacy Help components and Level02 page content need checking. That document covers Level01 fixes, Navigation, shared Home/Book, IntroFan and latest Spider teaching changes. Do not mark this release ready solely because its version settings are updated.
 
 Last updated: 2026-11-06.
 
@@ -139,7 +139,7 @@ Check all four menu entries: Kindergarten, Level 1, Elementary School and Level 
 - Level01 movable-door hint: wait 20 seconds without door movement, activate the Hint button by Box growth or BouncyBall contact, verify “A little lift?” and the paused preview, then confirm time/movement resumes. It must show only once per scene load and must not auto-activate from spawn overlap.
 - Verify analytics for all seven gameplay scenes, including completion, backward passage returns, restart/checkpoint actions and matching map versions. Navigation must remain untracked.
 
-Run the additional [beta-0.1.2 checks](Beta-0.1.2.md#unity-and-browser-acceptance-before-recording), especially Closet state ownership, Help migration, Level01 playtest fixes and latest Spider guidance. Publish only after local tests pass.
+Run the additional [beta-0.1.2 checks](Beta-0.1.2.md#unity-and-browser-acceptance-before-recording), especially session-only Closet/book discovery, Help migration, Level01 playtest fixes and latest Spider guidance. Publish only after local tests pass.
 
 ## 3. Prepare the publishing checkout
 

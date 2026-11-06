@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HelpBookContent
   pages:
   - title: Star
+    unlockId: Star
     icon: {fileID: 4815476061570213978, guid: ee2f7f1399d47c944bb52ddc0ae5be8a, type: 3}
     keys: "\nA/D\t\tMove\nSpace \tJump"
     demoFrames:
@@ -83,6 +84,7 @@ MonoBehaviour:
     - {fileID: 6016114126124034256, guid: 4afdabb596624124d96bf1d13c4f12f3, type: 3}
     caption: Touch a possessable body to become it.
   - title: BOX
+    unlockId: Box
     icon: {fileID: -3795119470717004479, guid: 0725892d4be3d25498a72892a6c14516, type: 3}
     keys: "\nA/D\t\tMove\nHold J\tGrow\nHold K\tShrink"
     demoFrames:
@@ -188,6 +190,7 @@ MonoBehaviour:
     - {fileID: 7076676859241052165, guid: fd3531420ec9e6d499ae7667eea16d85, type: 3}
     caption: Touch another body to switch.
   - title: BUBBLE
+    unlockId: Bubble
     icon: {fileID: -9136834448258697486, guid: 742349fc218e00c44a6cfa4a8ed37bbf, type: 3}
     keys: "\nA/D\t\tIn air\nW A S D\tUnderwater\nQ            \tPop"
     demoFrames:
@@ -277,6 +280,7 @@ MonoBehaviour:
     - {fileID: 122559473522559705, guid: f8217c13b2ca29943919f8b238ebb77f, type: 3}
     caption: Rises automatically in air.
   - title: BOUNCING BALL
+    unlockId: BouncyBall
     icon: {fileID: -7244493321671047126, guid: 44607da8d9788404ba73cf3190e55edb, type: 3}
     keys: "\nA/D\t\tMove"
     demoFrames:
@@ -348,6 +352,7 @@ MonoBehaviour:
     caption: Bounces automatically on land. Floats on water. Touch another body to
       switch.
   - title: Spider
+    unlockId: Spider
     icon: {fileID: 1059239481293130509, guid: d544ee28e31a764419c0f8dd59f8e589, type: 3}
     keys: "\nA/D\t\tMove along surfaces"
     demoFrames:
@@ -433,6 +438,7 @@ MonoBehaviour:
     - {fileID: 2834233381879223671, guid: 8fbe34f52ef4f614cad58b4abdd439e8, type: 3}
     caption: Moves along walls and ceilings. Touch another body to switch.
   - title: Fan
+    unlockId: Fan
     icon: {fileID: 1710981365271166214, guid: a172090fcb0c23e40b4f2993592d1abb, type: 3}
     keys: "\nA/D\t\tMove / face direction\nF\t\tWind ON / OFF\nQ\t\tReturn to Star"
     demoFrames:

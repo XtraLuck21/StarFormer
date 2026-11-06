@@ -5762,7 +5762,6 @@ MonoBehaviour:
   ballBraking: 28
   ballWaterSpeedMultiplier: 0.75
   ballMaximumHeight: 40
-  unlockStartingHostPage: 1
   possessionSeparationDistance: 0.35
   possessionSeparationFrames: 3
   possessionTouchTolerance: 0.1

@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-06. Current source target: `beta-0.1.2`, based on main `5e7105c`; not built/published by this preparation. See [the release checklist](Beta-0.1.2.md) for new functionality, outstanding Help/Closet wiring and required map export. Published Beta 0.1.1 remains a separate historical artifact.
+Last updated: 2026-11-06. Current source target: `beta-0.1.2`, based on main `5e7105c`; not built/published by this preparation. See [the release checklist](Beta-0.1.2.md) for new functionality, outstanding Help migration and session-discovery acceptance and required map export. Published Beta 0.1.1 remains a separate historical artifact.
 
 ## 1. Scenes and build configuration
 
@@ -121,14 +121,13 @@ Navigation entrance targets are IntroBox, Level01, IntroSpider and Level02. Intr
 | [NavigationEntrance.cs](../Assets/Scripts/NavigationEntrance.cs) | Scene destination and upper/lower interaction rules; Coming Soon has no scene |
 | [NavigationHelpBook.cs](../Assets/Scripts/NavigationHelpBook.cs) | Align book control with its world anchor, block Star input while open and disable entry-time interaction |
 | [CollectionBookGraphic.cs](../Assets/UI/CollectionBookGraphic.cs) | Procedural book icon; reusable CollectionBook/ControlsHelp prefabs reference shared content rather than duplicate demo images |
-| [HelpBookUnlocks.cs](../Assets/UI/HelpBookUnlocks.cs) | Session-only possession discovery; cleared on application/Play launch |
-| [ShapeClosetSlot.cs](../Assets/UI/ShapeClosetSlot.cs) | Per-form discovery visual; all five Navigation slots have this component |
-| [ShapeClosetProgress.cs](../Assets/Scripts/ShapeClosetProgress.cs) / [ShapeClosetView.cs](../Assets/Scripts/ShapeClosetView.cs) | Retained persistent completion groups and visual writer; still active alongside the new slots, requiring reconciliation |
+| [HelpBookUnlocks.cs](../Assets/UI/HelpBookUnlocks.cs) | Sole in-memory form discovery record; RecordPossession after successful ownership, Changed event for both views, reset on application/Play launch. No PlayerPrefs access. |
+| [ShapeClosetSlot.cs](../Assets/UI/ShapeClosetSlot.cs) | Event-driven per-form visual; all five slot roots remain active, only locked artwork/unlocked icons toggle |
 | [IntroSpiderCake.cs](../Assets/Scripts/IntroSpiderCake.cs) / [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Cake/spike reveal, contextual climbing prompts, directional arrows and center death feedback |
 
 Navigation's entering overlay draws above its Collection Book so the entire page dims uniformly. The disabled book color remains the normal color; the common overlay supplies dimming. Navigation UI Events routes pointer/UI input; it is not a gameplay checkpoint or progress manager.
 
-All seven gameplay scenes use Home with their local player controller. Legacy standalone buttons are disabled; R remains available. Death/Retry retains gameplay checkpoints; Restart and menu/new-level entry clears them. Discovery and completion storage are separate; see [release findings](Beta-0.1.2.md).
+All seven gameplay scenes use Home with their local player controller. Legacy standalone buttons are disabled; R remains available. Death/Retry retains gameplay checkpoints; Restart and menu/new-level entry clears them. Discovery survives these scene operations but clears on the next launch. The old persistent completion classes, view binding and goal reward hooks are removed; completion does not unlock unused forms. Navigation’s shared content now includes matching unlock IDs. See [the release specification](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## 4. Web build and GitHub Pages release
 
@@ -146,4 +145,6 @@ Use [publish_instructions.md](publish_instructions.md) for future releases. Pres
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 
-Current release work: reconcile the competing Closet writers, inspect legacy Help components and Level02 help content, regenerate all seven maps, and validate the beta-0.1.2 Web player and backend data. Broader browser/mobile coverage and new-player readability remain separate checks. Previous release acceptance does not certify latest main; see [Beta-0.1.2.md](Beta-0.1.2.md).
+Current release work: verify session-only discovery in the exported player, inspect legacy Help components and Level02 help content, regenerate all seven maps, and validate the beta-0.1.2 Web player and backend data. Broader browser/mobile coverage and new-player readability remain separate checks. Previous release acceptance does not certify latest main; see [Beta-0.1.2.md](Beta-0.1.2.md).
+
+The isolated [session-discovery regression](../Assets/Editor/SessionDiscoveryVerification.cs) checks real ownership/UI paths, completion without group rewards, retries and a second Play session with domain reload disabled. Execution instructions and the remaining legacy Help findings are in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#session-discovery-regression).

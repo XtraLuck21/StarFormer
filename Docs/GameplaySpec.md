@@ -121,7 +121,7 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery, now exposed 
 - Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
 - Level02 alone ends this sequence with Level Complete / You are a super star now! and waits for Return to Main Menu.
 - Navigation replaces the old playable Mainmenu as startup and return destination. It uses authored entrance interactions, not the legacy UI-platform landing behavior. Coming Soon has no destination.
-- Collection Book uses reusable UI assets and blocks Navigation movement while open. Gameplay books reveal pages after possession through session-only `HelpBookUnlocks`; the Navigation book uses unrestricted shared content. Shape Closet has both persistent completion and session-discovery writers attached; see [the release finding](Beta-0.1.2.md#shape-closet-has-two-competing-state-sources) before treating either policy as final.
+- Collection Book uses reusable UI assets and blocks Navigation movement while open. Navigation’s book, configured gameplay books and Shape Closet all read session-only `HelpBookUnlocks`. Successful possession reveals only the controlled form; an assigned starting/recovery host also counts. Star help is always available. Completion adds no form groups. Scene changes, death and level restart retain discoveries; refreshing/reopening the game or starting a new Editor Play session clears them. Old persistent completion saves are ignored. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## 8. Validation and remaining work
 

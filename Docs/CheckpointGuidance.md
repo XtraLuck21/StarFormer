@@ -61,7 +61,7 @@ Formal Level01 uses assigned ceiling contact and teaching regions, not generic s
 
 The generic E-pop reminder still exists in the legacy feedback script but is suppressed for scenes with `AdvancedCheckpointController`. It must not appear beside the current Level01 Q hints. This suppression is part of the scene-promotion fix, not an outstanding first-level copy bug.
 
-Shape Closet discovery/completion is separate from checkpoint state. The current source has two Closet state writers; see [the release finding](Beta-0.1.2.md#shape-closet-has-two-competing-state-sources). A menu return clears checkpoint sessions, not necessarily form discovery or persistent completion flags.
+Shape discovery is separate from checkpoint state. A menu return/full level restart clears the applicable checkpoint session but retains discovered forms for this application launch. Death and checkpoint retry also retain discoveries. Only a new game/Editor Play launch clears them; completion no longer grants form groups. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## Verification
 

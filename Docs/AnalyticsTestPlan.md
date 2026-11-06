@@ -13,7 +13,7 @@ Prepared November 6 from main `5e7105c` plus local version/docs edits. Player an
 | --- | --- |
 | Version and scene list | Source prepared: Navigation 0, seven gameplay scenes 1–7, IntroFan at 6 |
 | Map freshness | All seven saved-scene hashes differ; re-export in Unity before build |
-| Closet behavior | Two state writers remain; reconcile persistent completion versus session discovery, then test clean and existing saves |
+| Closet/book behavior | Unified session-only discovery; inspect the regression evidence below and repeat on the Web export |
 | Help migration | Six scenes have discovery pages; inspect retained legacy Help components and Level02’s missing page/content data |
 | Gameplay | Recheck PR #21 Level01 fixes, Navigation contact/click entries, shared Home/Help, current Spider hints and forward/return passages |
 | Web build and publication | Pending; intended folder `Builds/WebGL-Beta-0.1.2`, eventual `/beta/` deployment |
@@ -22,6 +22,12 @@ Prepared November 6 from main `5e7105c` plus local version/docs edits. Player an
 Navigation may participate in session initialization but must not create a tracked gameplay Run. Each selected gameplay destination must create its own Run; verify forward completions, backward returns, death, restart/retry, abandonment and paused/focus time as below. Collection Book pause must not add active gameplay time. Recording/rehearsal on the release configuration can add production events; keep that fact in mind when interpreting the dataset.
 
 Use [Beta-0.1.2.md](Beta-0.1.2.md#unity-and-browser-acceptance-before-recording) for the gameplay/recording checklist. Leave the historical evidence below attached to its original release.
+
+### Session discovery regression
+
+The executable [SessionDiscoveryVerification.cs](../Assets/Editor/SessionDiscoveryVerification.cs) check runs only in a disposable project copy. Set its Company Name to `StarFormerVerification` and use a separate Product Name; then launch Unity with `-batchmode -projectPath <copy> -executeMethod SessionDiscoveryVerification.RunBatch` (without `-quit`). It writes `starformer-session-discovery-results.txt` to the system temporary directory and exits with the test result. This isolates the Company/Product storage namespace. It exercises the real Navigation slot/book bindings and player ownership handoff, not a replacement unlock model. Old completion keys are seeded and restored by the test. No actual user progress is cleared.
+
+Acceptance cases: five locked icons and locked form pages on fresh launch; Star help always available; direct Level02 entry and completion grant no unused forms; early Kindergarten exit grants none; individual possession updates the corresponding icon/page; death, checkpoint retry, level restart and Navigation returns retain discoveries; skipped basic school reveals only Spider/Fan after controlling them; a second Editor Play session clears discoveries even with domain reload disabled. Build/browser startup, mobile behavior and Web storage handling still need exported-player acceptance. November 6 isolated Unity 6000.3.22f1 execution passed these discovery checks, including two Play sessions with domain reload disabled. The suite separately reported existing missing-button/panel errors from legacy gameplay Help components; it does not certify those panels or the Level02 migration. Ownership tests invoke the real successful handoff after initialization; they do not replace manual collision/movement playtests.
 
 ## Beta 0.1.1 acceptance status
 

@@ -152,7 +152,6 @@ public class LevelGoalToMenu : MonoBehaviour
     private void Clear()
     {
         cleared = true;
-        ShapeClosetProgress.RecordCompletion(gameObject.scene.name);
         AnalyticsManager.Instance?.TrackLevelComplete(
             player != null ? player.CurrentBody : null
         );

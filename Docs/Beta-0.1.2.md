@@ -30,21 +30,28 @@ The template remains `PROJECT:StarFormerAlpha`; its name is historical and its r
 
 ## Release review findings
 
-### Shape Closet has two competing state sources
+### Session-only shape discovery
 
-This source is not simply the earlier completion-only design. `HelpBookUnlocks` stores discovered form IDs in memory: possession unlocks a page, scene changes retain it, and a new application/Editor Play session clears it. `unlockStartingHostPage` defaults to true, so an assigned starting host can also unlock its page on entry.
+Shape Closet and Navigation’s Collection Book now use one `HelpBookUnlocks` in-memory record. `ShapeClosetSlot` updates the five icons from discovery events; the shared `ControlsContent` pages use the same Box, Bubble, BouncyBall, Spider and Fan IDs. Star’s basic help remains available from the start. Locked pages hide the form instructions, icon/demo and show the locked explanation.
 
-However, Navigation still has the enabled `ShapeClosetView` reading persistent `ShapeClosetProgress`, as well as five new `ShapeClosetSlot` components reading session discovery. Both write the same unlocked visuals. The old view also disables the slot root on group completion, which stops the new slot updater on that object. Display can therefore depend on saved completion flags and component lifecycle order. The old completion hooks and PlayerPrefs keys still exist; this preparation does not clear them or change gameplay.
+| Action | Discovery result |
+| --- | --- |
+| Select/enter a school or level as Star | No automatic form-group unlock |
+| Successfully take control of a form | Reveal only that form’s icon and book page |
+| Start in an assigned host or restore a controlled host | The actual controlled form counts as used; waiting bodies do not |
+| Finish Kindergarten, Elementary School, Level01 or Level02 | No additional unlock reward; only used forms remain discovered |
+| Return to Navigation, change scenes, die, retry a checkpoint or restart a level | Keep discoveries for the current launch |
+| Refresh the browser player, reopen the game or start a new Editor Play session | Clear all form discoveries; Star help stays available |
 
-The retained completion groups are: IntroBouncyBall/Level01 → Box, Bubble and BouncyBall; IntroFan → Spider and Fan; Level02 → both groups. In contrast, discovery is individual and does not require completion. Navigation's book still uses shared `ControlsContent` pages without unlock IDs, so it can show all help pages even when gameplay books are locked.
+The old `ShapeClosetProgress`/`ShapeClosetView` scripts, serialized view component and four completion-reward hooks were removed. Discovery has no PlayerPrefs read/write or migration. Historical `StarFormer.ShapeCloset.UnlockTier.v1` / `StarFormer.ShapeCloset.UnlockedGroups.v2` values may remain in local storage, but are ignored. No user save or analytics identifier is deleted. There is no Reset Progress UI.
 
-**Before publishing:** confirm one intended Closet rule and reconcile the two visual controllers. Test a clean state and an existing completion save, early tutorial exit, actual possession, basic/advanced completion, direct Level02 entry, return to Navigation and a full browser reload. Do not advertise either persistent completion unlocks or a fully unified discovery system as verified while both writers remain. This is a gameplay/wiring decision, not something changing the version number resolves.
+Opening a book cannot discover a form. A successful starting-host transfer counts consistently; the old per-scene `unlockStartingHostPage` opt-in and suppression path were removed. Book/Closet listeners refresh from the shared event instead of polling every frame. Launch reset uses `SubsystemRegistration`, including Editor Play with domain reload disabled.
 
 ### Gameplay help migration needs a check
 
 IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider and IntroFan contain six-page `HelpBookUI` configurations with form unlock IDs. IntroBox, IntroBubble and IntroSpider also retain enabled legacy help components on active scene objects with no page content. Level02's saved help component references the current HelpBookUI script GUID but retains the old HelpPanelUI serialized layout with no pages/content.
 
-Inspect these scenes in Play Mode and check the Console. Verify whether the legacy panels still serve a purpose; migrate or disable obsolete components after review. Specifically open Level02 Help and confirm it has real content, page controls and correct pause behavior before claiming help is complete in every scene. These are source inspection findings, not reproduced runtime failures in this preparation.
+Inspect these scenes in Play Mode and check the Console. Verify whether the legacy panels still serve a purpose; migrate or disable obsolete components after review. Specifically open Level02 Help and confirm it has real content, page controls and correct pause behavior before claiming help is complete in every scene. The session-discovery regression reproduced missing-button/panel errors from retained legacy gameplay Help components. Level02’s page-content migration remains unverified. These existing Help issues are separate from the passing Closet/Navigation book discovery checks.
 
 ### Analytics maps must be regenerated
 
@@ -64,7 +71,7 @@ All seven runtime map `source_scene_hash` values differ from the saved current s
 - Test Home and Help across every gameplay scene: pause/resume, no-checkpoint state, checkpoint retry, restart confirmation/cancel, return to Navigation and no stuck time scale or input.
 - Repeat the Level01 gap in both directions, edge stop/restart and resizing; checkpoint-2 approach; ball camera stability; Box-on-ball recovery before checkpoint 3; and existing route/checkpoint behavior.
 - Test IntroSpider climb arrows, first cake contact versus later spike death, release/recovery and IntroSpider → IntroFan → Level02. Confirm existing Box/Bubble/BouncyBall forward and return passages.
-- Resolve the Closet policy first, then test unlock behavior against that policy in a fresh launch and a returning session. Do not clear unrelated PlayerPrefs or analytics identifiers as part of ordinary release preparation.
+- Test individual discovery with old completion saves present, an early exit before possession, skipped basic school, actual possession, completion without extra rewards, cross-scene returns/retries and a new launch. Do not clear unrelated PlayerPrefs or analytics identifiers.
 - Export current maps, then use **Build And Run** into `Builds/WebGL-Beta-0.1.2`. Standard Build Profiles does not run the custom map-hash guard. The custom **Build → Build WebGL** menu defaults to `Builds/WebGL` unless launched with `-customBuildPath`; do not confuse its default with the version-specific export target.
 - Test the local HTTP player, not a `file://` launch. Check 16:9 framing, fullscreen/windowed loading, all scene links, Help/Home and unlock behavior. Record the exact tested build and browser. Keep mobile claims separate from desktop recording acceptance.
 - Check new runtime events use `beta-0.1.2`, `IntroFan` and matching exported map versions; Navigation remains untracked as a gameplay level. Verify actual production rows before claiming delivery. Recording/rehearsal runs use the retained production configuration and may add real data.
@@ -72,4 +79,4 @@ All seven runtime map `source_scene_hash` values differ from the saved current s
 
 ## Evidence for this preparation
 
-The source version settings, enabled scene order, destination names, help/Closet wiring and saved scene/map hashes were inspected. Local Markdown file/anchor checks passed, both settings files changed only their version value, and the pre-existing TMP fallback-font modification was preserved. No Unity runtime playtest, WebGL build, backend update, hosted verification, progress reset, commit or push was performed by this preparation. Earlier developer acceptance of PR #21/#22 remains useful historical evidence, but does not certify the later main changes or the future Beta 0.1.2 export.
+The initial release-preparation pass inspected versions, scene order, links and map hashes without running Unity or building. The subsequent session-discovery change removes the competing state sources described in that earlier review. Its isolated Unity regression results are recorded in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#session-discovery-regression). No WebGL build, backend update, hosted verification, actual-user progress reset, commit or push is claimed by this follow-up. Earlier developer acceptance of PR #21/#22 does not certify the future Beta 0.1.2 export.

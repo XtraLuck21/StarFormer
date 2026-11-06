@@ -72,7 +72,7 @@ Elementary School begins at IntroSpider and continues to IntroFan, then Level02.
 
 Current Spider teaching includes contextual climb prompts, directional wall arrows and a climb-surface lesson. The center prompt changes from `Climb over it` to `No floor, no problem.` after the qualifying climb, with an upward reminder when appropriate. Cake-disguised spikes reveal after contact; the first contact displays `cake is a lie`, while later spike deaths use `you are dead`. The center hint owns this feedback so the separate death caption does not duplicate it. The cake contact memory is session-local, not a persistent achievement.
 
-Gameplay Collection Book pages are discovered through possession and retained across scene changes for the current launch. Navigation’s shared book remains unrestricted. Do not describe tutorial completion as the sole unlock trigger in latest main: the [Closet state conflict](Beta-0.1.2.md#shape-closet-has-two-competing-state-sources) must be reviewed before release. Check retained legacy Help components in IntroBox, IntroBubble and IntroSpider alongside the newly configured books.
+Gameplay and Navigation Collection Book pages and Closet icons share possession-based discovery for the current launch. Entering as Star or completing a school grants no extra forms; actually controlling an assigned starting host also counts. Scene changes/death/restarts retain discoveries, while a new launch clears them. Star help remains available. Old completion saves are ignored; see [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery). Check retained legacy Help components in IntroBox, IntroBubble and IntroSpider alongside the newly configured books.
 
 ## Controls and hints
 
