@@ -7723,6 +7723,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 821500049}
+  - component: {fileID: 821500050}
   m_Layer: 0
   m_Name: Slot_02_Bubble_Locked
   m_TagString: Untagged
@@ -7747,6 +7748,23 @@ Transform:
   - {fileID: 108628466}
   m_Father: {fileID: 652867200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &821500050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 821500048}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6628b5052c0c3524586ad0e73cdd91eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShapeClosetSlot
+  unlockId: Bubble
+  lockedVisuals:
+  - {fileID: 2026347913}
+  - {fileID: 108628465}
+  unlockedVisual: {fileID: 1920599826}
 --- !u!1 &827465230
 GameObject:
   m_ObjectHideFlags: 0
@@ -7845,6 +7863,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2564960291566293999, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4281213978
+      objectReference: {fileID: 0}
+    - target: {fileID: 2564960291566293999, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 3179682215277756039, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -8790,6 +8816,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 934279908}
+  - component: {fileID: 934279909}
   m_Layer: 0
   m_Name: Slot_03_BouncingBall_Locked
   m_TagString: Untagged
@@ -8814,6 +8841,23 @@ Transform:
   - {fileID: 157570315}
   m_Father: {fileID: 652867200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &934279909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 934279907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6628b5052c0c3524586ad0e73cdd91eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShapeClosetSlot
+  unlockId: BouncyBall
+  lockedVisuals:
+  - {fileID: 1680039027}
+  - {fileID: 157570314}
+  unlockedVisual: {fileID: 1891065152}
 --- !u!1 &937025600
 GameObject:
   m_ObjectHideFlags: 0
@@ -14365,6 +14409,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1773461669}
+  - component: {fileID: 1773461670}
   m_Layer: 0
   m_Name: Slot_01_Box_Locked
   m_TagString: Untagged
@@ -14389,6 +14434,23 @@ Transform:
   - {fileID: 627092846}
   m_Father: {fileID: 652867200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1773461670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773461668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6628b5052c0c3524586ad0e73cdd91eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShapeClosetSlot
+  unlockId: Box
+  lockedVisuals:
+  - {fileID: 1636784029}
+  - {fileID: 627092845}
+  unlockedVisual: {fileID: 622460616}
 --- !u!1 &1776987005
 GameObject:
   m_ObjectHideFlags: 0
@@ -14488,6 +14550,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1791197047}
+  - component: {fileID: 1791197048}
   m_Layer: 0
   m_Name: Slot_05_Fan_Locked
   m_TagString: Untagged
@@ -14512,6 +14575,23 @@ Transform:
   - {fileID: 1636114804}
   m_Father: {fileID: 652867200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1791197048
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1791197046}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6628b5052c0c3524586ad0e73cdd91eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShapeClosetSlot
+  unlockId: Fan
+  lockedVisuals:
+  - {fileID: 302074242}
+  - {fileID: 1636114803}
+  unlockedVisual: {fileID: 615412566}
 --- !u!1 &1804694411
 GameObject:
   m_ObjectHideFlags: 0
@@ -14702,6 +14782,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1829855429}
   - component: {fileID: 1829855428}
+  - component: {fileID: 1829855430}
   m_Layer: 0
   m_Name: 00_Camera
   m_TagString: MainCamera
@@ -14775,6 +14856,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1829855430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829855427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &1830264027
 GameObject:
   m_ObjectHideFlags: 0
@@ -15054,6 +15179,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1882488162}
+  - component: {fileID: 1882488163}
   m_Layer: 0
   m_Name: Slot_04_Spider_Locked
   m_TagString: Untagged
@@ -15078,6 +15204,23 @@ Transform:
   - {fileID: 430480650}
   m_Father: {fileID: 652867200}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1882488163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1882488161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6628b5052c0c3524586ad0e73cdd91eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ShapeClosetSlot
+  unlockId: Spider
+  lockedVisuals:
+  - {fileID: 33393383}
+  - {fileID: 430480649}
+  unlockedVisual: {fileID: 1313973268}
 --- !u!1 &1891065152
 GameObject:
   m_ObjectHideFlags: 0
