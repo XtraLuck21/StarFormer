@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-02. Current source includes the IntroBouncyBall integration and the published Beta 0.1.0 release; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
+Last updated: 2026-11-05. Published Beta 0.1.1 uses source `9451511` (gh-pages `e81097e`) with seven-scene analytics, refreshed maps and the Level01 movable-door hint. Current main additionally includes the unpublished November 4 help-book UI. Level01 is the former Advanced scene; this guide replaces the old G/G2 and ball-checkpoint wiring descriptions.
 
 ## 1. Scenes and build configuration
 
@@ -11,11 +11,13 @@ Last updated: 2026-11-02. Current source includes the IntroBouncyBall integratio
 | 2 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Grounded-Star flag opens passage to IntroBouncyBall; return to IntroBox |
 | 3 | [IntroBouncyBall](../Assets/Scenes/IntroBouncyBall.unity) | Bounce/float/compressed-bounce tutorial; return to Bubble, flag to Level01 |
 | 4 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
-| 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to FanTutorial |
-| 6 | [FanTutorial](../Assets/Scenes/FanTutorial.unity) | Continues to Level02 |
+| 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to IntroFan |
+| 6 | [IntroFan](../Assets/Scenes/IntroFan.unity) | Continues to Level02 |
 | 7 | [Level02](../Assets/Scenes/Level02.unity) | Final completion screen with Main Menu action |
 
-Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02.
+The current source names the Fan tutorial `IntroFan` (formerly `FanTutorial`), preserving its scene GUID. Published builds and historical analytics retain the old name. Deploy the local analytics compatibility update with the next game release; this rename does not update the hosted build.
+
+Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02.
 
 [EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) owns the enabled list. [WebGLBuild.cs](../Assets/Editor/WebGLBuild.cs) exports that list. Keep Level01_Legacy, Level01_Reference, Tutorial, WaterPlayground and Playground disabled. EnemyScene is a separate test scene, not part of this progression.
 
@@ -55,6 +57,7 @@ The controller retains the merged Box movement/growth rules, contact separation 
 | [AdvancedCheckpoint.cs](../Assets/Scripts/AdvancedCheckpoint.cs) | World trigger, index, fixed respawn host/position, blue/yellow hollow-star marker and saved label. CP3 also requires grounded Star/Box at the upper floor. |
 | [AdvancedCheckpointController.cs](../Assets/Scripts/AdvancedCheckpointController.cs) | On PlayerControl; ordered CP1/2/3, scene-path-scoped session, live completed route/lift/cover/cinematic progress and restoration. Calls SetCheckpoint with ADV_CP1/2/3 and suppresses duplicate generic marker feedback. |
 | [StarStartGreeting.cs](../Assets/Scripts/StarStartGreeting.cs) | Optional READY? → LET'S GO! sign, Star-only upward contact, reusable bounce/sparkles on separate contacts. No route dependency. |
+| [MovableDoorContactHint.cs](../Assets/Scripts/MovableDoorContactHint.cs) | Published in Beta 0.1.1: lower-door idle timer, deliberate contact activation, paused lift preview and once-per-scene-load hint. |
 | [BubbleCeilingRestartHint.cs](../Assets/Scripts/BubbleCeilingRestartHint.cs) | First tank's real ceiling contact inside its teaching area; 1.5-second R reminder. Leaving the qualifying state resets the lesson. |
 | [BubbleCeilingPopHint.cs](../Assets/Scripts/BubbleCeilingPopHint.cs) | Two instances: water exit and upper-right ceiling. Assigned ceiling contact + area for 3 seconds; Q prompt once per instance per scene load. Pause does not advance the timer. |
 
@@ -69,7 +72,7 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 | [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | IntroBox form title/subtitle and Box-to-Box feedback. Disabled with old title objects in rebuilt IntroBubble, which uses world hints instead. Do not enable TutorialIntroUI alongside it. |
 | [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
 | [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Two-way IntroBox ↔ IntroBubble ↔ IntroBouncyBall passages. Return to Box uses BoxB; return to Bubble uses Star near its flag, with the destination gate open. One-shot destination setup is not a full previous-scene snapshot. |
-| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/FanTutorial. IntroBubble now uses flag + passage instead. |
+| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/IntroFan. IntroBubble now uses flag + passage instead. |
 | [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion, 1.5-second Level 1 transition to Level01. |
 | [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Short anchored headlines for bounce/float/land/low ceiling and spike death; subtitle disabled. |
 | [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Map movement-key prompt for the controlled tutorial ball. |
@@ -92,7 +95,8 @@ See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare 
 | [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs), [SpiderGooglyEyes.cs](../Assets/Scripts/spiderFolder/SpiderGooglyEyes.cs) | Spider traversal and eyes; preserve the merged Level02 behavior |
 | [SpikeButton.cs](../Assets/Scripts/SpikeWall/SpikeButton.cs) | Existing projectile/button interactions |
 | [BubbleSpawner.cs](../Assets/Scripts/transitStage/BubbleSpawner.cs) | Replacement Bubble in the transition section |
-| [HelpPanelUI.cs](../Assets/UI/HelpPanelUI.cs) | Existing Help UI in scenes that configure it; not the deferred Level01 contextual Hint button |
+| [HelpPanelUI.cs](../Assets/UI/HelpPanelUI.cs) | Main-only: now declares `HelpBookUI` for the paged Mainmenu help book; published 0.1.1 uses the earlier `HelpPanelUI`. Other scene configurations still need migration/regression checks. |
+| [Spritesequenceplayer.cs](../Assets/UI/Spritesequenceplayer.cs) | Main-only: `SpriteSequencePlayer` plays the six-form help demonstrations using unscaled time; not in published 0.1.1. |
 
 Level02 geometry and its positional checkpoint system were not replaced by Advanced. Its separate navigation buttons and final flag remain. Existing callback and device follow-ups are recorded in [level-2.md](level-2.md).
 
@@ -117,18 +121,18 @@ Level01 uses Home instead of the old LevelCanvas standalone Restart arrangement.
 
 ## 4. Web build and GitHub Pages release
 
-Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. Player/Analytics versions match. [Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/); all seven hosted files matched `Builds/WebGL-Beta-0.1.0`. Publication only added `beta/`; historical paths were preserved. The earlier Web compiler fix is `3365e29`.
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/WebGL-Beta-0.1.1` and the publishing checkout byte for byte. This confirms the deployed package, not a new gameplay playtest or production analytics acceptance. Player/Analytics versions are `beta-0.1.1`; the released source tracks all seven gameplay scenes (IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial and Level02), excluding Mainmenu. Current first-level checkpoint IDs remain ADV_CP1/2/3.
 
-Beta Level01 records are visible in the supplied production-dashboard screenshot. Matching-map rendering remains open: this version currently falls back to a coordinate grid. Level02-specific delivery and detailed raw-row metric checks remain separate follow-ups.
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. The release-preparation patch was rebased to `2caffd9` on November 5, but the November 3 export was built from `9451511`. Shared version labels do not make current main identical to the published game.
 
-The historical Alpha release is 0.1.2 (2026-10-18): gameplay/UI `9b35f8e`, source configuration `5650250`, `gh-pages` publication `5f62980`. The developer reported localhost and hosted gameplay tests passed. Current source changes, including formal Level01 promotion, have not been established as part of that export. Alpha 0.1.2 Sheet delivery remains separately unverified.
+Historical Beta 0.1.0 used source `3a693ca`, publishing commit `1105970`, and Level01/Level02-only analytics. Developer-reported local/online tests and the November 2 Level01 dashboard screenshot apply to that older export. Dashboard Version 9 subsequently resolved its map matching. The root URL still serves 0.1.0 via `f6eaf9e`; `/beta/` now serves 0.1.1. The earlier Web compiler fix is `3365e29`.
 
-Use [publish_instructions.md](publish_instructions.md) for the build list, versioning, localhost checks and scoped Pages publication procedure. Keep exports on the publishing checkout, preserve other published paths, and do not merge gh-pages into source. Use a new version/output for the next release rather than overwriting the local evidence for Beta 0.1.0 or historical Alpha releases.
+Historical Alpha 0.1.2 (October 18) used gameplay/UI `9b35f8e`, source configuration `5650250`, and publication `5f62980`; its developer-reported gameplay checks and unverified Sheet delivery remain separate evidence.
 
-Analytics tracks formal Level01 and Level02, not the introduction scenes. Current first-level checkpoint IDs are ADV_CP1/2/3. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md); Editor JSON is not proof of WebGL transport.
+Use [publish_instructions.md](publish_instructions.md) for future releases. Preserve completed exports and historical paths; use a new agreed version/output for the next build. Do not merge gh-pages into source. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for 0.1.1 production event/map acceptance; Editor JSON and package verification do not prove delivery.
 
 ## 5. Verification and remaining work
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 
-Outstanding work is scoped separately: optional Level01 Hint/Controls UI, new-player timing/readability and broader browser/mobile/aspect-ratio coverage and analytics map/version validation. The scene rename must not re-enable the legacy E reminder. Do not mark source changes as deployed without a tested export and publication.
+Outstanding work is scoped separately: a dedicated Level01 Controls panel, new-player timing/readability, broader browser/mobile/aspect-ratio coverage, 0.1.1 analytics delivery/map validation and cross-scene regression of the unpublished help-book UI. The contact-activated Level01 door hint is already included in published 0.1.1. The scene rename must not re-enable the legacy E reminder. Do not mark source changes as deployed without a tested export and publication.

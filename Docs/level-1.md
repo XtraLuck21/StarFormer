@@ -1,6 +1,6 @@
 # Level 1
 
-Last updated: 2026-11-02. Promotion baseline: `8834a4d`; published Beta source: `3a693ca` (gh-pages `1105970`).
+Last updated: 2026-11-05. Promotion baseline: `8834a4d`; current published Beta 0.1.1 source: `9451511` (gh-pages `e81097e`, November 3).
 
 ## Scene identity and progression
 
@@ -73,6 +73,7 @@ Restart Level, returning to Mainmenu, a new menu entry and forward level progres
 
 | Hint / control | Trigger and behavior |
 | --- | --- |
+| Movable-door hint (Beta 0.1.1) | After 20 seconds without lower-door movement, an optional star sign appears above the route. Deliberate Box growth or Ball contact triggers a short paused lift preview with “A little lift?”. Once per scene load; spawn overlap does not activate it. |
 | Water-tank restart lesson | Controlled Bubble contacts the assigned tank ceiling inside its teaching area for 1.5 seconds: `Feel stuck? / Press R to restart`. Sideways movement does not reset qualifying contact. R opens choices rather than immediately restarting. |
 | Water-exit pop lesson | Continuous Bubble contact with the assigned water-exit ceiling in its teaching area for 3 seconds: `Press Q / to pop`. |
 | Upper-right pop lesson | Continuous Bubble contact with the upper-right ceiling in its teaching area for 3 seconds: the same Q prompt, before choosing a landing side. |
@@ -86,4 +87,6 @@ Restart Level, returning to Mainmenu, a new menu entry and forward level progres
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 
-Further work remains separate: a dedicated optional Hint button, a dedicated Level01 Controls button, new-player timing/readability feedback, and broader browser/mobile/aspect-ratio coverage. Existing Help UI in other scenes is not a new Level01 Hint system. Beta 0.1.0 is now published and the developer reported local and online playtests passed. Beta Level01 records are visible in the production dashboard, but the rebuilt map is not yet matched: deaths currently appear on a coordinate grid. Correct map/version association and detailed metric checks are tracked in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status). See [publish_instructions.md](publish_instructions.md).
+Beta 0.1.1 is published at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It includes the contact-activated movable-door hint; the November 4 paged help book and Mainmenu UI edits remain main-only. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
+
+Further work remains separate: a dedicated Level01 Controls panel, new-player timing/readability feedback, broader browser/mobile/aspect-ratio coverage, and 0.1.1 production raw-row/map acceptance. Historical Beta 0.1.0 map matching was resolved by dashboard Version 9; verify the refreshed 0.1.1 map versions separately. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-011-acceptance-status) and [publish_instructions.md](publish_instructions.md).

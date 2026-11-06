@@ -1,6 +1,6 @@
 # WebGL Analytics Implementation
 
-Last updated: 2026-11-02.
+Last updated: 2026-11-05.
 
 ## Scope
 
@@ -8,23 +8,28 @@ Current source records anonymous playtest events for `IntroBox`, `IntroBubble`,
 `IntroBouncyBall`, `Level01`, `IntroSpider`, `FanTutorial` and `Level02`. Formal
 Level01 is the promoted Advanced map. Mainmenu, legacy/reference scenes, the old
 Tutorial and sandboxes are excluded. See [AnalyticsAllLevels.md](AnalyticsAllLevels.md)
-for schema v2, real maps and deployment. The already-published Beta export still
-contains its original Level01/Level02-only collector until the next game build.
+for schema v2, real maps and deployment. Published Beta 0.1.1 includes this seven-scene collector; historical Beta 0.1.0 and Alpha exports retain their embedded Level01/Level02-only collectors.
 
 The implementation does not collect names, email addresses, USC IDs, IP
 addresses or Google account information. `player_id` is a random UUID stored in
 the browser through Unity `PlayerPrefs`. Clearing site data, using a private
 window or changing browsers creates a different anonymous player.
 
-## Beta 0.1.0 release and dashboard status
+## Beta 0.1.1 release status
+
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. The released configuration uses `beta-0.1.1`, `production`, the existing endpoint and all seven gameplay scenes. On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/WebGL-Beta-0.1.1` and the publishing checkout byte for byte. This confirms the deployed package, not a new gameplay playtest or production analytics acceptance. Production raw-row delivery and refreshed backend map deployment/rendering remain to be verified; see [the current acceptance checklist](AnalyticsTestPlan.md#beta-011-acceptance-status).
+
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**.
+
+## Historical Beta 0.1.0 release and dashboard status
 
 Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. Player Version and Analytics `buildVersion` both use `beta-0.1.0`; the existing endpoint, `production` environment and tracked scenes Level01/Level02 were retained. Publication required no receiver/schema change.
 
 The developer confirmed records are arriving. The supplied November 2 production-dashboard screenshot is filtered to `beta-0.1.0` / Level 1 / All players / Normal entries, showing 2 anonymous players, 7 level runs, 79 events, 1 completed start out of 7 (14.3%), and 1 death. These are a point-in-time filtered sample, not a complete metric audit or a player-difficulty conclusion. The header's 5,334 production events is a separate overall count, not the Beta sample count. Level02-specific delivery and direct raw-row verification were not established by this screenshot.
 
-**Historical Beta publication issue (resolved by dashboard Version 9): matching map/version.** The dashboard shows a historical/unrecognized map-version selection and warns that no matching real map is available. It correctly falls back to a coordinate grid rather than substituting a different map. This does not mean event upload failed. The checked-in `AnalyticsEvent` schema includes `build_version`, coordinates and `details`, but no dedicated `map_version` field; the deployed dashboard's map registry/resolver has not been inspected, so the exact cause is not yet established.
+**Historical Beta publication issue (resolved by dashboard Version 9): matching map/version.** At the initial November 2 observation, the dashboard showed a historical/unrecognized map-version selection and warns that no matching real map is available. It correctly falls back to a coordinate grid rather than substituting a different map. This does not mean event upload failed. The 0.1.0 event schema lacked the dedicated v2 `map_version` field; the later Version 9 dashboard supplied release bindings. This older observation does not describe the current schema or establish 0.1.1 map acceptance.
 
-Follow up by inspecting the actual Beta rows and deployed dashboard resolver, then register the matching Level01 map from released source `3a693ca` and associate only the verified build/scene or map-version key. Do not relabel historical rows or use the Legacy map for Beta. Keep old maps and the unknown-version grid fallback. Level01 also has SAFE/NORMAL/HARD layouts and moving hazards: a static base map must not be presented as an exact replay of route or obstacle state when those states are not recorded. Audit existing payloads before proposing extra telemetry or a new build. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status).
+The historical follow-up registered the matching Level01 map from released source `3a693ca` through the Version 9 release bindings. For 0.1.1, inspect actual rows and the deployed resolver against its own refreshed map versions. Do not relabel historical rows or use the Legacy map for Beta. Keep old maps and the unknown-version grid fallback. Level01 also has SAFE/NORMAL/HARD layouts and moving hazards: a static base map must not be presented as an exact replay of route or obstacle state when those states are not recorded. Audit existing payloads before proposing extra telemetry or a new build. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status).
 
 ## Data flow
 
@@ -185,10 +190,12 @@ uploading. The current Beta source asset has a configured endpoint and collectio
 
 Use Unity `6000.3.22f1` and the scene/build configuration documented in
 `publish_instructions.md`. Source integration does not update GitHub Pages; a
-new WebGL export and separate `gh-pages` publication are required for future source changes. Alpha 0.1.2 publication is already complete.
+new WebGL export and separate `gh-pages` publication are required for future source changes. Beta 0.1.1 and Alpha 0.1.2 publication are already complete.
 
 
-## November 2 source integration against latest main
+## Historical November 2 source integration
+
+The following describes integration before the November 3 Beta 0.1.1 publication; its next-release step was subsequently completed for the game export. Backend/data acceptance remains separate.
 
 The v2 integration preserves current gameplay, seven enabled gameplay scenes,
 checkpoint restore rules and all published game packages. Production endpoint,

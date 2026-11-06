@@ -1,6 +1,6 @@
 # Checkpoints, restart and pause menus
 
-Last updated: 2026-11-02. This describes the rebuilt Level01 included in published Beta 0.1.0 (source `3a693ca`, gh-pages `1105970`).
+Last updated: 2026-11-05. This describes the rebuilt Level01 checkpoint behavior retained in published Beta 0.1.1 (source `9451511`, gh-pages `e81097e`, November 3). The later help-book/Mainmenu UI changes are main-only; they do not change the published checkpoint specification.
 
 ## Level01 checkpoints
 

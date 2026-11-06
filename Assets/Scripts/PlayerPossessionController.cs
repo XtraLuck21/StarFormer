@@ -117,17 +117,17 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointSession.HasCheckpoint &&
         checkpointSession.ScenePath == gameObject.scene.path;
 
-    private sealed class BubbleHandoffCollision
+    private sealed class BoxHandoffCollision
     {
         public Collider2D Box;
-        public Collider2D Bubble;
+        public Collider2D Recipient;
         public int SeparatedFrames;
     }
 
     // Independent of possession locks: a later transfer must not leave an old
-    // box/bubble pair permanently ignoring each other.
-    private readonly List<BubbleHandoffCollision> bubbleHandoffCollisions =
-        new List<BubbleHandoffCollision>();
+    // box/recipient pair permanently ignoring each other.
+    private readonly List<BoxHandoffCollision> boxHandoffCollisions =
+        new List<BoxHandoffCollision>();
 
     private float horizontalInput;
     private float verticalInput;
@@ -512,7 +512,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateBubbleHandoffCollisions();
+        UpdateBoxHandoffCollisions();
         if (currentBody == null || restartRequested || isDead)
         {
             return;
@@ -855,7 +855,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void OnDisable()
     {
         if (restartMenu != null) restartMenu.Close();
-        RestoreBubbleHandoffCollisions();
+        RestoreBoxHandoffCollisions();
         bubblePopRequested = false;
         ReleaseAllTouchInput();
         ClearPossessionContacts();
@@ -1041,7 +1041,7 @@ public class PlayerPossessionController : MonoBehaviour
         // Transfer ownership successfully first.
         currentBody = target;
         currentBody.SetOwner(this);
-        BeginBubbleHandoff(previousBody, currentBody);
+        BeginBoxHandoff(previousBody, currentBody);
         AnalyticsManager.Instance?.ChangeControlledForm(
             previousBody.Form,
             currentBody.Form,
@@ -1098,44 +1098,47 @@ public class PlayerPossessionController : MonoBehaviour
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
     }
 
-    private void BeginBubbleHandoff(PossessableBody previous, PossessableBody next)
+    private void BeginBoxHandoff(PossessableBody previous, PossessableBody next)
     {
-        if (previous.Form != BodyForm.Box || next.Form != BodyForm.Bubble)
+        if (previous.Form != BodyForm.Box ||
+            (next.Form != BodyForm.Bubble && next.Form != BodyForm.BouncyBall))
         {
             return;
         }
 
         Collider2D box = previous.BodyCollider;
-        Collider2D bubble = next.BodyCollider;
-        if (!IsActiveCollider(box) || !IsActiveCollider(bubble) ||
-            Physics2D.GetIgnoreCollision(box, bubble))
+        Collider2D recipient = next.BodyCollider;
+        if (!IsActiveCollider(box) || !IsActiveCollider(recipient) ||
+            Physics2D.GetIgnoreCollision(box, recipient))
         {
             // Do not take ownership of an exclusion configured by another system.
             return;
         }
 
         // Release only the old host's pressure. Terrain and other bodies remain solid.
-        Physics2D.IgnoreCollision(box, bubble, true);
-        bubbleHandoffCollisions.Add(new BubbleHandoffCollision
+        Physics2D.IgnoreCollision(box, recipient, true);
+        boxHandoffCollisions.Add(new BoxHandoffCollision
         {
             Box = box,
-            Bubble = bubble
+            Recipient = recipient
         });
     }
 
-    private void UpdateBubbleHandoffCollisions()
+    private void UpdateBoxHandoffCollisions()
     {
-        for (int i = bubbleHandoffCollisions.Count - 1; i >= 0; i--)
+        for (int i = boxHandoffCollisions.Count - 1; i >= 0; i--)
         {
-            BubbleHandoffCollision pair = bubbleHandoffCollisions[i];
-            if (!IsActiveCollider(pair.Box) || !IsActiveCollider(pair.Bubble))
+            BoxHandoffCollision pair = boxHandoffCollisions[i];
+            if (!IsActiveCollider(pair.Box) || !IsActiveCollider(pair.Recipient))
             {
-                // Unity drops pair exclusions when a collider is deactivated/destroyed.
-                bubbleHandoffCollisions.RemoveAt(i);
+                // Disabling just a collider can retain the exclusion when it is re-enabled.
+                if (pair.Box != null && pair.Recipient != null)
+                    Physics2D.IgnoreCollision(pair.Box, pair.Recipient, false);
+                boxHandoffCollisions.RemoveAt(i);
                 continue;
             }
 
-            Bounds clearance = pair.Bubble.bounds;
+            Bounds clearance = pair.Recipient.bounds;
             clearance.Expand(possessionSeparationDistance * 2f);
             if (clearance.Intersects(pair.Box.bounds))
             {
@@ -1149,22 +1152,22 @@ public class PlayerPossessionController : MonoBehaviour
                 continue;
             }
 
-            Physics2D.IgnoreCollision(pair.Box, pair.Bubble, false);
-            bubbleHandoffCollisions.RemoveAt(i);
+            Physics2D.IgnoreCollision(pair.Box, pair.Recipient, false);
+            boxHandoffCollisions.RemoveAt(i);
         }
     }
 
-    private void RestoreBubbleHandoffCollisions()
+    private void RestoreBoxHandoffCollisions()
     {
-        foreach (BubbleHandoffCollision pair in bubbleHandoffCollisions)
+        foreach (BoxHandoffCollision pair in boxHandoffCollisions)
         {
-            if (IsActiveCollider(pair.Box) && IsActiveCollider(pair.Bubble))
+            if (pair.Box != null && pair.Recipient != null)
             {
-                Physics2D.IgnoreCollision(pair.Box, pair.Bubble, false);
+                Physics2D.IgnoreCollision(pair.Box, pair.Recipient, false);
             }
         }
 
-        bubbleHandoffCollisions.Clear();
+        boxHandoffCollisions.Clear();
     }
 
     private static bool IsActiveCollider(Collider2D collider)

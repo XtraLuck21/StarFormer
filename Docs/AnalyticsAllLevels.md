@@ -5,6 +5,12 @@ based on fetched `main` revision `c9a43c2`. Historical test/deployment evidence
 below retains its original six-scene scope and dates.
 No difficulty selection or difficulty analytics are introduced.
 
+## Published Beta 0.1.1 status — November 5 update
+
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. Its released configuration uses production collection, version `beta-0.1.1`, all seven gameplay scenes and refreshed maps. On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/WebGL-Beta-0.1.1` and the publishing checkout byte for byte. This confirms the deployed package, not a new gameplay playtest or production analytics acceptance. The refreshed backend catalog deployment and 0.1.1 production raw rows remain separately unverified. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-011-acceptance-status).
+
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**.
+
 ## Coverage and lifecycle
 
 Track IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial
@@ -154,8 +160,7 @@ then observe refresh without reloading. Verify older builds still upload.
   start respawn. IntroBox normal entries show two runs/one completion in the
   integration fixtures; the backward visit is excluded. IntroBubble separately
   reports its scene return. No verification events were sent to Production.
-- No new hosted game build has been published. The local settings intentionally
-  still target Test; production rollout needs an agreed game release and version.
+- At this historical test checkpoint, no new hosted production game had been published and the isolated settings targeted Test. Beta 0.1.1 subsequently completed game publication on November 3, as recorded above.
 
 ## Deployment order
 
@@ -174,13 +179,7 @@ then observe refresh without reloading. Verify older builds still upload.
 7. Verify signed-out dashboard access, Production rows and both old/new builds.
    Commit source, map assets, tests and docs to the repository after review.
 
-The main integration preserves its existing production endpoint/environment and
-`beta-0.1.0` analytics identity. Test overrides belong in a disposable verification
-copy. The next game publisher must assign matching new Player/Analytics release
-versions; merging source alone does not update the already-hosted Beta.
-The existing published game and deployed Apps Script do not change merely from
-these local source edits. A rollout is only complete after the live checks.
-
+The November 3 release used the existing production endpoint/environment and matching Player/Analytics versions `beta-0.1.1`. Maps were re-exported against that release's scenes. The game is now published; verify the refreshed backend catalog deployment and production rows separately. Test overrides belong in a disposable verification copy. Future source edits do not change the hosted game or Apps Script without their respective deployment steps.
 
 ## November 2 main integration and scope boundary
 

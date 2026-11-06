@@ -1,14 +1,16 @@
 # Level 2 Progress
 
-Last updated: 2026-11-02 (shared controls and incoming progression updated; Level02 layout unchanged).
+Last updated: 2026-11-05 (release status updated; Level02 layout unchanged).
 
 Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 work through `ab68064` was integrated into `main` by PR #14 (`3714a49`). Alpha 0.1.1 (`765a1ea` in source) corrected the navigation Canvas scaling. This content is included in the published Alpha 0.1.2 release.
 
 **October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. Alpha 0.1.2 later passed developer-reported localhost and online tests; an exhaustive checkpoint/device matrix is not recorded.
 
+**Current published release:** Beta 0.1.1 (November 3), source `9451511`, gh-pages `e81097e`, at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It retains the Level02 gameplay described here, with refreshed maps and seven-scene analytics. Later help-book/Mainmenu changes in main are not included. A separate remote Level-2 branch is not automatically included in main or this release. See [the release record](publish_instructions.md#beta-011-release-status).
+
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
 
-**Current shared controls:** J grows Box, K shrinks Box, Q pops Bubble or leaves Spider/Fan, and F toggles Fan wind. Space still fires the possessable spike wall. R opens restart choices. These controls are included in published Beta 0.1.0; historical Alpha 0.1.2 retains its original export. See [CheckpointGuidance.md](CheckpointGuidance.md).
+**Current shared controls:** J grows Box, K shrinks Box, Q pops Bubble or leaves Spider/Fan, and F toggles Fan wind. Space still fires the possessable spike wall. R opens restart choices. These controls are retained in published Beta 0.1.1; historical Alpha 0.1.2 retains its original export. See [CheckpointGuidance.md](CheckpointGuidance.md).
 
 ## 1. Current route and progress
 
@@ -121,7 +123,7 @@ Source checks during implementation and this documentation review:
 - Keep mobile button positions unchanged for now. Standardize script comments, Inspector labels, tooltips and diagnostics in English without changing field/method names or gameplay logic.
 - Defer top-center form identity labels and broader instruction polish.
 
-Published Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105970`). Local and online playtests passed according to the developer; the supplied analytics screenshot covers Level01 only, so Level02-specific data and map validation remain open.
+Historical Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105970`). Local and online playtests passed according to the developer; the supplied analytics screenshot covers Level01 only, so Level02-specific data and map validation remain open.
 
 ## 6. Remaining work and handoff
 
@@ -129,5 +131,5 @@ Published Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `11059
 2. After a checkpoint, verify opening/cancelling R preserves the checkpoint; Return to Checkpoint resumes it. Confirm Restart Level returns to the entrance and clears it, then Retry also returns to the entrance. Test Mainmenu re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
 4. For the next export, retest IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02, including Level01 ADV_CP1/2/3 recovery and the upper landing choice. The incoming scene chain passed isolated Unity checks and developer promotion playtests; this item is browser/device regression. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
-5. Verify Level02-specific Beta 0.1.0 analytics delivery and raw-row metrics using [AnalyticsTestPlan.md](AnalyticsTestPlan.md). Beta is published and Level01 records are confirmed by the supplied dashboard, but that screenshot does not establish Level02 delivery or its map association. See [publish_instructions.md](publish_instructions.md) for the release record. Historical Alpha 0.1.2 delivery remains a separate unconfirmed record; source changes alone do not publish a build.
-6. Level-2-to-main integration and historical Alpha 0.1.2 publication are complete. Beta 0.1.0 export/publication is also complete (source `3a693ca`, gh-pages `1105970`), with developer-reported local and online playtests passed. The detailed device/scenario checks above remain follow-ups where no specific evidence is recorded.
+5. Verify Level02-specific Beta 0.1.1 production delivery, raw-row metrics and refreshed map rendering using [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-011-acceptance-status). The November 2 screenshot only establishes 0.1.0 Level01 records. Historical Alpha 0.1.2 delivery remains a separate unconfirmed record.
+6. Beta 0.1.1 build/publication are complete (source `9451511`, gh-pages `e81097e`); all seven hosted files matched the completed export on November 5. Detailed device/scenario gameplay and analytics acceptance remain follow-ups where no specific evidence is recorded. The later main-only UI changes require a new export before publication.

@@ -54,6 +54,13 @@ public class HelpBookUI : MonoBehaviour
     [Header("页面内容")]
     [Tooltip("按你希望的阅读顺序排列。建议：Star → Box → Bubble → BouncingBall → Spider → Fan → SpikeWall → Restart。")]
     [SerializeField] private HelpPage[] pages;
+    [SerializeField] private HelpBookContent content;
+
+    // Existing scenes may keep inline pages; reusable prefabs share one content asset.
+    private HelpPage[] ActivePages => content != null ? content.Pages : pages;
+    public event Action<bool> OpenStateChanged;
+    public Func<bool> CanOpen { get; set; }
+    public int PageCount => ActivePages == null ? 0 : ActivePages.Length;
 
     [Header("必填引用")]
     [SerializeField] private Button helpButton;
@@ -127,7 +134,7 @@ public class HelpBookUI : MonoBehaviour
             return;
         }
 
-        if (pages == null || pages.Length == 0)
+        if (ActivePages == null || ActivePages.Length == 0)
         {
             Debug.LogWarning("HelpBookUI 的 Pages 列表是空的，弹窗会显示空白页。", this);
         }
@@ -180,7 +187,7 @@ public class HelpBookUI : MonoBehaviour
 
     public void Open()
     {
-        if (isOpen)
+        if (isOpen || (CanOpen != null && !CanOpen()))
         {
             return;
         }
@@ -204,6 +211,7 @@ public class HelpBookUI : MonoBehaviour
             timeScaleBeforeOpen = Time.timeScale;
             Time.timeScale = 0f;
         }
+        OpenStateChanged?.Invoke(true);
     }
 
     public void Close()
@@ -228,6 +236,7 @@ public class HelpBookUI : MonoBehaviour
             // 硬写会在「别的系统已经暂停了游戏」时把它意外恢复。
             Time.timeScale = timeScaleBeforeOpen;
         }
+        OpenStateChanged?.Invoke(false);
     }
 
     public void Toggle()
@@ -251,20 +260,20 @@ public class HelpBookUI : MonoBehaviour
     /// <summary>跳到指定页。页码从 0 开始。</summary>
     public void GoToPage(int index)
     {
-        if (pages == null || pages.Length == 0)
+        if (ActivePages == null || ActivePages.Length == 0)
         {
             return;
         }
 
         if (wrapAround)
         {
-            // 取模实现循环翻页。加 pages.Length 是为了处理 -1 的情况：
+            // 取模实现循环翻页。加 ActivePages.Length 是为了处理 -1 的情况：
             // C# 里 -1 % 8 等于 -1 而不是 7，所以要先加一轮再取模。
-            index = (index % pages.Length + pages.Length) % pages.Length;
+            index = (index % ActivePages.Length + ActivePages.Length) % ActivePages.Length;
         }
         else
         {
-            index = Mathf.Clamp(index, 0, pages.Length - 1);
+            index = Mathf.Clamp(index, 0, ActivePages.Length - 1);
         }
 
         if (index == currentPageIndex && isOpen)
@@ -278,13 +287,13 @@ public class HelpBookUI : MonoBehaviour
 
     private void ShowPage(int index)
     {
-        if (pages == null || pages.Length == 0)
+        if (ActivePages == null || ActivePages.Length == 0)
         {
             return;
         }
 
-        index = Mathf.Clamp(index, 0, pages.Length - 1);
-        HelpPage page = pages[index];
+        index = Mathf.Clamp(index, 0, ActivePages.Length - 1);
+        HelpPage page = ActivePages[index];
 
         if (pageTitleText != null)
         {
@@ -334,7 +343,7 @@ public class HelpBookUI : MonoBehaviour
     {
         if (pageIndicatorText != null)
         {
-            pageIndicatorText.text = $"{currentPageIndex + 1} / {pages.Length}";
+            pageIndicatorText.text = $"{currentPageIndex + 1} / {ActivePages.Length}";
         }
 
         // 不循环时，到头了就把按钮置灰，告诉玩家没有更多页了。
@@ -347,21 +356,15 @@ public class HelpBookUI : MonoBehaviour
 
             if (nextButton != null)
             {
-                nextButton.interactable = currentPageIndex < pages.Length - 1;
+                nextButton.interactable = currentPageIndex < ActivePages.Length - 1;
             }
         }
     }
 
     private void OnDisable()
     {
-        // 场景切换时弹窗还开着并且暂停了游戏，必须还原 timeScale，
-        // 否则下一个场景会以 timeScale = 0 开局，表现为「游戏卡死」。
-        if (isOpen && pauseWhileOpen)
-        {
-            Time.timeScale = timeScaleBeforeOpen;
-        }
-
-        isOpen = false;
+        // A reusable panel can be disabled independently of its scene.
+        Close();
     }
 
     private void OnDestroy()

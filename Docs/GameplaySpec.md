@@ -1,8 +1,8 @@
 # Gameplay Specification
 
-Last updated: 2026-11-02. Beta 0.1.0 includes the rebuilt Level01 and integrated IntroBouncyBall; it was published on November 2 from source `3a693ca` with gh-pages `1105970`.
+Last updated: 2026-11-05. Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`.
 
-This specification describes the current code and authored scenes. The current hosted release is Beta 0.1.0 at source revision `3a693ca`; later source changes are not automatically deployed. Publication history and procedures are in [publish_instructions.md](publish_instructions.md).
+This specification describes current gameplay and authored scenes. Beta 0.1.1 includes the rebuilt Level01, integrated IntroBouncyBall, seven-scene analytics and the contextual door hint. The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Publication history and procedures are in [publish_instructions.md](publish_instructions.md).
 
 ## 1. Scenes and progression
 
@@ -40,7 +40,7 @@ Enabled build indices are Mainmenu 0, IntroBox 1, IntroBubble 2, IntroBouncyBall
 
 R opens restart choices, not an immediate reset. Level01 additionally has the Home pause menu. Q is not a universal exit for Box/BouncyBall. Space remains jump/fire, not Bubble pop. Fan's F toggle is handled by its ability script.
 
-Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. The Advanced promotion did not add new mobile controls or a dedicated Controls/Hint button to Level01.
+Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. The Advanced promotion did not add new mobile controls or a dedicated Controls panel to Level01. Beta 0.1.1 subsequently added the contact-activated door hint described below.
 
 ## 3. Possession and body behavior
 
@@ -100,7 +100,7 @@ The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. After
 
 The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE sinks hazards, reveals boards and demonstrates a complete alternating cycle before returning the camera. HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
 
-The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives an R reminder after 1.5 seconds; the water-exit and upper-right ceilings each give a once-per-scene-load Q-pop hint after 3 seconds. Dedicated optional Hint and Controls buttons remain deferred.
+The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives an R reminder after 1.5 seconds; the water-exit and upper-right ceilings each give a once-per-scene-load Q-pop hint after 3 seconds. Beta 0.1.1 adds an optional star hint above the lower movable-door path after 20 seconds without door movement. Deliberate Box growth or Ball contact activates a brief paused door-lift preview with “A little lift?”; it is shown once per scene load and avoids activation from spawn overlap. A dedicated Level01 Controls panel remains deferred.
 
 ## 6. Death, checkpoints and menus
 
@@ -126,6 +126,6 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery and existing 
 
 ## 8. Validation and remaining work
 
-Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. Production-dashboard evidence confirms Beta Level01 records, while the matching real map is still unavailable.
+Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. That November 2 evidence confirms Beta 0.1.0 Level01 records. Dashboard Version 9 subsequently resolved historical release-map matching; it does not certify 0.1.1 event delivery or its refreshed map deployment.
 
-Remaining work includes Level01 optional Hint/Controls UI, new-player route/timing/readability feedback, broader browser/aspect-ratio/mobile coverage, analytics map/version matching and Level02/raw-row metric verification. Keep Beta evidence separate from the historical Alpha 0.1.2 deployment. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md); deployment checks are in [publish_instructions.md](publish_instructions.md).
+Beta 0.1.1 publication is complete and its seven live files match the recorded export. Remaining work includes a dedicated Level01 Controls panel, new-player route/timing/readability feedback, broader browser/aspect-ratio/mobile coverage and 0.1.1 raw-row/map verification. The main-only help-book UI also needs cross-scene regression before a future release. Keep Beta evidence separate from the historical Alpha 0.1.2 deployment. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md); deployment checks are in [publish_instructions.md](publish_instructions.md).
