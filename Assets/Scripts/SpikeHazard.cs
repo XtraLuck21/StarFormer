@@ -49,6 +49,12 @@ public class SpikeHazard : MonoBehaviour
                 out PossessableBody possessableBody) &&
             possessableBody.IsControlled)
         {
+            // Notify before death freezes time so the center hint changes on contact.
+            if (!playerController.IsDead && Time.timeScale > 0f)
+            {
+                IntroSpiderCake cake = GetComponentInParent<IntroSpiderCake>();
+                if (cake != null) cake.NotifyContact();
+            }
             playerController.KillControlledBody(
                 possessableBody,
                 AnalyticsDeathCause.Spike

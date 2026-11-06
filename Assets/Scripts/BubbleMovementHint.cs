@@ -57,6 +57,17 @@ public class BubbleMovementHint : MonoBehaviour
     [SerializeField, Min(0f)] private float spiderSubtitleHoldSeconds = 4f;
     [SerializeField, Min(0.01f)] private float spiderSubtitleFadeSeconds = 0.75f;
 
+    [Header("IntroSpider Hint Sequence")]
+    [SerializeField] private bool useSpiderHintSequence;
+    [SerializeField] private Transform spiderClimbSurface;
+    [SerializeField] private Vector2[] spiderWallArrowPositions;
+    [SerializeField] private TMP_Text[] spiderWallArrowTexts;
+    [SerializeField, Min(0f)] private float spiderArrowSeconds = 8f;
+    private readonly List<SpriteRenderer[]> wallArrows = new List<SpriteRenderer[]>();
+    private readonly Dictionary<TMP_Text, float> wallArrowTextAlphas = new Dictionary<TMP_Text, float>();
+    private bool hasClimbedObstacle;
+    private float climbMessageAge;
+
     [Header("Activation Area")]
     [SerializeField] private Vector2 activationAreaSize = new Vector2(8f, 5f);
     [SerializeField] private Vector2 activationAreaOffset;
@@ -113,6 +124,9 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void LateUpdate()
     {
+        // ExecuteAlways can build previews before the scene enters play mode.
+        // Capture the authored arrows when actually playing, even without a rebuild.
+        InitializeWallArrowTexts();
         if (visuals == null) return;
         bool visible = !Application.IsPlaying(gameObject) && previewInEditor;
         if (Application.IsPlaying(gameObject))
@@ -155,8 +169,13 @@ public class BubbleMovementHint : MonoBehaviour
                     (mode != HintMode.SpiderBlockedExit || blockedKeyHintRemaining > 0f);
                 if (mode == HintMode.SpiderIntroduction)
                 {
-                    visible = ShouldShowSpiderIntroduction(body);
-                    UpdateSpiderSubtitle(body, visible);
+                    if (useSpiderHintSequence)
+                        visible = UpdateSpiderHintSequence(body);
+                    else
+                    {
+                        visible = ShouldShowSpiderIntroduction(body);
+                        UpdateSpiderSubtitle(body, visible);
+                    }
                 }
                 if (visible && mode == HintMode.SpiderBlockedExit)
                 {
@@ -326,6 +345,131 @@ public class BubbleMovementHint : MonoBehaviour
         }
     }
 
+    private bool UpdateSpiderHintSequence(PossessableBody body)
+    {
+        // Replace the whole center prompt during the frozen spike-death/restart delay.
+        if (playerController != null && playerController.IsDead &&
+            playerController.LastDeathCause == AnalyticsDeathCause.Spike)
+        {
+            if (introductionTitle != null)
+            {
+                introductionTitle.text = spikeCake != null && spikeCake.ShowFirstContactMessage
+                    ? "cake is a lie" : "you are dead";
+                introductionTitle.alpha = 1f;
+            }
+            if (introductionSubtitle != null) introductionSubtitle.alpha = 0f;
+            SetWallArrowAlpha(0f);
+            return true;
+        }
+
+        bool visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+            playerController != null && !playerController.IsDead;
+        if (!visible)
+        {
+            introductionBody = null;
+            introductionSubtitleAge = 0f;
+            SetWallArrowAlpha(0f);
+            return false;
+        }
+
+        if (introductionBody != body)
+        {
+            introductionBody = body;
+            introductionSubtitleAge = 0f;
+        }
+        introductionSubtitleAge += Time.deltaTime;
+        if (!hasClimbedObstacle && spiderClimbSurface != null &&
+            body.TryGetComponent(out HexagonSurfaceMovement movement) && movement.IsAttached &&
+            movement.AttachedSurface != null &&
+            (movement.AttachedSurface.transform == spiderClimbSurface ||
+             movement.AttachedSurface.transform.IsChildOf(spiderClimbSurface)) &&
+            Mathf.Abs(playerController.HorizontalInput) > 0.1f &&
+            body.TryGetComponent(out Rigidbody2D rigidbody) && rigidbody.linearVelocity.sqrMagnitude > 0.0025f)
+        {
+            hasClimbedObstacle = true;
+            climbMessageAge = 0f;
+        }
+        if (hasClimbedObstacle) climbMessageAge += Time.deltaTime;
+
+        float fadeIn = Mathf.Max(0.01f, spiderIntroductionFadeInSeconds);
+        float fadeOut = Mathf.Max(0.01f, spiderSubtitleFadeSeconds);
+        if (introductionTitle != null)
+        {
+            introductionTitle.text = "You are a spider";
+            introductionTitle.alpha = 1f;
+        }
+        if (introductionSubtitle != null)
+        {
+            bool remindUp = hasClimbedObstacle && spiderUpReminder != null &&
+                spiderUpReminder.bottomSeconds > spiderUpReminder.bottomReminderSeconds;
+            introductionSubtitle.text = remindUp ? "No floor, no problem.\nonly way is up" :
+                hasClimbedObstacle ? "No floor, no problem." : "Climb over it";
+            introductionSubtitle.alpha = Mathf.SmoothStep(0f, 1f,
+                Mathf.Clamp01((hasClimbedObstacle ? climbMessageAge : introductionSubtitleAge) / fadeIn));
+        }
+
+        // Start at possession: the authored nearby arrow leads the later wall arrows.
+        int arrowIndex = 0;
+        if (spiderWallArrowTexts != null)
+        {
+            foreach (TMP_Text text in spiderWallArrowTexts)
+            {
+                if (text == null || !wallArrowTextAlphas.TryGetValue(text, out float originalAlpha)) continue;
+                float alpha = WallArrowPulse(introductionSubtitleAge - arrowIndex++ * 0.45f, fadeOut);
+                text.alpha = originalAlpha * alpha;
+                text.gameObject.SetActive(alpha > 0f);
+            }
+        }
+        for (int i = 0; i < wallArrows.Count; i++)
+        {
+            float age = introductionSubtitleAge - arrowIndex++ * 0.45f;
+            SetArrowAlpha(wallArrows[i], WallArrowPulse(age, fadeOut));
+        }
+        return true;
+    }
+
+    private float WallArrowPulse(float age, float fadeOut)
+    {
+        if (age < 0f || age >= spiderArrowSeconds) return 0f;
+        float phase = Mathf.Repeat(age, 2f);
+        float pulse = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(phase / 0.45f)) *
+            (1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((phase - 0.9f) / 0.7f)));
+        return pulse * Mathf.Clamp01((spiderArrowSeconds - age) / fadeOut) * 0.55f;
+    }
+
+    private void SetWallArrowAlpha(float alpha)
+    {
+        foreach (SpriteRenderer[] arrow in wallArrows) SetArrowAlpha(arrow, alpha);
+        foreach (KeyValuePair<TMP_Text, float> entry in wallArrowTextAlphas)
+        {
+            if (entry.Key == null) continue;
+            entry.Key.alpha = entry.Value * alpha;
+            entry.Key.gameObject.SetActive(alpha > 0f);
+        }
+    }
+
+    private void InitializeWallArrowTexts()
+    {
+        if (!Application.IsPlaying(gameObject) || mode != HintMode.SpiderIntroduction ||
+            !useSpiderHintSequence || spiderWallArrowTexts == null) return;
+        foreach (TMP_Text text in spiderWallArrowTexts)
+        {
+            if (text == null || wallArrowTextAlphas.ContainsKey(text)) continue;
+            wallArrowTextAlphas.Add(text, text.alpha);
+            text.gameObject.SetActive(false);
+        }
+    }
+
+    private static void SetArrowAlpha(SpriteRenderer[] arrow, float alpha)
+    {
+        foreach (SpriteRenderer renderer in arrow)
+        {
+            Color color = renderer.color;
+            color.a = alpha;
+            renderer.color = color;
+        }
+    }
+
     private bool IsInsideArea(PossessableBody body)
     {
         if (body.BodyCollider == null) return false;
@@ -467,7 +611,26 @@ public class BubbleMovementHint : MonoBehaviour
                 introductionSubtitle = AddHintText("SpiderSubtitle", spiderSubtitle,
                     new Vector2(0, -0.55f), new Vector2(5.5f, 0.6f), spiderTextColor);
                 introductionSubtitle.fontSize = 8f / 3f;
+                if (useSpiderHintSequence) introductionSubtitle.rectTransform.sizeDelta = new Vector2(5.5f, 1.2f);
             }
+        }
+        if (spiderIntroduction && useSpiderHintSequence && Application.IsPlaying(gameObject) && spiderWallArrowTexts != null)
+        {
+            InitializeWallArrowTexts();
+            SetWallArrowAlpha(0f);
+        }
+        if (spiderIntroduction && useSpiderHintSequence && spiderWallArrowPositions != null)
+        {
+            foreach (Vector2 position in spiderWallArrowPositions)
+            {
+                Transform group = CreateControlGroup("Wall Climb Arrow");
+                group.position = new Vector3(position.x, position.y, transform.position.z);
+                controlVisualParent = group;
+                Arrow(new Vector2(0f, -0.55f), new Vector2(0f, 0.55f));
+                wallArrows.Add(group.GetComponentsInChildren<SpriteRenderer>());
+            }
+            controlVisualParent = null;
+            SetWallArrowAlpha(0f);
         }
     }
 
@@ -606,6 +769,14 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void ReleaseVisuals()
     {
+        foreach (KeyValuePair<TMP_Text, float> entry in wallArrowTextAlphas)
+        {
+            if (entry.Key == null) continue;
+            entry.Key.alpha = entry.Value;
+            if (Application.IsPlaying(gameObject)) entry.Key.gameObject.SetActive(false);
+        }
+        wallArrowTextAlphas.Clear();
+        wallArrows.Clear();
         spikeWarningText = null;
         leftControlVisuals = rightControlVisuals = controlVisualParent = null;
         leftLetterFill.Clear();

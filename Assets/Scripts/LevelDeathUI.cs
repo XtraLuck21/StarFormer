@@ -36,9 +36,10 @@ public class LevelDeathUI : MonoBehaviour
 
         deathShown = true;
 
-        if (gameObject.scene.name == "IntroSpider" && playerController.IsFirstIntroSpiderDeath)
+        if (gameObject.scene.name == "IntroSpider")
         {
-            statusText.text = "cake is a lie";
+            // IntroSpider's center hint owns cake feedback; no fixed death caption.
+            statusText.text = "";
             return;
         }
 

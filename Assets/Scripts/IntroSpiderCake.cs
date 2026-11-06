@@ -9,6 +9,20 @@ public class IntroSpiderCake : MonoBehaviour
     [SerializeField, Range(1, 8)] private int cherryCount = 3;
     [SerializeField, Min(0.01f)] private float cherryDiameter = 0.16f;
     public bool IsRevealed => revealed;
+    public bool ShowFirstContactMessage { get; private set; }
+    private static bool hasTouchedCake;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetContact() => hasTouchedCake = false;
+
+    public void NotifyContact()
+    {
+        if (hasTouchedCake) return;
+        hasTouchedCake = true;
+        ShowFirstContactMessage = true;
+        revealed = true;
+        rebuild = true;
+    }
 
     private GameObject generatedRoot;
     private GameObject decorations;
@@ -18,14 +32,14 @@ public class IntroSpiderCake : MonoBehaviour
 
     private void OnEnable()
     {
-        revealed = Application.IsPlaying(gameObject) && PlayerPossessionController.IntroSpiderDeathCount >= 1;
+        revealed = Application.IsPlaying(gameObject) && hasTouchedCake;
         rebuild = true;
     }
     private void OnValidate() => rebuild = true;
 
     private void Update()
     {
-        bool shouldReveal = Application.IsPlaying(gameObject) && PlayerPossessionController.IntroSpiderDeathCount >= 1;
+        bool shouldReveal = Application.IsPlaying(gameObject) && hasTouchedCake;
         if (revealed != shouldReveal)
         {
             revealed = shouldReveal;
