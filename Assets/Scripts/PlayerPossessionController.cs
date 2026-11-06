@@ -63,6 +63,11 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField, Range(0f, 1f)] private float ballWaterSpeedMultiplier = 0.75f;
     [SerializeField] private float ballMaximumHeight = 40f;
 
+    [Header("Help Book Unlocks")]
+    [Tooltip("关卡开局就被放进 Starting Host 的那次附身是否算「发现」。\n" +
+             "不勾：只有玩家自己撞上去才解锁对应的帮助书页面。")]
+    [SerializeField] private bool unlockStartingHostPage = true;
+
     [Header("Possession Stability")]
     [SerializeField, Min(0f)] private float possessionSeparationDistance = 0.35f;
     [SerializeField, Min(1)] private int possessionSeparationFrames = 3;
@@ -133,6 +138,9 @@ public class PlayerPossessionController : MonoBehaviour
     private bool bubblePopRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
+
+    // Suppresses the help-book unlock for the scene's scripted opening transfer.
+    private bool suppressNextUnlock;
 
     // ===== Touch button state (written by TouchHoldButton) =====
     private bool touchLeftHeld;
@@ -384,6 +392,8 @@ public class PlayerPossessionController : MonoBehaviour
         currentBody.SetOwner(this);
         if (enterStartingHost)
         {
+            // The scripted opening transfer only counts as a discovery when opted in.
+            suppressNextUnlock = !unlockStartingHostPage;
             TransferTo(startingHost);
         }
 
@@ -1031,6 +1041,7 @@ public class PlayerPossessionController : MonoBehaviour
         // Transfer ownership successfully first.
         currentBody = target;
         currentBody.SetOwner(this);
+        UnlockHelpBookPage(currentBody.Form);
         BeginBoxHandoff(previousBody, currentBody);
         AnalyticsManager.Instance?.ChangeControlledForm(
             previousBody.Form,
@@ -1086,6 +1097,21 @@ public class PlayerPossessionController : MonoBehaviour
         // how they behave while unpossessed.
 
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
+    }
+
+    /// <summary>
+    /// Mark this form's help-book page as discovered. The unlock id is the
+    /// BodyForm name, so HelpBookUI pages use "Box", "Bubble", "BouncingBall", etc.
+    /// </summary>
+    private void UnlockHelpBookPage(BodyForm form)
+    {
+        if (suppressNextUnlock)
+        {
+            suppressNextUnlock = false;
+            return;
+        }
+
+        HelpBookUnlocks.Unlock(form.ToString());
     }
 
     private void BeginBoxHandoff(PossessableBody previous, PossessableBody next)
@@ -1286,6 +1312,10 @@ public class PlayerPossessionController : MonoBehaviour
         {
             return;
         }
+
+        // Checkpoint and intro-return paths start directly in a non-Star form
+        // without going through TransferTo, so unlock that page here too.
+        UnlockHelpBookPage(currentBody.Form);
 
         string activeCheckpoint = AnalyticsValueNames.StartCheckpoint;
         if (HasCheckpointInCurrentScene)
