@@ -78,6 +78,7 @@ public class PlayerPossessionController : MonoBehaviour
     public AnalyticsDeathCause LastDeathCause { get; private set; } = AnalyticsDeathCause.Unknown;
     public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
+    public event System.Action<PossessableBody, PossessableBody> PossessionTransferred;
 
     /// <summary>
     /// This frame's vertical input (-1 to 1): J/K for Box resizing, W/S otherwise,
@@ -1086,6 +1087,7 @@ public class PlayerPossessionController : MonoBehaviour
         // how they behave while unpossessed.
 
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
+        PossessionTransferred?.Invoke(previousBody, currentBody);
     }
 
     private void BeginBubbleHandoff(PossessableBody previous, PossessableBody next)
