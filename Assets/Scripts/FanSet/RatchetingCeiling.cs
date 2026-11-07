@@ -17,6 +17,11 @@ public class RatchetingCeiling : MonoBehaviour
 
     public float CurrentBottom => ceiling.bounds.min.y;
 
+    public float MaximumRise => maximumRise;
+
+    public float CurrentRise =>
+        ceiling != null ? ceiling.bounds.min.y - minimumBottom : 0f;
+
     public bool BallRaisesCeiling => !boxOnlyLift && !ballPushesDown;
 
     private BoxCollider2D ceiling;
