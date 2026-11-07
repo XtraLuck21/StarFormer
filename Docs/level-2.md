@@ -1,6 +1,6 @@
 # Level 2 Progress
 
-Current source target: `beta-0.1.2`, build/publication pending. Shared Home and Navigation replace the earlier standalone menu presentation. Level02’s saved Help component still needs migration verification; see [release findings](Beta-0.1.2.md#gameplay-help-migration-needs-a-check).
+Beta 0.1.2 is published at root and `/beta/` via `64b35c6`. Shared Home and Navigation replace the earlier standalone menu presentation. Level02 gameplay repairs and Help migration are explicitly deferred until its replacement scene; no new Level02 acceptance is claimed. See [release findings](Beta-0.1.2.md#gameplay-help-cleanup-and-deferred-level02-work).
 
 Last updated: 2026-11-06 (release status updated; Level02 layout unchanged).
 
@@ -8,7 +8,7 @@ Scene: [Level02.unity](../Assets/Scenes/Level02.unity). The October 18 Level-2 w
 
 **October 18 wrap-up:** main through analytics PR #13 (`7e50e09`) was merged into Level-2 as `8929f94`, preserving the intro polish, Level 1 fixes and teammate mobile controls. Follow-ups add the final completion screen and corrected Spider/Fan hints (`81adda2`), Restart Level and Retry Checkpoint buttons (`ce77790`), English script comments/Inspector text (`260b9b1`), and removal of the unused brown finish block (`ab68064`). The developer confirmed hint presentation, accepted the top-right button layout, and tested goal completion and return to Mainmenu after deleting the block. Alpha 0.1.2 later passed developer-reported localhost and online tests; an exhaustive checkpoint/device matrix is not recorded.
 
-**Recorded published release:** Beta 0.1.1 (November 3), source `9451511`, gh-pages `e81097e`, at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It retains the Level02 gameplay described here, with refreshed maps and seven-scene analytics. Later help-book/Mainmenu changes in main are not included. A separate remote Level-2 branch is not automatically included in main or this release. See [the release record](publish_instructions.md#beta-011-release-status).
+**Historical published release:** Beta 0.1.1 (November 3), source `9451511`, gh-pages `e81097e`, at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It retains the Level02 gameplay described here, with refreshed maps and seven-scene analytics. That historical export predates the subsequent menu changes. The same URL now serves 0.1.2; this documentation update does not change the Level02 scene. A separate remote Level-2 branch is not automatically included in main or this release. See [the release record](publish_instructions.md#beta-011-release-status).
 
 For controls and form behavior, see [GameplaySpec.md](GameplaySpec.md). For script responsibilities, see [ScriptGuide.md](ScriptGuide.md). For build and publication steps, see [publish_instructions.md](publish_instructions.md).
 
@@ -129,10 +129,12 @@ Historical Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105
 
 ## 6. Remaining work and handoff
 
+The Level02 repair and gameplay/Help verification items below are deferred until the replacement scene arrives. They are not changes performed or acceptance claimed by the 0.1.2 publication.
+
 1. Confirm Home’s Return to Checkpoint is disabled before any checkpoint; test it at CP01, CP02 and CP03, verifying position, camera state and the reachable onward route. Check the unassigned ShowWall callbacks and automatic death recovery at each stage.
 2. After a checkpoint, verify opening/cancelling R or Home preserves it; Return to Checkpoint resumes it. Confirm Restart Level clears it and Home disables its checkpoint action. Test Navigation re-entry. Treat the one-time enemy expression separately from checkpoint recovery.
 3. Test every mobile form, held input release, box resizing, Bubble water transitions, Fan Blow/Leave, Spider Leave and SpikeWall Fire. On a real phone, include simultaneous movement/action touches, focus loss, aspect ratios and browser overlays.
 4. For the next export, retest IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02, including Level01 ADV_CP1/2/3 recovery and the upper landing choice. The incoming scene chain passed isolated Unity checks and developer promotion playtests; this item is browser/device regression. Check the Level02 goal in another controlled form as well as Star, and confirm one completion analytics event.
 5. Verify Level02-specific Beta 0.1.2 production delivery, raw-row metrics and refreshed map rendering using [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). The November 2 screenshot only establishes 0.1.0 Level01 records. Historical Alpha 0.1.2 delivery remains a separate unconfirmed record.
-6. Beta 0.1.1 build/publication are complete (source `9451511`, gh-pages `e81097e`); all seven hosted files matched the completed export on November 5. Detailed device/scenario gameplay and analytics acceptance remain follow-ups where no specific evidence is recorded. The later main-only UI changes require a new export before publication.
+6. Beta 0.1.2 build/publication are complete (`gh-pages` `64b35c6`); all 14 hosted files across root and `/beta/` matched the completed export on November 6. Detailed Level02 gameplay/device and analytics acceptance remain unverified. Historical 0.1.1 evidence belongs to source `9451511` and publication `e81097e`.
 7. Open Level02 Help and inspect its missing page/content configuration before recording or claiming shared Collection Book coverage across all seven scenes. Test overlap with Home, R and final completion.

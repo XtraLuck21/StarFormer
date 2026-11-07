@@ -1,10 +1,10 @@
 # Introductory Levels
 
-Current source target: `beta-0.1.2`, build/publication pending. Navigation, shared Home/Help, IntroFan naming and revised Spider teaching are covered by the [release checklist](Beta-0.1.2.md).
+Beta 0.1.2 was published November 6 at root and `/beta/` via `64b35c6`, with clean source checkout `b93768f`. Navigation, shared Home/Help, IntroFan naming, revised Spider teaching and session discovery are included. Deployment and 14-file hosted comparison passed; see the [release record](Beta-0.1.2.md) for outstanding gameplay/data acceptance.
 
 Last updated: 2026-11-06.
 
-**Recorded published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. See [the current release record](publish_instructions.md#beta-011-release-status).
+**Historical published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. The Beta URL now serves 0.1.2. See [the historical release record](publish_instructions.md#beta-011-release-status).
 
 **Historical published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
 
@@ -158,7 +158,7 @@ For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [Ga
 
 ## Verification and remaining work
 
-Historical November 2 integration: developer playtests accepted the BouncyBall route, hints, terrain alignment and two-way Bubble passage. After the Fan hint texture fix (`3365e29`), the final package was rebuilt with the synchronized versions/template and published as Beta 0.1.0. The developer confirmed local and hosted tests passed. The historical 0.1.0 Level01 production records are visible in the dashboard; Version 9 subsequently resolved historical map matching. Current 0.1.1 raw-row/map acceptance and broader device coverage remain follow-ups.
+Historical November 2 integration: developer playtests accepted the BouncyBall route, hints, terrain alignment and two-way Bubble passage. After the Fan hint texture fix (`3365e29`), the final package was rebuilt with the synchronized versions/template and published as Beta 0.1.0. The developer confirmed local and hosted tests passed. The historical 0.1.0 Level01 production records are visible in the dashboard; Version 9 subsequently resolved historical map matching. Historical 0.1.1 raw-row/map acceptance remains separate from the current 0.1.2 follow-ups and broader device coverage.
 
 Earlier November 1 Level01-promotion verification (before BouncyBall integration): developer playtests and isolated Unity checks passed Mainmenu entries, the then-direct IntroBubble → formal Level01 transition, Level01 completion in all four forms → IntroSpider, then FanTutorial → Level02. Legacy scene/meta preservation and current Level01 checkpoint/Home behavior were also verified. These earlier checks are distinct from the November 2 Beta release acceptance above; detailed mobile coverage remains a follow-up.
 

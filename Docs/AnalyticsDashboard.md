@@ -1,10 +1,10 @@
 # Analytics Dashboard
 
-## Beta 0.1.2 source preparation
+## Beta 0.1.2 publication and analytics follow-up
 
-Current source target: `beta-0.1.2` (November 6, main baseline `5e7105c` plus local release preparation). Build, publication and production-data acceptance are pending. The seven gameplay scenes are IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan and Level02; Navigation is the startup/menu scene and is not a tracked gameplay level. Preserve historical FanTutorial names/maps for older exports.
+Beta 0.1.2 was published November 6 to both the root and `/beta/` via `gh-pages` commit `64b35c6`, with clean source checkout `b93768f`. Deployment succeeded and all 14 hosted files matched the local export. Production-data acceptance remains pending. The seven gameplay scenes are IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan and Level02; Navigation is the startup/menu scene and is not a tracked gameplay level. Preserve historical FanTutorial names/maps for older exports.
 
-All seven current scene hashes differ from the runtime map catalog. Run **Analytics → Export all real level maps** after saving scenes, before building; retain historical PNGs/catalog entries. Separately deploy the refreshed catalog and current IntroFan-compatible backend to the existing Apps Script deployment. Do not change the endpoint or rewrite old rows. Verify `beta-0.1.2` events and exact map matches on the built player; prior Version 9 and 0.1.1 evidence does not certify the new export. See [release preparation](Beta-0.1.2.md) and [current acceptance](AnalyticsTestPlan.md#beta-012-acceptance-status).
+The pre-publication review found all seven scene hashes differed from the runtime map catalog. No analytics maps were exported and no backend deployment was performed during game publication. For a future build/map update, run **Analytics → Export all real level maps** after saving scenes and retain historical PNGs/catalog entries. Separately deploy the refreshed catalog and current IntroFan-compatible backend to the existing Apps Script deployment. Do not change the endpoint or rewrite old rows. Verify `beta-0.1.2` events and exact map matches on the built player; prior Version 9 and 0.1.1 evidence does not certify the new export. See [release record](Beta-0.1.2.md) and [current acceptance](AnalyticsTestPlan.md#beta-012-acceptance-status).
 
 Last updated: 2026-11-06. This replaces the earlier individual-player dashboard.
 See [AnalyticsAllLevels.md](AnalyticsAllLevels.md) for the seven-scene Unity collector,
@@ -13,7 +13,7 @@ it does not publish a new game or rewrite Sheet rows.
 
 ## Recorded Beta 0.1.1 publication
 
-Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. It includes seven-scene v2 collection. The Version 9 dashboard evidence below predates this game release; do not treat its historical map tests as verification of the refreshed 0.1.1 backend catalog or production events. Those remain [acceptance follow-ups](AnalyticsTestPlan.md#beta-011-acceptance-status). The November 4 help-book UI is main-only and is not part of the published 0.1.1 game.
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. It includes seven-scene v2 collection. The Version 9 dashboard evidence below predates this game release; do not treat its historical map tests as verification of the refreshed 0.1.1 backend catalog or production events. Those remain [acceptance follow-ups](AnalyticsTestPlan.md#beta-011-acceptance-status). The November 4 help-book UI was absent from the historical 0.1.1 export and is included in 0.1.2.
 
 ## Scope
 

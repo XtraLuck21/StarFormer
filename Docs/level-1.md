@@ -1,6 +1,6 @@
 # Level 1
 
-Current source target: `beta-0.1.2` (not yet built/published). [Release checklist](Beta-0.1.2.md).
+Beta 0.1.2 is published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
 
 Last updated: 2026-11-06. Promotion baseline: `8834a4d`; recorded published Beta 0.1.1 source: `9451511` (gh-pages `e81097e`, November 3).
 
@@ -57,7 +57,7 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 
 ## November 5 playtest improvements
 
-PR #21 (`42e32a4`) integrates four developer-tested changes, awaiting the Beta 0.1.2 export:
+PR #21 (`42e32a4`) integrates four developer-tested changes, included in the published Beta 0.1.2 export:
 
 - Upper platform edges preserve the gap and equal landing height while using small collision bevels to reduce maximum-size Box snagging in either direction. Recheck both directions, stopping at the edge and resizing during movement.
 - The approach to checkpoint 2 is wider. Its placement still requires reaching the authored route rather than moving the checkpoint left into the easy path.
@@ -101,6 +101,6 @@ Restart Level, returning to Navigation, a new menu entry and forward level progr
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 
-Beta 0.1.1 is published at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). It includes the contact-activated movable-door hint; the November 4 paged help book and Mainmenu UI edits remain main-only. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
+Historical Beta 0.1.1 was published at the Beta URL, which now serves 0.1.2. The 0.1.1 export included the contact-activated movable-door hint but predated paged Help; Beta 0.1.2 includes the later Help and Navigation work. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
 
-For beta-0.1.2, repeat these checks in the exported Web player alongside shared Home/Help, the four PR #21 fixes, and all three checkpoint recoveries. Re-export analytics maps and verify version-specific production rows/maps. See [the preparation checklist](Beta-0.1.2.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). Historical Beta 0.1.0/0.1.1 evidence does not certify this new export.
+For beta-0.1.2, repeat these checks in the exported Web player alongside shared Home/Help, the four PR #21 fixes, and all three checkpoint recoveries. Re-export analytics maps and verify version-specific production rows/maps. See [the release checklist](Beta-0.1.2.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). Historical Beta 0.1.0/0.1.1 evidence does not certify this new export.

@@ -1,6 +1,6 @@
 # Gameplay Specification
 
-Last updated: 2026-11-06. Current source target: `beta-0.1.2`, based on main `5e7105c`; build/publication pending. The last recorded published Beta is 0.1.1, source `9451511`, gh-pages `e81097e` (November 3; package verified November 5). See [release preparation](Beta-0.1.2.md) for new features and unresolved source findings; historical acceptance is not acceptance of the new export.
+Last updated: 2026-11-06. Beta 0.1.2 is published at both root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and all 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features and remaining gameplay/data acceptance; package verification does not establish gameplay correctness.
 
 ## 1. Scenes and progression
 
@@ -127,4 +127,4 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery, now exposed 
 
 Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. That November 2 evidence confirms Beta 0.1.0 Level01 records. Dashboard Version 9 subsequently resolved historical release-map matching; it does not certify 0.1.1 event delivery or its refreshed map deployment.
 
-The November 5 package check applies only to Beta 0.1.1. PR #21/#22 had developer-reported playtest acceptance, but the later discovery/help/Spider updates and the beta-0.1.2 export need the [current release checks](Beta-0.1.2.md). Broader browser/mobile coverage and production analytics/map acceptance remain separate. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md).
+The November 5 package check applies only to historical Beta 0.1.1. Beta 0.1.2 passed deployment and 14-file hosted comparison on November 6. PR #21/#22 had developer-reported playtest acceptance and discovery/Help passed isolated Editor checks; hosted gameplay still needs the [current acceptance checks](Beta-0.1.2.md). Broader browser/mobile coverage and production analytics/map acceptance remain separate. Script responsibilities are in [ScriptGuide.md](ScriptGuide.md).

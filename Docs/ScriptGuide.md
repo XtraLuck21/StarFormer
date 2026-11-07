@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-06. Current source target: `beta-0.1.2`, based on main `5e7105c`; not built/published by this preparation. See [the release checklist](Beta-0.1.2.md) for new functionality, outstanding Help migration and session-discovery acceptance and required map export. Published Beta 0.1.1 remains a separate historical artifact.
+Last updated: 2026-11-06. Beta 0.1.2 is published to root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features, isolated Editor evidence and outstanding browser/data checks. Level02 repairs remain deferred.
 
 ## 1. Scenes and build configuration
 
@@ -96,7 +96,7 @@ See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare 
 | [SpikeButton.cs](../Assets/Scripts/SpikeWall/SpikeButton.cs) | Existing projectile/button interactions |
 | [BubbleSpawner.cs](../Assets/Scripts/transitStage/BubbleSpawner.cs) | Replacement Bubble in the transition section |
 | [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Paged form help, discovery gates, demo playback and pause ownership. Obsolete Help components removed from IntroBox/IntroBubble/IntroSpider. Level02 still has a legacy layout without page data; work is deferred to its replacement scene. |
-| [Spritesequenceplayer.cs](../Assets/UI/Spritesequenceplayer.cs) | Main-only: `SpriteSequencePlayer` plays the six-form help demonstrations using unscaled time; not in published 0.1.1. |
+| [Spritesequenceplayer.cs](../Assets/UI/Spritesequenceplayer.cs) | `SpriteSequencePlayer` plays six-form Help demonstrations using unscaled time; included in Beta 0.1.2, absent from historical 0.1.1. |
 
 Level02 geometry and its positional checkpoint system were not replaced by Advanced. Its final flag remains; shared Home replaces the standalone menu/restart/retry presentation. Existing callback and device follow-ups are recorded in [level-2.md](level-2.md).
 
@@ -131,20 +131,24 @@ All seven gameplay scenes use Home with their local player controller. Legacy st
 
 ## 4. Web build and GitHub Pages release
 
+Beta 0.1.2 was published on November 6, 2026 to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/). The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256. This verifies deployment and package integrity, not a new hosted gameplay playtest, mobile acceptance or production analytics delivery. Analytics map export/backend updates were not performed in this publication; Level02 repairs remain deferred to its replacement scene.
+
+### Historical releases
+
 Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/WebGL-Beta-0.1.1` and the publishing checkout byte for byte. This confirms the deployed package, not a new gameplay playtest or production analytics acceptance. Player/Analytics versions are `beta-0.1.1`; the released source tracks all seven gameplay scenes (IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial and Level02), excluding Mainmenu. Current first-level checkpoint IDs remain ADV_CP1/2/3.
 
-The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. The release-preparation patch was rebased to `2caffd9` on November 5, but the November 3 export was built from `9451511`. Shared version labels do not make current main identical to the published game.
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) were integrated after the historical Beta 0.1.1 export; their runtime changes are included in Beta 0.1.2. Unity Recorder remains Editor tooling. The release-preparation patch was rebased to `2caffd9` on November 5, but the November 3 export was built from `9451511`. Shared version labels do not make current main identical to the published game.
 
-Historical Beta 0.1.0 used source `3a693ca`, publishing commit `1105970`, and Level01/Level02-only analytics. Developer-reported local/online tests and the November 2 Level01 dashboard screenshot apply to that older export. Dashboard Version 9 subsequently resolved its map matching. The root URL still serves 0.1.0 via `f6eaf9e`; `/beta/` now serves 0.1.1. The earlier Web compiler fix is `3365e29`.
+Historical Beta 0.1.0 used source `3a693ca`, publishing commit `1105970`, and Level01/Level02-only analytics. Developer-reported local/online tests and the November 2 Level01 dashboard screenshot apply to that older export. Dashboard Version 9 subsequently resolved its map matching. Root previously served 0.1.0 via `f6eaf9e`, and `/beta/` previously served 0.1.1; both were replaced with 0.1.2 on November 6. The earlier Web compiler fix is `3365e29`.
 
 Historical Alpha 0.1.2 (October 18) used gameplay/UI `9b35f8e`, source configuration `5650250`, and publication `5f62980`; its developer-reported gameplay checks and unverified Sheet delivery remain separate evidence.
 
-Use [publish_instructions.md](publish_instructions.md) for future releases. Preserve completed exports and historical paths; use a new agreed version/output for the next build. Do not merge gh-pages into source. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for 0.1.1 production event/map acceptance; Editor JSON and package verification do not prove delivery.
+Use [publish_instructions.md](publish_instructions.md) for future releases. Preserve completed exports and historical paths; use a new agreed version/output for the next build. Do not merge gh-pages into source. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for version-specific production event/map acceptance; Editor JSON and package verification do not prove delivery.
 
 ## 5. Verification and remaining work
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 
-Current release work: verify session-only discovery in the exported player, repeat the cleaned tutorial Help checks in the exported player (Level02 Help work is deferred), regenerate all seven maps, and validate the beta-0.1.2 Web player and backend data. Broader browser/mobile coverage and new-player readability remain separate checks. Previous release acceptance does not certify latest main; see [Beta-0.1.2.md](Beta-0.1.2.md).
+Post-publication follow-up: verify session-only discovery in the exported player, repeat the cleaned tutorial Help checks in the exported player (Level02 Help work is deferred), regenerate all seven maps, and validate the beta-0.1.2 Web player and backend data. Broader browser/mobile coverage and new-player readability remain separate checks. Previous release acceptance does not certify latest main; see [Beta-0.1.2.md](Beta-0.1.2.md).
 
 The isolated [session-discovery regression](../Assets/Editor/SessionDiscoveryVerification.cs) checks real ownership/UI paths, completion without group rewards, retries and a second Play session with domain reload disabled. Execution instructions, historical Help findings and the subsequent three-scene cleanup verification are in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#session-discovery-regression).

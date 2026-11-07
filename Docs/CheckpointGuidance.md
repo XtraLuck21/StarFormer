@@ -1,6 +1,6 @@
 # Checkpoints, restart and pause menus
 
-Last updated: 2026-11-06. Current source target: `beta-0.1.2`, pending build/publication. The Level01 recovery model remains; PR #21 improves traversal and PR #22 applies its Home menu across all seven gameplay scenes. See [release preparation](Beta-0.1.2.md). Published Beta 0.1.1 evidence remains historical.
+Last updated: 2026-11-06. Beta 0.1.2 is published at root and `/beta/` via `64b35c6`. The Level01 recovery model remains; PR #21 improves traversal and PR #22 applies its Home menu across all seven gameplay scenes. See the [release record](Beta-0.1.2.md) for deployment evidence and outstanding browser verification. Published Beta 0.1.1 evidence remains historical.
 
 ## Level01 checkpoints
 

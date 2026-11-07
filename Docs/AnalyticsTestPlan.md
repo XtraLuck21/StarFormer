@@ -7,16 +7,16 @@ Last updated: 2026-11-06.
 
 ## Beta 0.1.2 acceptance status
 
-Prepared November 6 from main `5e7105c` plus local version/docs edits. Player and Analytics versions are `beta-0.1.2`; collection remains production on the existing endpoint. No new Web build, hosted playtest or production-row verification is claimed here. The [release checklist](Beta-0.1.2.md) records concrete source findings.
+Beta 0.1.2 was published on November 6, 2026 to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/). The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256. The source checkout at publication was clean main `b93768f`; Player/Analytics versions are `beta-0.1.2`, using the existing production endpoint. This verifies deployment and package integrity, not a new hosted gameplay playtest, mobile acceptance or production analytics delivery. Analytics map export/backend updates were not performed in this publication; Level02 repairs remain deferred to its replacement scene. See the [release record](Beta-0.1.2.md).
 
 | Check | Status / required evidence |
 | --- | --- |
-| Version and scene list | Source prepared: Navigation 0, seven gameplay scenes 1–7, IntroFan at 6 |
-| Map freshness | All seven saved-scene hashes differ; re-export in Unity before build |
+| Version and scene list | Published configuration: Navigation 0, seven gameplay scenes 1–7, IntroFan at 6 |
+| Map freshness | Pre-publication review found all seven maps stale; no export/backend update in this publication; outstanding for future build/data acceptance |
 | Closet/book behavior | Unified session-only discovery; inspect the regression evidence below and repeat on the Web export |
 | Help migration | Obsolete components removed from IntroBox, IntroBubble and IntroSpider; focused Editor Help checks passed (below). Level02 migration deferred to its replacement scene |
 | Gameplay | Recheck PR #21 Level01 fixes, Navigation contact/click entries, shared Home/Help, current Spider hints and forward/return passages |
-| Web build and publication | Pending; intended folder `Builds/WebGL-Beta-0.1.2`, eventual `/beta/` deployment |
+| Web build and publication | Complete: `Builds/WebGL-Beta-0.1.2` published to root and `/beta/` via `64b35c6`; deployment successful and all 14 hosted files matched |
 | Data and dashboard | Pending; actual rows must carry beta-0.1.2 and the matching exported map version; verify IntroFan and historical FanTutorial separately |
 
 Navigation may participate in session initialization but must not create a tracked gameplay Run. Each selected gameplay destination must create its own Run; verify forward completions, backward returns, death, restart/retry, abandonment and paused/focus time as below. Collection Book pause must not add active gameplay time. Recording/rehearsal on the release configuration can add production events; keep that fact in mind when interpreting the dataset.
@@ -57,11 +57,11 @@ Remaining checks against the published export:
 - Verify the refreshed backend map catalog is deployed; synchronize it if needed. Confirm new `map_version` values resolve correctly, historical builds keep their maps and unknown versions still show a coordinate grid.
 - Record the browsers/devices and scenarios actually tested. Preserve the 0.1.1 export and keep historical evidence separate.
 
-The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Test those features in a future build with a new agreed version; they are not acceptance requirements for the already-published 0.1.1 package.
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) are integrated into `main` but are **not included in published Beta 0.1.1**. Those runtime features are now included in 0.1.2; their current acceptance belongs to the 0.1.2 checks above, not the historical 0.1.1 package.
 
 ## Beta 0.1.0 acceptance status
 
-Historical evidence below refers to the November 2 export; `/beta/` now serves 0.1.1. The map-binding follow-up was subsequently resolved by dashboard Version 9; retain the original observation and distinguish it from current 0.1.1 map checks.
+Historical evidence below refers to the November 2 export; both root and `/beta/` now serve 0.1.2. The map-binding follow-up was subsequently resolved by dashboard Version 9; retain the original observation and distinguish it from current 0.1.1 map checks.
 
 Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [Deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/). All seven hosted files matched the tested export. Player/Analytics versions are `beta-0.1.0`; the existing production endpoint and Level01/Level02 tracking configuration are unchanged.
 

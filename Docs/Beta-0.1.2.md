@@ -1,30 +1,36 @@
-# Beta 0.1.2 release preparation
+# Beta 0.1.2 release record
 
-Prepared: November 6, 2026. Source baseline: `main` at `5e7105c`, plus the uncommitted documentation/version changes in this preparation. **Not built, published or accepted as a new Web release by this preparation.** Record the final source revision and any local changes after review; `5e7105c` alone does not identify the future export.
+**Beta 0.1.2 was published on November 6, 2026** to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/).
+
+The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256.
 
 ## Release configuration
 
-| Item | Prepared state / next action |
+| Item | Published state |
 | --- | --- |
-| Player Version | `beta-0.1.2` in `ProjectSettings/ProjectSettings.asset` |
-| Analytics buildVersion | `beta-0.1.2` in `Assets/Resources/AnalyticsSettings.asset` |
-| Collection | Existing endpoint, `production`, collection enabled; no backend deployment performed |
-| Editor | Unity `6000.3.22f1` with Web Build Support |
-| Startup | `Navigation`, enabled build index 0; legacy `Mainmenu` retained but disabled |
-| Enabled gameplay scenes | IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan, Level02, indices 1–7 |
-| New export target | `Builds/WebGL-Beta-0.1.2`; preserve completed older exports |
-| Intended publication | Replace only `/beta/` in the separate `gh-pages` checkout after validation |
-| Last recorded published Beta | 0.1.1, source `9451511`, publication `e81097e`, package verified November 5 |
-| Publication / recording readiness | Pending the checks below; no new deployment or recording is claimed |
+| Player / Analytics version | `beta-0.1.2` |
+| Source checkout at publication | Clean `main` at `b93768f`; initial preparation baseline was `5e7105c` |
+| Export | `Builds/WebGL-Beta-0.1.2`, built by the owner; preserved unchanged during publishing |
+| Publishing commit | `64b35c6c5dbe50ffefc05e1590533cebf47888dc`, November 6 at 14:17:44 PST |
+| Deployment | GitHub Pages run `42303613672`, successful |
+| Destinations | `/StarFormer/` and `/StarFormer/beta/`, identical copies |
+| Replaced versions | Root: Beta 0.1.0; `/beta/`: Beta 0.1.1 |
+| Historical paths | Alpha, Alpha Progress Check, playtest and analytics-test folders unchanged; all 59 tracked files outside the two publishing scopes preserved |
+| Startup | `Navigation`, enabled index 0; legacy `Mainmenu` disabled |
+| Gameplay scenes | IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan, Level02 (1–7) |
+| Collection | Existing production endpoint and collection enabled; no backend deployment performed |
+| Verification | 14 hosted files HTTP 200 and byte-identical to the export; no new hosted gameplay test |
 
-The template remains `PROJECT:StarFormerAlpha`; its name is historical and its release label comes from Player Version. Current project settings retain 1920 × 1080, Gzip, Decompression Fallback, hashed payload names and disabled Web threads. Confirm Development Build is off in the active Web build configuration. Do not change Company/Product Name for this release: doing so can change the storage namespace.
+The clean source checkout is recorded for provenance; the export does not embed a Git revision stamp. The published file hashes below identify the artifact directly. Historical local exports remain preserved.
+
+The template remains `PROJECT:StarFormerAlpha`; its name is historical and the published HTML label is `beta-0.1.2`. Source settings retain Unity `6000.3.22f1`, 1920 × 1080, Gzip, Decompression Fallback, hashed payload names and disabled Web threads. Publication copied the owner-built export without rebuilding or changing runtime settings.
 
 ## Changes since the recorded Beta 0.1.1 export
 
 - **Level01 playtest fixes (PR #21, `42e32a4`):** bidirectional travel across the upper platform gap without maximum-size Box snagging; a wider checkpoint-2 approach that still requires player action; steadier camera framing during BouncyBall motion; recovery from Box-to-ball possession without the abandoned Box trapping the ball.
 - **Navigation (PR #22, `dc28ff2`):** a separate black/yellow Navigation scene with a playable Star, A/D and Space key hints, upper jump entrances and lower drop entrances, bounce/flash feedback and an Entering overlay before loading. Mouse clicks also select entrances. Kindergarten → IntroBox; Level 1 → Level01; Elementary School → IntroSpider; Level 2 → Level02. Coming Soon has no playable destination.
 - **Scene and menu integration:** FanTutorial is now IntroFan with its GUID retained. The forward chain and menu returns use the current scene names. All seven gameplay scenes have the shared top-right house/Star Home menu; return actions load Navigation. Legacy Mainmenu and test/reference scenes remain excluded from the build.
-- **Help and collection:** reusable Collection Book in Navigation, aligned with five Shape Closet slots; shared form-demo assets; input blocking while the book or entering sequence is active; one entering overlay dims the book and the rest of Navigation together. Later main changes add per-form discovery pages to six gameplay scenes. Level02 still needs the help migration check below.
+- **Help and collection:** reusable Collection Book in Navigation, aligned with five Shape Closet slots; shared form-demo assets; input blocking while the book or entering sequence is active; one entering overlay dims the book and the rest of Navigation together. Later main changes add per-form discovery pages to six gameplay scenes. Level02 Help migration is deferred as noted below.
 - **Spider teaching (`125217b`, `5e7105c`):** updated climbing guidance, contextual prompts and directional arrows; cake-disguised spikes reveal after contact; first-contact cake feedback and subsequent death text share the center hint rather than duplicating the death caption.
 - **Recording tooling:** Unity Recorder `5.1.7` is installed. This does not mean a recording preset or video export has been prepared.
 
@@ -55,9 +61,9 @@ November 6 isolated Unity 6000.3.22f1 Play Mode verification passed for all thre
 
 Level02 retains the old HelpPanelUI serialized layout without pages/content. Its repair and verification are explicitly deferred until the replacement Level02 scene arrives; it was not modified or tested in this cleanup. Do not describe Help as verified in every gameplay scene.
 
-### Analytics maps must be regenerated
+### Analytics follow-up — not completed by publication
 
-All seven runtime map `source_scene_hash` values differ from the saved current scenes. The custom `Build → Build WebGL` validation would reject this source until maps are exported again. No map images, hashes or historical bindings were fabricated or refreshed in this documentation pass.
+At the pre-publication check, all seven runtime map `source_scene_hash` values differed from the saved scenes. Map export was explicitly left out of this release operation; publishing the completed Web build did not resolve or verify map freshness. The custom `Build → Build WebGL` guard rejects stale maps, while standard Build Profiles does not invoke that guard. Treat map export and backend acceptance as outstanding work for a future build; do not overwrite this completed export or relabel old map data.
 
 1. Stop Play Mode and save intended scene changes.
 2. Run **Analytics → Export all real level maps** in Unity. Confirm seven maps export without errors.
@@ -67,6 +73,8 @@ All seven runtime map `source_scene_hash` values differ from the saved current s
 
 ## Unity and browser acceptance before recording
 
+The package is already published. The following gameplay/device checks remain follow-ups; exclude deferred Level02 repair and Help acceptance until its replacement scene is available. Build-setting steps apply when preparing a future export.
+
 - Open **File → Build Profiles → Scene List**. Navigation must be checked at index 0, followed by the seven gameplay scenes above. The saved shared list already has this order; check any active profile-specific override before building.
 - Confirm Player Version and Analytics buildVersion both read `beta-0.1.2`; these values are already changed in source. Resolve Console errors and the release findings above.
 - Run all four Navigation destinations by contact and by click; verify one transition/load, Coming Soon stays inactive, keyboard input does not submit Help unexpectedly, and the book dims uniformly with the entering overlay.
@@ -74,11 +82,25 @@ All seven runtime map `source_scene_hash` values differ from the saved current s
 - Repeat the Level01 gap in both directions, edge stop/restart and resizing; checkpoint-2 approach; ball camera stability; Box-on-ball recovery before checkpoint 3; and existing route/checkpoint behavior.
 - Test IntroSpider climb arrows, first cake contact versus later spike death, release/recovery and IntroSpider → IntroFan → Level02. Confirm existing Box/Bubble/BouncyBall forward and return passages.
 - Test individual discovery with old completion saves present, an early exit before possession, skipped basic school, actual possession, completion without extra rewards, cross-scene returns/retries and a new launch. Do not clear unrelated PlayerPrefs or analytics identifiers.
-- Export current maps, then use **Build And Run** into `Builds/WebGL-Beta-0.1.2`. Standard Build Profiles does not run the custom map-hash guard. The custom **Build → Build WebGL** menu defaults to `Builds/WebGL` unless launched with `-customBuildPath`; do not confuse its default with the version-specific export target.
+- For a future build, export current maps, then use **Build And Run** into a new version-specific folder; preserve the published `Builds/WebGL-Beta-0.1.2`. Standard Build Profiles does not run the custom map-hash guard. The custom **Build → Build WebGL** menu defaults to `Builds/WebGL` unless launched with `-customBuildPath`; do not confuse its default with the version-specific export target.
 - Test the local HTTP player, not a `file://` launch. Check 16:9 framing, fullscreen/windowed loading, all scene links, Help/Home and unlock behavior. Record the exact tested build and browser. Keep mobile claims separate from desktop recording acceptance.
 - Check new runtime events use `beta-0.1.2`, `IntroFan` and matching exported map versions; Navigation remains untracked as a gameplay level. Verify actual production rows before claiming delivery. Recording/rehearsal runs use the retained production configuration and may add real data.
-- Publish only the tested export following [publish_instructions.md](publish_instructions.md), then verify the hosted payload and gameplay before recording the hosted release. Record the final source revision, publishing commit, date and acceptance results.
+- Deployment and hosted payload verification are complete for 0.1.2. Exercise the hosted gameplay before recording and record the browser/scenarios actually tested. Use [publish_instructions.md](publish_instructions.md) for future deployments.
 
-## Evidence for this preparation
+## Verification evidence and limits
 
-The initial release-preparation pass inspected versions, scene order, links and map hashes without running Unity or building. The subsequent session-discovery change removes the competing state sources described in that earlier review. Its isolated Unity regression results are recorded in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#session-discovery-regression). No WebGL build, backend update, hosted verification, actual-user progress reset, commit or push is claimed by this follow-up. Earlier developer acceptance of PR #21/#22 does not certify the future Beta 0.1.2 export.
+The owner completed the Web build, then authorized publication to both URLs. The publishing checkout was synchronized, the two copies were verified, and commit `64b35c6` was pushed to `gh-pages`. Deployment and hosted file checks passed. The earlier isolated session-discovery and tutorial Help results remain recorded in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#session-discovery-regression). This verifies deployment and package integrity, not a new hosted gameplay playtest, mobile acceptance or production analytics delivery. Analytics map export/backend updates were not performed in this publication; Level02 repairs remain deferred to its replacement scene.
+
+## Published artifact SHA-256
+
+These relative paths have the same bytes at the root and under `beta/`. Checked November 6 after deployment.
+
+| File | SHA-256 |
+| --- | --- |
+| `index.html` | `3148ecdb800859dd39c62238eb5fdfe36b5ef17225c0024bce5604c709f5e046` |
+| `TemplateData/alpha.css` | `4148e1c051bc555368d09c3e9a1701e50a7a734fba5fabaa32f9edc7bb18fd93` |
+| `TemplateData/alpha.js` | `98c4720054adf740817ffbd1386128f8b819e0c7ff7a106e3d4796758241596c` |
+| `Build/e57746da5c241766158c3cecec2234b1.data.unityweb` | `25ffcd53317dbfb697b912ac30027155cfbb235113df688f90d1eb63aa712ff1` |
+| `Build/43e1d85759a0811fcc8f42f5bcbb9964.loader.js` | `a688af773440f1138786b18417194e346de6640ad0956fd4bb1d5196f5c2d4ad` |
+| `Build/b4558ba17c924fd6e835b75d1c8f1406.wasm.unityweb` | `2a5a028268851f53ecbafa510ec1384c7b1681313d726ffea2d3e221f723cb12` |
+| `Build/06a09d92e03272afcc9b14e5486751f3.framework.js.unityweb` | `d14eb45683bfcc46424c48958d6b5aa394515a5d292f01dbed7f21929499be7c` |
