@@ -36,6 +36,7 @@ public class level2Camera : MonoBehaviour
         new Vector3(-70f, 13f, -10f);
 
     [Header("Spider Cutscene - Once")]
+    [SerializeField] private bool useDoorChaseTrigger;
     [SerializeField] private float triggerY = 14.5f;
     [SerializeField, Min(0.01f)] private float cutsceneSize = 2f;
     [SerializeField]
@@ -54,8 +55,20 @@ public class level2Camera : MonoBehaviour
     // Leave three world units to the left of the wall and to the right of the player.
     [SerializeField, Min(0f)] private float horizontalMargin = 3f;
 
+    // Extra space behind the wall to show the collapsing floor.
+    [SerializeField, Min(0f)] private float chaseRearMargin;
+
     // Fixed camera height during the chase.
     [SerializeField] private float chaseCameraY = 13f;
+
+    [Header("Collapsing Floor Framing")]
+    [SerializeField] private bool frameCollapsingFloor;
+    [SerializeField] private SpikeWallEnemyChase chaseWall;
+    [SerializeField] private Collider2D chaseFloor;
+    [Tooltip("World units visible behind the wall's rear edge.")]
+    [SerializeField, Min(0f)] private float visibleCrackTrail = 8f;
+    [Tooltip("World units visible below the floor for falling fragments.")]
+    [SerializeField, Min(0f)] private float visibleDebrisDepth = 6f;
 
     [Header("Chase Zoom")]
     // Minimum orthographic size when tightening the chase framing.
@@ -106,6 +119,27 @@ public class level2Camera : MonoBehaviour
     private Vector3 droppingFixedPosition =
         new Vector3(-22f, -16f, -10f);
 
+    [Header("Drop Tension")]
+    [SerializeField] private bool tightenDropFraming;
+    [SerializeField, Min(0.01f)] private float droppingEndSize = 5.5f;
+    [SerializeField, Min(0.01f)] private float droppingZoomSpeed = 8f;
+    [SerializeField] private float droppingLookAhead = -1.5f;
+
+    [Header("Bottom Passage")]
+    [SerializeField] private bool followBottomPassage;
+    [SerializeField] private Vector2 bottomCameraXRange = new Vector2(-22f, -9f);
+    [SerializeField] private float bottomCameraY = -21.1f;
+    [SerializeField, Min(0.01f)] private float bottomFollowSize = 4f;
+    [SerializeField] private float bottomLookAhead = 2f;
+    private bool bottomPassageStarted;
+
+    [Header("Seesaw Room")]
+    [SerializeField, Min(0.01f)] private float seesawMinimumSize = 8f;
+    [SerializeField, Min(0f)] private float seesawHorizontalPadding = 2f;
+    [SerializeField] private float seesawCameraYOffset = 2f;
+    private Collider2D seesawSurface;
+    private bool seesawRoomStarted;
+
     private bool droppingStarted;
     private bool droppingFinished;
 
@@ -152,6 +186,8 @@ public class level2Camera : MonoBehaviour
 
     public void BeginRemainingFollow()
     {
+        seesawRoomStarted = false;
+        bottomPassageStarted = false;
         remainingFollowStarted = true;
         playingCutscene = false;
         focusStarted = false;
@@ -181,6 +217,73 @@ public class level2Camera : MonoBehaviour
     public void EndChaseCamera()
     {
         chaseCameraStarted = false;
+    }
+
+    // Door-driven levels keep the player in view while the enemy emerges.
+    public void BeginDoorChase()
+    {
+        if (!useDoorChaseTrigger || cutsceneTriggered || remainingFollowStarted)
+        {
+            return;
+        }
+
+        cutsceneTriggered = true;
+        chaseCameraStarted = true;
+        onEnemyShotStarted.Invoke();
+        onChaseStarted.Invoke();
+    }
+
+    public void BeginTrapdoorDrop()
+    {
+        playingCutscene = false;
+        focusStarted = false;
+        chaseCameraStarted = false;
+        droppingStarted = true;
+    }
+
+    public void BeginDarkPassage()
+    {
+        if (!followBottomPassage)
+        {
+            return;
+        }
+        bottomPassageStarted = true;
+        playingCutscene = false;
+        focusStarted = false;
+        chaseCameraStarted = false;
+    }
+
+    public void BeginSeesawRoom(Collider2D surface)
+    {
+        if (surface == null)
+        {
+            return;
+        }
+        seesawSurface = surface;
+        seesawRoomStarted = true;
+        droppingStarted = false;
+        droppingFinished = false;
+        bottomPassageStarted = false;
+        playingCutscene = false;
+        focusStarted = false;
+        chaseCameraStarted = false;
+        remainingFollowStarted = true;
+        TakeCamera();
+        // The door covers this cut, so the view never pans through the space
+        // between the two separate rooms.
+        FrameSeesawRoom(surface.bounds.center);
+    }
+
+    private void FrameSeesawRoom(Vector3 playerPosition)
+    {
+        Bounds bounds = seesawSurface.bounds;
+        Vector3 center = new Vector3(bounds.center.x,
+            bounds.center.y + seesawCameraYOffset, cameraZ);
+        float size = Mathf.Max(seesawMinimumSize,
+            (bounds.size.x + seesawHorizontalPadding * 2f) /
+                (2f * Mathf.Max(cam.aspect, 0.01f)));
+        size = Mathf.Max(size, Mathf.Abs(playerPosition.y - center.y) + 2f);
+        SetCamera(center, size);
     }
 
     private void LateUpdate()
@@ -304,6 +407,31 @@ public class level2Camera : MonoBehaviour
 
         Vector3 position = currentBody.transform.position;
 
+        if (seesawRoomStarted && seesawSurface != null)
+        {
+            Bounds bounds = seesawSurface.bounds;
+            if (position.x >= bounds.min.x - 3f && position.x <= bounds.max.x + 3f &&
+                position.y <= bounds.max.y + 12f && position.y >= bounds.min.y - 5f)
+            {
+                TakeCamera();
+                FrameSeesawRoom(position);
+                return;
+            }
+            seesawRoomStarted = false;
+        }
+
+        if (bottomPassageStarted)
+        {
+            TakeCamera();
+            Vector3 target = new Vector3(Mathf.Clamp(position.x + bottomLookAhead,
+                bottomCameraXRange.x, bottomCameraXRange.y), bottomCameraY, cameraZ);
+            SetCamera(Vector3.Lerp(transform.position, target,
+                1f - Mathf.Exp(-8f * Time.deltaTime)),
+                Mathf.MoveTowards(cam.orthographicSize, bottomFollowSize,
+                    3f * Time.deltaTime));
+            return;
+        }
+
         // Falling-shot logic takes priority over the final follow phase,
         // allowing the post-chase drop sequence to play normally.
         // Take camera control when the player enters the drop region.
@@ -327,13 +455,27 @@ public class level2Camera : MonoBehaviour
 
             if (droppingFinished)
             {
-                SetCamera(droppingFixedPosition, droppingSize);
+                SetCamera(droppingFixedPosition,
+                    tightenDropFraming ? droppingEndSize : droppingSize);
             }
             else
             {
+                float size = droppingSize;
+                if (tightenDropFraming)
+                {
+                    float progress = Mathf.InverseLerp(
+                        droppingStartY, droppingStopY, position.y);
+                    float targetSize = Mathf.SmoothStep(
+                        droppingSize, droppingEndSize, progress);
+                    size = Mathf.MoveTowards(cam.orthographicSize,
+                        targetSize, droppingZoomSpeed * Time.deltaTime);
+                }
+
                 SetCamera(
-                    new Vector3(position.x, position.y, cameraZ),
-                    droppingSize
+                    new Vector3(position.x,
+                        position.y + (tightenDropFraming ? droppingLookAhead : 0f),
+                        cameraZ),
+                    size
                 );
             }
 
@@ -370,7 +512,7 @@ public class level2Camera : MonoBehaviour
             !insideSecond;
 
         // Show the enemy cutscene when Spider first reaches the specified height.
-        if (!cutsceneTriggered &&
+        if (!useDoorChaseTrigger && !cutsceneTriggered &&
             spiderBody != null &&
             currentBody == spiderBody &&
             insideSecond &&
@@ -389,7 +531,7 @@ public class level2Camera : MonoBehaviour
 
         // After the cutscene, start chase framing when the player passes X = -64.
         // Do not restart a chase that has already finished.
-        if (cutsceneTriggered &&
+        if (!useDoorChaseTrigger && cutsceneTriggered &&
             !playingCutscene &&
             !focusStarted &&
             position.x > chaseStartX)
@@ -474,6 +616,12 @@ public class level2Camera : MonoBehaviour
 
     private void FollowDuringChase(Vector3 playerPosition)
     {
+        if (frameCollapsingFloor && chaseWall != null && chaseFloor != null)
+        {
+            FollowCollapsingFloorChase(playerPosition);
+            return;
+        }
+
         if (spikeWallEnemy == null)
         {
             SetCamera(
@@ -484,7 +632,7 @@ public class level2Camera : MonoBehaviour
         }
 
         // spikeWallEnemy references the SpikeAnchor at the wall's leading edge.
-        float left = spikeWallEnemy.position.x - horizontalMargin;
+        float left = spikeWallEnemy.position.x - horizontalMargin - chaseRearMargin;
         float right = playerPosition.x + horizontalMargin;
 
         float centerX = (left + right) * 0.5f;
@@ -515,6 +663,30 @@ public class level2Camera : MonoBehaviour
             new Vector3(centerX, chaseCameraY, cameraZ),
             nextSize
         );
+    }
+
+    private void FollowCollapsingFloorChase(Vector3 playerPosition)
+    {
+        // Keep the latest broken slabs inside the view after the wall passes them.
+        float left = Mathf.Min(chaseWall.RearEdgeX - visibleCrackTrail,
+            playerPosition.x - horizontalMargin);
+        float right = Mathf.Max(chaseWall.FrontEdgeX + horizontalMargin,
+            playerPosition.x + horizontalMargin);
+
+        // Frame actual floor height rather than centering above it. Include the
+        // falling debris as well as the player's full jump and the spike wall.
+        float bottom = chaseFloor.bounds.max.y - visibleDebrisDepth;
+        float top = Mathf.Max(playerPosition.y + 2.5f, chaseCameraY + 3f);
+        float targetSize = Mathf.Max(minimumChaseSize,
+            Mathf.Max((top - bottom) * 0.5f,
+                (right - left) / (2f * Mathf.Max(cam.aspect, 0.01f))));
+        float nextSize = targetSize >= cam.orthographicSize
+            ? targetSize
+            : Mathf.MoveTowards(cam.orthographicSize, targetSize,
+                zoomSpeed * Time.deltaTime);
+
+        SetCamera(new Vector3((left + right) * 0.5f,
+            (bottom + top) * 0.5f, cameraZ), nextSize);
     }
 
     private void ReleaseCamera()
