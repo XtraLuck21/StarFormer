@@ -16,6 +16,13 @@ public class FanBlower : MonoBehaviour
     public float MaxRange => maxRange;
     public float AirflowWidth => airflowWidth;
     public int Facing => facing;
+    public ulong LastBlowActivation { get; private set; }
+    public static ulong LatestBlowActivation => latestBlowActivation;
+
+    private static ulong latestBlowActivation;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetBlowActivations() => latestBlowActivation = 0;
 
     private PossessableBody possessable;
     private Rigidbody2D body;
@@ -30,7 +37,7 @@ public class FanBlower : MonoBehaviour
     {
         possessable = GetComponent<PossessableBody>();
         body = GetComponent<Rigidbody2D>();
-        isBlowing = startBlowing;
+        SetBlowing(startBlowing);
     }
 
     private void Update()
@@ -55,7 +62,7 @@ public class FanBlower : MonoBehaviour
 
         if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
         {
-            isBlowing = !isBlowing;
+            ToggleBlow();
         }
     }
 
@@ -120,7 +127,16 @@ public class FanBlower : MonoBehaviour
 
     public void ToggleBlow()
     {
-        isBlowing = !isBlowing;
+        SetBlowing(!isBlowing);
+    }
+
+    public void StopBlowing() => SetBlowing(false);
+
+    private void SetBlowing(bool blowing)
+    {
+        if (isBlowing == blowing) return;
+        isBlowing = blowing;
+        if (blowing) LastBlowActivation = ++latestBlowActivation;
     }
 
     public void SetFacing(int direction)

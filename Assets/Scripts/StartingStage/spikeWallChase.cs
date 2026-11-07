@@ -155,6 +155,9 @@ public class SpikeWallEnemyChase : MonoBehaviour
             return;
         }
 
+        // Emergence or moving the starting section can reposition the wall
+        // after Awake. Lock its current height rather than snapping it back.
+        fixedY = body.position.y;
         movementStarted = true;
         HasStarted = true;
 

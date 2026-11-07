@@ -7,6 +7,8 @@ using UnityEngine;
     typeof(PossessableBody))]
 public class BouncyBallAbility : MonoBehaviour
 {
+    public event System.Action Bounced;
+    public event System.Action<Collision2D> CeilingStruck;
     [Header("Bounce Rhythm")]
     [SerializeField, Min(0.25f)] private float defaultBounceHeight = 20.25f;
     [SerializeField, Min(0.05f)] private float defaultSecondsToApex = 2.4f;
@@ -89,6 +91,7 @@ public class BouncyBallAbility : MonoBehaviour
             Vector2 velocity = body.linearVelocity;
             velocity.y = CalculateLaunchSpeed(activeBounceHeight);
             body.linearVelocity = velocity;
+            Bounced?.Invoke();
         }
     }
 
@@ -190,6 +193,7 @@ public class BouncyBallAbility : MonoBehaviour
             Vector2 velocity = body.linearVelocity;
             velocity.y = -CalculateLaunchSpeed(activeBounceHeight);
             body.linearVelocity = velocity;
+            CeilingStruck?.Invoke(collision);
             break;
         }
     }

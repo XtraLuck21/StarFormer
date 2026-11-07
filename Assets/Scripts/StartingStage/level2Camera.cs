@@ -137,6 +137,7 @@ public class level2Camera : MonoBehaviour
     [SerializeField, Min(0.01f)] private float seesawMinimumSize = 8f;
     [SerializeField, Min(0f)] private float seesawHorizontalPadding = 2f;
     [SerializeField] private float seesawCameraYOffset = 2f;
+    [SerializeField] private SeesawRoomStage seesawStage;
     private Collider2D seesawSurface;
     private bool seesawRoomStarted;
 
@@ -253,6 +254,16 @@ public class level2Camera : MonoBehaviour
         chaseCameraStarted = false;
     }
 
+    public void RestoreDarkPassage()
+    {
+        BeginDarkPassage();
+        if (!bottomPassageStarted || player == null || player.CurrentBody == null) return;
+        TakeCamera();
+        Vector3 position = player.CurrentBody.transform.position;
+        SetCamera(new Vector3(Mathf.Clamp(position.x + bottomLookAhead,
+            bottomCameraXRange.x, bottomCameraXRange.y), bottomCameraY, cameraZ), bottomFollowSize);
+    }
+
     public void BeginSeesawRoom(Collider2D surface)
     {
         if (surface == null)
@@ -276,6 +287,12 @@ public class level2Camera : MonoBehaviour
 
     private void FrameSeesawRoom(Vector3 playerPosition)
     {
+        if (seesawStage != null)
+        {
+            seesawStage.GetCameraFrame(cam, cameraZ, out Vector3 stagePosition, out float stageSize);
+            SetCamera(stagePosition, stageSize);
+            return;
+        }
         Bounds bounds = seesawSurface.bounds;
         Vector3 center = new Vector3(bounds.center.x,
             bounds.center.y + seesawCameraYOffset, cameraZ);
@@ -410,8 +427,10 @@ public class level2Camera : MonoBehaviour
         if (seesawRoomStarted && seesawSurface != null)
         {
             Bounds bounds = seesawSurface.bounds;
-            if (position.x >= bounds.min.x - 3f && position.x <= bounds.max.x + 3f &&
-                position.y <= bounds.max.y + 12f && position.y >= bounds.min.y - 5f)
+            bool insideRoom = seesawStage != null ? seesawStage.ContainsPosition(position) :
+                position.x >= bounds.min.x - 3f && position.x <= bounds.max.x + 3f &&
+                position.y <= bounds.max.y + 12f && position.y >= bounds.min.y - 5f;
+            if (insideRoom)
             {
                 TakeCamera();
                 FrameSeesawRoom(position);

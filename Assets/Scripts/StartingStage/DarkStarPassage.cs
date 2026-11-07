@@ -99,6 +99,18 @@ public class DarkStarPassage : MonoBehaviour
         lightRadius = initialLightRadius;
     }
 
+    public void RestoreAtBottom(PossessableBody star)
+    {
+        if (completed || !IsCurrentStar(star)) return;
+        active = true;
+        landed = true;
+        descentStartY = star.Body.position.y;
+        descentProgress = 1f;
+        darkness = 1f;
+        lightRadius = faintLightRadius;
+        if (levelCamera != null) levelCamera.RestoreDarkPassage();
+    }
+
     private bool IsCurrentStar(PossessableBody star)
     {
         return player != null && !player.IsDead && star != null &&

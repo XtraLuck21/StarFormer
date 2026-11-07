@@ -9,6 +9,7 @@ public class StarRoomDoor : MonoBehaviour
     [SerializeField] private level2Camera levelCamera;
     [SerializeField] private Camera viewCamera;
     [SerializeField] private Collider2D arrivalSurface;
+    [SerializeField] private SeesawRoomSupplies roomSupplies;
     [SerializeField] private SpriteRenderer transitionVeil;
     [SerializeField, Min(0.01f)] private float fadeDuration = 0.18f;
     [SerializeField, Min(0f)] private float arrivalClearance = 0.2f;
@@ -78,11 +79,14 @@ public class StarRoomDoor : MonoBehaviour
         {
             darkPassage.CompletePassage();
         }
+        if (roomSupplies != null) roomSupplies.EnterRoom();
         // Query the authored board, not its parent/pivot at the fulcrum below.
         Bounds bounds = arrivalSurface.bounds;
         Vector2 point = arrivalSurface.ClosestPoint(new Vector2(
             bounds.center.x, bounds.max.y + 2f));
         Vector2 arrivalPosition = point + Vector2.up * (halfHeight + arrivalClearance);
+        if (roomSupplies != null)
+            arrivalPosition = roomSupplies.ClearArrivalPosition(arrivalPosition, halfHeight, arrivalClearance);
         // Keep the body registered with physics while moving both poses.
         star.transform.position = new Vector3(arrivalPosition.x, arrivalPosition.y,
             star.transform.position.z);

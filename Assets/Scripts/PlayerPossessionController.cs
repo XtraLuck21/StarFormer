@@ -507,7 +507,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateBubbleHandoffCollisions();
-        if (currentBody == null || restartRequested || isDead)
+        if (currentBody == null || !currentBody.isActiveAndEnabled || restartRequested || isDead)
         {
             return;
         }
@@ -610,9 +610,7 @@ public class PlayerPossessionController : MonoBehaviour
 
                     velocity.x = horizontalInput * speed;
 
-                    if (actionRequested &&
-                        velocity.y <= 0.1f &&
-                        currentBody.IsGrounded())
+                    if (actionRequested && currentBody.CanJumpFromGround())
                     {
                         velocity.y = currentBody.JumpSpeed *
                             (inWater ? starWaterJumpMultiplier : 1f);
@@ -950,6 +948,24 @@ public class PlayerPossessionController : MonoBehaviour
         Debug.Log("Bubble popped. Returned to star form.", currentBody);
     }
 
+    public bool RestoreStarAfterFanPuzzle(Vector2 fallbackPosition)
+    {
+        if (initialBody == null || !initialBody.IsReady || initialBody.Form != BodyForm.Star ||
+            isDead || restartRequested) return false;
+        if (currentBody != null && currentBody.Form != BodyForm.Fan) return false;
+        if (currentBody != null && currentBody.isActiveAndEnabled)
+        {
+            LeaveFan();
+            releaseRequested = false;
+            return currentBody == initialBody;
+        }
+        initialBody.gameObject.SetActive(true);
+        initialBody.Body.position = fallbackPosition;
+        initialBody.Body.linearVelocity = Vector2.zero;
+        initialBody.Body.angularVelocity = 0f;
+        return TryRecoverMissingHost(initialBody);
+    }
+
     private void LeaveFan()
     {
         if (initialBody == null ||
@@ -1005,6 +1021,25 @@ public class PlayerPossessionController : MonoBehaviour
         );
         BlockTarget(fan);
         actionRequested = false;
+    }
+
+    // A room supply can replace a host that was destroyed or disabled, without
+    // leaving the controller pointing at a destroyed object and the Star inactive.
+    public bool TryRecoverMissingHost(PossessableBody replacement)
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested || (currentBody != null && currentBody.isActiveAndEnabled) ||
+            replacement == null || !replacement.isActiveAndEnabled || !replacement.IsReady)
+            return false;
+        ClearPossessionContacts();
+        pendingSource = pendingTarget = null;
+        bubblePopRequested = releaseRequested = actionRequested = false;
+        horizontalInput = verticalInput = 0f;
+        ReleaseAllTouchInput();
+        if (currentBody != null) currentBody.SetOwner(null);
+        currentBody = replacement;
+        currentBody.SetOwner(this);
+        BlockCurrentContacts();
+        return true;
     }
 
     private void TransferTo(PossessableBody target)
