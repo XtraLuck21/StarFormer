@@ -13,6 +13,7 @@ Prepared November 10, 2026. This release updates **only `/StarFormer/beta/`**, r
 | Publishing checkout | `.utmp/Beta013Pages`, branch `publish/beta-0.1.3`, based on live `gh-pages` at `64b35c6` |
 | Scope | Replace `beta/` files only; source/docs and publishing commits stay separate |
 | Approval | No push/merge to live `gh-pages` until the owner explicitly approves publication |
+| Review | Draft [source PR #24](https://github.com/XtraLuck21/StarFormer/pull/24) to `main`; draft [publishing PR #25](https://github.com/XtraLuck21/StarFormer/pull/25) to `gh-pages` |
 
 The initial main checkout was clean. The promoted Level02 metadata incorrectly duplicated Level02_legacy's GUID. The source branch restores the replacement GUID to match Build Settings, while retaining the legacy scene disabled. `BetaReleaseBuild.Build` validates enabled scene identities and required references, exports seven current Analytics maps and calls the existing map-validating WebGL build script. The StarFormerAlpha template, Gzip/fallback and endpoint are preserved. See [Beta-0.1.3.md](Beta-0.1.3.md) for build evidence, artifact hashes, review findings and remaining gameplay/backend acceptance.
 

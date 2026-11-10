@@ -13,6 +13,7 @@
 | Export | `Builds/WebGL-Beta-0.1.3`; a new export, preserving previous builds |
 | Map inputs commit | `96c1617`; seven fresh maps and catalogs, with historical versions retained |
 | Publishing commit | `8c40e40` on the preparation branch; not merged to live `gh-pages` |
+| Review | Draft [source/documentation PR #24](https://github.com/XtraLuck21/StarFormer/pull/24) to `main`; draft [publishing PR #25](https://github.com/XtraLuck21/StarFormer/pull/25) to `gh-pages` |
 | Publishing branch | `publish/beta-0.1.3`, isolated at `.utmp/Beta013Pages`, based on `origin/gh-pages` at `64b35c6` |
 | Destination | `gh-pages/beta/` only; no root or Alpha replacement |
 | Startup / scenes | Navigation, IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan, Level02 |
@@ -90,7 +91,7 @@ These files identify the completed export and its byte-identical `beta/` copy. T
 
 ## Publication steps
 
-1. Review the separate source/documentation and publishing pull requests. Confirm the identified gameplay limitations and backend acceptance have an owner decision.
+1. Review source/documentation PR #24 and publishing PR #25. Source preparation commits are `0307f3d`, `a2f4a73`, `96c1617` and documentation commit `9397730`; publishing commit is `8c40e40`. Confirm the identified gameplay limitations and backend acceptance have an owner decision.
 2. Merge the source pull request into `main` after review. This does not publish the site.
 3. Obtain the owner's explicit final publication approval. Only then merge the publishing pull request into `gh-pages`; do not force-push. Its diff must contain only `beta/`.
 4. Wait for GitHub Pages to finish, request all seven `/StarFormer/beta/` files and compare their SHA-256 hashes with this export. Confirm root, Alpha and historical paths retain their previous bytes.
