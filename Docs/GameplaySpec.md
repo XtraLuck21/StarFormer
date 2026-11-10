@@ -1,6 +1,6 @@
 # Gameplay Specification
 
-Last updated: 2026-11-06. Beta 0.1.2 is published at both root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and all 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features and remaining gameplay/data acceptance; package verification does not establish gameplay correctness.
+Last updated: 2026-11-10. Beta 0.1.2 is published at both root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and all 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features and remaining gameplay/data acceptance; package verification does not establish gameplay correctness. The promoted Level02 is documented for unpublished [Beta 0.1.3](Beta-0.1.3.md).
 
 ## 1. Scenes and progression
 
@@ -16,8 +16,8 @@ Navigation offers Kindergarten → IntroBox, Level 1 → Level01, Elementary Sch
 | IntroBubble | EntryBox, dormant Bubble, air/water control, Q pop and a grounded-Star flag opening the BouncyBall passage; optional return to IntroBox endpoint |
 | IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, final flag to Level01 |
 | Level01 | Former Advanced layout: two lifts, right-side Star/Box landing choice, SAVE/NORMAL/RUIN upper routes, three fixed-form checkpoints and Home menu |
-| IntroSpider / IntroFan | Existing teaching sequence before Level02; Q releases Spider/Fan, F toggles Fan wind |
-| Level02 | Spider traversal, chase, projectiles/buttons, fan sections, positional checkpoints and final completion screen |
+| IntroSpider / IntroFan | Existing teaching sequence before Level02; Spider exits through authored handoffs, Q leaves Fan and F toggles Fan wind |
+| Level02 | Star chase, dark descent, four-gear seesaw, rising shell-release exit, Smiley Face teeth/forehead puzzles and final Box resizing |
 | Level01_Legacy | Previous formal Level01, preserved as a disabled backup; not the current map |
 | Tutorial / Level01_Reference / WaterPlayground / Playground | Disabled legacy/reference/sandbox scenes; EnemyScene is a separate test scene |
 
@@ -32,18 +32,18 @@ Enabled build indices are Navigation 0, IntroBox 1, IntroBubble 2, IntroBouncyBa
 | Bubble in air | A/D; automatic rise | Q: pop and return to Star |
 | Bubble underwater | WASD, including diagonals | Q: pop and return to Star |
 | BouncyBall | A/D; automatic land bounce | No manual jump or release |
-| Spider | A/D along connected surfaces | Q: leave and return to Star |
+| Spider | A/D along connected surfaces | No manual Q release in the current controller; use the next form or authored handoff |
 | Fan | A/D while grounded/facing | F: toggle airflow; Q: leave |
 | Possessable spike wall | A/D while grounded/facing | Space: fire |
 
 R opens restart choices, not an immediate reset. All seven gameplay scenes have the shared Home pause menu. Q is not a universal exit for Box/BouncyBall. Space remains jump/fire, not Bubble pop. Fan's F toggle is handled by its ability script.
 
-Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. Home is shared across the seven gameplay scenes. Six scenes have the newer paged Help configuration. Obsolete Help components were removed from IntroBox, IntroBubble and IntroSpider, with focused Editor open/close/pause checks passing. Level02 Help work is deferred to its replacement scene. These UI changes do not establish complete mobile navigation support.
+Mobile controls use form-specific movement, growth/shrink, action and release buttons in scenes where configured. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. Home is shared across the seven gameplay scenes. The seven gameplay scenes contain configured paged Help books in current source. Obsolete Help components were removed from IntroBox, IntroBubble and IntroSpider, with focused Editor open/close/pause checks passing. The promoted Level02 has the matching house/book icons; its old disabled empty Help component produces an initialization warning in the local WebGL test. These UI changes do not establish complete mobile navigation support.
 
 ## 3. Possession and body behavior
 
 - Contact with an eligible existing host requests possession; there is no possession key or duplicate body spawned at the old location.
-- The original Star becomes inactive while hosted. The controlled host displays a centered Star. Q release restores the original Star for Bubble, Spider or Fan.
+- The original Star becomes inactive while hosted. The controlled host displays a centered Star. Q release restores the original Star for Bubble or Fan; Spider handoffs are scene-driven.
 - Contacts are validated before transfer. Nearby previous hosts must separate before reacquisition; Box growth cannot continuously flip between touching hosts. An abandoned Box stops receiving horizontal drive.
 - Box-to-Bubble handoff temporarily ignores that body's old Box collider until separation, allowing escape without disabling unrelated collisions. PR #21 also handles Box-to-BouncyBall recovery so the abandoned Box does not trap the controlled ball.
 - Untouched Bubbles wait motionless until first possession. Activated Bubbles retain environmental physics after transfer; abandoned BouncyBalls stop and wait.
@@ -110,7 +110,7 @@ Retry/death retains the latest completed mode, raised upper platform, broken RUI
 
 The Level01 Home square shows a house outline with a small Star. Its Home · Restart tooltip leads to Paused: Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled without a save; full restart and Main Menu require confirmation. R retains its own restart-choice menu. Opening/cancelling menus changes no progress, and the R menu pauses the death countdown.
 
-Level02 retains its CP01/CP02/CP03 stage-based positional recovery, now exposed through the shared Home menu; the former standalone Menu/Restart/Retry controls are disabled. See [CheckpointGuidance.md](CheckpointGuidance.md) and [level-2.md](level-2.md).
+The promoted Level02 uses dedicated drop/seesaw recovery and five ordered Smiley Face entries, restoring Star, Spider or the final Box as configured. Its approximately 0.18-second Respawning pause is scene-specific. Home/R retain their checkpoint/full-restart choices; the old standalone buttons are disabled. See [CheckpointGuidance.md](CheckpointGuidance.md) and [level-2.md](level-2.md).
 
 ## 7. Completion and navigation
 
@@ -119,7 +119,7 @@ Level02 retains its CP01/CP02/CP03 stage-based positional recovery, now exposed 
 - IntroBouncyBall accepts controlled Star or BouncyBall at its flag, then shows Entering Level 1 before loading Level01.
 - Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to IntroFan, then Level02.
 - Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
-- Level02 alone ends this sequence with Level Complete / You are a super star now! and waits for Return to Main Menu.
+- The promoted Level02 requires its assigned final Box to press the roof button, then actual contact with the raised flag. Its custom overlay reads Congratulations, / you are now a super star and stops the winning body. It currently has no shared completion-analytics or Navigation-return call; see the release follow-up in [level-2.md](level-2.md).
 - Navigation replaces the old playable Mainmenu as startup and return destination. It uses authored entrance interactions, not the legacy UI-platform landing behavior. Coming Soon has no destination.
 - Collection Book uses reusable UI assets and blocks Navigation movement while open. Navigation’s book, configured gameplay books and Shape Closet all read session-only `HelpBookUnlocks`. Successful possession reveals only the controlled form; an assigned starting/recovery host also counts. Star help is always available. Completion adds no form groups. Scene changes, death and level restart retain discoveries; refreshing/reopening the game or starting a new Editor Play session clears them. Old persistent completion saves are ignored. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 

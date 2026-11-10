@@ -1,5 +1,37 @@
 # Publish StarFormer to GitHub Pages
 
+## Beta 0.1.3 preparation — not published
+
+Prepared November 10, 2026. This release updates **only `/StarFormer/beta/`**, retaining the same URL. Root remains Beta 0.1.2; Alpha, Alpha Progress Check, playtest, analytics-test paths and `.nojekyll` must be preserved. The historical release records below remain unchanged.
+
+| Item | Prepared state |
+| --- | --- |
+| Gameplay baseline | Latest fetched `main`, `002368c`; replacement Level02 integrated through PR #23 |
+| Source checkout | `.utmp/Beta013Source`, branch `release/beta-0.1.3` |
+| Versions | Player and Analytics `beta-0.1.3`; production collection settings retained |
+| Build | Unity `6000.3.22f1`; new `Builds/WebGL-Beta-0.1.3` export |
+| Publishing checkout | `.utmp/Beta013Pages`, branch `publish/beta-0.1.3`, based on live `gh-pages` at `64b35c6` |
+| Scope | Replace `beta/` files only; source/docs and publishing commits stay separate |
+| Approval | No push/merge to live `gh-pages` until the owner explicitly approves publication |
+
+The initial main checkout was clean. The promoted Level02 metadata incorrectly duplicated Level02_legacy's GUID. The source branch restores the replacement GUID to match Build Settings, while retaining the legacy scene disabled. `BetaReleaseBuild.Build` validates enabled scene identities and required references, exports seven current Analytics maps and calls the existing map-validating WebGL build script. The StarFormerAlpha template, Gzip/fallback and endpoint are preserved. See [Beta-0.1.3.md](Beta-0.1.3.md) for build evidence, artifact hashes, review findings and remaining gameplay/backend acceptance.
+
+To reproduce in a separate checkout, choose a **new unused output directory** rather than overwriting a verified export:
+
+```powershell
+$releaseProject = (Resolve-Path '.utmp/Beta013Source').Path
+$releaseOutput = Join-Path (Get-Location) 'Builds/WebGL-Beta-0.1.3-recheck'
+if (Test-Path -LiteralPath $releaseOutput) { throw 'Choose an unused export directory.' }
+$releaseLog = Join-Path (Get-Location) 'Logs/Beta013-WebGL-recheck.log'
+& 'C:/Program Files/Unity/Hub/Editor/6000.3.22f1/Editor/Unity.exe' `
+  -batchmode -quit -projectPath $releaseProject -buildTarget WebGL `
+  -executeMethod BetaReleaseBuild.Build -customBuildPath $releaseOutput -logFile $releaseLog
+```
+
+Keep the active Editor project separate from this batch invocation. A failed export must not be copied to the publishing checkout. Serve the completed package over local HTTP and record actual browser coverage. Local smoke tests must not be described as full gameplay, mobile or production-data acceptance.
+
+Before publication, review `git diff --stat` and `git diff --name-only` against `origin/gh-pages`: every changed path must begin `beta/`. Compare the seven publishing files byte for byte with the validated export and confirm every tracked file outside `beta/` retains its baseline hash. Push only the preparation branch and open a draft PR targeting `gh-pages`; this does not authorize merging it. After the owner's final approval, merge normally, wait for Pages, then verify all hosted Beta file hashes and retained historical paths. Apps Script catalog deployment is a separate operation.
+
 ## Beta 0.1.2 release status
 
 **Beta 0.1.2 was published on November 6, 2026** to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/).
