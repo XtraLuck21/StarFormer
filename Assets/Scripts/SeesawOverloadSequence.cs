@@ -28,10 +28,10 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
     [SerializeField]
     private Vector3 entranceHintOffset =
-        new Vector3(0f, .8f, 0f);
+        new Vector3(0f, 1.5f, 0f);
 
     [SerializeField, Min(.1f)]
-    private float entranceHintFontSize = 6f;
+    private float entranceHintFontSize = 16f;
 
 
     private readonly HashSet<WindReleasedBall> loaded =
@@ -253,9 +253,9 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
     {
         entranceHint.text = "!";
         entranceHint.color = Color.yellow;
-        entranceHint.fontSize = entranceHintFontSize;
+        entranceHint.fontSize = Mathf.Max(16f, entranceHintFontSize);
         entranceHint.alignment = TextAlignmentOptions.Center;
-        entranceHint.rectTransform.sizeDelta = new Vector2(2f, 2f);
+        entranceHint.rectTransform.sizeDelta = new Vector2(3f, 3f);
     }
 
     private void OnEnable()
@@ -295,8 +295,10 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             entrance.transform.position.z
         );
 
-        entranceHint.transform.position =
-            hintPosition + entranceHintOffset;
+        Vector3 floatingOffset = entranceHintOffset;
+        float visibleAge = Mathf.Max(0f, entranceHintAge - entranceHintDelay);
+        floatingOffset.y = Mathf.Max(1.5f, floatingOffset.y) + Mathf.Sin(visibleAge * Mathf.PI) * .15f;
+        entranceHint.transform.position = hintPosition + floatingOffset;
 
         entranceHint.enabled =
             entranceHintAge >= entranceHintDelay;
