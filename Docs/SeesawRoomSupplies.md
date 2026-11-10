@@ -156,7 +156,7 @@ Smile Face 入口虚拟存档点与 `CP03 / Check_Mickey` 不显示保存文字�
 - `Smile Final Route` 管理四个末段 checkpoint：门后接触 Spider 的 `SMILE_SPIDER_BASE`、右耳攀爬口的 `SMILE_RIGHT_HEAD`、右侧 Bubble 入口的 `SMILE_FOREHEAD_ENTRY`、左手 Box 的 `SMILE_HAND_BOX`。均只有纯色星星标记，没有文字。前两个重生为 Spider；泡泡侧存档后在安全起点 `(53.4,27.25)` 以 Star 重生；实际取得终点 Box 后保存箱子检查点，之后死亡直接在箱子原始位置以完整大小的 Box 重生，继续缩小通道。所有存档都保留已完成牙齿、开门和笑脸状态，并防止被更早的存档覆盖。右耳存档记录实际攀爬位置，额头与箱子存档使用安全落点。
 - 右侧 `Square (6)` 收窄形成上行开口。额头入口原来的上方 BouncyBall 停用，换成可补充的 Bubble；Spider 经过后切入泡泡，破泡回到 Star。泡泡破裂沿用 E／Pop／Release 的现有操作。
 - 额头放置 3 个错峰跳跃的尖刺，约 3.1 秒一轮，先用约 0.45 秒变色预警，再起跳约 0.85 秒。陷阱之间保留落脚处，玩家可观察落地节奏后跳过。
-- Box 位于当前场景左手原有黑色落脚线，世界位置约 `(32.31,27.38)`。其左侧出口上方新增三颗朝下的静态尖刺，保留约 0.7–0.8 的净空：正常大小的 Box 会碰刺，按 J 缩小到一半后可从下方通过。然后沿原本左侧轮廓自然下落到屋顶按钮，全程保留操作与刚体物理；没有新增平台或搬运。`Square (7)`／`Square (9)`／`Square (11)` 仍只保留原画面，不用额外碰撞挡住路线。
+- Box 位于当前场景左手原有黑色落脚线，世界位置约 `(32.31,27.38)`。箱子路径的六颗刺已按用户要求恢复为小刺改动之前的原始位置、朝向和 0.75 大小；移除替换时新增的小刺副本及五颗额外小顶刺。随后沿原本左侧轮廓自然下落到屋顶按钮，全程保留操作与刚体物理；没有新增平台或搬运。`Square (7)`／`Square (9)`／`Square (11)` 仍只保留原画面，不用额外碰撞挡住路线。
 - 屋顶按钮位于约 `(25.1,11.58)`，仅实际的终点 Box 落地压住才能触发。按钮下压、变绿后，约 `(21.8,11.47)` 的旗子用约 1.25 秒升起；升旗状态在死亡后保留，清除存档重开时重置。
 - 按钮和旗子是两个步骤：只有受控身体实际碰到已经升起的旗子，才显示 `Congratulations,` / `you are now a super star`，并清空输入、固定获胜身体。尚未升起的旗子不能提前触发胜利。
 
@@ -199,5 +199,15 @@ Smile Face 的电梯落点、门后 Spider、右耳攀爬口、额头入口和�
 较近脑袋构图已通过隔离 Unity 验证：左右关键落点与 Bubble 同时可见，退出恢复跟随，真实死亡重生和自动回落返回后构图一致；固定牙齿房间和三牙齿到位后的完整笑脸展示仍通过。日志：`Logs/SmileForeheadFramingChecks.log`；截图：`Logs/SmileForeheadCloserFraming.png`、`Logs/SmileForeheadRespawnFraming.png`。
 
 箱子缩小出口版已通过隔离 Unity 实测：实际接触 Box 保存新检查点、纯蓝星星变纯黄；完整大小的 Box 实际碰刺死亡，重生为安全落点的 Box，原检查点不回退且保持跟随镜头。实际缩小到一半后通过三颗顶刺，沿原轮廓下落压按钮；升旗后再死亡仍保留按钮／旗子进度，以 Box 重生、再次缩小走完全程并真实触旗通关。五处检查点均无黑色描边。日志：`Logs/SmileBoxShrinkChecks.log`；截图：`Logs/SmileBoxShrinkUnsaved.png`、`Logs/SmileBoxShrunkClearance.png`。
+
+Level 2 的 `PlayerPossessionController` 单独启用 `quickRespawn`，统一将各种死亡来源（包括覆盖延迟的追逐／移动刺）设为约 0.18 秒，中央仅显示 `Respawning...` 后立即重载并恢复检查点；其余场景的死亡时序保持原配置。该提示独立于 Smile 内的存档文字隐藏设置。删除笑脸右侧原 `bubbleSpawner` 及其组件，保留水路入口 Bubble 和脑袋入口可补充 Bubble。
+
+小刺与快速重生版隔离 Unity 实测通过：普通大小和 0.6 大小 Box 分别实际碰刺死亡，死亡提示正确且计时约 0.18 秒，均恢复至 Box 检查点；0.5 最小 Box 能走完整个小刺路径、自然落下压按钮、死亡后保留旗子进度并再次到旗子通关。启动时确认旧 BubbleSpawner 不存在，入口所需泡泡保留。日志：`Logs/Level02QuickSmallSpikeChecks.log`；近景：`Logs/SmileBoxMinimumClearance.png`。
+
+箱子尖刺外观恢复：六颗原刺已还原其原始变换，新增的 17 颗小刺删除；快速重生、Box 检查点和右侧旧泡泡生成器移除保持。已核对场景局部引用和六颗尖刺的原始大小／位置，未重跑 Play Mode；上述最小尺寸通道实测属于已撤销的小刺版本。
+
+跷跷板新增蓝绿齿轮的分步提示：进入房间后先显示 `As Fan, blow the ball RIGHT. / Lift the blue key into its lock.`；蓝齿轮实际启动后切为 `As Fan, blow the ball LEFT. / Lower the green key into its lock.`。两色完成即隐藏，不叠加显示，死亡或离开房间也隐藏。黄色裂缝原感叹号替换为 `Use Spider on the crack. / Break through the floor.`，裂缝出现后立即显示 8 秒，暂停不消耗计时，破开入口时提前隐藏。
+
+隔离 Unity 已实测真实风吹球完成蓝绿机关后提示切换／清理，黄色裂缝提示内容与 8 秒边界、暂停／恢复正确，后续地下通道、四次撞击、地震电梯及入口死亡恢复回归通过。日志：`Logs/SeesawContextHintChecks.log`；截图：`Logs/SeesawBlueGearHint.png`、`Logs/SeesawGreenGearHint.png`、`Logs/SeesawYellowCrackHint.png`。
 
 后续任何更改，均先向用户说明具体细节，获得确认后再执行。

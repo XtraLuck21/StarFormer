@@ -24,7 +24,9 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
     [Header("Entrance Reminder")]
     [SerializeField, Min(0f)]
-    private float entranceHintDelay = 20f;
+    private float entranceHintDelay = 0f;
+    [SerializeField, Min(.1f)] private float entranceHintSeconds = 8f;
+    [SerializeField, TextArea] private string entranceHintText = "Use Spider on the crack.\nBreak through the floor.";
 
     [SerializeField]
     private Vector3 entranceHintOffset =
@@ -226,7 +228,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         hintObject.transform.SetParent(transform, false);
 
         entranceHint = hintObject.AddComponent<TextMeshPro>();
-        entranceHint.text = "!";
+        entranceHint.text = entranceHintText;
         entranceHint.fontSize = entranceHintFontSize;
         entranceHint.fontStyle = FontStyles.Bold;
         entranceHint.alignment = TextAlignmentOptions.Center;
@@ -237,7 +239,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         entranceHint.raycastTarget = false;
 
         entranceHint.rectTransform.sizeDelta =
-            new Vector2(2f, 2f);
+            new Vector2(12f, 1.8f);
 
         MeshRenderer hintRenderer =
             hintObject.GetComponent<MeshRenderer>();
@@ -285,7 +287,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             hintPosition + entranceHintOffset;
 
         entranceHint.enabled =
-            entranceHintAge >= entranceHintDelay;
+            entranceHintAge >= entranceHintDelay && entranceHintAge < entranceHintDelay + entranceHintSeconds;
     }
 
     private void HideEntranceHint()

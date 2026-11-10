@@ -30,6 +30,7 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
     private GameObject root;
     private RectTransform canvasRect;
     private TMP_Text toast;
+    private TMP_Text respawnNotice;
     private float savedUntil;
     private Camera worldCamera;
     public bool TextSuppressed { get; private set; }
@@ -62,6 +63,10 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
 
         toast = CreateLabel("Saved notification", root.transform, 20f, -45f, 360f);
         toast.color = new Color(0.35f, 1f, 0.7f);
+        respawnNotice = CreateLabel("Respawning notice", root.transform, 32f, 0f, 380f);
+        respawnNotice.rectTransform.anchorMin = respawnNotice.rectTransform.anchorMax = Vector2.one * .5f;
+        respawnNotice.text = "Respawning...";
+        respawnNotice.enabled = false;
         bubbleIdleHint = CreateLabel("Bubble pop reminder", root.transform, 18f, 0f, 260f);
         bubbleIdleHint.rectTransform.anchorMin = bubbleIdleHint.rectTransform.anchorMax = Vector2.one * 0.5f;
         bubbleIdleHint.text = "Press E to pop bubble";
@@ -71,6 +76,11 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
     public void ShowSaved()
     {
         savedUntil = Time.unscaledTime + 2.5f;
+    }
+
+    public void ShowRespawning()
+    {
+        respawnNotice.enabled = true;
     }
 
     public void RegisterMarker(Transform target, string id, bool isBall = false)

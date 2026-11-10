@@ -21,6 +21,8 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float maximumHeight = 8f;
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
+    [SerializeField] private bool quickRespawn;
+    [SerializeField, Min(.05f)] private float quickRespawnSeconds = .18f;
 
     private RestartMenuUI restartMenu;
     private CheckpointFeedbackUI checkpointFeedback;
@@ -848,6 +850,11 @@ public class PlayerPossessionController : MonoBehaviour
         float activeDeathDelay = restartDelayOverride >= 0f
             ? restartDelayOverride
             : deathDelay;
+        if (quickRespawn)
+        {
+            activeDeathDelay = quickRespawnSeconds;
+            CheckpointFeedback.ShowRespawning();
+        }
         deathRestartTime = Time.unscaledTime + activeDeathDelay;
         Time.timeScale = 0f;
     }

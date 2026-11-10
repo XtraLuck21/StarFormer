@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 /// <summary>Fixed room view, player-only gate and the blue/green completion reveal.</summary>
 [DefaultExecutionOrder(-50)]
@@ -24,6 +25,10 @@ public sealed class SeesawRoomStage : MonoBehaviour
     [SerializeField] private SeesawTilt2D seesaw;
     [SerializeField] private Rect fullView = new Rect(10.3f, -24.8f, 36.7f, 12.3f);
     [SerializeField, Min(.1f)] private float revealDuration = 2f;
+    [Header("Blue and green gear hints")]
+    [SerializeField, TextArea] private string blueGearHint = "As Fan, blow the ball RIGHT.\nLift the blue key into its lock.";
+    [SerializeField, TextArea] private string greenGearHint = "As Fan, blow the ball LEFT.\nLower the green key into its lock.";
+    private TextMeshPro blueHint, greenHint;
 
     public bool IsUnlocked { get; private set; }
     public float RevealProgress { get; private set; }
@@ -64,6 +69,36 @@ public sealed class SeesawRoomStage : MonoBehaviour
         ConfigureGate(leftGate);
         gate.gameObject.AddComponent<SeesawGateFeedback>().Initialize(this, player, gateVisual.GetComponent<SpriteRenderer>());
         leftGate.gameObject.AddComponent<SeesawGateFeedback>().Initialize(this, player, leftGateVisual.GetComponent<SpriteRenderer>());
+        blueHint = BuildGearHint("Blue Gear Hint", blueGearHint, new Color(.45f, .78f, 1f));
+        greenHint = BuildGearHint("Green Gear Hint", greenGearHint, new Color(.55f, 1f, .65f));
+    }
+
+    private TextMeshPro BuildGearHint(string name, string message, Color color)
+    {
+        var label = new GameObject(name);
+        label.transform.SetParent(transform, false);
+        label.transform.position = new Vector3(fullView.center.x, fullView.yMax - 1.25f, 0f);
+        var text = label.AddComponent<TextMeshPro>();
+        text.text = message;
+        text.fontSize = 4f;
+        text.alignment = TextAlignmentOptions.Center;
+        text.color = color;
+        text.outlineColor = new Color32(15, 20, 30, 255);
+        text.outlineWidth = .18f;
+        text.rectTransform.sizeDelta = new Vector2(20f, 2f);
+        text.raycastTarget = false;
+        text.GetComponent<MeshRenderer>().sortingOrder = 30;
+        text.enabled = false;
+        return text;
+    }
+
+    private void UpdateGearHints()
+    {
+        bool active = supplies.IsRoomActive && !IsUnlocked && !player.IsDead && !player.IsRestarting &&
+            player.CurrentBody != null && supplies.IsInsideRoom(player.CurrentBody.transform.position);
+        blueHint.enabled = active && !blueGear.IsRunning;
+        // Show one action at a time; either order of actual gear completion is valid.
+        greenHint.enabled = active && blueGear.IsRunning && !greenGear.IsRunning;
     }
 
     private void ConfigureGate(BoxCollider2D barrier)
@@ -89,6 +124,7 @@ public sealed class SeesawRoomStage : MonoBehaviour
 
     private void Update()
     {
+        UpdateGearHints();
         if (!IsUnlocked && blueGear.IsRunning && greenGear.IsRunning)
         {
             // Keep the death/restart controller running if the last button and a fall
@@ -197,7 +233,12 @@ public sealed class SeesawRoomStage : MonoBehaviour
         frozenBlower = null;
     }
 
-    private void OnDisable() => RestoreControls();
+    private void OnDisable()
+    {
+        RestoreControls();
+        if (blueHint != null) blueHint.enabled = false;
+        if (greenHint != null) greenHint.enabled = false;
+    }
 
     public void RestoreUnlocked()
     {
