@@ -99,7 +99,7 @@ See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare 
 | [SmileFaceFinalRoute.cs](../Assets/Scripts/SmileFaceFinalRoute.cs), [SmileRouteCheckpoint.cs](../Assets/Scripts/SmileRouteCheckpoint.cs) | Ordered Spider/Star/Box checkpoints, pure blue/yellow markers and forehead fall-return protection |
 | [SmileBoxPressureButton.cs](../Assets/Scripts/SmileBoxPressureButton.cs), [SmileGoalFlag.cs](../Assets/Scripts/SmileGoalFlag.cs) | Assigned final Box opens the flag stage; actual flag contact displays the custom victory overlay |
 | [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Climb real solid surfaces; ignore checkpoint/water trigger volumes |
-| [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Configured six-page Level02 Collection Book alongside shared Home; legacy empty disabled component produces an initialization warning in the local WebGL test |
+| [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Configured six-page Level02 Collection Book alongside shared Home; obsolete empty Help component removed |
 
 The promoted scene replaces the old layout, retained as Level02_legacy and excluded from builds. The obsolete right-side BubbleSpawner and CP03 are gone. The final Smile flag does not yet invoke shared completion analytics or a Navigation-return control. See [level-2.md](level-2.md) for mechanics, recovery and remaining acceptance.
 
