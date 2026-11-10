@@ -1,6 +1,6 @@
 # Level 2 Progress
 
-Beta 0.1.3 is being prepared from the Level 2 replacement integrated into `main` by PR #23 (`bf8e5e1`), followed by the hint changes through `002368c`. It is not published. The live root and `/beta/` still serve Beta 0.1.2; historical release evidence remains in [Beta-0.1.2.md](Beta-0.1.2.md).
+Beta 0.1.3 was published on November 10, 2026 to `/beta/`, including the promoted Level02 from PR #23, subsequent hints and Help cleanup. Its seven hosted runtime hashes match the verified export. The root remains Beta 0.1.2; historical release evidence remains in [Beta-0.1.2.md](Beta-0.1.2.md).
 
 Last updated: 2026-11-10.
 
@@ -155,4 +155,4 @@ Historical Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105
 3. Repeat opening chase -> dark passage -> seesaw -> lift -> face on desktop; test interruptions, full restart and Navigation re-entry. Inspect retained legacy CP01/CP02 callbacks separately rather than treating their presence as current-route coverage.
 4. Verify Home/Help/R interactions and all form controls on real phones, including multi-touch, focus loss, portrait/fullscreen transitions and held-input release. The obsolete empty Help component has been removed. Keep real-device input, pause ownership and all-form page coverage separate from the focused desktop book check.
 5. Keep the seven freshly exported maps and historical entries; export again after subsequent gameplay scene changes. The game build does not deploy the Apps Script backend or update its image store. Verify current `map_version` bindings and production `beta-0.1.3` rows separately.
-6. Publish only after approval, using the isolated publishing branch targeting `gh-pages` and updating `beta/` only. Preserve root Beta 0.1.2 and historical Alpha paths. See [the new release record](Beta-0.1.3.md) for the exact build, hashes, commits and acceptance status.
+6. Publication is complete after owner approval: `beta/` serves 0.1.3, with root Beta 0.1.2 and historical Alpha paths preserved. Keep future releases scoped and retain their verification evidence. See [the new release record](Beta-0.1.3.md) for the exact build, hashes, commits and acceptance status.

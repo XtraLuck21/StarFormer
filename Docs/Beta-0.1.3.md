@@ -1,6 +1,6 @@
-# Beta 0.1.3 release preparation
+# Beta 0.1.3 release record
 
-**Prepared November 10, 2026; not published.** The proposed update replaces only the [Beta website](https://xtraluck21.github.io/StarFormer/beta/). The root website remains Beta 0.1.2 and historical Alpha paths are preserved. [Beta-0.1.2.md](Beta-0.1.2.md) is the unchanged historical release record.
+**Beta 0.1.3 was published on November 10, 2026** to the [Beta website](https://xtraluck21.github.io/StarFormer/beta/). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42806924119) succeeded. All seven hosted runtime files returned HTTP 200 and matched the cleanup export byte for byte by SHA-256. The root remains Beta 0.1.2; Alpha and other historical paths are preserved. Historical evidence remains in [Beta-0.1.2.md](Beta-0.1.2.md).
 
 ## Release configuration
 
@@ -12,15 +12,15 @@
 | Source branch | `release/beta-0.1.3`, isolated at `.utmp/Beta013Source` |
 | Export | `Builds/WebGL-Beta-0.1.3-help-cleanup`; replaces the prepared artifact, preserving the initial export |
 | Map inputs commit | `538cf4c` updates Level02 after cleanup; original seven-map export `96c1617`; historical versions retained |
-| Publishing commit | `c5e2b64` refreshes the artifact after `8c40e40`; neither is merged to live `gh-pages` |
-| Review | Draft [source/documentation PR #24](https://github.com/XtraLuck21/StarFormer/pull/24) to `main`; draft [publishing PR #25](https://github.com/XtraLuck21/StarFormer/pull/25) to `gh-pages` |
-| Publishing branch | `publish/beta-0.1.3`, isolated at `.utmp/Beta013Pages`, based on `origin/gh-pages` at `64b35c6` |
+| Publishing commits | PR #25 merge `675c690`; exact-byte preservation follow-up `5603d2f` on live `gh-pages` |
+| Review | Merged [source/documentation PR #24](https://github.com/XtraLuck21/StarFormer/pull/24) to `main`; merged [publishing PR #25](https://github.com/XtraLuck21/StarFormer/pull/25) to `gh-pages` |
+| Publishing branch | `publish/beta-0.1.3`, isolated at `.utmp/Beta013Pages`, originally based on `origin/gh-pages` at `64b35c6` |
 | Destination | `gh-pages/beta/` only; no root or Alpha replacement |
 | Startup / scenes | Navigation, IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan, Level02 |
 | Unity / template | `6000.3.22f1`, WebGL Support installed; `PROJECT:StarFormerAlpha` |
 | Runtime settings | Gzip, Decompression Fallback, hashed payload names, Web threads disabled, 1920 × 1080 default canvas |
 | Collection | Existing production endpoint, collection enabled and seven tracked gameplay scenes; no backend deployment |
-| Publication | Requires the owner's final approval before merging/pushing to live `gh-pages` |
+| Publication | Owner approved November 10; live `5603d2f`; deployment run `42806924119` succeeded |
 
 The build runs from the isolated worktree through `BetaReleaseBuild.Build`, which first checks scene identities/references, exports the seven maps and invokes the existing `WebGLBuild.Build` hash guard. The initial export was built from `a2f4a73` and remains preserved at `Builds/WebGL-Beta-0.1.3`. The replacement export starts at `c8f05c1`, which removes the obsolete empty Level02 Help component; refreshed map files are generated inputs during that invocation. Documentation commits made afterwards do not change the exported runtime. The artifact hashes below identify the actual package; it has no embedded Git revision stamp.
 
@@ -73,15 +73,16 @@ The initial export confirmed an empty-Pages warning from an obsolete disabled He
 | Portrait presentation | Android/touch emulation at 390 × 844: rotation hint visible and 384 × 216 render canvas retains 16:9; not a physical-phone gameplay test |
 | Runtime diagnostics | No JavaScript/runtime errors in these smoke scenarios. the Level02 Help empty-Pages warning is absent after cleanup; initial loads still show Unity filesystem deprecation/software-GPU performance warnings |
 | Analytics payloads | Locally intercepted session/level/attempt events use `beta-0.1.3`; Level01 map is `map-cc32b88d66f8-003e13417d1a`, Level02 map is `map-9bdd1ef5f7db-ac006d87430a` |
-| Live deployment | Not performed. Pages is configured for legacy branch publication from `gh-pages`, `/`; live branch remains `64b35c6` during preparation |
+| Hosted browser | Chromium 151 loads the published `/beta/`, enters Level02, switches fullscreen and opens/closes book/Home; no Help warning or runtime errors in this smoke scenario; analytics intercepted |
+| Live deployment | Successful run `42806924119`, commit `5603d2f`; seven hosted Beta file hashes match the export |
 
 The browser used a local analytics response stub and closed test pages after each scenario. Production endpoint/configuration in the package is unchanged; production delivery was not tested. No complete Level02 playthrough or real-device acceptance is claimed.
 
-Cleanup-export evidence: `Logs/Beta013-HelpCleanup-WebGL.log`, `Logs/Beta013HelpCleanup-ArtifactManifest.json`, `Logs/Beta013HelpCleanup-MapVerification.json`, `Logs/Beta013HelpCleanup-PagesPreserved.json`, `Logs/Beta013HelpCleanup-Browser-*.json` and screenshots. Initial-export evidence remains under the original `Beta013-` names. The isolated source checkout also contains `Logs/BetaReleaseSceneVerification.json`. These local logs are not runtime publishing files.
+Cleanup-export evidence: `Logs/Beta013-HelpCleanup-WebGL.log`, `Logs/Beta013HelpCleanup-ArtifactManifest.json`, `Logs/Beta013HelpCleanup-MapVerification.json`, `Logs/Beta013HelpCleanup-PagesPreserved.json`, `Logs/Beta013HelpCleanup-Browser-*.json` and screenshots. Initial-export evidence remains under the original `Beta013-` names. The isolated source checkout also contains `Logs/BetaReleaseSceneVerification.json`. Hosted evidence is in `Logs/Beta013Hosted-Browser-level2menus.json`, screenshots, `Logs/Beta013-HostedVerification.json`, `Logs/Beta013-PagesDeployment.json` and `Logs/Beta013-PagesGitBlobPreservation.json`. These local logs are not runtime publishing files.
 
 ## Artifact SHA-256
 
-These files identify the completed export and its byte-identical `beta/` copy. They have not yet been checked on the public Beta URL.
+These files identify the completed export and live `beta/` package. All seven returned HTTP 200 and matched these SHA-256 hashes after deployment.
 
 | File | Bytes | SHA-256 |
 | --- | ---: | --- |
@@ -93,12 +94,12 @@ These files identify the completed export and its byte-identical `beta/` copy. T
 | `TemplateData/alpha.js` | 5,775 | `5f0caf2e6846ae7c7c5184ea9110f090316d4359859467eb6d8db244d1784762` |
 | `index.html` | 2,276 | `21c82e0c9a6da92e48d345654dedbd992a01245f0816932196c1150b21564347` |
 
-## Publication steps
+## Publication and follow-up
 
-1. Review source/documentation PR #24 and publishing PR #25. Source preparation commits are `0307f3d`, `a2f4a73`, `96c1617` documentation commit `9397730`, cleanup `c8f05c1` and map refresh `538cf4c`; current publishing commit is `c5e2b64`. Confirm the identified gameplay limitations and backend acceptance have an owner decision.
-2. Merge the source pull request into `main` after review. This does not publish the site.
-3. Obtain the owner's explicit final publication approval. Only then merge the publishing pull request into `gh-pages`; do not force-push. Its diff must contain only `beta/`.
-4. Wait for GitHub Pages to finish, request all seven `/StarFormer/beta/` files and compare their SHA-256 hashes with this export. Confirm root, Alpha and historical paths retain their previous bytes.
-5. Run the hosted gameplay/device and production-analytics acceptance above. Record the deployment URL/run and actual outcomes before changing this record to published.
+1. Owner approved publication. Source/documentation PR #24 merged into `main` as `db8cfac`, including the README Play link to `/beta/`.
+2. Publishing PR #25 merged normally into `gh-pages` as `675c690`; no force-push or history rewrite. Follow-up `5603d2f` adds `beta/.gitattributes` and preserves the exact exported text bytes after Windows Git normalization was detected.
+3. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42806924119) (run `42806924119`) completed successfully for `5603d2f`.
+4. All seven Beta runtime URLs returned HTTP 200 and matched the export. Five historical launch-page hashes match their pre-release Git blobs. All 66 tracked files outside `beta/` retain their original Git blob entries. Keep `beta/.gitattributes` during future copies and validate staged/committed blobs as well as worktree files.
+5. Full hosted gameplay, real-device controls and production analytics/backend acceptance remain follow-ups. Publication does not deploy Apps Script or prove event delivery.
 
 See [publish_instructions.md](publish_instructions.md) for the retained deployment history and working procedure.

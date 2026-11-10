@@ -2,13 +2,13 @@
 
 StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce and float as a Bouncy Ball, then learn Spider and Fan abilities.
 
-## Beta 0.1.3
+## Published Beta 0.1.3
 
 [Play StarFormer - latest Beta](https://xtraluck21.github.io/StarFormer/beta/)
 
 Beta 0.1.3 includes the promoted Level02: the spike-wall chase, dark descent, four-gear seesaw, rising Star handoff, Smiley Face teeth/head route and final Box challenge. It also includes refreshed maps and the obsolete empty Help-component cleanup. Player and Analytics versions are both `beta-0.1.3`.
 
-Publication to `/beta/` is approved and in progress. The main Play link above points to this release destination; the root website remains historical Beta 0.1.2 and Alpha paths are unchanged. See the [Beta 0.1.3 release record](Docs/Beta-0.1.3.md) for artifact hashes, local checks and remaining gameplay/device/backend acceptance.
+Published November 10, 2026. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42806924119) succeeded, and all seven hosted files match the verified export by SHA-256. The main Play link above opens this Beta 0.1.3 build; the root website remains historical Beta 0.1.2 and Alpha paths are unchanged. See the [Beta 0.1.3 release record](Docs/Beta-0.1.3.md) for artifact hashes, local checks and remaining gameplay/device/backend acceptance.
 
 ## Historical Beta 0.1.2
 

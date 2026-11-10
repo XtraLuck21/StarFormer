@@ -1,6 +1,6 @@
 # Gameplay Specification
 
-Last updated: 2026-11-10. Beta 0.1.2 is published at both root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and all 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features and remaining gameplay/data acceptance; package verification does not establish gameplay correctness. The promoted Level02 is documented for unpublished [Beta 0.1.3](Beta-0.1.3.md).
+Last updated: 2026-11-10. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). Package verification does not establish full gameplay correctness.
 
 ## 1. Scenes and progression
 
