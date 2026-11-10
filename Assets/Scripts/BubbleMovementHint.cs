@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
@@ -7,14 +8,41 @@ using UnityEngine.InputSystem;
 public class BubbleMovementHint : MonoBehaviour
 {
     // Append modes to preserve existing scene values: Air=0, Water=1, ExitBubble=2.
-    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction, SpiderIntroduction, SpiderBlockedExit, SpiderControls }
+    public enum HintMode { Air, Water, ExitBubble, StarMove, StarJump, ContinueRight, BubbleIntroduction, SpiderIntroduction, SpiderBlockedExit, SpiderControls, SpiderSpikeWarning, SpiderMoveRight, SpiderUpReminder }
 
     [SerializeField] private HintMode mode;
+    [SerializeField] private IntroSpiderCake spikeCake;
+    private TextMeshPro spikeWarningText;
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private PossessableBody targetBody;
     [SerializeField] private bool previewInEditor = true;
     [Tooltip("Only used by Continue Right: show the arrow after this flag opens its gate.")]
     [SerializeField] private IntroFlagGate flagGate;
+
+    [Header("Spider Movement Lesson")]
+    [SerializeField] private Vector2 spiderControlsOffset = new Vector2(0f, 1.5f);
+    [SerializeField, Min(0.01f)] private float directionPracticeSeconds = 0.5f;
+    [SerializeField] private Color practicedColor = new Color(0.3f, 0.9f, 0.4f, 1f);
+    [SerializeField, Min(0f)] private float bottomReminderSeconds = 7f;
+
+    private float leftPracticeSeconds;
+    private float rightPracticeSeconds;
+    private float controlsCompleteAge;
+    private float bottomSeconds;
+    private Transform leftControlVisuals;
+    private Transform rightControlVisuals;
+    private Transform controlVisualParent;
+    private readonly List<LetterFillStroke> leftLetterFill = new List<LetterFillStroke>();
+    private readonly List<LetterFillStroke> rightLetterFill = new List<LetterFillStroke>();
+    private List<LetterFillStroke> capturingLetter;
+    private struct LetterFillStroke
+    {
+        public Transform overlay;
+        public Vector2 start, end;
+    }
+    [SerializeField] private BubbleMovementHint spiderUpReminder;
+    public bool SpiderControlsCompleted => leftPracticeSeconds >= directionPracticeSeconds &&
+        rightPracticeSeconds >= directionPracticeSeconds && controlsCompleteAge >= 0.35f;
 
     [Header("Spider Q Reminder")]
     [SerializeField, Min(0.1f)] private float blockedKeyHintSeconds = 3f;
@@ -28,6 +56,17 @@ public class BubbleMovementHint : MonoBehaviour
     [SerializeField, Min(0.01f)] private float spiderIntroductionFadeInSeconds = 1f;
     [SerializeField, Min(0f)] private float spiderSubtitleHoldSeconds = 4f;
     [SerializeField, Min(0.01f)] private float spiderSubtitleFadeSeconds = 0.75f;
+
+    [Header("IntroSpider Hint Sequence")]
+    [SerializeField] private bool useSpiderHintSequence;
+    [SerializeField] private Transform spiderClimbSurface;
+    [SerializeField] private Vector2[] spiderWallArrowPositions;
+    [SerializeField] private TMP_Text[] spiderWallArrowTexts;
+    [SerializeField, Min(0f)] private float spiderArrowSeconds = 8f;
+    private readonly List<SpriteRenderer[]> wallArrows = new List<SpriteRenderer[]>();
+    private readonly Dictionary<TMP_Text, float> wallArrowTextAlphas = new Dictionary<TMP_Text, float>();
+    private bool hasClimbedObstacle;
+    private float climbMessageAge;
 
     [Header("Activation Area")]
     [SerializeField] private Vector2 activationAreaSize = new Vector2(8f, 5f);
@@ -85,15 +124,38 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void LateUpdate()
     {
+        // ExecuteAlways can build previews before the scene enters play mode.
+        // Capture the authored arrows when actually playing, even without a rebuild.
+        InitializeWallArrowTexts();
         if (visuals == null) return;
         bool visible = !Application.IsPlaying(gameObject) && previewInEditor;
         if (Application.IsPlaying(gameObject))
         {
-            if (mode == HintMode.SpiderControls)
+            if (mode == HintMode.SpiderUpReminder)
+            {
+                PossessableBody body = playerController != null ? playerController.CurrentBody : null;
+                bool inBottom = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+                    !playerController.IsDead && IsInsideArea(body);
+                bottomSeconds = inBottom ? bottomSeconds + Time.deltaTime : 0f;
+                visible = inBottom && bottomSeconds > bottomReminderSeconds;
+            }
+            else if (mode == HintMode.SpiderSpikeWarning || mode == HintMode.SpiderMoveRight)
+            {
+                PossessableBody body = playerController != null ? playerController.CurrentBody : null;
+                visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+                    !playerController.IsDead && IsInsideArea(body);
+            }
+            else if (mode == HintMode.SpiderControls)
             {
                 PossessableBody body = playerController != null ? playerController.CurrentBody : null;
                 visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
                     !playerController.IsDead;
+                if (visible)
+                {
+                    UpdateSpiderControls();
+                    visuals.transform.position = body.transform.position + (Vector3)spiderControlsOffset;
+                    visible = !SpiderControlsCompleted;
+                }
             }
             else if (mode == HintMode.ContinueRight)
             {
@@ -107,8 +169,13 @@ public class BubbleMovementHint : MonoBehaviour
                     (mode != HintMode.SpiderBlockedExit || blockedKeyHintRemaining > 0f);
                 if (mode == HintMode.SpiderIntroduction)
                 {
-                    visible = ShouldShowSpiderIntroduction(body);
-                    UpdateSpiderSubtitle(body, visible);
+                    if (useSpiderHintSequence)
+                        visible = UpdateSpiderHintSequence(body);
+                    else
+                    {
+                        visible = ShouldShowSpiderIntroduction(body);
+                        UpdateSpiderSubtitle(body, visible);
+                    }
                 }
                 if (visible && mode == HintMode.SpiderBlockedExit)
                 {
@@ -131,7 +198,72 @@ public class BubbleMovementHint : MonoBehaviour
                     (starMode || body.IsInWater == (mode == HintMode.Water)) && IsInsideArea(body);
             }
         }
+        if (spikeWarningText != null)
+            spikeWarningText.text = spikeCake != null && spikeCake.IsRevealed ? "spike?" : "cake or spike?";
         if (visuals.activeSelf != visible) visuals.SetActive(visible);
+    }
+
+    private void UpdateSpiderControls()
+    {
+        if (Time.timeScale > 0f)
+        {
+            float input = playerController.HorizontalInput;
+            if (input < -0.1f) leftPracticeSeconds += Time.deltaTime;
+            if (input > 0.1f) rightPracticeSeconds += Time.deltaTime;
+            if (leftPracticeSeconds >= directionPracticeSeconds && rightPracticeSeconds >= directionPracticeSeconds)
+                controlsCompleteAge += Time.deltaTime;
+        }
+        SetControlColor(leftControlVisuals, leftPracticeSeconds >= directionPracticeSeconds);
+        SetControlColor(rightControlVisuals, rightPracticeSeconds >= directionPracticeSeconds);
+        UpdateLetterFill(leftLetterFill, leftPracticeSeconds, -0.5f, true);
+        UpdateLetterFill(rightLetterFill, rightPracticeSeconds, 0.5f, false);
+    }
+
+    private void UpdateLetterFill(List<LetterFillStroke> strokes, float seconds, float centerX, bool rightToLeft)
+    {
+        float progress = Mathf.Clamp01(seconds / Mathf.Max(0.01f, directionPracticeSeconds));
+        foreach (LetterFillStroke stroke in strokes)
+        {
+            Vector2 start = stroke.start, end = stroke.end;
+            // A fills toward the left; D fills toward the right.
+            float minX = rightToLeft ? centerX + 0.13f - 0.26f * progress : centerX - 0.13f;
+            float maxX = rightToLeft ? centerX + 0.13f : centerX - 0.13f + 0.26f * progress;
+            float deltaX = end.x - start.x;
+            float from = 0f, to = 1f;
+            bool visible = progress > 0f;
+            if (Mathf.Abs(deltaX) < 0.00001f)
+            {
+                visible &= start.x >= minX - 0.00001f && start.x <= maxX + 0.00001f;
+            }
+            else
+            {
+                float first = (minX - start.x) / deltaX;
+                float second = (maxX - start.x) / deltaX;
+                from = Mathf.Max(0f, Mathf.Min(first, second));
+                to = Mathf.Min(1f, Mathf.Max(first, second));
+                visible &= to > from;
+            }
+            stroke.overlay.gameObject.SetActive(visible);
+            if (!visible) continue;
+            Vector2 originalStart = start;
+            start = Vector2.Lerp(originalStart, end, from);
+            end = Vector2.Lerp(originalStart, end, to);
+            Vector2 delta = end - start;
+            stroke.overlay.localPosition = (start + end) * 0.5f;
+            stroke.overlay.localScale = new Vector3(delta.magnitude, 0.03f, 1f);
+            stroke.overlay.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+        }
+    }
+
+    private void SetControlColor(Transform root, bool practiced)
+    {
+        if (root == null) return;
+        foreach (SpriteRenderer renderer in root.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            // Preserve the dark keycap fill; color the letter, outline and arrow.
+            if (renderer.sortingOrder == sortingOrder + 1)
+                renderer.color = practiced ? practicedColor : inkColor;
+        }
     }
 
     private bool ShouldShowSpiderIntroduction(PossessableBody body)
@@ -197,9 +329,144 @@ public class BubbleMovementHint : MonoBehaviour
 
         if (introductionSubtitle != null)
         {
+            bool showUpReminder = spiderUpReminder != null &&
+                spiderUpReminder.bottomSeconds > spiderUpReminder.bottomReminderSeconds;
+            introductionSubtitle.text = showUpReminder ? "only way is up" : spiderSubtitle;
+            if (showUpReminder)
+            {
+                introductionSubtitle.alpha = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(
+                    (spiderUpReminder.bottomSeconds - spiderUpReminder.bottomReminderSeconds) /
+                    Mathf.Max(0.01f, spiderIntroductionFadeInSeconds)));
+                return;
+            }
             introductionSubtitle.alpha = fadeIn * (1f - Mathf.Clamp01(
                 (introductionSubtitleAge - fadeInDuration - spiderSubtitleHoldSeconds) /
                 Mathf.Max(0.01f, spiderSubtitleFadeSeconds)));
+        }
+    }
+
+    private bool UpdateSpiderHintSequence(PossessableBody body)
+    {
+        // Replace the whole center prompt during the frozen spike-death/restart delay.
+        if (playerController != null && playerController.IsDead &&
+            playerController.LastDeathCause == AnalyticsDeathCause.Spike)
+        {
+            if (introductionTitle != null)
+            {
+                introductionTitle.text = spikeCake != null && spikeCake.ShowFirstContactMessage
+                    ? "cake is a lie" : "you are dead";
+                introductionTitle.alpha = 1f;
+            }
+            if (introductionSubtitle != null) introductionSubtitle.alpha = 0f;
+            SetWallArrowAlpha(0f);
+            return true;
+        }
+
+        bool visible = body != null && body.Form == BodyForm.Spider && body.isActiveAndEnabled &&
+            playerController != null && !playerController.IsDead;
+        if (!visible)
+        {
+            introductionBody = null;
+            introductionSubtitleAge = 0f;
+            SetWallArrowAlpha(0f);
+            return false;
+        }
+
+        if (introductionBody != body)
+        {
+            introductionBody = body;
+            introductionSubtitleAge = 0f;
+        }
+        introductionSubtitleAge += Time.deltaTime;
+        if (!hasClimbedObstacle && spiderClimbSurface != null &&
+            body.TryGetComponent(out HexagonSurfaceMovement movement) && movement.IsAttached &&
+            movement.AttachedSurface != null &&
+            (movement.AttachedSurface.transform == spiderClimbSurface ||
+             movement.AttachedSurface.transform.IsChildOf(spiderClimbSurface)) &&
+            Mathf.Abs(playerController.HorizontalInput) > 0.1f &&
+            body.TryGetComponent(out Rigidbody2D rigidbody) && rigidbody.linearVelocity.sqrMagnitude > 0.0025f)
+        {
+            hasClimbedObstacle = true;
+            climbMessageAge = 0f;
+        }
+        if (hasClimbedObstacle) climbMessageAge += Time.deltaTime;
+
+        float fadeIn = Mathf.Max(0.01f, spiderIntroductionFadeInSeconds);
+        float fadeOut = Mathf.Max(0.01f, spiderSubtitleFadeSeconds);
+        if (introductionTitle != null)
+        {
+            introductionTitle.text = "You are a spider";
+            introductionTitle.alpha = 1f;
+        }
+        if (introductionSubtitle != null)
+        {
+            bool remindUp = hasClimbedObstacle && spiderUpReminder != null &&
+                spiderUpReminder.bottomSeconds > spiderUpReminder.bottomReminderSeconds;
+            introductionSubtitle.text = remindUp ? "No floor, no problem.\nonly way is up" :
+                hasClimbedObstacle ? "No floor, no problem." : "Climb over it";
+            introductionSubtitle.alpha = Mathf.SmoothStep(0f, 1f,
+                Mathf.Clamp01((hasClimbedObstacle ? climbMessageAge : introductionSubtitleAge) / fadeIn));
+        }
+
+        // Start at possession: the authored nearby arrow leads the later wall arrows.
+        int arrowIndex = 0;
+        if (spiderWallArrowTexts != null)
+        {
+            foreach (TMP_Text text in spiderWallArrowTexts)
+            {
+                if (text == null || !wallArrowTextAlphas.TryGetValue(text, out float originalAlpha)) continue;
+                float alpha = WallArrowPulse(introductionSubtitleAge - arrowIndex++ * 0.45f, fadeOut);
+                text.alpha = originalAlpha * alpha;
+                text.gameObject.SetActive(alpha > 0f);
+            }
+        }
+        for (int i = 0; i < wallArrows.Count; i++)
+        {
+            float age = introductionSubtitleAge - arrowIndex++ * 0.45f;
+            SetArrowAlpha(wallArrows[i], WallArrowPulse(age, fadeOut));
+        }
+        return true;
+    }
+
+    private float WallArrowPulse(float age, float fadeOut)
+    {
+        if (age < 0f || age >= spiderArrowSeconds) return 0f;
+        float phase = Mathf.Repeat(age, 2f);
+        float pulse = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(phase / 0.45f)) *
+            (1f - Mathf.SmoothStep(0f, 1f, Mathf.Clamp01((phase - 0.9f) / 0.7f)));
+        return pulse * Mathf.Clamp01((spiderArrowSeconds - age) / fadeOut) * 0.55f;
+    }
+
+    private void SetWallArrowAlpha(float alpha)
+    {
+        foreach (SpriteRenderer[] arrow in wallArrows) SetArrowAlpha(arrow, alpha);
+        foreach (KeyValuePair<TMP_Text, float> entry in wallArrowTextAlphas)
+        {
+            if (entry.Key == null) continue;
+            entry.Key.alpha = entry.Value * alpha;
+            entry.Key.gameObject.SetActive(alpha > 0f);
+        }
+    }
+
+    private void InitializeWallArrowTexts()
+    {
+        if (!Application.IsPlaying(gameObject) || mode != HintMode.SpiderIntroduction ||
+            !useSpiderHintSequence || spiderWallArrowTexts == null) return;
+        foreach (TMP_Text text in spiderWallArrowTexts)
+        {
+            if (text == null || wallArrowTextAlphas.ContainsKey(text)) continue;
+            wallArrowTextAlphas.Add(text, text.alpha);
+            text.gameObject.SetActive(false);
+        }
+    }
+
+    private static void SetArrowAlpha(SpriteRenderer[] arrow, float alpha)
+    {
+        foreach (SpriteRenderer renderer in arrow)
+        {
+            Color color = renderer.color;
+            color.a = alpha;
+            renderer.color = color;
         }
     }
 
@@ -225,7 +492,21 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(0.5f, 0.5f), texture.width, 0, SpriteMeshType.FullRect);
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
 
-        if (mode == HintMode.BubbleIntroduction || mode == HintMode.SpiderIntroduction)
+        if (mode == HintMode.SpiderUpReminder)
+        {
+            // This area's timer drives the introduction subtitle; it has no separate label.
+        }
+        else if (mode == HintMode.SpiderSpikeWarning)
+        {
+            spikeWarningText = AddHintText("SpikeWarning", "cake or spike?", Vector2.zero, new Vector2(5.5f, 0.8f));
+        }
+        else if (mode == HintMode.SpiderMoveRight)
+        {
+            AddKey('D', new Vector2(-0.5f, 0));
+            Arrow(new Vector2(0f, 0), new Vector2(1.2f, 0));
+            AddHintText("MoveRightDescription", "Go right", new Vector2(0.25f, -0.65f), new Vector2(3f, 0.6f));
+        }
+        else if (mode == HintMode.BubbleIntroduction || mode == HintMode.SpiderIntroduction)
         {
             BuildBubbleIntroduction();
         }
@@ -233,7 +514,25 @@ public class BubbleMovementHint : MonoBehaviour
         {
             Arrow(new Vector2(-0.6f, 0), new Vector2(0.6f, 0));
         }
-        else if (mode == HintMode.Air || mode == HintMode.StarMove || mode == HintMode.SpiderControls)
+        else if (mode == HintMode.SpiderControls)
+        {
+            leftControlVisuals = CreateControlGroup("A Direction");
+            controlVisualParent = leftControlVisuals;
+            AddKeyFrame(new Vector2(-0.5f, 0), Vector2.one * 0.5f);
+            capturingLetter = leftLetterFill;
+            AddLetter('A', new Vector2(-0.5f, 0));
+            capturingLetter = null;
+            Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
+            rightControlVisuals = CreateControlGroup("D Direction");
+            controlVisualParent = rightControlVisuals;
+            AddKeyFrame(new Vector2(0.5f, 0), Vector2.one * 0.5f);
+            capturingLetter = rightLetterFill;
+            AddLetter('D', new Vector2(0.5f, 0));
+            capturingLetter = null;
+            Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
+            controlVisualParent = null;
+        }
+        else if (mode == HintMode.Air || mode == HintMode.StarMove)
         {
             AddKey('A', new Vector2(-0.5f, 0));
             AddKey('D', new Vector2(0.5f, 0));
@@ -282,6 +581,14 @@ public class BubbleMovementHint : MonoBehaviour
         }
     }
 
+    private Transform CreateControlGroup(string groupName)
+    {
+        var group = new GameObject(groupName);
+        group.hideFlags = HideFlags.HideAndDontSave;
+        group.transform.SetParent(visuals.transform, false);
+        return group.transform;
+    }
+
     private void BuildBubbleIntroduction()
     {
         bool spiderIntroduction = mode == HintMode.SpiderIntroduction;
@@ -304,7 +611,26 @@ public class BubbleMovementHint : MonoBehaviour
                 introductionSubtitle = AddHintText("SpiderSubtitle", spiderSubtitle,
                     new Vector2(0, -0.55f), new Vector2(5.5f, 0.6f), spiderTextColor);
                 introductionSubtitle.fontSize = 8f / 3f;
+                if (useSpiderHintSequence) introductionSubtitle.rectTransform.sizeDelta = new Vector2(5.5f, 1.2f);
             }
+        }
+        if (spiderIntroduction && useSpiderHintSequence && Application.IsPlaying(gameObject) && spiderWallArrowTexts != null)
+        {
+            InitializeWallArrowTexts();
+            SetWallArrowAlpha(0f);
+        }
+        if (spiderIntroduction && useSpiderHintSequence && spiderWallArrowPositions != null)
+        {
+            foreach (Vector2 position in spiderWallArrowPositions)
+            {
+                Transform group = CreateControlGroup("Wall Climb Arrow");
+                group.position = new Vector3(position.x, position.y, transform.position.z);
+                controlVisualParent = group;
+                Arrow(new Vector2(0f, -0.55f), new Vector2(0f, 0.55f));
+                wallArrows.Add(group.GetComponentsInChildren<SpriteRenderer>());
+            }
+            controlVisualParent = null;
+            SetWallArrowAlpha(0f);
         }
     }
 
@@ -410,13 +736,20 @@ public class BubbleMovementHint : MonoBehaviour
             new Vector2(delta.magnitude, mode == HintMode.ContinueRight
                 ? Mathf.Max(0.01f, continueArrowWidth) : 0.03f), inkColor, sortingOrder + 1);
         segment.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
+        if (capturingLetter != null)
+        {
+            Transform overlay = Rectangle((start + end) * 0.5f, new Vector2(delta.magnitude, 0.03f),
+                practicedColor, sortingOrder + 2);
+            overlay.gameObject.SetActive(false);
+            capturingLetter.Add(new LetterFillStroke { overlay = overlay, start = start, end = end });
+        }
     }
 
     private Transform Rectangle(Vector2 position, Vector2 size, Color color, int order)
     {
         GameObject part = new GameObject("HintStroke");
         part.hideFlags = HideFlags.HideAndDontSave;
-        part.transform.SetParent(visuals.transform, false);
+        part.transform.SetParent(controlVisualParent != null ? controlVisualParent : visuals.transform, false);
         part.transform.localPosition = position;
         part.transform.localScale = new Vector3(size.x, size.y, 1);
         SpriteRenderer renderer = part.AddComponent<SpriteRenderer>();
@@ -436,6 +769,19 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void ReleaseVisuals()
     {
+        foreach (KeyValuePair<TMP_Text, float> entry in wallArrowTextAlphas)
+        {
+            if (entry.Key == null) continue;
+            entry.Key.alpha = entry.Value;
+            if (Application.IsPlaying(gameObject)) entry.Key.gameObject.SetActive(false);
+        }
+        wallArrowTextAlphas.Clear();
+        wallArrows.Clear();
+        spikeWarningText = null;
+        leftControlVisuals = rightControlVisuals = controlVisualParent = null;
+        leftLetterFill.Clear();
+        rightLetterFill.Clear();
+        capturingLetter = null;
         introductionTitle = null;
         introductionSubtitle = null;
         introductionBody = null;

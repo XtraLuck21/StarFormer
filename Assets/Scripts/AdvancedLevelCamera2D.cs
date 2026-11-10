@@ -32,6 +32,8 @@ public class AdvancedLevelCamera2D : MonoBehaviour
     [SerializeField] private View waterTransfer = new(new(12.9f, 5.8f), new(2.3f, 0.3f), new(1.5f, 1.2f), 5.6f);
     [SerializeField] private View doorRoom = new(new(31f, 5.8f), Vector2.zero, Vector2.zero, 7.1f);
     [SerializeField] private View rightAscent = new(new(36.8f, 9.7f), new(0f, 3.7f), new(0f, 2f), 4.5f);
+    // Frame the lower landing and bounce arc together so visibility correction stays idle.
+    [SerializeField] private View rightAscentBall = new(new(36.8f, 5.6f), Vector2.zero, Vector2.zero, 5.8f);
     [SerializeField] private View upperReturn = new(new(22.15f, 14.1f), new(14.65f, 0f), Vector2.zero, 4f, 1.5f);
 
     [Header("Region Boundaries")]
@@ -123,11 +125,9 @@ public class AdvancedLevelCamera2D : MonoBehaviour
         previousPosition = point;
 
         region = SelectRegion(point);
-        View view = GetView(region);
+        View view = region == Region.RightAscent && body.Form == BodyForm.BouncyBall
+            ? rightAscentBall : GetView(region);
         Vector2 aim = point + view.offset + Vector2.right * (facing * view.lookAhead);
-        // A Ball reaching U2 should not make the ascent camera bounce vertically.
-        if (region == Region.RightAscent && body.Form == BodyForm.BouncyBall)
-            aim.y = rightAscent.center.y - rightAscent.followRange.y;
 
         Vector3 destination = new(
             Mathf.Clamp(aim.x, view.center.x - view.followRange.x, view.center.x + view.followRange.x),

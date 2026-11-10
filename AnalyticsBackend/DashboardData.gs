@@ -203,8 +203,11 @@ function getDashboardMap(level,mapVersion,build) {
   if(!mapVersion||mapVersion==='unmapped')return null;
   try {
     const catalog=JSON.parse(HtmlService.createHtmlOutputFromFile('MapCatalog').getContent());
-    const map=(catalog.maps||[]).find(map=>map.level_name===level&&map.map_version===mapVersion);
-    return map?Object.assign({},map,binding?{historical_build:build,source_commit:binding.source_commit}:{}):null;
+    const maps=catalog.maps||[];
+    // The renamed scene keeps its geometry; reuse the exact historical map version until re-exported.
+    const map=maps.find(map=>map.level_name===level&&map.map_version===mapVersion)||
+      (level==='IntroFan'?maps.find(map=>map.level_name==='FanTutorial'&&map.map_version===mapVersion):null);
+    return map?Object.assign({},map,{level_name:level},binding?{historical_build:build,source_commit:binding.source_commit}:{}):null;
   } catch(error) {console.warn('Map catalog unavailable: '+error.message);return null;}
 }
 function dashboardHasPosition_(row) {

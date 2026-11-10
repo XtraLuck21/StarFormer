@@ -36,6 +36,13 @@ public class LevelDeathUI : MonoBehaviour
 
         deathShown = true;
 
+        if (gameObject.scene.name == "IntroSpider")
+        {
+            // IntroSpider's center hint owns cake feedback; no fixed death caption.
+            statusText.text = "";
+            return;
+        }
+
         statusText.text =
             playerController.HasSavedCheckpoint
                 ? "You died.\nReturning to checkpoint..."

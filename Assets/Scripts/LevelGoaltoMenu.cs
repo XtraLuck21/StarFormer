@@ -35,7 +35,7 @@ public class LevelGoalToMenu : MonoBehaviour
 
     [Header("Return To Menu")]
     // Main-menu scene name; must match the enabled build scene list.
-    [SerializeField] private string menuSceneName = "Mainmenu";
+    [SerializeField] private string menuSceneName = "Navigation";
 
     [Tooltip("Show Level Complete and wait for the player to choose Return to Main Menu.")]
     [SerializeField] private bool waitForMenuButton;

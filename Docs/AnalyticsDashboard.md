@@ -1,9 +1,19 @@
 # Analytics Dashboard
 
-Last updated: 2026-11-02. This replaces the earlier individual-player dashboard.
-See [AnalyticsAllLevels.md](AnalyticsAllLevels.md) for the six-scene Unity collector,
+## Beta 0.1.2 publication and analytics follow-up
+
+Beta 0.1.2 was published November 6 to both the root and `/beta/` via `gh-pages` commit `64b35c6`, with clean source checkout `b93768f`. Deployment succeeded and all 14 hosted files matched the local export. Production-data acceptance remains pending. The seven gameplay scenes are IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, IntroFan and Level02; Navigation is the startup/menu scene and is not a tracked gameplay level. Preserve historical FanTutorial names/maps for older exports.
+
+The pre-publication review found all seven scene hashes differed from the runtime map catalog. No analytics maps were exported and no backend deployment was performed during game publication. For a future build/map update, run **Analytics → Export all real level maps** after saving scenes and retain historical PNGs/catalog entries. Separately deploy the refreshed catalog and current IntroFan-compatible backend to the existing Apps Script deployment. Do not change the endpoint or rewrite old rows. Verify `beta-0.1.2` events and exact map matches on the built player; prior Version 9 and 0.1.1 evidence does not certify the new export. See [release record](Beta-0.1.2.md) and [current acceptance](AnalyticsTestPlan.md#beta-012-acceptance-status).
+
+Last updated: 2026-11-06. This replaces the earlier individual-player dashboard.
+See [AnalyticsAllLevels.md](AnalyticsAllLevels.md) for the seven-scene Unity collector,
 v2 migration and runtime map export. This change updates dashboard code/assets;
 it does not publish a new game or rewrite Sheet rows.
+
+## Recorded Beta 0.1.1 publication
+
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. It includes seven-scene v2 collection. The Version 9 dashboard evidence below predates this game release; do not treat its historical map tests as verification of the refreshed 0.1.1 backend catalog or production events. Those remain [acceptance follow-ups](AnalyticsTestPlan.md#beta-011-acceptance-status). The November 4 help-book UI was absent from the historical 0.1.1 export and is included in 0.1.2.
 
 ## Scope
 
@@ -101,7 +111,7 @@ in AnalyticsBackend/Maps/releases.json. PNGs were rendered from disposable Unity
 | alpha-0.1.1 | 765a1ea | a931f23 |
 | alpha-0.1.0 | 994a014 | f47d18d |
 
-Bindings cover every gameplay scene actually enabled in each release. The released collectors still track only Level01 and Level02.
+Bindings cover every gameplay scene actually enabled in the historical releases listed above. Those collectors track only Level01 and Level02; published Beta 0.1.1 instead tracks all seven scenes and supplies v2 map versions. The table describes historical fallback bindings, not a complete release list.
 Beta Level01 is the promoted Advanced layout and differs from the Alpha map.
 The page labels the matched release; source/publishing revisions remain in the provenance file. Unverified older builds
 (e.g. playtest-01-20261018) retain the labeled coordinate grid until their exact
@@ -132,7 +142,7 @@ provenance before adding a binding.
 
 ## Source and deployment
 
-- Code.gs: existing POST receiver and GET/health routes; the scene whitelist also accepts IntroBouncyBall for a future game update.
+- Code.gs: existing POST receiver and GET/health routes; the current scene whitelist accepts all seven gameplay scenes, including IntroBouncyBall and IntroFan, while retaining historical FanTutorial compatibility.
 - DashboardData.gs: aggregate-only API, interval reconstruction, verified legacy
   map bindings, read-only cloud check, 30-second sharded cache (new v3 key namespace).
 - Dashboard.html: four metric sections, responsive UI, safe text rendering and
@@ -194,7 +204,7 @@ No game release, ingestion payload, permissions, or Sheet event data was changed
 ## Tutorial-map follow-up (November 2)
 
 Root cause: map-version choices were inferred exclusively from recorded events.
-The published Beta/Alpha collector only tracks Level01 and Level02, so tutorial
+At that historical deployment checkpoint, the Beta 0.1.0/Alpha collectors only tracked Level01 and Level02, so tutorial
 selections had zero events, an empty map version and no background, even when
 map assets existed for other source snapshots.
 
@@ -259,6 +269,4 @@ The current source integration adds seven-scene runtime collection (including
 IntroBouncyBall) against the latest main gameplay. It preserves the production
 endpoint/environment/build label and contains no scene/layout/ability edits.
 The earlier tutorial-map follow-up's six-scene-runtime limitation describes its
-historical deployment step; it is superseded by this source integration. The
-already-hosted Beta still needs a future rebuilt game release to collect tutorial
-events. Static base-map limitations and existing release bindings remain valid.
+historical deployment step; it is superseded by this source integration. Beta 0.1.1 subsequently published the seven-scene collector on November 3. Verify its actual production tutorial events and refreshed map deployment separately. Static base-map limitations and existing historical release bindings remain valid.

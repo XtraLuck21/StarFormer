@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 public static class AnalyticsMapExporter
 {
     private static readonly string[] Scenes =
-        { "IntroBox", "IntroBubble", "IntroBouncyBall", "Level01", "IntroSpider", "FanTutorial", "Level02" };
+        { "IntroBox", "IntroBubble", "IntroBouncyBall", "Level01", "IntroSpider", "IntroFan", "Level02" };
 
     [MenuItem("Analytics/Export all real level maps")]
     public static void ExportAll()

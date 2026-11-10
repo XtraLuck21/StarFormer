@@ -1,6 +1,8 @@
 # Level 1
 
-Last updated: 2026-11-02. Promotion baseline: `8834a4d`; published Beta source: `3a693ca` (gh-pages `1105970`).
+Beta 0.1.2 is published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
+
+Last updated: 2026-11-06. Promotion baseline: `8834a4d`; recorded published Beta 0.1.1 source: `9451511` (gh-pages `e81097e`, November 3).
 
 ## Scene identity and progression
 
@@ -9,12 +11,12 @@ Last updated: 2026-11-02. Promotion baseline: `8834a4d`; published Beta source: 
 The previous scene and its original `.meta` are preserved unchanged as [Level01_Legacy.unity](../Assets/Scenes/Level01_Legacy.unity). It is excluded from builds. `Level01_Reference` is a separate, older design reference. Neither backup is the current playable map; the old G/G2, held-plate, ball-checkpoint and U2-regeneration layout must not be used as the specification for this scene.
 
 ```text
-Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
+Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
-- Mainmenu's Level 1 button calls `MainMenuUI.OpenLevel1()` and loads `Level01`.
+- Navigation’s Level 1 entrance targets `Level01` through NavigationEntrance; both contact and click paths run the entry feedback before loading.
 - IntroBouncyBall's Star/BouncyBall goal also loads `Level01`; IntroBubble first opens a passage to that tutorial.
-- Level01 is at enabled build index 4, after IntroBouncyBall; IntroSpider, FanTutorial and Level02 follow at indices 5, 6 and 7. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
+- Level01 is at enabled build index 4, after IntroBouncyBall; IntroSpider, IntroFan and Level02 follow at indices 5, 6 and 7. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
 - The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, label `Level 2 Intro`, and a 1.5-second transition. Any living controlled form can finish.
 - Completion pauses gameplay, shows `Level up! / Entering Level 2 Intro...`, clears checkpoint sessions and loads the next scene with normal time. The final wait-for-menu completion screen belongs to Level02.
 
@@ -53,6 +55,17 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 - The HARD trap activates only for the controlled body approaching its horizontal band in the upper corridor, outside cinematics. It falls quickly, stays visible on the floor and remains lethal. It does not fade out. Route resets and checkpoint retries rearm it.
 - `AdvancedLevelCamera2D` handles ordinary regional framing; route presentations temporarily take control and restore it afterward. Editor Game-view Scale only affects the preview display, not the camera's saved zoom.
 
+## November 5 playtest improvements
+
+PR #21 (`42e32a4`) integrates four developer-tested changes, included in the published Beta 0.1.2 export:
+
+- Upper platform edges preserve the gap and equal landing height while using small collision bevels to reduce maximum-size Box snagging in either direction. Recheck both directions, stopping at the edge and resizing during movement.
+- The approach to checkpoint 2 is wider. Its placement still requires reaching the authored route rather than moving the checkpoint left into the easy path.
+- BouncyBall camera framing near checkpoint 2 suppresses repeated bounce-driven vertical shake while preserving route transitions.
+- Box-to-ball possession after a fall before checkpoint 3 allows recovery instead of leaving the ball trapped under an abandoned Box.
+
+These fixes do not change the fixed checkpoint respawn forms or convert checkpoint state into a persistent save.
+
 ## Checkpoints and restart
 
 All three markers remain hollow stars: blue before activation, yellow after being reached. `CHECKPOINT SAVED` appears briefly above the marker. Progress only advances 1 → 2 → 3; returning through an earlier point does not overwrite a later save.
@@ -67,17 +80,19 @@ Checkpoint 3 requires Star or Box to land on the left floor; flying over it as B
 
 Death and Return to Checkpoint reload the scene, restore the configured body and retain the latest completed route choice, upper lift height, broken RUIN cover and viewed route-presentation history. Loose bodies return to authored placements; the lower reversible door resets. SAFE boards restart a predictable motion cycle and the HARD falling spike rearms. A half-finished cinematic is not saved. This is in-memory session recovery, not a save across application launches.
 
-Restart Level, returning to Mainmenu, a new menu entry and forward level progression clear checkpoint sessions. Restart Level restores NORMAL, the upper lift's initial low position, the intact cover and all original bodies. See [CheckpointGuidance.md](CheckpointGuidance.md) for the menus and recovery matrix.
+Restart Level, returning to Navigation, a new menu entry and forward level progression clear checkpoint sessions. Restart Level restores NORMAL, the upper lift's initial low position, the intact cover and all original bodies. See [CheckpointGuidance.md](CheckpointGuidance.md) for the menus and recovery matrix.
 
 ## Hints and Home menu
 
 | Hint / control | Trigger and behavior |
 | --- | --- |
+| Movable-door hint (Beta 0.1.1) | After 20 seconds without lower-door movement, an optional star sign appears above the route. Deliberate Box growth or Ball contact triggers a short paused lift preview with “A little lift?”. Once per scene load; spawn overlap does not activate it. |
 | Water-tank restart lesson | Controlled Bubble contacts the assigned tank ceiling inside its teaching area for 1.5 seconds: `Feel stuck? / Press R to restart`. Sideways movement does not reset qualifying contact. R opens choices rather than immediately restarting. |
 | Water-exit pop lesson | Continuous Bubble contact with the assigned water-exit ceiling in its teaching area for 3 seconds: `Press Q / to pop`. |
 | Upper-right pop lesson | Continuous Bubble contact with the upper-right ceiling in its teaching area for 3 seconds: the same Q prompt, before choosing a landing side. |
 | Pop-hint lifetime | Each pop hint appears once per scene load, remains while contact continues, then hides on leaving/popping/changing bodies. Scene reload resets its lesson state; paused time does not consume the contact timer. |
 | Home | Top-right square house outline with a small Star; tooltip `Home · Restart`. Opens a paused menu with Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled before a save; full restart and Main Menu require confirmation. |
+| Help | Paged form help is now configured in this scene; possession discovers gameplay pages for the current application session. |
 | R | Retains the existing restart-choice menu, independent of Home. Opening or cancelling changes no checkpoint state. |
 
 `CheckpointFeedbackUI` suppresses its old generic E-pop reminder when `AdvancedCheckpointController` is present. The formal Level01 uses the scene hints above; renaming it must not enable that duplicate legacy prompt.
@@ -86,4 +101,6 @@ Restart Level, returning to Mainmenu, a new menu entry and forward level progres
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 
-Further work remains separate: a dedicated optional Hint button, a dedicated Level01 Controls button, new-player timing/readability feedback, and broader browser/mobile/aspect-ratio coverage. Existing Help UI in other scenes is not a new Level01 Hint system. Beta 0.1.0 is now published and the developer reported local and online playtests passed. Beta Level01 records are visible in the production dashboard, but the rebuilt map is not yet matched: deaths currently appear on a coordinate grid. Correct map/version association and detailed metric checks are tracked in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-010-acceptance-status). See [publish_instructions.md](publish_instructions.md).
+Historical Beta 0.1.1 was published at the Beta URL, which now serves 0.1.2. The 0.1.1 export included the contact-activated movable-door hint but predated paged Help; Beta 0.1.2 includes the later Help and Navigation work. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
+
+For beta-0.1.2, repeat these checks in the exported Web player alongside shared Home/Help, the four PR #21 fixes, and all three checkpoint recoveries. Re-export analytics maps and verify version-specific production rows/maps. See [the release checklist](Beta-0.1.2.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). Historical Beta 0.1.0/0.1.1 evidence does not certify this new export.

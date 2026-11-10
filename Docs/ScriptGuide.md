@@ -1,23 +1,25 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-02. Current source includes the IntroBouncyBall integration and the published Beta 0.1.0 release; current Level01 is the former Advanced scene. This guide replaces the old first-level G/G2 and ball-checkpoint wiring descriptions.
+Last updated: 2026-11-06. Beta 0.1.2 is published to root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features, isolated Editor evidence and outstanding browser/data checks. Level02 repairs remain deferred.
 
 ## 1. Scenes and build configuration
 
 | Enabled index | Scene | Role / continuation |
 | --- | --- | --- |
-| 0 | [Mainmenu](../Assets/Scenes/Mainmenu.unity) | Startup and direct entries |
+| 0 | [Navigation](../Assets/Scenes/Navigation.unity) | Interactive startup; Kindergarten, Level 1, Elementary School and Level 2 entrances |
 | 1 | [IntroBox](../Assets/Scenes/IntroBox.unity) | Box flag opens an exit to IntroBubble |
 | 2 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Grounded-Star flag opens passage to IntroBouncyBall; return to IntroBox |
 | 3 | [IntroBouncyBall](../Assets/Scenes/IntroBouncyBall.unity) | Bounce/float/compressed-bounce tutorial; return to Bubble, flag to Level01 |
 | 4 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
-| 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to FanTutorial |
-| 6 | [FanTutorial](../Assets/Scenes/FanTutorial.unity) | Continues to Level02 |
+| 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to IntroFan |
+| 6 | [IntroFan](../Assets/Scenes/IntroFan.unity) | Continues to Level02 |
 | 7 | [Level02](../Assets/Scenes/Level02.unity) | Final completion screen with Main Menu action |
 
-Transitions use scene names rather than adjacent build indices. The actual forward flow is Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02.
+The current source names the Fan tutorial `IntroFan` (formerly `FanTutorial`), preserving its scene GUID. Published builds and historical analytics retain the old name. Deploy the local analytics compatibility update with the next game release; this rename does not update the hosted build.
 
-[EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) owns the enabled list. [WebGLBuild.cs](../Assets/Editor/WebGLBuild.cs) exports that list. Keep Level01_Legacy, Level01_Reference, Tutorial, WaterPlayground and Playground disabled. EnemyScene is a separate test scene, not part of this progression.
+Transitions use scene names rather than adjacent build indices. The actual forward flow is Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02.
+
+[EditorBuildSettings.asset](../ProjectSettings/EditorBuildSettings.asset) owns the enabled list. [WebGLBuild.cs](../Assets/Editor/WebGLBuild.cs) exports that list. Keep Mainmenu, Level01_Legacy, Level01_Reference, Tutorial, WaterPlayground and Playground disabled. EnemyScene is a separate test scene, not part of this progression.
 
 The former Advanced scene and GUID now belong to Level01. The previous Level01 scene and meta are preserved as [Level01_Legacy](../Assets/Scenes/Level01_Legacy.unity); Level01_Reference is a different historical reference. There is no second active Level01_Advanced scene. Classes named `Advanced*` are intentionally retained to avoid unrelated refactoring.
 
@@ -41,7 +43,7 @@ The former Advanced scene and GUID now belong to Level01. The previous Level01 s
 
 Reusable prefabs live in Assets/Form: StarPlayer, BoxBody, BubbleBody and BouncyBall. They include internal physics/visual references, not a scene controller. Keep Boxes at scene root for resizing; assign scene instances to switches/goals/hints. BouncyBall's serialized form is 7, Spider's is 4. Do not rerun BouncyBallSetup just to repair one enum value: it also recreates assets/placements.
 
-The controller retains the merged Box movement/growth rules, contact separation before reacquisition, and temporary departed-Box/new-Bubble collision exclusion. Do not replace these with global collision-layer changes. Preserve Star's enabled PolygonCollider and the scene/prefab's disabled legacy Capsule where configured.
+The controller retains the merged Box movement/growth rules, contact separation before reacquisition, and temporary departed-Box/new-Bubble collision exclusion, plus the PR #21 Box-to-BouncyBall recovery safeguards. Do not replace these with global collision-layer changes. Preserve Star's enabled PolygonCollider and the scene/prefab's disabled legacy Capsule where configured.
 
 ### Current Level01
 
@@ -51,10 +53,11 @@ The controller retains the merged Box movement/growth rules, contact separation 
 | [SafeRouteObstacles.cs](../Assets/Scripts/SafeRouteObstacles.cs) | Three black fixed-size boards: one static, two vertically translating in opposite phase. Shared travel clock; leading-edge protection pauses the pair. Reveals after spike retraction and demonstrates a full alternating cycle. |
 | [HardRouteFallingSpike.cs](../Assets/Scripts/HardRouteFallingSpike.cs) | Assigned ceiling tooth falls only in HARD when the current body enters its upper-route horizontal band. Sweeps the actual collider, stays landed and lethal, resets for route changes/retries. Assign route/controller/tooth and upper floor height. |
 | [RuinButtonGuard.cs](../Assets/Scripts/RuinButtonGuard.cs) | First upward hit by assigned R2 breaks the cover, spawns short-lived fragments and forces downward velocity. The button arms only after a later landing. RestoreBrokenState supports checkpoints. |
-| [AdvancedLevelCamera2D.cs](../Assets/Scripts/AdvancedLevelCamera2D.cs) | Current Level01 regional framing and local position/zoom limits. Route presentations temporarily override it. RegionalCameraFollow2D is the old map's camera, not this scene's active system. |
+| [AdvancedLevelCamera2D.cs](../Assets/Scripts/AdvancedLevelCamera2D.cs) | Current Level01 regional framing, local position/zoom limits and stabilized BouncyBall framing near checkpoint 2. Route presentations temporarily override it. RegionalCameraFollow2D is the old map's camera, not this scene's active system. |
 | [AdvancedCheckpoint.cs](../Assets/Scripts/AdvancedCheckpoint.cs) | World trigger, index, fixed respawn host/position, blue/yellow hollow-star marker and saved label. CP3 also requires grounded Star/Box at the upper floor. |
 | [AdvancedCheckpointController.cs](../Assets/Scripts/AdvancedCheckpointController.cs) | On PlayerControl; ordered CP1/2/3, scene-path-scoped session, live completed route/lift/cover/cinematic progress and restoration. Calls SetCheckpoint with ADV_CP1/2/3 and suppresses duplicate generic marker feedback. |
 | [StarStartGreeting.cs](../Assets/Scripts/StarStartGreeting.cs) | Optional READY? → LET'S GO! sign, Star-only upward contact, reusable bounce/sparkles on separate contacts. No route dependency. |
+| [MovableDoorContactHint.cs](../Assets/Scripts/MovableDoorContactHint.cs) | Published in Beta 0.1.1: lower-door idle timer, deliberate contact activation, paused lift preview and once-per-scene-load hint. |
 | [BubbleCeilingRestartHint.cs](../Assets/Scripts/BubbleCeilingRestartHint.cs) | First tank's real ceiling contact inside its teaching area; 1.5-second R reminder. Leaving the qualifying state resets the lesson. |
 | [BubbleCeilingPopHint.cs](../Assets/Scripts/BubbleCeilingPopHint.cs) | Two instances: water exit and upper-right ceiling. Assigned ceiling contact + area for 3 seconds; Q prompt once per instance per scene load. Pause does not advance the timer. |
 
@@ -69,7 +72,7 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 | [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | IntroBox form title/subtitle and Box-to-Box feedback. Disabled with old title objects in rebuilt IntroBubble, which uses world hints instead. Do not enable TutorialIntroUI alongside it. |
 | [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
 | [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Two-way IntroBox ↔ IntroBubble ↔ IntroBouncyBall passages. Return to Box uses BoxB; return to Bubble uses Star near its flag, with the destination gate open. One-shot destination setup is not a full previous-scene snapshot. |
-| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/FanTutorial. IntroBubble now uses flag + passage instead. |
+| [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/IntroFan. IntroBubble now uses flag + passage instead. |
 | [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion, 1.5-second Level 1 transition to Level01. |
 | [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Short anchored headlines for bounce/float/land/low ceiling and spike death; subtitle disabled. |
 | [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Map movement-key prompt for the controlled tutorial ball. |
@@ -92,43 +95,60 @@ See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare 
 | [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs), [SpiderGooglyEyes.cs](../Assets/Scripts/spiderFolder/SpiderGooglyEyes.cs) | Spider traversal and eyes; preserve the merged Level02 behavior |
 | [SpikeButton.cs](../Assets/Scripts/SpikeWall/SpikeButton.cs) | Existing projectile/button interactions |
 | [BubbleSpawner.cs](../Assets/Scripts/transitStage/BubbleSpawner.cs) | Replacement Bubble in the transition section |
-| [HelpPanelUI.cs](../Assets/UI/HelpPanelUI.cs) | Existing Help UI in scenes that configure it; not the deferred Level01 contextual Hint button |
+| [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Paged form help, discovery gates, demo playback and pause ownership. Obsolete Help components removed from IntroBox/IntroBubble/IntroSpider. Level02 still has a legacy layout without page data; work is deferred to its replacement scene. |
+| [Spritesequenceplayer.cs](../Assets/UI/Spritesequenceplayer.cs) | `SpriteSequencePlayer` plays six-form Help demonstrations using unscaled time; included in Beta 0.1.2, absent from historical 0.1.1. |
 
-Level02 geometry and its positional checkpoint system were not replaced by Advanced. Its separate navigation buttons and final flag remain. Existing callback and device follow-ups are recorded in [level-2.md](level-2.md).
+Level02 geometry and its positional checkpoint system were not replaced by Advanced. Its final flag remains; shared Home replaces the standalone menu/restart/retry presentation. Existing callback and device follow-ups are recorded in [level-2.md](level-2.md).
 
 ## 3. Navigation and interactive menu
 
 | Script | Behavior and wiring |
 | --- | --- |
 | [MainMenuUI.cs](../Assets/Scripts/MainMenuUI.cs) | OpenIntroLevels → IntroBox; OpenTutorial aliases it; OpenLevel1 → Level01; OpenLevel2Intro → IntroSpider; OpenLevel2 → Level02. Clears checkpoint sessions and restores time before loading. |
-| [MainMenuButtonUI.cs](../Assets/Scripts/MainMenuButtonUI.cs) / [HomeButtonGraphic.cs](../Assets/Scripts/HomeButtonGraphic.cs) | Level01 runtime Home square, house/Star graphic, Home · Restart tooltip, Paused menu, conditional checkpoint action, and restart/menu confirmations. Owns/restores pause and blocks underlying input. |
+| [MainMenuButtonUI.cs](../Assets/Scripts/MainMenuButtonUI.cs) / [HomeButtonGraphic.cs](../Assets/Scripts/HomeButtonGraphic.cs) | Shared runtime Home square in all seven gameplay scenes, house/Star graphic, Home · Restart tooltip, Paused menu, conditional checkpoint action, and restart/menu confirmations. Owns/restores pause and blocks underlying input. |
 | [RestartMenuUI.cs](../Assets/Scripts/RestartMenuUI.cs) | R/touch restart choices; conditional Return to Checkpoint, Restart Level and Cancel. Escape/R cancels. Delegates recovery to the local player controller. |
-| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Existing standalone Menu/Restart/Retry callbacks in other scenes. Full restart clears progress; Retry preserves it. Uses current-scene identity; do not hardcode the old Advanced name. |
+| [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Retained navigation callbacks; current visible gameplay menu is shared Home. Full restart clears progress; Retry preserves it. Uses current-scene identity; do not hardcode the old Advanced name. |
 | [LevelGoal.cs](../Assets/Scripts/LevelGoal.cs) | Optional required gate: an assigned active gate blocks, an absent gate does not. Validates destination and accepts a living controlled form. Current Level01 uses IntroSpider / Level 2 Intro / 1.5 seconds and no gate. |
 | [LevelTransitionUI.cs](../Assets/Scripts/LevelTransitionUI.cs) | Generated overlay; disables player, pauses time, blocks pointer input, clears selection and loads after real-time delay. Clears sessions and restores time. Final-result mode waits for the menu button. |
 | [LevelGoaltoMenu.cs](../Assets/Scripts/LevelGoaltoMenu.cs) | Class LevelGoalToMenu: Level02 completion event and final-result overlay with Return to Main Menu. |
 | [MenuUIPlatform.cs](../Assets/Scripts/MenuUIPlatform.cs) | Aligns one-way colliders to UI rectangle tops using the menu camera. Contact does not submit buttons. |
 
-Mainmenu Level1Button and IntroBouncyBall's goal both load formal Level01; IntroBubble's opened passage leads to IntroBouncyBall. Do not point either at Level01_Legacy. Direct Level2IntroButton and Level2Button remain separate entries. Preserve local callback targets when copying UI.
+Navigation entrance targets are IntroBox, Level01, IntroSpider and Level02. IntroBouncyBall still continues to Level01; do not target Level01_Legacy. The older MainMenuUI/MenuUIPlatform helpers belong to retained Mainmenu and are not the current startup implementation.
 
-The playable menu uses Screen Space - Camera, the assigned orthographic camera, reference resolution 1920 × 1080 and UI-aligned one-way platforms. The Star renders above that Canvas. Keep EventSystem navigation events disabled so gameplay movement/jump does not submit buttons. Preserve the camera/coordinate conversion together when changing menu layout.
+| Current navigation/help script | Responsibility |
+| --- | --- |
+| [NavigationStarController.cs](../Assets/Scripts/NavigationStarController.cs) | A/D and Space movement, contact/click entrance selection, bounce/flash animation, Entering overlay and destination load |
+| [NavigationEntrance.cs](../Assets/Scripts/NavigationEntrance.cs) | Scene destination and upper/lower interaction rules; Coming Soon has no scene |
+| [NavigationHelpBook.cs](../Assets/Scripts/NavigationHelpBook.cs) | Align book control with its world anchor, block Star input while open and disable entry-time interaction |
+| [CollectionBookGraphic.cs](../Assets/UI/CollectionBookGraphic.cs) | Procedural book icon; reusable CollectionBook/ControlsHelp prefabs reference shared content rather than duplicate demo images |
+| [HelpBookUnlocks.cs](../Assets/UI/HelpBookUnlocks.cs) | Sole in-memory form discovery record; RecordPossession after successful ownership, Changed event for both views, reset on application/Play launch. No PlayerPrefs access. |
+| [ShapeClosetSlot.cs](../Assets/UI/ShapeClosetSlot.cs) | Event-driven per-form visual; all five slot roots remain active, only locked artwork/unlocked icons toggle |
+| [IntroSpiderCake.cs](../Assets/Scripts/IntroSpiderCake.cs) / [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Cake/spike reveal, contextual climbing prompts, directional arrows and center death feedback |
 
-Level01 uses Home instead of the old LevelCanvas standalone Restart arrangement. IntroBox keeps its separate Restart button; IntroBubble hides that button and keeps compact Main Menu plus R. Level02 retains Menu/Restart/Retry. A reload alone does not mean a fresh session: death and Retry preserve progress; Restart Level and menu/new-level entry clear it.
+Navigation's entering overlay draws above its Collection Book so the entire page dims uniformly. The disabled book color remains the normal color; the common overlay supplies dimming. Navigation UI Events routes pointer/UI input; it is not a gameplay checkpoint or progress manager.
+
+All seven gameplay scenes use Home with their local player controller. Legacy standalone buttons are disabled; R remains available. Death/Retry retains gameplay checkpoints; Restart and menu/new-level entry clears them. Discovery survives these scene operations but clears on the next launch. The old persistent completion classes, view binding and goal reward hooks are removed; completion does not unlock unused forms. Navigation’s shared content now includes matching unlock IDs. See [the release specification](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## 4. Web build and GitHub Pages release
 
-Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. Player/Analytics versions match. [Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/); all seven hosted files matched `Builds/WebGL-Beta-0.1.0`. Publication only added `beta/`; historical paths were preserved. The earlier Web compiler fix is `3365e29`.
+Beta 0.1.2 was published on November 6, 2026 to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/). The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256. This verifies deployment and package integrity, not a new hosted gameplay playtest, mobile acceptance or production analytics delivery. Analytics map export/backend updates were not performed in this publication; Level02 repairs remain deferred to its replacement scene.
 
-Beta Level01 records are visible in the supplied production-dashboard screenshot. Matching-map rendering remains open: this version currently falls back to a coordinate grid. Level02-specific delivery and detailed raw-row metric checks remain separate follow-ups.
+### Historical releases
 
-The historical Alpha release is 0.1.2 (2026-10-18): gameplay/UI `9b35f8e`, source configuration `5650250`, `gh-pages` publication `5f62980`. The developer reported localhost and hosted gameplay tests passed. Current source changes, including formal Level01 promotion, have not been established as part of that export. Alpha 0.1.2 Sheet delivery remains separately unverified.
+Beta 0.1.1 was published on November 3, 2026 at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), from source `9451511` as `gh-pages` commit `e81097e`. On November 5, all seven live Beta files returned HTTP 200 and matched `Builds/WebGL-Beta-0.1.1` and the publishing checkout byte for byte. This confirms the deployed package, not a new gameplay playtest or production analytics acceptance. Player/Analytics versions are `beta-0.1.1`; the released source tracks all seven gameplay scenes (IntroBox, IntroBubble, IntroBouncyBall, Level01, IntroSpider, FanTutorial and Level02), excluding Mainmenu. Current first-level checkpoint IDs remain ADV_CP1/2/3.
 
-Use [publish_instructions.md](publish_instructions.md) for the build list, versioning, localhost checks and scoped Pages publication procedure. Keep exports on the publishing checkout, preserve other published paths, and do not merge gh-pages into source. Use a new version/output for the next release rather than overwriting the local evidence for Beta 0.1.0 or historical Alpha releases.
+The November 4 paged help book, six-form demo animations, Unity Recorder package and Mainmenu layout/behavior changes (`3a03844`, `f05d433`, `55f6b6b`, `f2c5c48`) were integrated after the historical Beta 0.1.1 export; their runtime changes are included in Beta 0.1.2. Unity Recorder remains Editor tooling. The release-preparation patch was rebased to `2caffd9` on November 5, but the November 3 export was built from `9451511`. Shared version labels do not make current main identical to the published game.
 
-Analytics tracks formal Level01 and Level02, not the introduction scenes. Current first-level checkpoint IDs are ADV_CP1/2/3. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md); Editor JSON is not proof of WebGL transport.
+Historical Beta 0.1.0 used source `3a693ca`, publishing commit `1105970`, and Level01/Level02-only analytics. Developer-reported local/online tests and the November 2 Level01 dashboard screenshot apply to that older export. Dashboard Version 9 subsequently resolved its map matching. Root previously served 0.1.0 via `f6eaf9e`, and `/beta/` previously served 0.1.1; both were replaced with 0.1.2 on November 6. The earlier Web compiler fix is `3365e29`.
+
+Historical Alpha 0.1.2 (October 18) used gameplay/UI `9b35f8e`, source configuration `5650250`, and publication `5f62980`; its developer-reported gameplay checks and unverified Sheet delivery remain separate evidence.
+
+Use [publish_instructions.md](publish_instructions.md) for future releases. Preserve completed exports and historical paths; use a new agreed version/output for the next build. Do not merge gh-pages into source. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for version-specific production event/map acceptance; Editor JSON and package verification do not prove delivery.
 
 ## 5. Verification and remaining work
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 
-Outstanding work is scoped separately: optional Level01 Hint/Controls UI, new-player timing/readability and broader browser/mobile/aspect-ratio coverage and analytics map/version validation. The scene rename must not re-enable the legacy E reminder. Do not mark source changes as deployed without a tested export and publication.
+Post-publication follow-up: verify session-only discovery in the exported player, repeat the cleaned tutorial Help checks in the exported player (Level02 Help work is deferred), regenerate all seven maps, and validate the beta-0.1.2 Web player and backend data. Broader browser/mobile coverage and new-player readability remain separate checks. Previous release acceptance does not certify latest main; see [Beta-0.1.2.md](Beta-0.1.2.md).
+
+The isolated [session-discovery regression](../Assets/Editor/SessionDiscoveryVerification.cs) checks real ownership/UI paths, completion without group rewards, retries and a second Play session with domain reload disabled. Execution instructions, historical Help findings and the subsequent three-scene cleanup verification are in [AnalyticsTestPlan.md](AnalyticsTestPlan.md#session-discovery-regression).

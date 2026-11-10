@@ -2,39 +2,54 @@
 
 StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce and float as a Bouncy Ball, then learn Spider and Fan abilities.
 
-## Play Beta 0.1.0
+## Published Beta 0.1.2
 
-[Play StarFormer Beta](https://xtraluck21.github.io/StarFormer/beta/)
+[Play StarFormer](https://xtraluck21.github.io/StarFormer/) · [Beta website](https://xtraluck21.github.io/StarFormer/beta/)
 
-Beta 0.1.0 was published on November 2, 2026, from source revision `3a693ca` as gh-pages commit `1105970`. The final WebGL package was rebuilt after version/template synchronization; the developer reported local and hosted playtests passed. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/41410712039) succeeded, and all seven live files matched the tested local export byte for byte. Export: `Builds/WebGL-Beta-0.1.0`. Alpha and all historical publication paths remain unchanged.
+Beta 0.1.2 was published on November 6, 2026 to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/). Player Version and Analytics `buildVersion` are `beta-0.1.2`. The source checkout at publication was clean main `b93768f`; the published artifact is the completed local export.
 
-Player Version and Analytics `buildVersion` are `beta-0.1.0`; collection remains in `production`, tracking Level01/Level02. The developer confirmed incoming records, and the November 2 dashboard screenshot shows Beta Level01 events, a completion and a death. **Analytics source update:** the current source adds schema-v2 collection for all seven gameplay scenes, including the five tutorials. The live Apps Script dashboard is on Version 9 with release-matched base maps and the four aggregate metrics. The already-hosted Beta retains its embedded Level01/Level02-only collector until a new game build is published; Level02-specific raw-row and broader playtest checks remain separate acceptance work. See [analytics acceptance and follow-ups](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status) and [publishing instructions](Docs/publish_instructions.md).
+The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256. Alpha and other historical version directories were preserved. The root previously served Beta 0.1.0; `/beta/` previously served Beta 0.1.1. Both now serve Beta 0.1.2.
+
+The release includes interactive Navigation, school/level entrances, Collection Book integration, shared Home menus, the IntroFan rename, Level01 traversal/camera/possession fixes and revised Spider guidance. Shape Closet and the books share session-only per-form discovery: controlling a form reveals its icon/help, scene changes and retries retain it, and a new game launch clears it. Completion grants no additional forms; old persistent unlock saves are ignored. Obsolete Help components were removed from IntroBox, IntroBubble and IntroSpider, with isolated Editor book/pause checks passing.
+
+This verifies deployment and package integrity, not a new hosted gameplay playtest, mobile acceptance or production analytics delivery. Analytics map export/backend updates were not performed in this publication; Level02 repairs remain deferred to its replacement scene. See the [release record](Docs/Beta-0.1.2.md) and [remaining acceptance checks](Docs/AnalyticsTestPlan.md#beta-012-acceptance-status).
+
+## Historical Beta 0.1.1
+
+Beta 0.1.1 was published to `/beta/` on November 3 from source `9451511` as `gh-pages` commit `e81097e`. It added seven-scene analytics and the Level01 movable-door hint. All seven hosted files matched `Builds/WebGL-Beta-0.1.1` on November 5. That export remains preserved locally and in Git history; `/beta/` was replaced by 0.1.2 on November 6. See [historical release evidence](Docs/publish_instructions.md#beta-011-release-status).
+
+## Historical Beta 0.1.0
+
+Beta 0.1.0 was published November 2 from source `3a693ca` as `gh-pages` commit `1105970`, with developer-reported local/hosted playtests and Level01 production-event evidence. Its collector tracked only Level01/Level02. The dashboard Version 9 record documents historical map matching and aggregate metrics; this is separate from 0.1.1 runtime/data acceptance.
+
+On November 5, `/beta/` served 0.1.1 and the root served 0.1.0 (root publication `f6eaf9e`). Both URLs were updated to 0.1.2 on November 6. See [historical release evidence](Docs/AnalyticsTestPlan.md#beta-010-acceptance-status).
 
 ## Current gameplay and progression
 
 ```text
-Mainmenu → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → FanTutorial → Level02
+Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
 - IntroBox and IntroBubble teach contact possession, J/K resizing, air ascent, underwater steering and Q pop. Flag-opened passages support return travel between IntroBox/IntroBubble and IntroBubble/IntroBouncyBall without a Level up overlay between those scenes.
 - IntroBouncyBall teaches automatic bouncing, floating on water, resuming bounces on land and faster bounces beneath low ceilings. The main route includes the low-ceiling lesson, short contextual headlines and a spike-death reminder. Its final flag transitions into Level01.
 - Level01 was rebuilt with a new layout and form progression, replacing the original scene. It includes Star/Box route choices, a one-way lift, reversible SAFE/NORMAL/HARD choices, moving safe-route boards, a falling spike, three fixed-form checkpoints, contextual hints and Home pause/restart UI. The original map remains as disabled `Level01_Legacy`.
-- Level01 continues through IntroSpider and FanTutorial to Level02. The menu also offers direct Level 1, Level 2 Intro and Level 2 entries.
-- R opens restart choices. Optional dedicated Hint/Controls buttons for Level01 remain deferred. Broader browser/mobile coverage and analytics map/version validation remain follow-ups.
+- Level01 continues through IntroSpider and IntroFan to Level02. Navigation maps Kindergarten to IntroBox, Level 1 to Level01, Elementary School to IntroSpider and Level 2 to Level02; tutorials remain optional.
+- R opens restart choices; the shared house/Star Home menu is configured in all seven gameplay scenes and returns to Navigation. Collection Book and per-form Help are included in Beta 0.1.2; see the release checklist for verification coverage and deferred Level02 work.
+- Level01 includes the upper-gap, checkpoint-2 approach, ball camera and Box-to-ball recovery fixes from PR #21. IntroSpider adds climbing arrows and cake/spike feedback. These changes are included in Beta 0.1.2 and were absent from the historical Beta 0.1.1 export.
 
 ## Published builds and history
 
 - [Alpha 0.1.2](https://xtraluck21.github.io/StarFormer/alpha/) — historical release, October 18, 2026; does not contain the current rebuilt Level01 or integrated Bouncy Ball tutorial.
 - [Earlier analytics playtest](https://xtraluck21.github.io/StarFormer/playtest-01/) — preserved older build.
 - [Alpha Progress Check submission](https://xtraluck21.github.io/StarFormer/alpha-progress-check/) — frozen October 12 All-Level V2 submission.
-- [Legacy root build](https://xtraluck21.github.io/StarFormer/) — preserved separately.
+- Beta 0.1.0 and 0.1.1 — preserved in their local versioned exports and `gh-pages` history; their former live URLs now serve 0.1.2.
 
 Alpha 0.1.2 source configuration: `5650250`; gameplay/UI changes: `9b35f8e`; publishing commit: `5f62980`. Developer-reported localhost/online tests and deployed payload/version checks passed. Its embedded Player/Analytics version remains `alpha-0.1.2`; Sheet delivery for that version remains separately unconfirmed. Source updates do not change published exports.
 
 ## Development references
 
 - Unity editor: `6000.3.22f1`, with Web Build Support.
-- Enabled build scenes: Mainmenu (0), IntroBox (1), IntroBubble (2), IntroBouncyBall (3), Level01 (4), IntroSpider (5), FanTutorial (6), Level02 (7). Legacy/reference/sandbox entries stay disabled.
+- Enabled build scenes: Navigation (0), IntroBox (1), IntroBubble (2), IntroBouncyBall (3), Level01 (4), IntroSpider (5), IntroFan (6), Level02 (7). Mainmenu and legacy/reference/sandbox entries stay disabled.
 - [Introductory levels](Docs/intro-levels.md) — tutorials, controls, contextual hints and two-way passages.
 - [Gameplay specification](Docs/GameplaySpec.md)
 - [Script, scene and release reference](Docs/ScriptGuide.md)
