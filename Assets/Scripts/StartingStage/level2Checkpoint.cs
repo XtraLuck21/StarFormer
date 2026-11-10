@@ -10,6 +10,7 @@ public class level2Checkpoint : MonoBehaviour
 
     [Header("Identity")]
     [SerializeField] private string checkpointId = "CP01";
+    [SerializeField] private bool showTextFeedback = true;
 
     [Header("Events")]
     // Invoked when the player enters this checkpoint.
@@ -32,7 +33,7 @@ public class level2Checkpoint : MonoBehaviour
 
     private void Start()
     {
-        if (player != null && respawnPoint != null)
+        if (showTextFeedback && player != null && respawnPoint != null)
         {
             player.CheckpointFeedback.RegisterMarker(respawnPoint, checkpointId);
         }
@@ -53,6 +54,8 @@ public class level2Checkpoint : MonoBehaviour
         {
             return;
         }
+        // The two later Smile checkpoints must not regress to the old mouth exit.
+        if (checkpointId == "CP03" && SmileFaceFinalRoute.IsRouteCheckpoint(player)) return;
 
         Rigidbody2D otherBody = other.attachedRigidbody;
 
@@ -69,7 +72,7 @@ public class level2Checkpoint : MonoBehaviour
             return;
         }
 
-        player.SetCheckpoint(checkpointId, respawnPoint.position);
+        player.SetCheckpoint(checkpointId, respawnPoint.position, showTextFeedback);
         onCheckpointReached.Invoke();
     }
 }

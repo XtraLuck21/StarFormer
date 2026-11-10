@@ -172,6 +172,25 @@ public class PossessableBody : MonoBehaviour
         return false;
     }
 
+    public bool CanJumpFromGround()
+    {
+        if (Body == null) return false;
+        int count = Body.GetContacts(contacts);
+        for (int i = 0; i < count; i++)
+        {
+            ContactPoint2D contact = contacts[i];
+            if (contact.normal.y <= .65f) continue;
+            Rigidbody2D support = contact.collider.attachedRigidbody;
+            if (support == Body) support = contact.otherCollider.attachedRigidbody;
+            Vector2 supportVelocity = support != null ? support.GetPointVelocity(contact.point) : Vector2.zero;
+            // Uphill travel has positive world Y speed but stays tangent to the slope.
+            // Reject only motion away from the supporting surface (including stale jump contacts).
+            if (Vector2.Dot(Body.linearVelocity - supportVelocity, contact.normal) <= .1f)
+                return true;
+        }
+        return false;
+    }
+
     public Vector2 RemoveBubbleWallPush(Vector2 velocity)
     {
         int count = Body.GetContacts(contacts);

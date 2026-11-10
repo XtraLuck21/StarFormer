@@ -1,0 +1,1248 @@
+fileFormatVersion: 2
+guid: 5ce85c81896721742a03abfa44ce6166
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2482753820483735534
+    second: RedGear_0
+  - first:
+      213: 5129164395530370019
+    second: RedGear_1
+  - first:
+      213: 4221757492573328236
+    second: RedGear_2
+  - first:
+      213: 3972267481439431542
+    second: RedGear_3
+  - first:
+      213: -188268922457147303
+    second: RedGear_4
+  - first:
+      213: -5330948944001240430
+    second: RedGear_5
+  - first:
+      213: -7323852646044206914
+    second: RedGear_6
+  - first:
+      213: 1017283580579017313
+    second: RedGear_7
+  - first:
+      213: 7730432880044611906
+    second: RedGear_8
+  - first:
+      213: -6321584037619831819
+    second: RedGear_9
+  - first:
+      213: -3594158379863429830
+    second: RedGear_10
+  - first:
+      213: 2725950271472146602
+    second: RedGear_11
+  - first:
+      213: -5892015487059463325
+    second: RedGear_12
+  - first:
+      213: -3534611630948140585
+    second: RedGear_13
+  - first:
+      213: -3415618082178213432
+    second: RedGear_14
+  - first:
+      213: -1681118808472238988
+    second: RedGear_15
+  - first:
+      213: 4191350126909576445
+    second: RedGear_16
+  - first:
+      213: -6935467318189638268
+    second: RedGear_17
+  - first:
+      213: 448439500299926445
+    second: RedGear_18
+  - first:
+      213: 1795120979710269850
+    second: RedGear_19
+  - first:
+      213: 9062459105539442469
+    second: RedGear_20
+  - first:
+      213: 803824180889038535
+    second: RedGear_21
+  - first:
+      213: -2437599622980226747
+    second: RedGear_22
+  - first:
+      213: 5115979684128605948
+    second: RedGear_23
+  - first:
+      213: 2603284526415238555
+    second: RedGear_24
+  - first:
+      213: 7229861752127914998
+    second: RedGear_25
+  - first:
+      213: -4143451554616186333
+    second: RedGear_26
+  - first:
+      213: 1324466449176078056
+    second: RedGear_27
+  - first:
+      213: -182371191722393886
+    second: RedGear_28
+  - first:
+      213: 2355326701916546519
+    second: RedGear_29
+  - first:
+      213: 1934740522660295913
+    second: RedGear_30
+  - first:
+      213: -8180426177349173085
+    second: RedGear_31
+  - first:
+      213: -9175095938636934861
+    second: RedGear_32
+  - first:
+      213: 7409886330671893097
+    second: RedGear_33
+  - first:
+      213: 3717372591299500510
+    second: RedGear_34
+  - first:
+      213: -8349090079233841738
+    second: RedGear_35
+  - first:
+      213: -383888520843980748
+    second: RedGear_36
+  - first:
+      213: -6059690809411778379
+    second: RedGear_37
+  - first:
+      213: -332784148034750185
+    second: RedGear_38
+  - first:
+      213: -4576636990814899086
+    second: RedGear_39
+  - first:
+      213: -3468466749161230629
+    second: RedGear_40
+  - first:
+      213: 3698888992820666689
+    second: RedGear_41
+  - first:
+      213: -3608036181092692955
+    second: RedGear_42
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: RedGear_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1155
+        height: 1234
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 210b251fd8c7b8dd0800000000000000
+      internalID: -2482753820483735534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_1
+      rect:
+        serializedVersion: 2
+        x: 683
+        y: 1173
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3eb3b2e97d37e2740800000000000000
+      internalID: 5129164395530370019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_2
+      rect:
+        serializedVersion: 2
+        x: 688
+        y: 999
+        width: 157
+        height: 189
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c635da85212b69a30800000000000000
+      internalID: 4221757492573328236
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_3
+      rect:
+        serializedVersion: 2
+        x: 689
+        y: 1167
+        width: 15
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 67b68087a34502730800000000000000
+      internalID: 3972267481439431542
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_4
+      rect:
+        serializedVersion: 2
+        x: 502
+        y: 1140
+        width: 10
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95832ba9962236df0800000000000000
+      internalID: -188268922457147303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_5
+      rect:
+        serializedVersion: 2
+        x: 645
+        y: 1147
+        width: 9
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 292ff051e2aa406b0800000000000000
+      internalID: -5330948944001240430
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_6
+      rect:
+        serializedVersion: 2
+        x: 430
+        y: 1072
+        width: 55
+        height: 73
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: eb8fa3562d27c5a90800000000000000
+      internalID: -7323852646044206914
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_7
+      rect:
+        serializedVersion: 2
+        x: 869
+        y: 1109
+        width: 6
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 162ff38d60e1e1e00800000000000000
+      internalID: 1017283580579017313
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_8
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 1110
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2491f0f2fb3084b60800000000000000
+      internalID: 7730432880044611906
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_9
+      rect:
+        serializedVersion: 2
+        x: 893
+        y: 1114
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5fbe3eb9fc83548a0800000000000000
+      internalID: -6321584037619831819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_10
+      rect:
+        serializedVersion: 2
+        x: 900
+        y: 1114
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a3d2fb50ffbfe1ec0800000000000000
+      internalID: -3594158379863429830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_11
+      rect:
+        serializedVersion: 2
+        x: 1141
+        y: 955
+        width: 70
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: aa81a76445584d520800000000000000
+      internalID: 2725950271472146602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_12
+      rect:
+        serializedVersion: 2
+        x: 1131
+        y: 892
+        width: 14
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36378bab12b5b3ea0800000000000000
+      internalID: -5892015487059463325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_13
+      rect:
+        serializedVersion: 2
+        x: 1149
+        y: 885
+        width: 22
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d93f56e27982fec0800000000000000
+      internalID: -3534611630948140585
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_14
+      rect:
+        serializedVersion: 2
+        x: 1125
+        y: 873
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8c9dd5373794990d0800000000000000
+      internalID: -3415618082178213432
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_15
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 873
+        width: 10
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 474c8c3c9577ba8e0800000000000000
+      internalID: -1681118808472238988
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_16
+      rect:
+        serializedVersion: 2
+        x: 50
+        y: 657
+        width: 167
+        height: 181
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df4dbb3dbbaaa2a30800000000000000
+      internalID: 4191350126909576445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_17
+      rect:
+        serializedVersion: 2
+        x: 1133
+        y: 827
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 48db9f3483540cf90800000000000000
+      internalID: -6935467318189638268
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_18
+      rect:
+        serializedVersion: 2
+        x: 1155
+        y: 811
+        width: 16
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dab71ae795d293600800000000000000
+      internalID: 448439500299926445
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_19
+      rect:
+        serializedVersion: 2
+        x: 1170
+        y: 834
+        width: 17
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a995b74250d89e810800000000000000
+      internalID: 1795120979710269850
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_20
+      rect:
+        serializedVersion: 2
+        x: 1037
+        y: 662
+        width: 202
+        height: 161
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 527ce21aa8254cd70800000000000000
+      internalID: 9062459105539442469
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_21
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 650
+        width: 21
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7cea2cb65d1c72b00800000000000000
+      internalID: 803824180889038535
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_22
+      rect:
+        serializedVersion: 2
+        x: 30
+        y: 550
+        width: 33
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54133afce08eb2ed0800000000000000
+      internalID: -2437599622980226747
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_23
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 552
+        width: 38
+        height: 45
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cf6c996ca6c9ff640800000000000000
+      internalID: 5115979684128605948
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_24
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 487
+        width: 50
+        height: 68
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b955046eb79b02420800000000000000
+      internalID: 2603284526415238555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_25
+      rect:
+        serializedVersion: 2
+        x: 70
+        y: 546
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f384c645f0a55460800000000000000
+      internalID: 7229861752127914998
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_26
+      rect:
+        serializedVersion: 2
+        x: 1011
+        y: 417
+        width: 212
+        height: 184
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 32aef0793c08f76c0800000000000000
+      internalID: -4143451554616186333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_27
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 483
+        width: 27
+        height: 48
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e6201cd733716210800000000000000
+      internalID: 1324466449176078056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_28
+      rect:
+        serializedVersion: 2
+        x: 96
+        y: 492
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee3f1c0e56187df0800000000000000
+      internalID: -182371191722393886
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_29
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 497
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d56ab5082dcfa020800000000000000
+      internalID: 2355326701916546519
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_30
+      rect:
+        serializedVersion: 2
+        x: 98
+        y: 455
+        width: 16
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9e478b1314499da10800000000000000
+      internalID: 1934740522660295913
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_31
+      rect:
+        serializedVersion: 2
+        x: 110
+        y: 451
+        width: 8
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3a0cbc3cbb9497e80800000000000000
+      internalID: -8180426177349173085
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_32
+      rect:
+        serializedVersion: 2
+        x: 529
+        y: 117
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3319a650bd28ba080800000000000000
+      internalID: -9175095938636934861
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_33
+      rect:
+        serializedVersion: 2
+        x: 693
+        y: 39
+        width: 148
+        height: 196
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 96a88b5cb5435d660800000000000000
+      internalID: 7409886330671893097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_34
+      rect:
+        serializedVersion: 2
+        x: 874
+        y: 122
+        width: 11
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ed91e222da2c69330800000000000000
+      internalID: 3717372591299500510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_35
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 89
+        width: 15
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6b5678deec2122c80800000000000000
+      internalID: -8349090079233841738
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_36
+      rect:
+        serializedVersion: 2
+        x: 482
+        y: 97
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4309eb99c672caaf0800000000000000
+      internalID: -383888520843980748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_37
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 90
+        width: 13
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5b8cf408057a7eba0800000000000000
+      internalID: -6059690809411778379
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_38
+      rect:
+        serializedVersion: 2
+        x: 525
+        y: 91
+        width: 17
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 719f18d9496b16bf0800000000000000
+      internalID: -332784148034750185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_39
+      rect:
+        serializedVersion: 2
+        x: 551
+        y: 97
+        width: 11
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 274b098a7e48c70c0800000000000000
+      internalID: -4576636990814899086
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_40
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 69
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bdeadfc4ed78ddfc0800000000000000
+      internalID: -3468466749161230629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_41
+      rect:
+        serializedVersion: 2
+        x: 675
+        y: 49
+        width: 7
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 141ada001f7155330800000000000000
+      internalID: 3698888992820666689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: RedGear_42
+      rect:
+        serializedVersion: 2
+        x: 685
+        y: 47
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52c8631a53eadedc0800000000000000
+      internalID: -3608036181092692955
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      RedGear_0: -2482753820483735534
+      RedGear_1: 5129164395530370019
+      RedGear_10: -3594158379863429830
+      RedGear_11: 2725950271472146602
+      RedGear_12: -5892015487059463325
+      RedGear_13: -3534611630948140585
+      RedGear_14: -3415618082178213432
+      RedGear_15: -1681118808472238988
+      RedGear_16: 4191350126909576445
+      RedGear_17: -6935467318189638268
+      RedGear_18: 448439500299926445
+      RedGear_19: 1795120979710269850
+      RedGear_2: 4221757492573328236
+      RedGear_20: 9062459105539442469
+      RedGear_21: 803824180889038535
+      RedGear_22: -2437599622980226747
+      RedGear_23: 5115979684128605948
+      RedGear_24: 2603284526415238555
+      RedGear_25: 7229861752127914998
+      RedGear_26: -4143451554616186333
+      RedGear_27: 1324466449176078056
+      RedGear_28: -182371191722393886
+      RedGear_29: 2355326701916546519
+      RedGear_3: 3972267481439431542
+      RedGear_30: 1934740522660295913
+      RedGear_31: -8180426177349173085
+      RedGear_32: -9175095938636934861
+      RedGear_33: 7409886330671893097
+      RedGear_34: 3717372591299500510
+      RedGear_35: -8349090079233841738
+      RedGear_36: -383888520843980748
+      RedGear_37: -6059690809411778379
+      RedGear_38: -332784148034750185
+      RedGear_39: -4576636990814899086
+      RedGear_4: -188268922457147303
+      RedGear_40: -3468466749161230629
+      RedGear_41: 3698888992820666689
+      RedGear_42: -3608036181092692955
+      RedGear_5: -5330948944001240430
+      RedGear_6: -7323852646044206914
+      RedGear_7: 1017283580579017313
+      RedGear_8: 7730432880044611906
+      RedGear_9: -6321584037619831819
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

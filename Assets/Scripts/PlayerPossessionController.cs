@@ -21,6 +21,8 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private float maximumHeight = 8f;
     [SerializeField] private float maximumRiseSpeed = 3f;
     [SerializeField] private float deathDelay = 2f;
+    [SerializeField] private bool quickRespawn;
+    [SerializeField, Min(.05f)] private float quickRespawnSeconds = .18f;
 
     private RestartMenuUI restartMenu;
     private CheckpointFeedbackUI checkpointFeedback;
@@ -83,6 +85,7 @@ public class PlayerPossessionController : MonoBehaviour
     public AnalyticsDeathCause LastDeathCause { get; private set; } = AnalyticsDeathCause.Unknown;
     public bool IsRestarting => restartRequested;
     public PossessableBody CurrentBody => currentBody;
+    public event System.Action<PossessableBody, PossessableBody> PossessionTransferred;
 
     /// <summary>
     /// This frame's vertical input (-1 to 1): J/K for Box resizing, W/S otherwise,
@@ -176,6 +179,7 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointPosition = Vector3.zero;
         BouncyBallCheckpointSession.ClearCurrent();
         AdvancedCheckpointController.ClearSession();
+        SmileFaceFinalRoute.ClearSession();
     }
 
     public void SetCheckpoint(string id, Vector3 position, bool showFeedback = true)
@@ -289,6 +293,32 @@ public class PlayerPossessionController : MonoBehaviour
         horizontalInput = verticalInput = 0f;
         actionRequested = releaseRequested = false;
         ReleaseAllTouchInput();
+    }
+
+    // A scene's fall-recovery zone can return to its saved Star checkpoint
+    // without recording a death, a manual retry, or reloading solved mechanisms.
+    public bool TryReturnToStarCheckpoint(string expectedCheckpoint)
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested || Time.timeScale <= 0f ||
+            !IsCurrentCheckpoint(expectedCheckpoint) || currentBody == null ||
+            initialBody == null || !initialBody.IsReady || initialBody.Form != BodyForm.Star ||
+            (currentBody.Form != BodyForm.Star && currentBody.Form != BodyForm.Bubble &&
+             currentBody.Form != BodyForm.Spider)) return false;
+        if (currentBody.Form != BodyForm.Star)
+        {
+            if (currentBody.TryGetComponent(out HexagonSurfaceMovement climbing)) climbing.Release();
+            PopBubble();
+        }
+        ClearPossessionContacts();
+        ClearInputForRestartMenu();
+        bubblePopRequested = false;
+        currentBody.transform.position = checkpointPosition;
+        currentBody.Body.position = checkpointPosition;
+        currentBody.Body.linearVelocity = Vector2.zero;
+        currentBody.Body.angularVelocity = 0f;
+        Physics2D.SyncTransforms();
+        BlockCurrentContacts();
+        return true;
     }
 
     public void ResumeAfterRestartMenu(float pausedDuration)
@@ -513,7 +543,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateBoxHandoffCollisions();
-        if (currentBody == null || restartRequested || isDead)
+        if (currentBody == null || !currentBody.isActiveAndEnabled || restartRequested || isDead)
         {
             return;
         }
@@ -820,6 +850,11 @@ public class PlayerPossessionController : MonoBehaviour
         float activeDeathDelay = restartDelayOverride >= 0f
             ? restartDelayOverride
             : deathDelay;
+        if (quickRespawn)
+        {
+            activeDeathDelay = quickRespawnSeconds;
+            CheckpointFeedback.ShowRespawning();
+        }
         deathRestartTime = Time.unscaledTime + activeDeathDelay;
         Time.timeScale = 0f;
     }
@@ -960,6 +995,55 @@ public class PlayerPossessionController : MonoBehaviour
         Debug.Log("Bubble popped. Returned to star form.", currentBody);
     }
 
+    public bool RestoreStarAfterFanPuzzle(Vector2 fallbackPosition)
+    {
+        if (initialBody == null || !initialBody.IsReady || initialBody.Form != BodyForm.Star ||
+            isDead || restartRequested) return false;
+        if (currentBody != null && currentBody.Form != BodyForm.Fan) return false;
+        if (currentBody != null && currentBody.isActiveAndEnabled)
+        {
+            LeaveFan();
+            releaseRequested = false;
+            return currentBody == initialBody;
+        }
+        initialBody.gameObject.SetActive(true);
+        initialBody.Body.position = fallbackPosition;
+        initialBody.Body.linearVelocity = Vector2.zero;
+        initialBody.Body.angularVelocity = 0f;
+        return TryRecoverMissingHost(initialBody);
+    }
+
+    // The elevator owns movement while the spent ball shell opens. This handoff
+    // also works while this controller is temporarily disabled for the ride.
+    public bool ReleaseBouncyShellForElevator(PossessableBody expectedBall, out PossessableBody star)
+    {
+        star = null;
+        if (isDead || restartRequested || currentBody != expectedBall || expectedBall == null ||
+            expectedBall.Form != BodyForm.BouncyBall || initialBody == null || !initialBody.IsReady ||
+            initialBody.Form != BodyForm.Star) return false;
+
+        Vector2 position = expectedBall.Body.position;
+        ClearPossessionContacts();
+        pendingSource = pendingTarget = null;
+        bubblePopRequested = releaseRequested = actionRequested = false;
+        horizontalInput = verticalInput = 0f;
+        ReleaseAllTouchInput();
+        expectedBall.SetOwner(null);
+        initialBody.transform.position = new Vector3(position.x, position.y, initialBody.transform.position.z);
+        initialBody.gameObject.SetActive(true);
+        initialBody.Body.position = position;
+        initialBody.Body.linearVelocity = Vector2.zero;
+        initialBody.Body.angularVelocity = 0f;
+        currentBody = initialBody;
+        currentBody.SetOwner(this);
+        expectedBall.gameObject.SetActive(false);
+        BlockCurrentContacts();
+        AnalyticsManager.Instance?.ChangeControlledForm(expectedBall.Form, currentBody.Form, position, "leave_form");
+        PossessionTransferred?.Invoke(expectedBall, currentBody);
+        star = currentBody;
+        return true;
+    }
+
     private void LeaveFan()
     {
         if (initialBody == null ||
@@ -1015,6 +1099,47 @@ public class PlayerPossessionController : MonoBehaviour
         );
         BlockTarget(fan);
         actionRequested = false;
+    }
+
+    // A room supply can replace a host that was destroyed or disabled, without
+    // leaving the controller pointing at a destroyed object and the Star inactive.
+    public bool TryRecoverMissingHost(PossessableBody replacement)
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested || (currentBody != null && currentBody.isActiveAndEnabled) ||
+            replacement == null || !replacement.isActiveAndEnabled || !replacement.IsReady)
+            return false;
+        ClearPossessionContacts();
+        pendingSource = pendingTarget = null;
+        bubblePopRequested = releaseRequested = actionRequested = false;
+        horizontalInput = verticalInput = 0f;
+        ReleaseAllTouchInput();
+        if (currentBody != null) currentBody.SetOwner(null);
+        currentBody = replacement;
+        currentBody.SetOwner(this);
+        BlockCurrentContacts();
+        return true;
+    }
+
+    public bool TryEnterSpiderAtGate(PossessableBody spider)
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested || Time.timeScale <= 0f ||
+            currentBody == null || spider == null || spider.Form != BodyForm.Spider ||
+            spider.gameObject.scene != gameObject.scene) return false;
+        if (currentBody == spider) return true;
+        spider.gameObject.SetActive(true);
+        if (!spider.IsReady) return false;
+        PossessableBody previous = currentBody;
+        Vector2 position = previous.Body.position;
+        spider.GetComponent<HexagonSurfaceMovement>().Release();
+        spider.transform.position = new Vector3(position.x, position.y, spider.transform.position.z);
+        spider.Body.position = position;
+        spider.Body.linearVelocity = Vector2.zero;
+        spider.Body.angularVelocity = 0f;
+        Physics2D.SyncTransforms();
+        TransferTo(spider);
+        if (previous != null && previous.Form != BodyForm.Star) previous.gameObject.SetActive(false);
+        ClearInputForRestartMenu();
+        return true;
     }
 
     private void TransferTo(PossessableBody target)
@@ -1097,6 +1222,7 @@ public class PlayerPossessionController : MonoBehaviour
         // how they behave while unpossessed.
 
         Debug.Log($"Possessed {currentBody.Form}.", currentBody);
+        PossessionTransferred?.Invoke(previousBody, currentBody);
     }
 
     private void BeginBoxHandoff(PossessableBody previous, PossessableBody next)

@@ -14,6 +14,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
     [SerializeField, Min(0f)] private float surfaceGap = 0.02f;
     [SerializeField, Min(0f)] private float correctionSpeed = 10f;
 
+    private readonly RaycastHit2D[] surfaceHits = new RaycastHit2D[32];
     private Rigidbody2D body;
     private PossessableBody possessable;
     private CircleCollider2D circle;
@@ -151,6 +152,18 @@ public class HexagonSurfaceMovement : MonoBehaviour
         );
     }
 
+    // Checkpoints, water and hazard sensors do not support climbing.
+    private RaycastHit2D CastSolidSurface(Vector2 origin, float radius, Vector2 direction, float distance)
+    {
+        var filter = new ContactFilter2D();
+        filter.SetLayerMask(surfaceMask);
+        filter.useTriggers = false;
+        int count = Physics2D.CircleCast(origin, radius, direction, filter, surfaceHits, distance);
+        for (int i = 0; i < count; i++)
+            if (surfaceHits[i].collider != null && surfaceHits[i].rigidbody != body) return surfaceHits[i];
+        return default;
+    }
+
     private bool FindSurface(
         Vector2 center,
         float radius,
@@ -180,13 +193,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
                 surfaceGap +
             searchDistance; ;
 
-            RaycastHit2D forwardHit = Physics2D.CircleCast(
-                center,
-                probeRadius,
-                moveDirection,
-                forwardDistance,
-                surfaceMask
-            );
+            RaycastHit2D forwardHit = CastSolidSurface(center, probeRadius, moveDirection, forwardDistance);
 
             if (forwardHit.collider != null &&
                 forwardHit.distance > 0f)
@@ -213,13 +220,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
             }
         }
         // Detect the current attached surface with or without movement input.
-        bestHit = Physics2D.CircleCast(
-            center,
-            probeRadius,
-            -surfaceNormal,
-            probeDistance,
-            surfaceMask
-        );
+        bestHit = CastSolidSurface(center, probeRadius, -surfaceNormal, probeDistance);
 
         if (bestHit.collider != null && bestHit.distance > 0f)
         {
@@ -239,13 +240,7 @@ public class HexagonSurfaceMovement : MonoBehaviour
                 Mathf.Sin(angle)
             );
 
-            RaycastHit2D hit = Physics2D.CircleCast(
-                center,
-                probeRadius,
-                direction,
-                probeDistance,
-                surfaceMask
-            );
+            RaycastHit2D hit = CastSolidSurface(center, probeRadius, direction, probeDistance);
 
             if (hit.collider == null || hit.distance <= 0f)
             {

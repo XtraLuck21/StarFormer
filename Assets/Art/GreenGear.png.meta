@@ -1,0 +1,1404 @@
+fileFormatVersion: 2
+guid: 685f4fcba96bcd14ca590fb7f27ac11d
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3293143694908253011
+    second: GreenGear_0
+  - first:
+      213: 8428794870019117621
+    second: GreenGear_1
+  - first:
+      213: -656387514052725918
+    second: GreenGear_2
+  - first:
+      213: 7947359357848455345
+    second: GreenGear_3
+  - first:
+      213: 8395248136951199421
+    second: GreenGear_4
+  - first:
+      213: -3621412111157695635
+    second: GreenGear_5
+  - first:
+      213: -6566691804501367153
+    second: GreenGear_6
+  - first:
+      213: 6660500615406374235
+    second: GreenGear_7
+  - first:
+      213: 9188731022269511971
+    second: GreenGear_8
+  - first:
+      213: -2228423813919602117
+    second: GreenGear_9
+  - first:
+      213: 4355657033087051058
+    second: GreenGear_10
+  - first:
+      213: -3906281593494515899
+    second: GreenGear_11
+  - first:
+      213: 2808200802251183611
+    second: GreenGear_12
+  - first:
+      213: 4676548085610393554
+    second: GreenGear_13
+  - first:
+      213: -4362737079362659999
+    second: GreenGear_14
+  - first:
+      213: 7801135901568641197
+    second: GreenGear_15
+  - first:
+      213: 673745956434977598
+    second: GreenGear_16
+  - first:
+      213: -7960628621170907160
+    second: GreenGear_17
+  - first:
+      213: -1145103582025316821
+    second: GreenGear_18
+  - first:
+      213: 7282068161889628149
+    second: GreenGear_19
+  - first:
+      213: -7467137775902570482
+    second: GreenGear_20
+  - first:
+      213: 2506774322532186626
+    second: GreenGear_21
+  - first:
+      213: 1080568032467049625
+    second: GreenGear_22
+  - first:
+      213: -6253337433947951157
+    second: GreenGear_23
+  - first:
+      213: -3345656784299394054
+    second: GreenGear_24
+  - first:
+      213: 7079982302584026475
+    second: GreenGear_25
+  - first:
+      213: -4659332086529484041
+    second: GreenGear_26
+  - first:
+      213: 4735604841410728824
+    second: GreenGear_27
+  - first:
+      213: 8913793591725436238
+    second: GreenGear_28
+  - first:
+      213: -2505768436530568820
+    second: GreenGear_29
+  - first:
+      213: 1379463711950748388
+    second: GreenGear_30
+  - first:
+      213: 3587255541348026576
+    second: GreenGear_31
+  - first:
+      213: 6037083197243256811
+    second: GreenGear_32
+  - first:
+      213: -4163289073119721370
+    second: GreenGear_33
+  - first:
+      213: 7539303524810287901
+    second: GreenGear_34
+  - first:
+      213: -2645470382744060004
+    second: GreenGear_35
+  - first:
+      213: -945309184446384064
+    second: GreenGear_36
+  - first:
+      213: -7214424680858992121
+    second: GreenGear_37
+  - first:
+      213: 1125770899012523047
+    second: GreenGear_38
+  - first:
+      213: -3275566700376564820
+    second: GreenGear_39
+  - first:
+      213: -3885645586592438714
+    second: GreenGear_40
+  - first:
+      213: -7296090578322109867
+    second: GreenGear_41
+  - first:
+      213: -2921017513183814311
+    second: GreenGear_42
+  - first:
+      213: 3655932591497952748
+    second: GreenGear_43
+  - first:
+      213: 8345772109911321785
+    second: GreenGear_44
+  - first:
+      213: -3466748637638235705
+    second: GreenGear_45
+  - first:
+      213: -3510314401786494567
+    second: GreenGear_46
+  - first:
+      213: 1000899497004135046
+    second: GreenGear_47
+  - first:
+      213: 3820509702713821777
+    second: GreenGear_48
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: GreenGear_0
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 1215
+        height: 1232
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dac1daed1476c42d0800000000000000
+      internalID: -3293143694908253011
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_1
+      rect:
+        serializedVersion: 2
+        x: 796
+        y: 1162
+        width: 37
+        height: 70
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 532df10d64819f470800000000000000
+      internalID: 8428794870019117621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_2
+      rect:
+        serializedVersion: 2
+        x: 828
+        y: 1206
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 263b2ed980b04e6f0800000000000000
+      internalID: -656387514052725918
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_3
+      rect:
+        serializedVersion: 2
+        x: 833
+        y: 1203
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1b80fe2aa31ba4e60800000000000000
+      internalID: 7947359357848455345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_4
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 1189
+        width: 15
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db67c3c53b9e18470800000000000000
+      internalID: 8395248136951199421
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_5
+      rect:
+        serializedVersion: 2
+        x: 847
+        y: 1191
+        width: 12
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d6be5293fd82ebdc0800000000000000
+      internalID: -3621412111157695635
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_6
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 1173
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f862a3b789c6ed4a0800000000000000
+      internalID: -6566691804501367153
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_7
+      rect:
+        serializedVersion: 2
+        x: 850
+        y: 1173
+        width: 8
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5d4197550ade6c50800000000000000
+      internalID: 6660500615406374235
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_8
+      rect:
+        serializedVersion: 2
+        x: 876
+        y: 1173
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3297cf64e2ee48f70800000000000000
+      internalID: 9188731022269511971
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_9
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 1150
+        width: 7
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b3a0d42195c0311e0800000000000000
+      internalID: -2228423813919602117
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_10
+      rect:
+        serializedVersion: 2
+        x: 265
+        y: 1144
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 235e59c8ef6627c30800000000000000
+      internalID: 4355657033087051058
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_11
+      rect:
+        serializedVersion: 2
+        x: 271
+        y: 1150
+        width: 9
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 54fcc1b46991ac9c0800000000000000
+      internalID: -3906281593494515899
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_12
+      rect:
+        serializedVersion: 2
+        x: 301
+        y: 1147
+        width: 10
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf5162c40cbb8f620800000000000000
+      internalID: 2808200802251183611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_13
+      rect:
+        serializedVersion: 2
+        x: 844
+        y: 1143
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2df27d9d4bf66e040800000000000000
+      internalID: 4676548085610393554
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_14
+      rect:
+        serializedVersion: 2
+        x: 191
+        y: 1098
+        width: 17
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 169d928bdb17473c0800000000000000
+      internalID: -4362737079362659999
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_15
+      rect:
+        serializedVersion: 2
+        x: 217
+        y: 1108
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da8ab8135c3334c60800000000000000
+      internalID: 7801135901568641197
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_16
+      rect:
+        serializedVersion: 2
+        x: 806
+        y: 1112
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e33a922b060a95900800000000000000
+      internalID: 673745956434977598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_17
+      rect:
+        serializedVersion: 2
+        x: 818
+        y: 1106
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8e7ec4e327a268190800000000000000
+      internalID: -7960628621170907160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_18
+      rect:
+        serializedVersion: 2
+        x: 979
+        y: 1108
+        width: 16
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b268a52fb56cb10f0800000000000000
+      internalID: -1145103582025316821
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_19
+      rect:
+        serializedVersion: 2
+        x: 1043
+        y: 1092
+        width: 9
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5ffec93496a1f0560800000000000000
+      internalID: 7282068161889628149
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_20
+      rect:
+        serializedVersion: 2
+        x: 810
+        y: 1084
+        width: 15
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e084d6261c56f5890800000000000000
+      internalID: -7467137775902570482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_21
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 1074
+        width: 31
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 20af99207f9d9c220800000000000000
+      internalID: 2506774322532186626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_22
+      rect:
+        serializedVersion: 2
+        x: 1051
+        y: 1090
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 99c57d286e2fefe00800000000000000
+      internalID: 1080568032467049625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_23
+      rect:
+        serializedVersion: 2
+        x: 118
+        y: 1029
+        width: 30
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bcf21e44cbea739a0800000000000000
+      internalID: -6253337433947951157
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_24
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 984
+        width: 24
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: afb757771e6d191d0800000000000000
+      internalID: -3345656784299394054
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_25
+      rect:
+        serializedVersion: 2
+        x: 104
+        y: 1004
+        width: 9
+        height: 17
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b65b2919466214260800000000000000
+      internalID: 7079982302584026475
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_26
+      rect:
+        serializedVersion: 2
+        x: 1127
+        y: 1000
+        width: 42
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7fa94db472ab65fb0800000000000000
+      internalID: -4659332086529484041
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_27
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 972
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 87318e0538f38b140800000000000000
+      internalID: 4735604841410728824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_28
+      rect:
+        serializedVersion: 2
+        x: 1137
+        y: 964
+        width: 50
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e4da2fb5b0824bb70800000000000000
+      internalID: 8913793591725436238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_29
+      rect:
+        serializedVersion: 2
+        x: 90
+        y: 927
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c81a53312e8b93dd0800000000000000
+      internalID: -2505768436530568820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_30
+      rect:
+        serializedVersion: 2
+        x: 1140
+        y: 915
+        width: 23
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eabd53ffe6d42310800000000000000
+      internalID: 1379463711950748388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_31
+      rect:
+        serializedVersion: 2
+        x: 1167
+        y: 855
+        width: 53
+        height: 94
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0d8c994a8ed78c130800000000000000
+      internalID: 3587255541348026576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_32
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 740
+        width: 9
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: befe92b9e2708c350800000000000000
+      internalID: 6037083197243256811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_33
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 771
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6680f6365a60936c0800000000000000
+      internalID: -4163289073119721370
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_34
+      rect:
+        serializedVersion: 2
+        x: 1161
+        y: 787
+        width: 12
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d1bea226c9cf0a860800000000000000
+      internalID: 7539303524810287901
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_35
+      rect:
+        serializedVersion: 2
+        x: 1165
+        y: 652
+        width: 68
+        height: 192
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c9f39b404b6694bd0800000000000000
+      internalID: -2645470382744060004
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_36
+      rect:
+        serializedVersion: 2
+        x: 1170
+        y: 769
+        width: 7
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 048b8222e4691e2f0800000000000000
+      internalID: -945309184446384064
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_37
+      rect:
+        serializedVersion: 2
+        x: 1175
+        y: 769
+        width: 6
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 702c696f9f631eb90800000000000000
+      internalID: -7214424680858992121
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_38
+      rect:
+        serializedVersion: 2
+        x: 1182
+        y: 722
+        width: 7
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7241d160baa8f9f00800000000000000
+      internalID: 1125770899012523047
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_39
+      rect:
+        serializedVersion: 2
+        x: 1188
+        y: 770
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cabd4f1d079da82d0800000000000000
+      internalID: -3275566700376564820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_40
+      rect:
+        serializedVersion: 2
+        x: 38
+        y: 393
+        width: 9
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 646e7101de9631ac0800000000000000
+      internalID: -3885645586592438714
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_41
+      rect:
+        serializedVersion: 2
+        x: 62
+        y: 385
+        width: 21
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55a490e76441fba90800000000000000
+      internalID: -7296090578322109867
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_42
+      rect:
+        serializedVersion: 2
+        x: 120
+        y: 178
+        width: 8
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95ddbf74c067677d0800000000000000
+      internalID: -2921017513183814311
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_43
+      rect:
+        serializedVersion: 2
+        x: 201
+        y: 107
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ced320f625b7cb230800000000000000
+      internalID: 3655932591497952748
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_44
+      rect:
+        serializedVersion: 2
+        x: 1059
+        y: 111
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9bc60a3248322d370800000000000000
+      internalID: 8345772109911321785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_45
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 49
+        width: 11
+        height: 25
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7c9e0005b72a3efc0800000000000000
+      internalID: -3466748637638235705
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_46
+      rect:
+        serializedVersion: 2
+        x: 488
+        y: 55
+        width: 11
+        height: 13
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 991049766abd84fc0800000000000000
+      internalID: -3510314401786494567
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_47
+      rect:
+        serializedVersion: 2
+        x: 834
+        y: 14
+        width: 11
+        height: 20
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6827cce1ac8e3ed00800000000000000
+      internalID: 1000899497004135046
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: GreenGear_48
+      rect:
+        serializedVersion: 2
+        x: 860
+        y: 31
+        width: 7
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 15ac03b255d250530800000000000000
+      internalID: 3820509702713821777
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      GreenGear_0: -3293143694908253011
+      GreenGear_1: 8428794870019117621
+      GreenGear_10: 4355657033087051058
+      GreenGear_11: -3906281593494515899
+      GreenGear_12: 2808200802251183611
+      GreenGear_13: 4676548085610393554
+      GreenGear_14: -4362737079362659999
+      GreenGear_15: 7801135901568641197
+      GreenGear_16: 673745956434977598
+      GreenGear_17: -7960628621170907160
+      GreenGear_18: -1145103582025316821
+      GreenGear_19: 7282068161889628149
+      GreenGear_2: -656387514052725918
+      GreenGear_20: -7467137775902570482
+      GreenGear_21: 2506774322532186626
+      GreenGear_22: 1080568032467049625
+      GreenGear_23: -6253337433947951157
+      GreenGear_24: -3345656784299394054
+      GreenGear_25: 7079982302584026475
+      GreenGear_26: -4659332086529484041
+      GreenGear_27: 4735604841410728824
+      GreenGear_28: 8913793591725436238
+      GreenGear_29: -2505768436530568820
+      GreenGear_3: 7947359357848455345
+      GreenGear_30: 1379463711950748388
+      GreenGear_31: 3587255541348026576
+      GreenGear_32: 6037083197243256811
+      GreenGear_33: -4163289073119721370
+      GreenGear_34: 7539303524810287901
+      GreenGear_35: -2645470382744060004
+      GreenGear_36: -945309184446384064
+      GreenGear_37: -7214424680858992121
+      GreenGear_38: 1125770899012523047
+      GreenGear_39: -3275566700376564820
+      GreenGear_4: 8395248136951199421
+      GreenGear_40: -3885645586592438714
+      GreenGear_41: -7296090578322109867
+      GreenGear_42: -2921017513183814311
+      GreenGear_43: 3655932591497952748
+      GreenGear_44: 8345772109911321785
+      GreenGear_45: -3466748637638235705
+      GreenGear_46: -3510314401786494567
+      GreenGear_47: 1000899497004135046
+      GreenGear_48: 3820509702713821777
+      GreenGear_5: -3621412111157695635
+      GreenGear_6: -6566691804501367153
+      GreenGear_7: 6660500615406374235
+      GreenGear_8: 9188731022269511971
+      GreenGear_9: -2228423813919602117
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -8,6 +8,7 @@ using UnityEngine;
 public class ReturnToSpawnOnLeave : MonoBehaviour
 {
     [SerializeField] private bool resetVelocity = true;
+    [SerializeField] private bool consumeOnLeave;
 
     private PossessableBody possessable;
     private Vector3 spawnPosition;
@@ -17,6 +18,13 @@ public class ReturnToSpawnOnLeave : MonoBehaviour
     private void Awake()
     {
         possessable = GetComponent<PossessableBody>();
+        if (consumeOnLeave)
+        {
+            // Later-room forms were authored beneath this body; consuming it must not remove them.
+            foreach (PossessableBody other in GetComponentsInChildren<PossessableBody>(true))
+                if (other != possessable && other.transform.IsChildOf(transform))
+                    other.transform.SetParent(transform.parent, true);
+        }
         spawnPosition = transform.position;
         spawnRotation = transform.rotation;
     }
@@ -38,6 +46,12 @@ public class ReturnToSpawnOnLeave : MonoBehaviour
     /// </summary>
     public void ReturnToSpawn()
     {
+        if (consumeOnLeave)
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+            return;
+        }
         if (!gameObject.activeSelf)
         {
             gameObject.SetActive(true);

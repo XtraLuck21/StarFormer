@@ -43,6 +43,13 @@ public class SpikeWallEnemyChase : MonoBehaviour
     private float endTimer;
     private bool spikesGone;
 
+    // Cache the wall's original footprint so expired spikes cannot make it jump.
+    private float rearOffset;
+    private float frontOffset;
+    public bool HasStarted { get; private set; }
+    public float RearEdgeX => body.position.x + rearOffset;
+    public float FrontEdgeX => body.position.x + frontOffset;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -62,11 +69,17 @@ public class SpikeWallEnemyChase : MonoBehaviour
         }
 
         // Child spike colliders use the parent object's Rigidbody2D.
+        float rear = float.PositiveInfinity;
+        float front = float.NegativeInfinity;
         foreach (Collider2D spikeCollider
                  in GetComponentsInChildren<Collider2D>())
         {
             spikeCollider.isTrigger = true;
+            rear = Mathf.Min(rear, spikeCollider.bounds.min.x);
+            front = Mathf.Max(front, spikeCollider.bounds.max.x);
         }
+        rearOffset = float.IsInfinity(rear) ? 0f : rear - body.position.x;
+        frontOffset = float.IsInfinity(front) ? 0f : front - body.position.x;
     }
 
     private void FixedUpdate()
@@ -142,7 +155,11 @@ public class SpikeWallEnemyChase : MonoBehaviour
             return;
         }
 
+        // Emergence or moving the starting section can reposition the wall
+        // after Awake. Lock its current height rather than snapping it back.
+        fixedY = body.position.y;
         movementStarted = true;
+        HasStarted = true;
 
         BeginSpikeLifetime();
 
