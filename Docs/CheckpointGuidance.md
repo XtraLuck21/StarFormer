@@ -1,6 +1,6 @@
 # Checkpoints, restart and pause menus
 
-Last updated: 2026-11-06. Beta 0.1.2 is published at root and `/beta/` via `64b35c6`. The Level01 recovery model remains; PR #21 improves traversal and PR #22 applies its Home menu across all seven gameplay scenes. See the [release record](Beta-0.1.2.md) for deployment evidence and outstanding browser verification. Published Beta 0.1.1 evidence remains historical.
+Last updated: 2026-11-10. Beta 0.1.2 is published at root and `/beta/` via `64b35c6`. The Level01 recovery model remains; PR #21 improves traversal and PR #22 applies its Home menu across all seven gameplay scenes. See the [release record](Beta-0.1.2.md) for deployment evidence and outstanding browser verification. Published Beta 0.1.1 evidence remains historical. The promoted Level02 recovery below is the unpublished Beta 0.1.3 source behavior.
 
 ## Level01 checkpoints
 
@@ -53,7 +53,7 @@ Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Es
 - The R menu also pauses automatic death recovery. Cancelling restores the remaining death-delay time.
 - Home's extra confirmation screens do not replace or change the existing R shortcut.
 - Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
-- Level02 retains CP01/CP02/CP03 and uses Home for menu, restart and checkpoint retry actions. Retry/death restore its saved Star position and stage events; full restart clears it. See [level-2.md](level-2.md).
+- Promoted Level02 uses DROP_BOTTOM, SEESAW_ROOM and the five Smiley Face entries documented in [level-2.md](level-2.md#2-scene-wiring-to-preserve). Death/Home retry restore the configured Star, Spider or Box entry and its stage progress; later entries cannot regress. A saved forehead entry also enables the lower-right fall-return zone without a death/reload. The scene uses a short Respawning pause; full restart clears its session records. CP01/CP02 remain legacy objects; CP03 has been removed.
 
 ## Bubble hints
 

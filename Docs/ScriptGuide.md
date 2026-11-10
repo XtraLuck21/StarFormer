@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-06. Beta 0.1.2 is published to root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features, isolated Editor evidence and outstanding browser/data checks. Level02 repairs remain deferred.
+Last updated: 2026-11-10. Beta 0.1.2 is published to root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and 14 hosted file comparisons passed. See the [release record](Beta-0.1.2.md) for features, isolated Editor evidence and outstanding browser/data checks. The replacement Level02 is now integrated; [Beta-0.1.3.md](Beta-0.1.3.md) records its unpublished release preparation.
 
 ## 1. Scenes and build configuration
 
@@ -13,7 +13,7 @@ Last updated: 2026-11-06. Beta 0.1.2 is published to root and `/beta/` via `64b3
 | 4 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
 | 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to IntroFan |
 | 6 | [IntroFan](../Assets/Scenes/IntroFan.unity) | Continues to Level02 |
-| 7 | [Level02](../Assets/Scenes/Level02.unity) | Final completion screen with Main Menu action |
+| 7 | [Level02](../Assets/Scenes/Level02.unity) | Promoted chase/dark passage/seesaw/Smiley Face layout; custom raised-flag victory |
 
 The current source names the Fan tutorial `IntroFan` (formerly `FanTutorial`), preserving its scene GUID. Published builds and historical analytics retain the old name. Deploy the local analytics compatibility update with the next game release; this rename does not update the hosted build.
 
@@ -90,15 +90,18 @@ See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare 
 
 | Script | Responsibility |
 | --- | --- |
-| [level2Camera.cs](../Assets/Scripts/StartingStage/level2Camera.cs) | Follow/fixed framing, Spider reveal, chase, falling and later follow stages |
-| [level2Checkpoint.cs](../Assets/Scripts/StartingStage/level2Checkpoint.cs) | CP01/CP02/CP03 positions and stage events on checkpoint arrival/respawn |
-| [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs), [SpiderGooglyEyes.cs](../Assets/Scripts/spiderFolder/SpiderGooglyEyes.cs) | Spider traversal and eyes; preserve the merged Level02 behavior |
-| [SpikeButton.cs](../Assets/Scripts/SpikeWall/SpikeButton.cs) | Existing projectile/button interactions |
-| [BubbleSpawner.cs](../Assets/Scripts/transitStage/BubbleSpawner.cs) | Replacement Bubble in the transition section |
-| [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Paged form help, discovery gates, demo playback and pause ownership. Obsolete Help components removed from IntroBox/IntroBubble/IntroSpider. Level02 still has a legacy layout without page data; work is deferred to its replacement scene. |
-| [Spritesequenceplayer.cs](../Assets/UI/Spritesequenceplayer.cs) | `SpriteSequencePlayer` plays six-form Help demonstrations using unscaled time; included in Beta 0.1.2, absent from historical 0.1.1. |
+| [level2Camera.cs](../Assets/Scripts/StartingStage/level2Camera.cs) | Chase, fall/dark passage, fixed seesaw/tooth views, brief complete-face reveal, closer forehead framing and follow |
+| [DarkStarPassage.cs](../Assets/Scripts/StartingStage/DarkStarPassage.cs), [DropBottomCheckpoint.cs](../Assets/Scripts/StartingStage/DropBottomCheckpoint.cs) | Descent darkness, local light recovery, glowing exit and safe bottom landing |
+| [SeesawRoomSupplies.cs](../Assets/Scripts/SeesawRoomSupplies.cs), [SeesawRoomStage.cs](../Assets/Scripts/SeesawRoomStage.cs) | Direction-triggered Fan supply, single ordinary ball, blue/green cleanup and staged barrier/platform reveal |
+| [SeesawOverloadSequence.cs](../Assets/Scripts/SeesawOverloadSequence.cs), [SeesawBouncyFinale.cs](../Assets/Scripts/SeesawBouncyFinale.cs) | Yellow three-ball loading, floating delayed !, Spider passage and four underside impacts |
+| [SeesawRoomExit.cs](../Assets/Scripts/SeesawRoomExit.cs), [SeesawBallShellExit.cs](../Assets/Scripts/SeesawBallShellExit.cs) | Four-gear quake, rising lift, continuous ride and real Star handoff during shell breakup |
+| [TeethTriggeredDoor.cs](../Assets/Scripts/TeethTriggeredDoor.cs), [SmileFaceCompletion.cs](../Assets/Scripts/SmileFaceCompletion.cs) | Three tooth arrivals, connected grin/opening eyes, separate camera phases |
+| [SmileFaceFinalRoute.cs](../Assets/Scripts/SmileFaceFinalRoute.cs), [SmileRouteCheckpoint.cs](../Assets/Scripts/SmileRouteCheckpoint.cs) | Ordered Spider/Star/Box checkpoints, pure blue/yellow markers and forehead fall-return protection |
+| [SmileBoxPressureButton.cs](../Assets/Scripts/SmileBoxPressureButton.cs), [SmileGoalFlag.cs](../Assets/Scripts/SmileGoalFlag.cs) | Assigned final Box opens the flag stage; actual flag contact displays the custom victory overlay |
+| [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Climb real solid surfaces; ignore checkpoint/water trigger volumes |
+| [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Configured six-page Level02 Collection Book alongside shared Home; obsolete empty Help component removed |
 
-Level02 geometry and its positional checkpoint system were not replaced by Advanced. Its final flag remains; shared Home replaces the standalone menu/restart/retry presentation. Existing callback and device follow-ups are recorded in [level-2.md](level-2.md).
+The promoted scene replaces the old layout, retained as Level02_legacy and excluded from builds. The obsolete right-side BubbleSpawner and CP03 are gone. The final Smile flag does not yet invoke shared completion analytics or a Navigation-return control. See [level-2.md](level-2.md) for mechanics, recovery and remaining acceptance.
 
 ## 3. Navigation and interactive menu
 
