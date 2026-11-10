@@ -32300,11 +32300,9 @@ MonoBehaviour:
   entranceShatter: {fileID: 2258310024}
   exitShatter: {fileID: 2258310034}
   ballInterval: 0.75
-  entranceHintDelay: 0
-  entranceHintOffset: {x: 0, y: 1.3, z: 0}
-  entranceHintFontSize: 3.8
-  entranceHintColor: {r: 1, g: 0.5642848, b: 0.1490196, a: 1}
-  entranceHintSeconds: 8
+  entranceHintDelay: 5
+  entranceHintOffset: {x: 0, y: 0.8, z: 0}
+  entranceHintFontSize: 8
 --- !u!1 &2258310000
 GameObject:
   m_ObjectHideFlags: 0

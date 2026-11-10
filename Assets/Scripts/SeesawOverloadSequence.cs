@@ -24,9 +24,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
     [Header("Entrance Reminder")]
     [SerializeField, Min(0f)]
-    private float entranceHintDelay = 0f;
-    [SerializeField, Min(.1f)] private float entranceHintSeconds = 8f;
-    [SerializeField, TextArea] private string entranceHintText = "Use Spider on the crack.\nBreak through the floor.";
+    private float entranceHintDelay = 5f;
 
     [SerializeField]
     private Vector3 entranceHintOffset =
@@ -35,9 +33,6 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
     [SerializeField, Min(.1f)]
     private float entranceHintFontSize = 6f;
 
-    [SerializeField]
-    private Color entranceHintColor =
-        new Color(1f, .82f, .15f, 1f);
 
     private readonly HashSet<WindReleasedBall> loaded =
         new HashSet<WindReleasedBall>();
@@ -228,18 +223,13 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         hintObject.transform.SetParent(transform, false);
 
         entranceHint = hintObject.AddComponent<TextMeshPro>();
-        entranceHint.text = entranceHintText;
-        entranceHint.fontSize = entranceHintFontSize;
         entranceHint.fontStyle = FontStyles.Bold;
-        entranceHint.alignment = TextAlignmentOptions.Center;
-        entranceHint.color = entranceHintColor;
         entranceHint.outlineColor =
             new Color32(0, 0, 0, 255);
         entranceHint.outlineWidth = .15f;
         entranceHint.raycastTarget = false;
 
-        entranceHint.rectTransform.sizeDelta =
-            new Vector2(12f, 1.8f);
+        ApplyEntranceExclamation();
 
         MeshRenderer hintRenderer =
             hintObject.GetComponent<MeshRenderer>();
@@ -259,10 +249,32 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         entranceHintAge = 0f;
     }
 
+    private void ApplyEntranceExclamation()
+    {
+        entranceHint.text = "!";
+        entranceHint.color = Color.yellow;
+        entranceHint.fontSize = entranceHintFontSize;
+        entranceHint.alignment = TextAlignmentOptions.Center;
+        entranceHint.rectTransform.sizeDelta = new Vector2(2f, 2f);
+    }
+
+    private void OnEnable()
+    {
+        // Script reloads can retain the old runtime text and Inspector values.
+        if (entranceHint == null)
+        {
+            Transform oldHint = transform.Find("Spider Entrance Reminder");
+            if (oldHint != null) entranceHint = oldHint.GetComponent<TextMeshPro>();
+        }
+        if (entranceHint != null) ApplyEntranceExclamation();
+    }
+
     private void UpdateEntranceHint()
     {
         if (entranceHint == null)
             return;
+
+        ApplyEntranceExclamation();
 
         if (breaking ||
             IsPassageOpen ||
@@ -287,7 +299,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             hintPosition + entranceHintOffset;
 
         entranceHint.enabled =
-            entranceHintAge >= entranceHintDelay && entranceHintAge < entranceHintDelay + entranceHintSeconds;
+            entranceHintAge >= entranceHintDelay;
     }
 
     private void HideEntranceHint()
