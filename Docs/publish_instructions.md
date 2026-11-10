@@ -1,5 +1,9 @@
 # Publish StarFormer to GitHub Pages
 
+## Beta 0.1.4 local build
+
+See the [Beta 0.1.4 build notes](Beta-0.1.4.md) for Unity settings, the build command and local preview steps.
+
 ## Beta 0.1.3 release status
 
 **Beta 0.1.3 was published on November 10, 2026** to the [Beta website](https://xtraluck21.github.io/StarFormer/beta/). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42806924119) succeeded. All seven hosted runtime files returned HTTP 200 and matched the cleanup export byte for byte by SHA-256. The root remains Beta 0.1.2; Alpha and other historical paths are preserved.
