@@ -131,6 +131,7 @@ public class FanBlower : MonoBehaviour
     }
 
     public void StopBlowing() => SetBlowing(false);
+    public void StartBlowing() => SetBlowing(true);
 
     private void SetBlowing(bool blowing)
     {

@@ -293,6 +293,32 @@ public class PlayerPossessionController : MonoBehaviour
         ReleaseAllTouchInput();
     }
 
+    // A scene's fall-recovery zone can return to its saved Star checkpoint
+    // without recording a death, a manual retry, or reloading solved mechanisms.
+    public bool TryReturnToStarCheckpoint(string expectedCheckpoint)
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested || Time.timeScale <= 0f ||
+            !IsCurrentCheckpoint(expectedCheckpoint) || currentBody == null ||
+            initialBody == null || !initialBody.IsReady || initialBody.Form != BodyForm.Star ||
+            (currentBody.Form != BodyForm.Star && currentBody.Form != BodyForm.Bubble &&
+             currentBody.Form != BodyForm.Spider)) return false;
+        if (currentBody.Form != BodyForm.Star)
+        {
+            if (currentBody.TryGetComponent(out HexagonSurfaceMovement climbing)) climbing.Release();
+            PopBubble();
+        }
+        ClearPossessionContacts();
+        ClearInputForRestartMenu();
+        bubblePopRequested = false;
+        currentBody.transform.position = checkpointPosition;
+        currentBody.Body.position = checkpointPosition;
+        currentBody.Body.linearVelocity = Vector2.zero;
+        currentBody.Body.angularVelocity = 0f;
+        Physics2D.SyncTransforms();
+        BlockCurrentContacts();
+        return true;
+    }
+
     public void ResumeAfterRestartMenu(float pausedDuration)
     {
         // Death recovery also uses unscaled time; browsing the menu must not consume its delay.

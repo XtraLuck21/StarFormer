@@ -148,13 +148,15 @@ public class level2Camera : MonoBehaviour
     private Bounds smileRoomBounds;
     private Vector3 smileCameraStart;
     private float smileCameraStartSize, smileCameraAge, smileCameraSeconds;
+    private float smileCameraPadding = 1.5f;
     public bool IsSmileOverview => smileOverview;
 
-    public void BeginSmileOverview(Bounds bounds, float seconds, bool immediate = false)
+    public void BeginSmileOverview(Bounds bounds, float seconds, bool immediate = false, float padding = 1.5f)
     {
         BeginRemainingFollow();
         TakeCamera();
         smileRoomBounds = bounds;
+        smileCameraPadding = Mathf.Max(0f, padding);
         smileOverview = true;
         returningFromSmile = false;
         smileCameraStart = transform.position;
@@ -165,8 +167,8 @@ public class level2Camera : MonoBehaviour
             smileCameraAge = smileCameraSeconds;
             Vector3 center = bounds.center;
             center.z = cameraZ;
-            float size = Mathf.Max(bounds.extents.y + 1.5f,
-                (bounds.extents.x + 1.5f) / Mathf.Max(.01f, cam.aspect));
+            float size = Mathf.Max(bounds.extents.y + smileCameraPadding,
+                (bounds.extents.x + smileCameraPadding) / Mathf.Max(.01f, cam.aspect));
             SetCamera(center, size);
             smileCameraStart = center;
             smileCameraStartSize = size;
@@ -380,8 +382,8 @@ public class level2Camera : MonoBehaviour
             float blend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(smileCameraAge / smileCameraSeconds));
             Vector3 target = smileRoomBounds.center;
             target.z = cameraZ;
-            float size = Mathf.Max(smileRoomBounds.extents.y + 1.5f,
-                (smileRoomBounds.extents.x + 1.5f) / Mathf.Max(.01f, cam.aspect));
+            float size = Mathf.Max(smileRoomBounds.extents.y + smileCameraPadding,
+                (smileRoomBounds.extents.x + smileCameraPadding) / Mathf.Max(.01f, cam.aspect));
             if (returningFromSmile && player.CurrentBody != null)
             {
                 Vector3 rider = player.CurrentBody.transform.position;

@@ -11,9 +11,16 @@ public sealed class SmileFaceCompletion : MonoBehaviour
     [SerializeField] private Shader eyeShader;
     [SerializeField] private Renderer levelTitle;
     [SerializeField, Min(.1f)] private float transitionSeconds = 2.6f;
+    [SerializeField] private Vector2 teethCameraLocalCenter = new Vector2(43.5f, -44.8f);
+    [SerializeField] private Vector2 teethCameraSize = new Vector2(24.8f, 14.5f);
+    [SerializeField] private Vector2 foreheadCameraLocalCenter = new Vector2(44.5f, -36.1f);
+    [SerializeField] private Vector2 foreheadCameraSize = new Vector2(45f, 25.6f);
+    [SerializeField, Min(0f)] private float completedSmileHoldSeconds = 1.4f;
     public bool HasStarted { get; private set; }
     public float Progress { get; private set; }
     public Bounds RoomBounds { get; private set; }
+    public Bounds TeethRoomBounds { get; private set; }
+    public Bounds ForeheadBounds { get; private set; }
     public Vector2 LeftLook { get; private set; }
     public Vector2 RightLook { get; private set; }
 
@@ -23,13 +30,25 @@ public sealed class SmileFaceCompletion : MonoBehaviour
     private SpriteRenderer[] toothVisuals;
     private Color[] toothColors;
     private float age;
-    private bool enteredForehead;
     private bool titleWasVisible;
+    private bool showCompletionReveal;
+    private enum SmileCameraFrame { Follow, TeethRoom, Completion, Forehead }
+    private SmileCameraFrame cameraFrame;
 
-    public void RestoreCompletedPose() => age = transitionSeconds;
+    public void RestoreCompletedPose()
+    {
+        age = transitionSeconds;
+        showCompletionReveal = false;
+    }
 
     private void Awake()
     {
+        TeethRoomBounds = new Bounds(transform.TransformPoint(
+            new Vector3(teethCameraLocalCenter.x, teethCameraLocalCenter.y, 0f)),
+            new Vector3(teethCameraSize.x, teethCameraSize.y, 0f));
+        ForeheadBounds = new Bounds(transform.TransformPoint(
+            new Vector3(foreheadCameraLocalCenter.x, foreheadCameraLocalCenter.y, 0f)),
+            new Vector3(foreheadCameraSize.x, foreheadCameraSize.y, 0f));
         RoomBounds = face.bounds;
         foreach (Collider2D surface in GetComponentsInChildren<Collider2D>())
             if (surface.enabled && !surface.isTrigger) {
@@ -174,6 +193,7 @@ public sealed class SmileFaceCompletion : MonoBehaviour
         player.CheckpointFeedback.SetTextSuppressed(RoomBounds.Contains(playerPosition));
         if (!HasStarted) {
             if (!toothDoor.IsOpen) { UpdateForeheadCamera(); return; }
+            showCompletionReveal = age < transitionSeconds;
             HasStarted = true;
             mouth.gameObject.SetActive(true);
             foreach (SpriteRenderer tooth in toothVisuals)
@@ -207,11 +227,24 @@ public sealed class SmileFaceCompletion : MonoBehaviour
 
     public void EnterForeheadOverview()
     {
-        if (player.CurrentBody == null || player.CurrentBody.Form == BodyForm.Box ||
+        if (player.CurrentBody == null || !IsInsideForehead() ||
             player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
-        enteredForehead = true;
-        if (!roomCamera.IsSmileOverview) roomCamera.BeginSmileOverview(RoomBounds, 1f);
+        showCompletionReveal = false;
+        ShowCameraFrame(SmileCameraFrame.Forehead);
         if (levelTitle != null) levelTitle.enabled = false;
+    }
+
+    public void RestoreForeheadCamera()
+    {
+        showCompletionReveal = false;
+        cameraFrame = SmileCameraFrame.Forehead;
+        roomCamera.BeginSmileOverview(ForeheadBounds, 1f, immediate: true, padding: .6f);
+    }
+
+    private bool IsInsideForehead()
+    {
+        Vector3 local = transform.InverseTransformPoint(player.CurrentBody.transform.position);
+        return local.x >= 32.7f && local.x <= 60.8f && local.y >= -32.8f && local.y <= -26.5f;
     }
 
     private void UpdateForeheadCamera()
@@ -220,21 +253,41 @@ public sealed class SmileFaceCompletion : MonoBehaviour
         exitBounds.Expand(new Vector3(4f, 4f, 20f));
         Vector3 position = player.CurrentBody.transform.position;
         position.z = exitBounds.center.z;
-        // Keep the whole child visible throughout the forehead challenge. Reaching
-        // the hand's Box ends that framing while the player is still inside the room.
-        Vector3 local = transform.InverseTransformPoint(player.CurrentBody.transform.position);
-        bool inForehead = local.x >= 32.7f && local.x <= 60.8f && local.y >= -32.8f && local.y <= -26.5f;
-        if (player.CurrentBody.Form == BodyForm.Box) enteredForehead = false;
-        else if (inForehead) enteredForehead = true;
-        bool wantsOverview = (HasStarted && Progress < 1f) || (enteredForehead && player.CurrentBody.Form != BodyForm.Box && exitBounds.Contains(position));
-        if (wantsOverview && !roomCamera.IsSmileOverview)
-            roomCamera.BeginSmileOverview(RoomBounds, HasStarted && Progress < 1f ? 1.8f : 1f);
-        else if (!wantsOverview && roomCamera.IsSmileOverview)
-            roomCamera.EndSmileOverview();
+        Bounds teethArea = TeethRoomBounds;
+        teethArea.Expand(new Vector3(1.5f, 2f, 20f));
+        SmileCameraFrame next = SmileCameraFrame.Follow;
+        if (IsInsideForehead())
+        {
+            showCompletionReveal = false;
+            next = SmileCameraFrame.Forehead;
+        }
+        else if (showCompletionReveal && age < transitionSeconds + completedSmileHoldSeconds &&
+            player.CurrentBody.Form != BodyForm.Box && exitBounds.Contains(position))
+            next = SmileCameraFrame.Completion;
+        else if (!toothDoor.IsOpen && player.CurrentBody.Form == BodyForm.BouncyBall && teethArea.Contains(position))
+            next = SmileCameraFrame.TeethRoom;
+        ShowCameraFrame(next);
+        bool wantsOverview = next != SmileCameraFrame.Follow;
         if (wantsOverview && levelTitle != null) levelTitle.enabled = false;
         if (!wantsOverview && (!HasStarted || !exitBounds.Contains(position))) {
             if (levelTitle != null) levelTitle.enabled = titleWasVisible;
         }
+    }
+
+    private void ShowCameraFrame(SmileCameraFrame next)
+    {
+        if (next == SmileCameraFrame.Follow)
+        {
+            if (roomCamera.IsSmileOverview) roomCamera.EndSmileOverview();
+        }
+        else if (next != cameraFrame || !roomCamera.IsSmileOverview)
+        {
+            bool teeth = next == SmileCameraFrame.TeethRoom;
+            bool forehead = next == SmileCameraFrame.Forehead;
+            roomCamera.BeginSmileOverview(teeth ? TeethRoomBounds : forehead ? ForeheadBounds : RoomBounds,
+                next == SmileCameraFrame.Completion ? 1.8f : 1f, padding: teeth ? .35f : forehead ? .6f : 1.5f);
+        }
+        cameraFrame = next;
     }
 
     private void OnDestroy()

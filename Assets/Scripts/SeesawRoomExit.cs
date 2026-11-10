@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 /// <summary>All four gears reveal an elevator to the lower-left Smile Face entrance.</summary>
@@ -14,6 +13,7 @@ public sealed class SeesawRoomExit : MonoBehaviour
     [SerializeField] private level2Camera roomCamera;
     [SerializeField] private SpriteRenderer sourceVisual;
     [SerializeField] private Collider2D arrivalSurface;
+    [SerializeField] private LineRenderer entryCheckpointOutline;
     [SerializeField] private BoxCollider2D roomCeiling;
     [SerializeField] private float arrivalX = 28.03f;
     [SerializeField] private Vector2 platformLocalPosition = new Vector2(.21f, 2.8f);
@@ -70,9 +70,18 @@ public sealed class SeesawRoomExit : MonoBehaviour
 
     private void Start()
     {
+        RefreshEntryCheckpoint();
         if (!player.IsCurrentCheckpoint(SmileCheckpointId) && !SmileFaceFinalRoute.IsRouteCheckpoint(player)) return;
         HasTransferred = true;
         roomCamera.BeginRemainingFollow();
+    }
+
+    private void RefreshEntryCheckpoint()
+    {
+        if (entryCheckpointOutline == null) return;
+        bool saved = player.IsCurrentCheckpoint(SmileCheckpointId) || SmileFaceFinalRoute.IsRouteCheckpoint(player);
+        entryCheckpointOutline.startColor = entryCheckpointOutline.endColor = saved
+            ? new Color32(255, 211, 77, 255) : new Color32(47, 155, 236, 255);
     }
 
     private bool AllGearsRunning()
@@ -85,6 +94,7 @@ public sealed class SeesawRoomExit : MonoBehaviour
 
     private void Update()
     {
+        RefreshEntryCheckpoint();
         if (HasTransferred || player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
         if (!CompletionStarted)
         {
@@ -289,19 +299,6 @@ public sealed class SeesawRoomExit : MonoBehaviour
             float y = .5f + i * .3f;
             line.SetPositions(new[] { new Vector3(-.3f, y, 0f), new Vector3(0f, y + .2f, 0f), new Vector3(.3f, y, 0f) });
         }
-        var caption = new GameObject("Smile Face Destination Caption");
-        caption.transform.SetParent(portalCues.transform, false);
-        caption.transform.localPosition = Vector3.up * 2f;
-        var text = caption.AddComponent<TextMeshPro>();
-        text.text = "SMILE FACE";
-        text.fontSize = 3f;
-        text.alignment = TextAlignmentOptions.Center;
-        text.color = new Color(.85f, .75f, 1f);
-        text.outlineWidth = .15f;
-        text.outlineColor = Color.black;
-        text.rectTransform.sizeDelta = new Vector2(3.2f, .6f);
-        text.raycastTarget = false;
-        text.GetComponent<MeshRenderer>().sortingOrder = 9;
         portalCues.SetActive(false);
     }
 

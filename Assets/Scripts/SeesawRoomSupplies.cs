@@ -56,6 +56,8 @@ public class SeesawRoomSupplies : MonoBehaviour
     private float fanMissingSince = -1f;
     private float ballMissingSince = -1f;
     private bool wasControllingRoomFan;
+    private PossessableBody directionFan;
+    private int lastBallDirection;
 
     public bool AnyFanBlowing
     {
@@ -70,8 +72,8 @@ public class SeesawRoomSupplies : MonoBehaviour
         }
     }
 
-    // A new ball waits for a NEW start command, even when a Fan is already running.
-    // The sequence also retains short on/off commands between physics steps.
+    // Retain explicit F/touch blow commands as an optional release path too.
+    // A new ball does not fall just because the previous wind is still running.
     public bool HasFanBlowCommandAfter(ulong activation)
     {
         if (!IsRoomActive) return false;
@@ -108,6 +110,7 @@ public class SeesawRoomSupplies : MonoBehaviour
     private void Update()
     {
         if (IsPuzzleComplete || !IsRoomActive || player == null || player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
+        SupplyBallOnDirectionChange();
         if (player.CurrentBody != null)
             wasControllingRoomFan = player.CurrentBody.Form == BodyForm.Fan && IsInsideRoom(player.CurrentBody.transform.position);
         if (Time.time < nextPopulationCheck) return;
@@ -133,6 +136,44 @@ public class SeesawRoomSupplies : MonoBehaviour
             if (ballMissingSince < 0f) ballMissingSince = Time.time;
             if (Time.time - ballMissingSince >= respawnDelay) SpawnBall();
         }
+    }
+
+    private void SupplyBallOnDirectionChange()
+    {
+        PossessableBody fan = player.CurrentBody;
+        if (FanSupplyStopped || gustBatchStarted || fan == null || !fan.isActiveAndEnabled ||
+            fan.Form != BodyForm.Fan || !fan.IsControlled || !IsInsideRoom(fan.transform.position))
+        {
+            directionFan = null;
+            lastBallDirection = 0;
+            return;
+        }
+        if (directionFan != fan)
+        {
+            directionFan = fan;
+            lastBallDirection = 0;
+        }
+        float input = player.HorizontalInput;
+        if (Mathf.Abs(input) < 0.01f) return;
+        int direction = input > 0f ? 1 : -1;
+        if (direction == lastBallDirection) return;
+        lastBallDirection = direction;
+
+        FanBlower blower = fan.GetComponent<FanBlower>();
+        blower.SetFacing(direction);
+        // The first direction input and each turn start wind without requiring F.
+        blower.StartBlowing();
+        // Count immediately: the periodic population check may still be stale.
+        // Any existing ball, including one stopped on the board, prevents a new one.
+        RefreshPopulation();
+        if (IsWaitingBall(SpawnedBall))
+        {
+            if (OrdinaryBallCount == 1) SpawnedBall.BeginReleaseShake();
+            return;
+        }
+        if (OrdinaryBallCount > 0) return;
+        SpawnBall();
+        SpawnedBall.BeginReleaseShake();
     }
 
     private void RefreshPopulation()

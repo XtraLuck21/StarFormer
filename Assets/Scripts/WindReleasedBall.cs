@@ -81,9 +81,7 @@ public class WindReleasedBall : MonoBehaviour
         if (supply == null || !supply.CanRunEffects) return;
         if (!HasBeenReleased && !IsShaking && !supply.FanSupplyStopped && supply.HasFanBlowCommandAfter(armedAfterActivation))
         {
-            IsShaking = true;
-            shakeElapsed = 0f;
-            shakeOrigin = body.position;
+            BeginReleaseShake();
         }
         if (IsShaking)
         {
@@ -107,5 +105,15 @@ public class WindReleasedBall : MonoBehaviour
             body.linearVelocity = new Vector2(Mathf.MoveTowards(body.linearVelocity.x, -4f,
                 12f * Time.fixedDeltaTime), body.linearVelocity.y);
         if (HasBeenReleased && supply.HasBallLeftBoard(body.position)) Destroy(gameObject);
+    }
+
+    public bool BeginReleaseShake()
+    {
+        if (supply == null || !supply.CanRunEffects || supply.FanSupplyStopped || HasBeenReleased || IsShaking)
+            return false;
+        IsShaking = true;
+        shakeElapsed = 0f;
+        shakeOrigin = body.position;
+        return true;
     }
 }
