@@ -8,6 +8,7 @@ public sealed class SeesawRoomStage : MonoBehaviour
     [SerializeField] private GameObject gateVisual;
     [SerializeField] private BoxCollider2D leftGate;
     [SerializeField] private GameObject leftGateVisual;
+    [SerializeField] private SeesawGearBarrier gearBarrier;
     [SerializeField] private SeesawGateShatter rightGateShatter;
     [SerializeField] private SeesawGateShatter leftGateShatter;
     [SerializeField] private SeesawGear2D blueGear;
@@ -36,6 +37,14 @@ public sealed class SeesawRoomStage : MonoBehaviour
     private RigidbodyConstraints2D previousConstraints;
     private FanBlower frozenBlower;
     private bool controllerWasEnabled, blowerWasEnabled, controlsLocked;
+    private bool gateHintShown;
+
+    public bool TryClaimGateHint()
+    {
+        if (gateHintShown) return false;
+        gateHintShown = true;
+        return true;
+    }
 
     private void Awake()
     {
@@ -53,6 +62,8 @@ public sealed class SeesawRoomStage : MonoBehaviour
         rightPlatform.SetRevealProgress(0f);
         ConfigureGate(gate);
         ConfigureGate(leftGate);
+        gate.gameObject.AddComponent<SeesawGateFeedback>().Initialize(this, player, gateVisual.GetComponent<SpriteRenderer>());
+        leftGate.gameObject.AddComponent<SeesawGateFeedback>().Initialize(this, player, leftGateVisual.GetComponent<SpriteRenderer>());
     }
 
     private void ConfigureGate(BoxCollider2D barrier)
@@ -71,6 +82,7 @@ public sealed class SeesawRoomStage : MonoBehaviour
     public void AllowBall(Collider2D ball)
     {
         if (ball == null) return;
+        if (gearBarrier != null) gearBarrier.AllowBall(ball);
         if (gate.enabled) Physics2D.IgnoreCollision(gate, ball);
         if (leftGate.enabled) Physics2D.IgnoreCollision(leftGate, ball);
     }

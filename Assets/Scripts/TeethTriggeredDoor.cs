@@ -8,6 +8,13 @@ public class TeethTriggeredDoor : MonoBehaviour
 
     public bool IsOpen { get; private set; }
 
+    public void RestoreSolved()
+    {
+        foreach (TeethArrivalTriggerZone trigger in requiredTriggers)
+            if (trigger != null) trigger.RestoreArrived();
+        TryOpen();
+    }
+
     private void Start()
     {
         TryOpen();

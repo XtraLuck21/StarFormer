@@ -172,6 +172,7 @@ public class PlayerPossessionController : MonoBehaviour
         checkpointPosition = Vector3.zero;
         BouncyBallCheckpointSession.ClearCurrent();
         AdvancedCheckpointController.ClearSession();
+        SmileFaceFinalRoute.ClearSession();
     }
 
     public void SetCheckpoint(string id, Vector3 position, bool showFeedback = true)
@@ -967,6 +968,37 @@ public class PlayerPossessionController : MonoBehaviour
         return TryRecoverMissingHost(initialBody);
     }
 
+    // The elevator owns movement while the spent ball shell opens. This handoff
+    // also works while this controller is temporarily disabled for the ride.
+    public bool ReleaseBouncyShellForElevator(PossessableBody expectedBall, out PossessableBody star)
+    {
+        star = null;
+        if (isDead || restartRequested || currentBody != expectedBall || expectedBall == null ||
+            expectedBall.Form != BodyForm.BouncyBall || initialBody == null || !initialBody.IsReady ||
+            initialBody.Form != BodyForm.Star) return false;
+
+        Vector2 position = expectedBall.Body.position;
+        ClearPossessionContacts();
+        pendingSource = pendingTarget = null;
+        bubblePopRequested = releaseRequested = actionRequested = false;
+        horizontalInput = verticalInput = 0f;
+        ReleaseAllTouchInput();
+        expectedBall.SetOwner(null);
+        initialBody.transform.position = new Vector3(position.x, position.y, initialBody.transform.position.z);
+        initialBody.gameObject.SetActive(true);
+        initialBody.Body.position = position;
+        initialBody.Body.linearVelocity = Vector2.zero;
+        initialBody.Body.angularVelocity = 0f;
+        currentBody = initialBody;
+        currentBody.SetOwner(this);
+        expectedBall.gameObject.SetActive(false);
+        BlockCurrentContacts();
+        AnalyticsManager.Instance?.ChangeControlledForm(expectedBall.Form, currentBody.Form, position, "leave_form");
+        PossessionTransferred?.Invoke(expectedBall, currentBody);
+        star = currentBody;
+        return true;
+    }
+
     private void LeaveFan()
     {
         if (initialBody == null ||
@@ -1040,6 +1072,28 @@ public class PlayerPossessionController : MonoBehaviour
         currentBody = replacement;
         currentBody.SetOwner(this);
         BlockCurrentContacts();
+        return true;
+    }
+
+    public bool TryEnterSpiderAtGate(PossessableBody spider)
+    {
+        if (!isActiveAndEnabled || isDead || restartRequested || Time.timeScale <= 0f ||
+            currentBody == null || spider == null || spider.Form != BodyForm.Spider ||
+            spider.gameObject.scene != gameObject.scene) return false;
+        if (currentBody == spider) return true;
+        spider.gameObject.SetActive(true);
+        if (!spider.IsReady) return false;
+        PossessableBody previous = currentBody;
+        Vector2 position = previous.Body.position;
+        spider.GetComponent<HexagonSurfaceMovement>().Release();
+        spider.transform.position = new Vector3(position.x, position.y, spider.transform.position.z);
+        spider.Body.position = position;
+        spider.Body.linearVelocity = Vector2.zero;
+        spider.Body.angularVelocity = 0f;
+        Physics2D.SyncTransforms();
+        TransferTo(spider);
+        if (previous != null && previous.Form != BodyForm.Star) previous.gameObject.SetActive(false);
+        ClearInputForRestartMenu();
         return true;
     }
 

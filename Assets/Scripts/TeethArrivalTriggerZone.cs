@@ -19,6 +19,14 @@ public class TeethArrivalTriggerZone : MonoBehaviour
 
     public bool HasArrived => hasArrived;
 
+    public void RestoreArrived()
+    {
+        if (targetTooth == null || hasArrived) return;
+        targetTooth.LiftForBox(targetTooth.CurrentBottom + targetTooth.MaximumRise);
+        hasArrived = true;
+        onToothArrived.Invoke();
+    }
+
     private void Awake()
     {
         zone = GetComponent<BoxCollider2D>();

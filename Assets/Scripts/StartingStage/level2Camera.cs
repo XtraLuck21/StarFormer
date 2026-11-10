@@ -140,6 +140,72 @@ public class level2Camera : MonoBehaviour
     [SerializeField] private SeesawRoomStage seesawStage;
     private Collider2D seesawSurface;
     private bool seesawRoomStarted;
+    private float roomShakeDuration, roomShakeElapsed, roomShakeStrength;
+    private Transform elevatorRider;
+    private Vector3 elevatorCameraStart;
+    private float elevatorCameraStartSize, elevatorCameraElapsed;
+    private bool smileOverview, returningFromSmile;
+    private Bounds smileRoomBounds;
+    private Vector3 smileCameraStart;
+    private float smileCameraStartSize, smileCameraAge, smileCameraSeconds;
+    public bool IsSmileOverview => smileOverview;
+
+    public void BeginSmileOverview(Bounds bounds, float seconds, bool immediate = false)
+    {
+        BeginRemainingFollow();
+        TakeCamera();
+        smileRoomBounds = bounds;
+        smileOverview = true;
+        returningFromSmile = false;
+        smileCameraStart = transform.position;
+        smileCameraStartSize = cam.orthographicSize;
+        smileCameraAge = 0f;
+        smileCameraSeconds = Mathf.Max(.1f, seconds);
+        if (immediate) {
+            smileCameraAge = smileCameraSeconds;
+            Vector3 center = bounds.center;
+            center.z = cameraZ;
+            float size = Mathf.Max(bounds.extents.y + 1.5f,
+                (bounds.extents.x + 1.5f) / Mathf.Max(.01f, cam.aspect));
+            SetCamera(center, size);
+            smileCameraStart = center;
+            smileCameraStartSize = size;
+        }
+    }
+
+    public void EndSmileOverview()
+    {
+        if (!smileOverview) return;
+        smileOverview = false;
+        BeginRemainingFollow();
+        returningFromSmile = true;
+        smileCameraStart = transform.position;
+        smileCameraStartSize = cam.orthographicSize;
+        smileCameraAge = 0f;
+        smileCameraSeconds = .8f;
+    }
+
+    public void RetargetElevatorRider(Transform rider)
+    {
+        elevatorRider = rider;
+    }
+
+    public void BeginElevatorRide(Transform rider)
+    {
+        BeginRemainingFollow();
+        TakeCamera();
+        elevatorRider = rider;
+        elevatorCameraStart = transform.position;
+        elevatorCameraStartSize = cam.orthographicSize;
+        elevatorCameraElapsed = 0f;
+    }
+
+    public void ShakeSeesawRoom(float duration, float strength)
+    {
+        roomShakeDuration = Mathf.Max(.01f, duration);
+        roomShakeElapsed = 0f;
+        roomShakeStrength = strength;
+    }
 
     private bool droppingStarted;
     private bool droppingFinished;
@@ -187,6 +253,8 @@ public class level2Camera : MonoBehaviour
 
     public void BeginRemainingFollow()
     {
+        elevatorRider = null;
+        roomShakeDuration = 0f;
         seesawRoomStarted = false;
         bottomPassageStarted = false;
         remainingFollowStarted = true;
@@ -271,6 +339,7 @@ public class level2Camera : MonoBehaviour
             return;
         }
         seesawSurface = surface;
+        elevatorRider = null;
         seesawRoomStarted = true;
         droppingStarted = false;
         droppingFinished = false;
@@ -305,6 +374,34 @@ public class level2Camera : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (smileOverview || returningFromSmile)
+        {
+            smileCameraAge += Time.deltaTime;
+            float blend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(smileCameraAge / smileCameraSeconds));
+            Vector3 target = smileRoomBounds.center;
+            target.z = cameraZ;
+            float size = Mathf.Max(smileRoomBounds.extents.y + 1.5f,
+                (smileRoomBounds.extents.x + 1.5f) / Mathf.Max(.01f, cam.aspect));
+            if (returningFromSmile && player.CurrentBody != null)
+            {
+                Vector3 rider = player.CurrentBody.transform.position;
+                target = new Vector3(rider.x + remainingFollowOffset.x, rider.y + remainingFollowOffset.y, cameraZ);
+                size = remainingFollowSize;
+            }
+            SetCamera(Vector3.Lerp(smileCameraStart, target, blend), Mathf.Lerp(smileCameraStartSize, size, blend));
+            if (returningFromSmile && blend >= 1f) returningFromSmile = false;
+            return;
+        }
+        if (elevatorRider != null)
+        {
+            elevatorCameraElapsed += Time.deltaTime;
+            float blend = Mathf.SmoothStep(0f, 1f, Mathf.Clamp01(elevatorCameraElapsed / .8f));
+            Vector3 riderPosition = elevatorRider.position;
+            SetCamera(Vector3.Lerp(elevatorCameraStart,
+                new Vector3(riderPosition.x, riderPosition.y + remainingFollowOffset.y, cameraZ), blend),
+                Mathf.Lerp(elevatorCameraStartSize, remainingFollowSize, blend));
+            return;
+        }
         if (playingCutscene)
         {
             SetCamera(cutscenePosition, cutsceneSize);
@@ -330,6 +427,13 @@ public class level2Camera : MonoBehaviour
         }
 
         ApplyPlayerCamera();
+        if (roomShakeDuration > 0f && roomShakeElapsed < roomShakeDuration)
+        {
+            roomShakeElapsed += Time.deltaTime;
+            float strength = roomShakeStrength * (1f - Mathf.Clamp01(roomShakeElapsed / roomShakeDuration));
+            transform.position += new Vector3(Mathf.Sin(roomShakeElapsed * 89f),
+                Mathf.Sin(roomShakeElapsed * 113f) * .65f, 0f) * strength;
+        }
     }
 
     private void ApplyFocusCamera()

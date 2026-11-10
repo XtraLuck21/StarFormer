@@ -47,6 +47,8 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         new List<LineRenderer>();
 
     private Vector3[] boardCrackPoints;
+    private float finaleImpactProgress;
+    private bool boardBroken;
 
     private float elapsed;
     private float crackProgress;
@@ -66,6 +68,17 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
     public bool IsCracked { get; private set; }
     public bool IsPassageOpen { get; private set; }
     public Collider2D BoardSurface => board;
+
+    public void SetFinaleImpactProgress(float progress)
+    {
+        finaleImpactProgress = Mathf.Clamp01(progress);
+    }
+
+    public void HideBoardCrack()
+    {
+        boardBroken = true;
+        if (boardCrack != null) boardCrack.enabled = false;
+    }
 
     public void BeginYellowGust()
     {
@@ -133,7 +146,8 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             crackProgress + Time.deltaTime
         );
 
-        boardCrack.enabled = true;
+        boardCrack.enabled = !boardBroken;
+        boardCrack.widthMultiplier = Mathf.Lerp(.09f, .24f, finaleImpactProgress);
         entranceCrack.enabled = !IsPassageOpen;
 
         int count = Mathf.Clamp(
@@ -148,7 +162,9 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
         for (int i = 0; i < count; i++)
         {
-            boardCrack.SetPosition(i, boardCrackPoints[i]);
+            Vector3 point = boardCrackPoints[i];
+            point.x += (i % 2 == 0 ? -1f : 1f) * finaleImpactProgress * .13f;
+            boardCrack.SetPosition(i, point);
         }
 
         if (IsPassageOpen)
@@ -314,7 +330,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             "Overloaded Board Crack",
             board.transform.parent,
             new Color(.22f, .09f, .04f),
-            .055f,
+            .09f,
             9
         );
 
@@ -324,7 +340,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         for (int i = 0; i < boardCrackPoints.Length; i++)
         {
             boardCrackPoints[i] = center + new Vector3(
-                i % 2 == 0 ? -.12f : .14f,
+                i % 2 == 0 ? -.18f : .20f,
                 board.size.y *
                 Mathf.Abs(board.transform.localScale.y) *
                 (.5f - i / 8f),

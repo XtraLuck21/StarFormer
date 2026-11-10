@@ -32,6 +32,16 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
     private TMP_Text toast;
     private float savedUntil;
     private Camera worldCamera;
+    public bool TextSuppressed { get; private set; }
+
+    public void SetTextSuppressed(bool suppressed)
+    {
+        TextSuppressed = suppressed;
+        if (!suppressed) return;
+        savedUntil = 0f;
+        if (toast != null) toast.text = "";
+        foreach (Marker marker in markers) marker.Label.enabled = false;
+    }
 
     public void Initialize(PlayerPossessionController controller)
     {
@@ -101,7 +111,7 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
     {
         if (player == null || root == null) return;
 
-        toast.text = Time.unscaledTime < savedUntil
+        toast.text = !TextSuppressed && Time.unscaledTime < savedUntil
             ? "CHECKPOINT SAVED"
             : "";
 
@@ -119,7 +129,7 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
             // Ball recovery uses its original spawn, even after the ball moves.
             Vector3 screen = worldCamera.WorldToScreenPoint(
                 marker.IsBall ? marker.Position : marker.Target.position);
-            bool visible = screen.z > 0f && worldCamera.pixelRect.Contains((Vector2)screen);
+            bool visible = !TextSuppressed && screen.z > 0f && worldCamera.pixelRect.Contains((Vector2)screen);
             marker.Label.enabled = visible;
             if (!visible) continue;
 

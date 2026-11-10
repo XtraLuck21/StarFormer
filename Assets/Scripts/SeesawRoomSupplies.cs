@@ -43,6 +43,8 @@ public class SeesawRoomSupplies : MonoBehaviour
     public PossessableBody SpawnedFan { get; private set; }
     public WindReleasedBall SpawnedBall { get; private set; }
     public bool FanSupplyStopped { get; private set; }
+    public bool CanRunEffects => IsRoomActive && player != null && !player.IsDead &&
+        !player.IsRestarting && Time.timeScale > 0f;
     private bool gustBatchStarted;
     public bool ReferencesReady => player != null && boardSurface != null && roomVolume != null &&
         fanPrefab != null && fanPrefab.Form == BodyForm.Fan && fanSpawnPoint != null &&
@@ -95,9 +97,11 @@ public class SeesawRoomSupplies : MonoBehaviour
             return;
         }
         IsRoomActive = true;
+        ballSpawnPoint.gameObject.AddComponent<SeesawBallSpawnMarker>().Initialize(this, ballPrefab.GetComponent<SpriteRenderer>());
         RefreshPopulation();
         if (!FanSupplyStopped && FanCount == 0) SpawnFan();
-        if (OrdinaryBallCount == 0) SpawnBall();
+        if (FanSupplyStopped && !gustBatchStarted) EnsureWaitingBall();
+        else if (OrdinaryBallCount == 0) SpawnBall();
         nextPopulationCheck = Time.time + populationCheckInterval;
     }
 
@@ -117,6 +121,11 @@ public class SeesawRoomSupplies : MonoBehaviour
         {
             if (fanMissingSince < 0f) fanMissingSince = Time.time;
             if (Time.time - fanMissingSince >= respawnDelay) SpawnFan();
+        }
+        if (FanSupplyStopped && !gustBatchStarted)
+        {
+            EnsureWaitingBall();
+            return;
         }
         if (OrdinaryBallCount > 0) ballMissingSince = -1f;
         else if (!gustBatchStarted)
@@ -169,10 +178,54 @@ public class SeesawRoomSupplies : MonoBehaviour
 
     public void StopFanSupply()
     {
+        if (FanSupplyStopped) return;
         FanSupplyStopped = true;
         fanSpawnPoint.gameObject.SetActive(false);
         RefreshPopulation();
+        // Hand off before the reveal locks controls, so it freezes the surviving
+        // Star rather than a Fan that is about to be removed.
+        if (player != null && !player.IsDead && !player.IsRestarting &&
+            player.CurrentBody != null && player.CurrentBody.Form == BodyForm.Fan &&
+            roomFans.Contains(player.CurrentBody))
+        {
+            player.RestoreStarAfterFanPuzzle((Vector2)boardSurface.bounds.center + Vector2.up);
+            player.ClearInputForRestartMenu();
+        }
+        wasControllingRoomFan = false;
         ClearUncontrolledFans();
+        ClearLooseBalls();
+        if (IsRoomActive && player != null && !player.IsDead && !player.IsRestarting)
+            EnsureWaitingBall();
+    }
+
+    private bool IsWaitingBall(WindReleasedBall ball)
+        => ball != null && ball.isActiveAndEnabled && ball.IsOwnedBy(this) &&
+           !ball.HasBeenReleased && !ball.IsShaking &&
+           ball.GetComponent<Rigidbody2D>().bodyType == RigidbodyType2D.Kinematic;
+
+    private void EnsureWaitingBall()
+    {
+        if (!IsWaitingBall(SpawnedBall)) SpawnBall();
+    }
+
+    private void ClearLooseBalls()
+    {
+        WindReleasedBall waiting = IsWaitingBall(SpawnedBall) ? SpawnedBall : null;
+        foreach (Rigidbody2D body in ordinaryBodies)
+        {
+            if (body == null) continue;
+            var ball = body.GetComponent<WindReleasedBall>();
+            if (waiting == null && IsWaitingBall(ball)) waiting = ball;
+            if (ball == waiting && waiting != null) continue;
+            // Reclaim this supply's balls even outside the room, and any ordinary
+            // authored ball inside it. Leave unrelated balls in other rooms alone.
+            if ((ball == null || !ball.IsOwnedBy(this)) && !IsInsideRoom(body.position)) continue;
+            body.gameObject.SetActive(false);
+            Destroy(body.gameObject);
+        }
+        SpawnedBall = waiting;
+        ballMissingSince = -1f;
+        RefreshPopulation();
     }
 
     private void ClearUncontrolledFans()
@@ -181,6 +234,7 @@ public class SeesawRoomSupplies : MonoBehaviour
         {
             if (fan == player.CurrentBody && fan.IsControlled) continue;
             fan.GetComponent<FanBlower>().StopBlowing();
+            if (SpawnedFan == fan) SpawnedFan = null;
             fan.gameObject.SetActive(false);
             Destroy(fan.gameObject);
         }

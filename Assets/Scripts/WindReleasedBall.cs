@@ -11,6 +11,11 @@ public class WindReleasedBall : MonoBehaviour
     private ulong armedAfterActivation;
     private bool hasTriggeredSeesaw;
     private SeesawOverloadSequence gust;
+    [SerializeField, Min(.1f)] private float releaseShakeSeconds = .6f;
+    [SerializeField, Min(0f)] private float releaseShakeDistance = .16f;
+    private float shakeElapsed;
+    private Vector2 shakeOrigin;
+    public bool IsShaking { get; private set; }
     public bool HasBeenReleased { get; private set; }
     public bool IsOwnedBy(SeesawRoomSupplies owner) => supply != null && supply == owner;
 
@@ -36,6 +41,8 @@ public class WindReleasedBall : MonoBehaviour
     public void ReleaseForGust(SeesawOverloadSequence sequence)
     {
         gust = sequence;
+        if (IsShaking) body.position = shakeOrigin;
+        IsShaking = false;
         HasBeenReleased = true;
         body.constraints = fallingConstraints;
         body.bodyType = RigidbodyType2D.Dynamic;
@@ -71,14 +78,30 @@ public class WindReleasedBall : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (supply == null || !supply.IsRoomActive || Time.timeScale <= 0f) return;
-        if (!HasBeenReleased && !supply.FanSupplyStopped && supply.HasFanBlowCommandAfter(armedAfterActivation))
+        if (supply == null || !supply.CanRunEffects) return;
+        if (!HasBeenReleased && !IsShaking && !supply.FanSupplyStopped && supply.HasFanBlowCommandAfter(armedAfterActivation))
         {
-            HasBeenReleased = true;
-            body.constraints = fallingConstraints;
-            body.bodyType = RigidbodyType2D.Dynamic;
-            body.gravityScale = fallingGravity;
-            body.WakeUp();
+            IsShaking = true;
+            shakeElapsed = 0f;
+            shakeOrigin = body.position;
+        }
+        if (IsShaking)
+        {
+            shakeElapsed += Time.fixedDeltaTime;
+            float t = Mathf.Clamp01(shakeElapsed / Mathf.Max(.1f, releaseShakeSeconds));
+            // Two complete side-to-side shakes, ending at the original release point.
+            body.position = shakeOrigin + Vector2.right *
+                (Mathf.Sin(t * Mathf.PI * 4f) * Mathf.Sin(t * Mathf.PI) * releaseShakeDistance);
+            if (t >= 1f)
+            {
+                body.position = shakeOrigin;
+                IsShaking = false;
+                HasBeenReleased = true;
+                body.constraints = fallingConstraints;
+                body.bodyType = RigidbodyType2D.Dynamic;
+                body.gravityScale = fallingGravity;
+                body.WakeUp();
+            }
         }
         if (gust != null && gust.IsWindActive)
             body.linearVelocity = new Vector2(Mathf.MoveTowards(body.linearVelocity.x, -4f,
