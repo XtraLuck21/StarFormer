@@ -80,9 +80,9 @@
         },
         {
             "level_name": "Level02",
-            "map_version": "map-c29073455c6b-ac006d87430a",
-            "image_file": "Maps/Level02/map-c29073455c6b-ac006d87430a.png",
-            "source_scene_hash": "c29073455c6b77949b32d367b949715d4ab7073d129a4db7cc7a816751ebc4f0",
+            "map_version": "map-9bdd1ef5f7db-ac006d87430a",
+            "image_file": "Maps/Level02/map-9bdd1ef5f7db-ac006d87430a.png",
+            "source_scene_hash": "9bdd1ef5f7dbec1c8dff5154d19d5ed5cb8162e11c9cb1c8d8b949dc5384b347",
             "image_data_url": "",
             "min_x": -82.35786437988281,
             "max_x": 69.06343078613281,
