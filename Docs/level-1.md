@@ -1,8 +1,8 @@
 # Level 1
 
-Beta 0.1.2 is published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
+The November 6 Beta 0.1.2 release was published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
 
-Last updated: 2026-11-06. Promotion baseline: `8834a4d`; recorded published Beta 0.1.1 source: `9451511` (gh-pages `e81097e`, November 3).
+Touch controls reviewed November 16, 2026. Promotion baseline: `8834a4d`; recorded published Beta 0.1.1 source: `9451511` (gh-pages `e81097e`, November 3).
 
 ## Scene identity and progression
 
@@ -87,20 +87,18 @@ Restart Level, returning to Navigation, a new menu entry and forward level progr
 | Hint / control | Trigger and behavior |
 | --- | --- |
 | Movable-door hint (Beta 0.1.1) | After 20 seconds without lower-door movement, an optional star sign appears above the route. Deliberate Box growth or Ball contact triggers a short paused lift preview with “A little lift?”. Once per scene load; spawn overlap does not activate it. |
-| Water-tank restart lesson | Controlled Bubble contacts the assigned tank ceiling inside its teaching area for 1.5 seconds: `Feel stuck? / Press R to restart`. Sideways movement does not reset qualifying contact. R opens choices rather than immediately restarting. |
-| Water-exit pop lesson | Continuous Bubble contact with the assigned water-exit ceiling in its teaching area for 3 seconds: `Press Q / to pop`. |
-| Upper-right pop lesson | Continuous Bubble contact with the upper-right ceiling in its teaching area for 3 seconds: the same Q prompt, before choosing a landing side. |
-| Pop-hint lifetime | Each pop hint appears once per scene load, remains while contact continues, then hides on leaving/popping/changing bodies. Scene reload resets its lesson state; paused time does not consume the contact timer. |
+| Water-tank restart lesson | On desktop, 1.5 seconds of qualifying Bubble contact with the first tank ceiling shows the R restart reminder. Touch mode hides it. Tap the house for restart or checkpoint options. |
+| Bubble exits | The water exit and upper landing use the same Bubble controls as the rest of Level01. Tap Pop on mobile, or press Q or right-click on desktop. |
 | Home | Top-right square house outline with a small Star; tooltip `Home · Restart`. Opens a paused menu with Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled before a save; full restart and Main Menu require confirmation. |
 | Help | Paged form help is now configured in this scene; possession discovers gameplay pages for the current application session. |
 | R | Retains the existing restart-choice menu, independent of Home. Opening or cancelling changes no checkpoint state. |
 
-`CheckpointFeedbackUI` suppresses its old generic E-pop reminder when `AdvancedCheckpointController` is present. The formal Level01 uses the scene hints above; renaming it must not enable that duplicate legacy prompt.
+`AdvancedCheckpointController` suppresses the legacy E-pop reminder. Level01 has no separate ceiling-triggered Q-pop lessons. [Controls by form](GameplaySpec.md#2-controls)
 
 ## Verification and remaining work
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 
-Historical Beta 0.1.1 was published at the Beta URL, which now serves 0.1.2. The 0.1.1 export included the contact-activated movable-door hint but predated paged Help; Beta 0.1.2 includes the later Help and Navigation work. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
+Historical Beta 0.1.1 was published at the Beta URL before 0.1.2. The 0.1.1 export included the contact-activated movable-door hint but predated paged Help; Beta 0.1.2 includes the later Help and Navigation work. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
 
 For beta-0.1.2, repeat these checks in the exported Web player alongside shared Home/Help, the four PR #21 fixes, and all three checkpoint recoveries. Re-export analytics maps and verify version-specific production rows/maps. See [the release checklist](Beta-0.1.2.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). Historical Beta 0.1.0/0.1.1 evidence does not certify this new export.

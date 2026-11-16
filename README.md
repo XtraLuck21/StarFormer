@@ -38,7 +38,9 @@ On November 5, `/beta/` served 0.1.1 and the root served 0.1.0 (root publication
 Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
-- IntroBox and IntroBubble teach contact possession, J/K resizing, air ascent, underwater steering and Q pop. Flag-opened passages support return travel between IntroBox/IntroBubble and IntroBubble/IntroBouncyBall without a Level up overlay between those scenes.
+On phones, drag the floating joystick on the left and use the round action buttons on the right. They change with the current form. On Navigation, tap a level sign directly or use Move and Jump. On desktop, the fullscreen icon sits in the lower-right corner during windowed play. [Controls by form](Docs/GameplaySpec.md#2-controls)
+
+- IntroBox and IntroBubble teach contact possession, Box resizing, air ascent, underwater steering and Bubble pop. Flag-opened passages support return travel between IntroBox/IntroBubble and IntroBubble/IntroBouncyBall without a Level up overlay between those scenes.
 - IntroBouncyBall teaches automatic bouncing, floating on water, resuming bounces on land and faster bounces beneath low ceilings. The main route includes the low-ceiling lesson, short contextual headlines and a spike-death reminder. Its final flag transitions into Level01.
 - Level01 was rebuilt with a new layout and form progression, replacing the original scene. It includes Star/Box route choices, a one-way lift, reversible SAFE/NORMAL/HARD choices, moving safe-route boards, a falling spike, three fixed-form checkpoints, contextual hints and Home pause/restart UI. The original map remains as disabled `Level01_Legacy`.
 - Level01 continues through IntroSpider and IntroFan to Level02. Navigation maps Kindergarten to IntroBox, Level 1 to Level01, Elementary School to IntroSpider and Level 2 to Level02; tutorials remain optional.

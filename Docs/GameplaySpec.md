@@ -1,6 +1,6 @@
 # Gameplay Specification
 
-Last updated: 2026-11-10. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). Package verification does not establish full gameplay correctness.
+Touch controls reviewed November 16, 2026. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). Package verification does not establish full gameplay correctness.
 
 ## 1. Scenes and progression
 
@@ -25,20 +25,22 @@ Enabled build indices are Navigation 0, IntroBox 1, IntroBubble 2, IntroBouncyBa
 
 ## 2. Controls
 
-| Controlled form | Movement | Ability / exit |
-| --- | --- | --- |
-| Star | A/D or Left/Right Arrow; horizontal air steering | Space: grounded jump; no double jump |
-| Box | A/D while grounded | Hold J: grow; hold K: shrink; no jump or manual exit |
-| Bubble in air | A/D; automatic rise | Q: pop and return to Star |
-| Bubble underwater | WASD, including diagonals | Q: pop and return to Star |
-| BouncyBall | A/D; automatic land bounce | No manual jump or release |
-| Spider | A/D along connected surfaces | No manual Q release in the current controller; use the next form or authored handoff |
-| Fan | A/D while grounded/facing | F: toggle airflow; Q: leave |
-| Possessable spike wall | A/D while grounded/facing | Space: fire |
+| Form | Desktop gameplay | Left thumb | Right thumb |
+| --- | --- | --- | --- |
+| Star | A/D or arrow keys to move, Space to jump | Steer left or right | Tap Jump |
+| Box | A/D to move, hold J or left mouse to grow, K or right mouse to shrink | Steer left or right | Hold Grow (outward arrows) or Shrink (inward arrows). Release to stop resizing. |
+| Bubble | A/D in air, WASD underwater, Q or right click to pop | Steer horizontally while rising. Underwater, drag in any direction, including diagonally. | Tap Pop to return to Star |
+| BouncyBall | A/D to steer | Steer horizontally. The ball bounces automatically on land and floats on water. | None |
+| Spider | A/D to travel along connected surfaces | Steer along the surface | None. Contact or an authored transition changes form. |
+| Fan | A/D to move and face, F or left click to toggle wind, Q or right click to leave | Steer and face left or right | Tap Blow to toggle airflow. Tap Leave to return to Star. |
 
-R opens restart choices, not an immediate reset. All seven gameplay scenes have the shared Home pause menu. Q is not a universal exit for Box/BouncyBall. Space remains jump/fire, not Bubble pop. Fan's F toggle is handled by its ability script.
+**Touch layout.** Touch inside the left half of the safe area to set the joystick center, then drag. The resting ring shows where to start and the thumb shows the drag direction. The ring is centered on the initial touch, so part of it can extend past the canvas near an edge. Lifting the thumb or dragging outside the canvas returns movement to neutral. Start another drag inside the movement area to steer again. A second finger can operate a right-hand button while the first keeps steering. On Navigation the movement zone occupies the lower 68% of the left half. The Jump button sits above and to the right of the Collection Book. Players can also tap a destination sign.
 
-Mobile controls use a floating joystick and form-specific action buttons in Navigation and the seven gameplay scenes. AutoDetect is the release default; AlwaysShow is a testing override. Held inputs must clear on hiding/focus loss. Home is shared across the seven gameplay scenes. The seven gameplay scenes contain configured paged Help books in current source. Obsolete Help components were removed from IntroBox, IntroBubble and IntroSpider, with focused Editor open/close/pause checks passing. The promoted Level02 has the matching house/book icons. Its obsolete empty Help component has also been removed; the configured six-page Collection Book and its controls are preserved. On Navigation, players can move, jump, or tap a level sign to enter.
+**Display mode.** All eight build scenes use the `Mobile Form Controls` component. Its saved `Show Mode` is `Auto Detect`, which selects touch on a mobile platform or when Unity detects a touchscreen without a mouse. To preview in Play Mode, select the component on the player controller (on Navigation, the navigation star) and set `Always Show`. Drag or click with the mouse to preview the joystick, action icons and map hints. `Never Show` previews desktop controls. Use two actual touches to test steering and an action together.
+
+The seven gameplay scenes show a form controls card on desktop and replace it with the touch controls on mobile. Navigation teaches Move and Jump beside the star and has no corner card in either mode. All seven gameplay scenes have paged Collection Books. The six form pages use shared keyboard and mouse descriptions on all devices. The possessable SpikeWall in legacy/test content uses Space to fire and has no touch layout in the active route.
+
+**Pause and restart.** Tap the house in any gameplay scene to continue, return to a saved checkpoint, restart the level or return to Navigation. Desktop also supports Esc for Home and R for restart choices. In desktop WebGL, the lower-right fullscreen button resumes ordinary Home pause after fullscreen entry succeeds. The first Esc exits fullscreen. In windowed play, Esc closes the current menu layer or opens Home.
 
 ## 3. Possession and body behavior
 
@@ -98,7 +100,7 @@ The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. After
 
 The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE sinks hazards, reveals boards and demonstrates a complete alternating cycle before returning the camera. HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
 
-The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives an R reminder after 1.5 seconds; the water-exit and upper-right ceilings each give a once-per-scene-load Q-pop hint after 3 seconds. Beta 0.1.1 adds an optional star hint above the lower movable-door path after 20 seconds without door movement. Deliberate Box growth or Ball contact activates a brief paused door-lift preview with “A little lift?”; it is shown once per scene load and avoids activation from spawn overlap. Current source also includes paged form Help in Level01.
+The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives a desktop R reminder after 1.5 seconds of qualifying contact. Touch mode hides this prompt. Bubble’s Pop button is available throughout possession. Beta 0.1.1 adds an optional star hint above the lower movable-door path after 20 seconds without door movement. Deliberate Box growth or Ball contact activates a brief paused door-lift preview with “A little lift?”; it is shown once per scene load and avoids activation from spawn overlap. Current source also includes paged form Help in Level01.
 
 ## 6. Death, checkpoints and menus
 
@@ -119,7 +121,7 @@ The promoted Level02 uses dedicated drop/seesaw recovery and five ordered Smiley
 - IntroBouncyBall accepts controlled Star or BouncyBall at its flag, then shows Entering Level 1 before loading Level01.
 - Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to IntroFan, then Level02.
 - Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
-- The promoted Level02 requires its assigned final Box to press the roof button, then actual contact with the raised flag. Its custom overlay reads Congratulations, / you are now a super star and stops the winning body. It currently has no shared completion-analytics or Navigation-return call; see the release follow-up in [level-2.md](level-2.md).
+- In Level02 the assigned final Box presses the roof button. Touching the raised flag with the controlled body records completion and opens the result screen. Tap Return to Main Menu to load Navigation.
 - Navigation replaces the old playable Mainmenu as startup and return destination. It uses authored entrance interactions, not the legacy UI-platform landing behavior. Coming Soon has no destination.
 - Collection Book uses reusable UI assets and blocks Navigation movement while open. Navigation’s book, configured gameplay books and Shape Closet all read session-only `HelpBookUnlocks`. Successful possession reveals only the controlled form; an assigned starting/recovery host also counts. Star help is always available. Completion adds no form groups. Scene changes, death and level restart retain discoveries; refreshing/reopening the game or starting a new Editor Play session clears them. Old persistent completion saves are ignored. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 

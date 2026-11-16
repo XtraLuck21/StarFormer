@@ -1,6 +1,6 @@
 # Script and Scene Guide
 
-Last updated: 2026-11-10. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). The promoted Level02 and its Help cleanup are included; browser/data acceptance limits remain recorded.
+Touch controls reviewed November 16, 2026. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). The promoted Level02 and its Help cleanup are included; browser/data acceptance limits remain recorded.
 
 ## 1. Scenes and build configuration
 
@@ -35,11 +35,15 @@ The former Advanced scene and GUID now belong to Level01. The previous Level01 s
 | [BouncyBallAbility.cs](../Assets/Scripts/BouncyBallAbility.cs) | Dormant ball activation, automatic bounce, overhead-clearance compression and water float. Read scene overrides before changing shared prefab defaults. |
 | [WaterZone.cs](../Assets/Scripts/WaterZone.cs) / [BodyWaterPhysics.cs](../Assets/Scripts/BodyWaterPhysics.cs) | Water membership, cached air physics, damping and form-specific water behavior; WaterZone requires a trigger collider. |
 | [RatchetingCeiling.cs](../Assets/Scripts/RatchetingCeiling.cs) | Box lift/ball lowering with clearance protection. Lower Level01 door allows ball lowering. Upper lift uses `boxOnlyLift = true`, `ballPushesDown = false`, retaining its height after Box shrinks. |
-| [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Connected-surface Spider movement; shared controller uses Q release. |
-| [FanBlower.cs](../Assets/Scripts/FanSet/FanBlower.cs) | F toggles airflow; Q release is handled by the controller. Current targets are eligible non-possessable obstacles. |
+| [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Steers Spider along connected surfaces. Contact or an authored handoff changes form. |
+| [FanBlower.cs](../Assets/Scripts/FanSet/FanBlower.cs) | The player controller routes keyboard, mouse and touch Blow to the same wind toggle and handles Leave. Current targets are eligible non-possessable obstacles. |
 | [SpikeShooterAbility.cs](../Assets/Scripts/SpikeWall/SpikeShooterAbility.cs) / [SpikeProjectile.cs](../Assets/Scripts/SpikeWall/SpikeProjectile.cs) | Possessable spike-wall facing/fire and projectile behavior; Space remains Fire. |
 | [StarVisual.cs](../Assets/Scripts/StarVisual.cs), [CircleVisual.cs](../Assets/Scripts/CircleVisual.cs), [FormGlowHalo.cs](../Assets/Scripts/FanSet/FormGlowHalo.cs) | Star drawing, optional inward circle outlines and host glow. Sprite styling does not enlarge collision geometry. |
-| [MobileFormControls.cs](../Assets/Scripts/Mobile/MobileFormControls.cs) / [MobileTouchTarget.cs](../Assets/Scripts/Mobile/MobileTouchTarget.cs) | Floating joystick and form-specific action buttons in all eight active scenes. Auto Detect selects the device layout and Always Show previews touch in the Editor. |
+| [MobileFormControls.cs](../Assets/Scripts/Mobile/MobileFormControls.cs) | Owns Show Mode, the runtime safe-area canvas, joystick movement and the action buttons for the controlled form. Attach once to the player controller or Navigation star. |
+| [MobileTouchTarget.cs](../Assets/Scripts/Mobile/MobileTouchTarget.cs) | Tracks the pointer for each joystick or button press. Gameplay stick recovery checks the live contact, resets movement at the canvas edge and can reclaim a thumb held through a checkpoint reload. |
+| [MobileControlGraphic.cs](../Assets/Scripts/Mobile/MobileControlGraphic.cs) | Draws the stick and action icons used by the touch HUD and map hints. |
+| [NavigationMapTap.cs](../Assets/Scripts/NavigationMapTap.cs) | Routes a tap to a level sign and discards drags. Navigation shows Move/Jump by the star. |
+| [FormControlsHUD.cs](../Assets/Scripts/FormControlsHUD.cs) | Shows keyboard and mouse bindings for the controlled form in the seven gameplay scenes when touch mode is off. |
 
 Reusable prefabs live in Assets/Form: StarPlayer, BoxBody, BubbleBody and BouncyBall. They include internal physics/visual references, not a scene controller. Keep Boxes at scene root for resizing; assign scene instances to switches/goals/hints. BouncyBall's serialized form is 7, Spider's is 4. Do not rerun BouncyBallSetup just to repair one enum value: it also recreates assets/placements.
 
@@ -58,8 +62,8 @@ The controller retains the merged Box movement/growth rules, contact separation 
 | [AdvancedCheckpointController.cs](../Assets/Scripts/AdvancedCheckpointController.cs) | On PlayerControl; ordered CP1/2/3, scene-path-scoped session, live completed route/lift/cover/cinematic progress and restoration. Calls SetCheckpoint with ADV_CP1/2/3 and suppresses duplicate generic marker feedback. |
 | [StarStartGreeting.cs](../Assets/Scripts/StarStartGreeting.cs) | Optional READY? → LET'S GO! sign, Star-only upward contact, reusable bounce/sparkles on separate contacts. No route dependency. |
 | [MovableDoorContactHint.cs](../Assets/Scripts/MovableDoorContactHint.cs) | Published in Beta 0.1.1: lower-door idle timer, deliberate contact activation, paused lift preview and once-per-scene-load hint. |
-| [BubbleCeilingRestartHint.cs](../Assets/Scripts/BubbleCeilingRestartHint.cs) | First tank's real ceiling contact inside its teaching area; 1.5-second R reminder. Leaving the qualifying state resets the lesson. |
-| [BubbleCeilingPopHint.cs](../Assets/Scripts/BubbleCeilingPopHint.cs) | Two instances: water exit and upper-right ceiling. Assigned ceiling contact + area for 3 seconds; Q prompt once per instance per scene load. Pause does not advance the timer. |
+| [BubbleCeilingRestartHint.cs](../Assets/Scripts/BubbleCeilingRestartHint.cs) | Shows the Level01 first-tank R reminder after 1.5 seconds of qualifying ceiling contact on desktop. Touch mode hides it. |
+| [BubbleCeilingPopHint.cs](../Assets/Scripts/BubbleCeilingPopHint.cs) | Retained ceiling-contact pop lesson. The active Level01 scene has no instances. |
 
 Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, CP2 restores R1, CP3 restores Star. Restore completed progress without replaying cinematics; reset loose bodies/lower door, SAFE phase and the falling trap. Full restart clears everything. See [level-1.md](level-1.md) and [CheckpointGuidance.md](CheckpointGuidance.md).
 
@@ -67,7 +71,7 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 
 | Script / asset | Current responsibility |
 | --- | --- |
-| [BoxGrowHint.cs](../Assets/Scripts/BoxGrowHint.cs) | Assigned Box/area, dashed size guide and J/K hints. Visual root is separate from the moving host. |
+| [BoxGrowHint.cs](../Assets/Scripts/BoxGrowHint.cs) | Assigned Box/area, dashed size guide and mode-aware resize icons. Visual root is separate from the moving host. |
 | [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Intro Air/Water/Q-exit, Star movement/jump, Bubble introduction and ContinueRight modes. Q-exit follows any current Bubble in its safe landing area; ordinary assigned-body hints keep their binding. |
 | [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | IntroBox form title/subtitle and Box-to-Box feedback. Disabled with old title objects in rebuilt IntroBubble, which uses world hints instead. Do not enable TutorialIntroUI alongside it. |
 | [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
@@ -75,16 +79,16 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 | [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/IntroFan. IntroBubble now uses flag + passage instead. |
 | [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion, 1.5-second Level 1 transition to Level01. |
 | [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Short anchored headlines for bounce/float/land/low ceiling and spike death; subtitle disabled. |
-| [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Map movement-key prompt for the controlled tutorial ball. |
+| [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Shows horizontal joystick guidance or desktop movement keys for the controlled tutorial ball. |
 | [IntroSpiderCamera.cs](../Assets/Scripts/IntroSpiderCamera.cs), [IntroSpiderEntranceSeal.cs](../Assets/Scripts/IntroSpiderEntranceSeal.cs), [CameraFocusIntro.cs](../Assets/Scripts/FanSet/CameraFocusIntro.cs) | Existing Spider/Fan introduction camera and entrance behavior; retain local scene wiring. |
 | [GoalFlagVisual.prefab](../Assets/Form/GoalFlagVisual.prefab) | Visual pole/flag only; gameplay goals have separate triggers and scene references. |
 | [HeldPressurePlate.cs](../Assets/Scripts/HeldPressurePlate.cs), [BoxHeightSwitch.cs](../Assets/Scripts/BoxHeightSwitch.cs) | Retained plate/height-switch interactions for legacy layouts. G/G2 are not formal Level01 prerequisites. |
 | [BubbleRespawnOnPop.cs](../Assets/Scripts/BubbleRespawnOnPop.cs), [ReturnToSpawnOnLeave.cs](../Assets/Scripts/FanSet/ReturnToSpawnOnLeave.cs) | Explicit respawn/return opt-ins, not global Bubble rules. Old U2 regeneration belongs to Level01_Legacy. |
 | [BouncyBallCheckpointSession.cs](../Assets/Scripts/BouncyBallCheckpointSession.cs) | Retained last-ball recovery for opted-in scenes; disabled for current Level01. |
-| [CheckpointFeedbackUI.cs](../Assets/Scripts/CheckpointFeedbackUI.cs) | Generic checkpoint feedback for other scenes; legacy E-pop lesson is suppressed when AdvancedCheckpointController is present. Formal Level01 uses its own marker/text and Q hints. |
+| [CheckpointFeedbackUI.cs](../Assets/Scripts/CheckpointFeedbackUI.cs) | Generic checkpoint feedback for other scenes; legacy E-pop lesson is suppressed when AdvancedCheckpointController is present. Formal Level01 uses its own marker and checkpoint text. |
 | [SpikeHazard.cs](../Assets/Scripts/SpikeHazard.cs), [BubblePopHazard.cs](../Assets/Scripts/BubblePopHazard.cs) | Controlled-body lethal spikes; Bubble-only pop / Box death hazard respectively. Keep scene controller references. |
 
-See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare Bubble and original mobile layouts. These scene-specific references must not point into another scene.
+See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare Bubble and the current touch lessons. These scene-specific references must not point into another scene.
 
 ### Level02 integration points
 
@@ -92,16 +96,16 @@ See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare 
 | --- | --- |
 | [level2Camera.cs](../Assets/Scripts/StartingStage/level2Camera.cs) | Chase, fall/dark passage, fixed seesaw/tooth views, brief complete-face reveal, closer forehead framing and follow |
 | [DarkStarPassage.cs](../Assets/Scripts/StartingStage/DarkStarPassage.cs), [DropBottomCheckpoint.cs](../Assets/Scripts/StartingStage/DropBottomCheckpoint.cs) | Descent darkness, local light recovery, glowing exit and safe bottom landing |
-| [SeesawRoomSupplies.cs](../Assets/Scripts/SeesawRoomSupplies.cs), [SeesawRoomStage.cs](../Assets/Scripts/SeesawRoomStage.cs) | Direction-triggered Fan supply, single ordinary ball, blue/green cleanup and staged barrier/platform reveal |
+| [SeesawRoomSupplies.cs](../Assets/Scripts/SeesawRoomSupplies.cs), [SeesawRoomStage.cs](../Assets/Scripts/SeesawRoomStage.cs) | Direction-triggered ball supply while Fan wind is on, single ordinary ball, blue/green cleanup and staged barrier/platform reveal |
 | [SeesawOverloadSequence.cs](../Assets/Scripts/SeesawOverloadSequence.cs), [SeesawBouncyFinale.cs](../Assets/Scripts/SeesawBouncyFinale.cs) | Yellow three-ball loading, floating delayed !, Spider passage and four underside impacts |
 | [SeesawRoomExit.cs](../Assets/Scripts/SeesawRoomExit.cs), [SeesawBallShellExit.cs](../Assets/Scripts/SeesawBallShellExit.cs) | Four-gear quake, rising lift, continuous ride and real Star handoff during shell breakup |
 | [TeethTriggeredDoor.cs](../Assets/Scripts/TeethTriggeredDoor.cs), [SmileFaceCompletion.cs](../Assets/Scripts/SmileFaceCompletion.cs) | Three tooth arrivals, connected grin/opening eyes, separate camera phases |
 | [SmileFaceFinalRoute.cs](../Assets/Scripts/SmileFaceFinalRoute.cs), [SmileRouteCheckpoint.cs](../Assets/Scripts/SmileRouteCheckpoint.cs) | Ordered Spider/Star/Box checkpoints, pure blue/yellow markers and forehead fall-return protection |
-| [SmileBoxPressureButton.cs](../Assets/Scripts/SmileBoxPressureButton.cs), [SmileGoalFlag.cs](../Assets/Scripts/SmileGoalFlag.cs) | Assigned final Box opens the flag stage; actual flag contact displays the custom victory overlay |
+| [SmileBoxPressureButton.cs](../Assets/Scripts/SmileBoxPressureButton.cs), [SmileGoalFlag.cs](../Assets/Scripts/SmileGoalFlag.cs) | Assigned final Box opens the flag stage; flag contact records completion and opens the shared result screen |
 | [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Climb real solid surfaces; ignore checkpoint/water trigger volumes |
 | [HelpBookUI.cs](../Assets/UI/HelpBookUI.cs) | Configured six-page Level02 Collection Book alongside shared Home; obsolete empty Help component removed |
 
-The promoted scene replaces the old layout, retained as Level02_legacy and excluded from builds. The obsolete right-side BubbleSpawner and CP03 are gone. The final Smile flag does not yet invoke shared completion analytics or a Navigation-return control. See [level-2.md](level-2.md) for mechanics, recovery and remaining acceptance.
+The promoted scene replaces the old layout, retained as Level02_legacy and excluded from builds. The obsolete right-side BubbleSpawner and CP03 are gone. The final Smile flag opens a result screen with a Return to Main Menu button. See [level-2.md](level-2.md) for mechanics, recovery and remaining acceptance.
 
 ## 3. Navigation and interactive menu
 

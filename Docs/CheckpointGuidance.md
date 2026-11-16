@@ -1,6 +1,6 @@
 # Checkpoints, restart and pause menus
 
-Last updated: 2026-11-10. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). The Level01 recovery model and promoted Level02 recovery rules below remain; full-route/device acceptance is separate.
+Touch controls reviewed November 16, 2026. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). The Level01 recovery model and promoted Level02 recovery rules below remain; full-route/device acceptance is separate.
 
 ## Level01 checkpoints
 
@@ -55,11 +55,11 @@ Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Es
 - Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
 - Promoted Level02 uses DROP_BOTTOM, SEESAW_ROOM and the five Smiley Face entries documented in [level-2.md](level-2.md#2-scene-wiring-to-preserve). Death/Home retry restore the configured Star, Spider or Box entry and its stage progress; later entries cannot regress. A saved forehead entry also enables the lower-right fall-return zone without a death/reload. The scene uses a short Respawning pause; full restart clears its session records. CP01/CP02 remain legacy objects; CP03 has been removed.
 
-## Bubble hints
+## Touch input and checkpoint recovery
 
-Formal Level01 uses assigned ceiling contact and teaching regions, not generic stationary detection. The first tank displays its R lesson after 1.5 seconds. The water-exit and upper-right ceilings each display a once-per-scene-load `Press Q to pop` lesson after 3 seconds of continuous qualifying contact. Sideways movement under the ceiling can still count. Paused time does not advance the pop lessons.
+In Level01, the first tank’s ceiling-contact lesson shows the R restart reminder on desktop. On touch screens, tap the house and choose Return to Checkpoint after a save, or Restart Level to start over. Bubble’s Pop button returns to Star at either exit.
 
-The generic E-pop reminder still exists in the legacy feedback script but is suppressed for scenes with `AdvancedCheckpointController`. It must not appear beside the current Level01 Q hints. This suppression is part of the scene-promotion fix, not an outstanding first-level copy bug.
+The gameplay joystick clears on death and when the controls are hidden. When the HUD returns after a checkpoint reload, a thumb held inside its movement area can establish a fresh neutral center. To test recovery, keep one thumb down through respawn, drag again, then lift and start a new drag in the opposite direction.
 
 Shape discovery is separate from checkpoint state. A menu return/full level restart clears the applicable checkpoint session but retains discovered forms for this application launch. Death and checkpoint retry also retain discoveries. Only a new game/Editor Play launch clears them; completion no longer grants form groups. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 
