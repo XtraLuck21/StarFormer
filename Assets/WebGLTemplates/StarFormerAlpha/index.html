@@ -14,7 +14,11 @@
     <div id="viewport">
       <div id="game-frame">
         <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1" aria-label="Game"></canvas>
-        <button id="fullscreen" type="button" hidden>Fullscreen</button>
+        <button id="fullscreen" type="button" title="Enter Fullscreen" aria-label="Enter Fullscreen" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M14 4h6v6m0-6-7 7M10 20H4v-6m0 6 7-7"/>
+          </svg>
+        </button>
       </div>
     </div>
     <section id="launch" aria-labelledby="game-title">

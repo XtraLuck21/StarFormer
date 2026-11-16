@@ -62,6 +62,7 @@
   const notice = document.getElementById("notice");
   const build = window.starFormerBuild;
   const touchDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
     (navigator.maxTouchPoints > 0 && matchMedia("(pointer: coarse)").matches);
   const requestFullscreen = player.requestFullscreen || player.webkitRequestFullscreen;
   const canFullscreen = Boolean(requestFullscreen) &&
@@ -69,6 +70,8 @@
   let started = false;
   let failed = false;
   let noticeTimer;
+  let cornerRequestPending = false;
+  let shownExitHint = false;
 
   function showNotice(message) {
     clearTimeout(noticeTimer);
@@ -118,21 +121,34 @@
   }, true);
 
   function syncFullscreen() {
-    fullscreen.textContent = isFullscreen() ? "Exit Fullscreen" : "Fullscreen";
-    fullscreen.setAttribute("aria-pressed", String(isFullscreen()));
+    const active = isFullscreen();
+    fullscreen.hidden = !started || failed || touchDevice || !canFullscreen || active;
+    if (active && cornerRequestPending) {
+      window.starFormerCornerFullscreenEntries = (window.starFormerCornerFullscreenEntries || 0) + 1;
+      cornerRequestPending = false;
+    }
+    if (active && started && !touchDevice && !shownExitHint) {
+      shownExitHint = true;
+      showNotice("Press Esc to exit fullscreen.");
+    } else if (!active && notice.textContent === "Press Esc to exit fullscreen.") {
+      notice.hidden = true;
+    }
     resize();
+    if (started) canvas.focus();
+  }
+
+  function fullscreenFailed() {
+    cornerRequestPending = false;
+    showNotice("Fullscreen is unavailable. You can keep playing in this window.");
     if (started) canvas.focus();
   }
 
   function enterFullscreen() {
     if (!canFullscreen) return;
     try {
-      // Request immediately inside the user's click, before any asynchronous work.
-      Promise.resolve(requestFullscreen.call(player)).catch(() => {
-        showNotice("Fullscreen is unavailable. You can keep playing in this window.");
-      });
+      Promise.resolve(requestFullscreen.call(player)).catch(fullscreenFailed);
     } catch (_) {
-      showNotice("Fullscreen is unavailable. You can keep playing in this window.");
+      fullscreenFailed();
     }
   }
 
@@ -141,13 +157,12 @@
     if (wantsFullscreen) enterFullscreen();
     started = true;
     launch.hidden = true;
-    fullscreen.hidden = !canFullscreen;
-    resize();
-    canvas.focus();
+    syncFullscreen();
   }
 
   function fail(message) {
     failed = true;
+    fullscreen.hidden = true;
     console.error(message);
     launch.hidden = false;
     status.textContent = "The game could not load. Please refresh the page to try again.";
@@ -161,18 +176,12 @@
   playFullscreen.addEventListener("click", () => start(true));
   playWindowed.addEventListener("click", () => start(touchDevice && canFullscreen));
   fullscreen.addEventListener("click", () => {
-    if (isFullscreen()) {
-      const exit = document.exitFullscreen || document.webkitExitFullscreen;
-      try {
-        Promise.resolve(exit.call(document)).catch(() => showNotice("Use your browser's fullscreen control to exit."));
-      } catch (_) {
-        showNotice("Use your browser's fullscreen control to exit.");
-      }
-    } else {
-      enterFullscreen();
-    }
-    canvas.focus();
+    if (fullscreen.hidden || cornerRequestPending) return;
+    cornerRequestPending = true;
+    enterFullscreen();
   });
+  document.addEventListener("fullscreenerror", fullscreenFailed);
+  document.addEventListener("webkitfullscreenerror", fullscreenFailed);
   document.addEventListener("fullscreenchange", syncFullscreen);
   document.addEventListener("webkitfullscreenchange", syncFullscreen);
   window.addEventListener("resize", resize);

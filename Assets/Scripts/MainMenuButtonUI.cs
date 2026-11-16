@@ -22,6 +22,12 @@ public sealed class MainMenuButtonUI : MonoBehaviour
     private Confirmation confirmation;
     public bool IsOpen => ownsPause;
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+    [System.Runtime.InteropServices.DllImport("__Internal")]
+    private static extern int HomeFullscreenEntryCount();
+    private int fullscreenEntriesAtOpen;
+#endif
+
     private void Awake()
     {
         hud = new GameObject("Home HUD", typeof(RectTransform), typeof(Canvas),
@@ -79,6 +85,13 @@ public sealed class MainMenuButtonUI : MonoBehaviour
     // reaches the Home menu, even when closing a dialog has just resumed gameplay.
     private void LateUpdate()
     {
+#if UNITY_WEBGL && !UNITY_EDITOR
+        if (IsOpen && confirmation == Confirmation.None && HomeFullscreenEntryCount() != fullscreenEntriesAtOpen)
+        {
+            ContinuePlaying();
+            return;
+        }
+#endif
         if (!MenuEscapeInput.TryConsume()) return;
         if (!IsOpen) Show();
         else if (confirmation != Confirmation.None) ShowPaused();
@@ -118,6 +131,9 @@ public sealed class MainMenuButtonUI : MonoBehaviour
     {
         if (!IsOpen) return;
         confirmation = Confirmation.None;
+#if UNITY_WEBGL && !UNITY_EDITOR
+        fullscreenEntriesAtOpen = HomeFullscreenEntryCount();
+#endif
         var panel = Panel("Paused", 540);
         var resume = Choice("Continue Playing", panel, 120, ContinuePlaying);
         var checkpoint = Choice("Return to Checkpoint", panel, 40, ReturnToCheckpoint);
