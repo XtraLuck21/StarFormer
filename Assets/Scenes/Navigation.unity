@@ -7402,7 +7402,6 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FormControlsHUD
   formBook: {fileID: 11400000, guid: 7ad88915ee1ed4c7987d980d9139f10d, type: 2}
-  touchControls: {fileID: 0}
 --- !u!114 &760008690
 MonoBehaviour:
   m_ObjectHideFlags: 0

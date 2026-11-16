@@ -94,13 +94,13 @@ public class PlayerPossessionController : MonoBehaviour
 
     /// <summary>
     /// This frame's vertical input (-1 to 1): J/K or mouse buttons for Box resizing, W/S otherwise,
-    /// combined with touch Up/Down (Grow/Shrink for Box).
+    /// combined with the swimming joystick or the Box resize buttons.
     /// Box resizing reads this value instead of polling the keyboard separately.
     /// </summary>
     public float VerticalInput => verticalInput;
 
     /// <summary>
-    /// This frame's horizontal input (-1 to 1), combining A/D and touch Left/Right.
+    /// This frame's horizontal input (-1 to 1), combining A/D and the horizontal joystick axis.
     /// Fan facing reads this value instead of polling the keyboard separately.
     /// </summary>
     public float HorizontalInput => horizontalInput;
@@ -146,12 +146,6 @@ public class PlayerPossessionController : MonoBehaviour
     private bool bubblePopRequested;
     private float fanRepossessBlockedUntil;
     private bool restartRequested;
-
-    // ===== Touch button state (written by TouchHoldButton) =====
-    private bool touchLeftHeld;
-    private bool touchRightHeld;
-    private bool touchUpHeld;
-    private bool touchDownHeld;
 
     private static bool hasCheckpoint;
     private static string checkpointScene;
@@ -208,11 +202,6 @@ public class PlayerPossessionController : MonoBehaviour
     // Touch input API: UI buttons use these methods without changing physics logic.
     // ===================================================================
 
-    public void SetTouchLeft(bool held) => touchLeftHeld = held;
-    public void SetTouchRight(bool held) => touchRightHeld = held;
-    public void SetTouchUp(bool held) => touchUpHeld = held;
-    public void SetTouchDown(bool held) => touchDownHeld = held;
-
     /// <summary>Space: Star jump / SpikeWall fire. Requests an active ability only.</summary>
     public void PressTouchAction()
     {
@@ -242,12 +231,6 @@ public class PlayerPossessionController : MonoBehaviour
         releaseRequested = true;
     }
 
-    /// <summary>Legacy name retained as an alias for RequestRelease.</summary>
-    public void PressTouchPop()
-    {
-        RequestRelease();
-    }
-
     /// <summary>
     /// Toggle the Fan's wind (F on the keyboard): press once for on, again for off.
     /// Only applies while possessing Fan, matching the form-specific firing behavior.
@@ -273,7 +256,7 @@ public class PlayerPossessionController : MonoBehaviour
     }
 
     /// <summary>Open the same restart choices as the R key.</summary>
-    public void PressTouchRestart()
+    private void OpenRestartMenu()
     {
         if (!isActiveAndEnabled || restartRequested || (!isDead && Time.timeScale <= 0f)) return;
         if (restartMenu == null) restartMenu = gameObject.AddComponent<RestartMenuUI>();
@@ -299,7 +282,6 @@ public class PlayerPossessionController : MonoBehaviour
     {
         horizontalInput = verticalInput = 0f;
         actionRequested = releaseRequested = false;
-        ReleaseAllTouchInput();
     }
 
     // A scene's fall-recovery zone can return to its saved Star checkpoint
@@ -333,15 +315,6 @@ public class PlayerPossessionController : MonoBehaviour
         // Death recovery also uses unscaled time; browsing the menu must not consume its delay.
         if (isDead) deathRestartTime += pausedDuration;
         ClearInputForRestartMenu();
-    }
-
-    /// <summary>Release all directions when changing forms, dying, or restarting.</summary>
-    public void ReleaseAllTouchInput()
-    {
-        touchLeftHeld = false;
-        touchRightHeld = false;
-        touchUpHeld = false;
-        touchDownHeld = false;
     }
 
     private void Start()
@@ -460,14 +433,13 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (keyboard != null && keyboard.rKey.wasPressedThisFrame)
         {
-            PressTouchRestart();
+            OpenRestartMenu();
             return;
         }
 
         if (isDead)
         {
             actionRequested = false;
-            ReleaseAllTouchInput();
 
             if (Time.unscaledTime >= deathRestartTime)
             {
@@ -542,22 +514,12 @@ public class PlayerPossessionController : MonoBehaviour
             downHeld |= isBox && mobileControls.ShrinkHeld;
         }
 
-        if (touchLeftHeld)
-        {
-            horizontalInput -= 1f;
-        }
-
-        if (touchRightHeld)
-        {
-            horizontalInput += 1f;
-        }
-
-        if (upHeld || mouseGrowHeld || touchUpHeld)
+        if (upHeld || mouseGrowHeld)
         {
             verticalInput += 1f;
         }
 
-        if (downHeld || mouseShrinkHeld || touchDownHeld)
+        if (downHeld || mouseShrinkHeld)
         {
             verticalInput -= 1f;
         }
@@ -876,7 +838,6 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
-        ReleaseAllTouchInput();
     }
 
     public void KillControlledBody(
@@ -908,7 +869,6 @@ public class PlayerPossessionController : MonoBehaviour
         pendingTarget = null;
         horizontalInput = 0f;
         actionRequested = false;
-        ReleaseAllTouchInput();
 
         float activeDeathDelay = restartDelayOverride >= 0f
             ? restartDelayOverride
@@ -956,7 +916,6 @@ public class PlayerPossessionController : MonoBehaviour
         if (restartMenu != null) restartMenu.Close();
         RestoreBoxHandoffCollisions();
         bubblePopRequested = false;
-        ReleaseAllTouchInput();
         ClearPossessionContacts();
 
         if (isDead)
@@ -1091,7 +1050,6 @@ public class PlayerPossessionController : MonoBehaviour
         pendingSource = pendingTarget = null;
         bubblePopRequested = releaseRequested = actionRequested = false;
         horizontalInput = verticalInput = 0f;
-        ReleaseAllTouchInput();
         expectedBall.SetOwner(null);
         initialBody.transform.position = new Vector3(position.x, position.y, initialBody.transform.position.z);
         initialBody.gameObject.SetActive(true);
@@ -1176,7 +1134,6 @@ public class PlayerPossessionController : MonoBehaviour
         pendingSource = pendingTarget = null;
         bubblePopRequested = releaseRequested = actionRequested = false;
         horizontalInput = verticalInput = 0f;
-        ReleaseAllTouchInput();
         if (currentBody != null) currentBody.SetOwner(null);
         currentBody = replacement;
         currentBody.SetOwner(this);

@@ -607,21 +607,11 @@ public class BubbleMovementHint : MonoBehaviour
             }
             else
             {
-                var touchControls = FindFirstObjectByType<MobileControlsUI>();
-                bool useTouch = touchControls != null && touchControls.ResolveShouldShow();
-                float width = useTouch ? 1.4f : 2.18f;
-                Rectangle(Vector2.zero, new Vector2(width, 0.78f), keyBackground, sortingOrder);
-                if (useTouch)
-                {
-                    AddHintText("Pop input", "Tap Pop", Vector2.zero, new Vector2(width, 0.58f));
-                }
-                else
-                {
-                    AddKey('Q', Vector2.left * 0.67f);
-                    AddHintText("Input separator", "or", Vector2.zero, new Vector2(0.54f, 0.58f));
-                    MouseButtonHintIcon.Draw(visuals.transform, strokeSprite, Vector2.right * 0.67f,
-                        1f, true, inkColor, sortingOrder + 2);
-                }
+                Rectangle(Vector2.zero, new Vector2(2.18f, 0.78f), keyBackground, sortingOrder);
+                AddKey('Q', Vector2.left * 0.67f);
+                AddHintText("Input separator", "or", Vector2.zero, new Vector2(0.54f, 0.58f));
+                MouseButtonHintIcon.Draw(visuals.transform, strokeSprite, Vector2.right * 0.67f,
+                    1f, true, inkColor, sortingOrder + 2);
             }
             if (!string.IsNullOrWhiteSpace(popDescription))
                 AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);

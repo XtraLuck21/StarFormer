@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public sealed class FormControlsHUD : MonoBehaviour
 {
     [SerializeField] private HelpBookContent formBook;
-    [SerializeField] private MobileControlsUI touchControls;
 
     private static readonly Color Background = new Color32(25, 43, 62, 255);
     private static readonly Color Highlight = new Color32(79, 68, 49, 255);
@@ -23,7 +22,6 @@ public sealed class FormControlsHUD : MonoBehaviour
     private Image background;
     private PossessableBody lastBody;
     private bool lastSwimming;
-    private bool lastTouch;
     private float changedAt;
     private RectTransform content;
     private Sprite rounded;
@@ -55,7 +53,7 @@ public sealed class FormControlsHUD : MonoBehaviour
         content.offsetMin = Vector2.one * 2f;
         content.offsetMax = Vector2.one * -2f;
         background = Round(content, Background);
-        if (navigation != null) BuildCard(BodyForm.Star, false, false);
+        if (navigation != null) BuildCard(BodyForm.Star, false);
     }
 
     private void OnDisable()
@@ -79,20 +77,18 @@ public sealed class FormControlsHUD : MonoBehaviour
         if (!visible) return;
 
         bool swimming = body.Form == BodyForm.Bubble && body.IsInWater;
-        bool touch = touchControls != null && touchControls.ResolveShouldShow();
-        if (body != lastBody || swimming != lastSwimming || touch != lastTouch)
+        if (body != lastBody || swimming != lastSwimming)
         {
             if (body != lastBody) changedAt = Time.unscaledTime;
-            if (lastBody == null || body.Form != lastBody.Form || swimming != lastSwimming || touch != lastTouch)
-                BuildCard(body.Form, swimming, touch);
+            if (lastBody == null || body.Form != lastBody.Form || swimming != lastSwimming)
+                BuildCard(body.Form, swimming);
             lastBody = body;
             lastSwimming = swimming;
-            lastTouch = touch;
         }
         background.color = Color.Lerp(Highlight, Background, (Time.unscaledTime - changedAt) / 0.45f);
     }
 
-    private void BuildCard(BodyForm form, bool swimming, bool touch)
+    private void BuildCard(BodyForm form, bool swimming)
     {
         foreach (Transform child in content)
         {
@@ -107,7 +103,7 @@ public sealed class FormControlsHUD : MonoBehaviour
             _ => navigation != null ? 3 : 2
         };
         float height = 42f + rows * RowHeight;
-        bar.sizeDelta = new Vector2(touch ? 278f : 256f, height);
+        bar.sizeDelta = new Vector2(256f, height);
 
         var iconRect = Slot("Form icon", 13f, (height - 48f) / 2f, 44f, 44f);
         if (form == BodyForm.Box)
@@ -131,24 +127,24 @@ public sealed class FormControlsHUD : MonoBehaviour
         title.fontStyle |= FontStyles.UpperCase;
         title.alignment = TextAlignmentOptions.MidlineLeft;
 
-        string movement = touch ? (swimming ? "Directions" : "Left / Right") : (swimming ? "WASD" : "A/D");
+        string movement = swimming ? "WASD" : "A/D";
         ActionRow(0, swimming ? "Swim" : "Move", movement);
         switch (form)
         {
             case BodyForm.Star:
-                ActionRow(1, "Jump", touch ? "Jump" : "Space");
+                ActionRow(1, "Jump", "Space");
                 if (navigation != null) ActionRow(2, "Enter", null, false);
                 break;
             case BodyForm.Box:
-                ActionRow(1, "Grow", touch ? "Hold Grow" : "J", touch ? (bool?)null : false);
-                ActionRow(2, "Shrink", touch ? "Hold Shrink" : "K", touch ? (bool?)null : true);
+                ActionRow(1, "Grow", "J", false);
+                ActionRow(2, "Shrink", "K", true);
                 break;
             case BodyForm.Fan:
-                ActionRow(1, "Blow", touch ? "Blow" : "F", touch ? (bool?)null : false);
-                ActionRow(2, "Leave", touch ? "Leave" : "Q", touch ? (bool?)null : true);
+                ActionRow(1, "Blow", "F", false);
+                ActionRow(2, "Leave", "Q", true);
                 break;
             case BodyForm.Bubble:
-                ActionRow(1, "Pop", touch ? "Pop" : "Q", touch ? (bool?)null : true);
+                ActionRow(1, "Pop", "Q", true);
                 break;
         }
     }

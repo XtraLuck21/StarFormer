@@ -70,13 +70,9 @@ public class BoxGrowHint : MonoBehaviour
         }
 
         mobileControls = playerController.GetComponent<MobileFormControls>();
-        var legacyControls = FindFirstObjectByType<MobileControlsUI>();
-        if (mobileControls != null || legacyControls == null || !legacyControls.ResolveShouldShow())
-        {
-            desktopPrompt = new GameObject("Desktop Input");
-            desktopPrompt.transform.SetParent(visuals.transform, false);
-            AddDesktopPrompt(half);
-        }
+        desktopPrompt = new GameObject("Desktop Input");
+        desktopPrompt.transform.SetParent(visuals.transform, false);
+        AddDesktopPrompt(half);
         if (mobileControls != null)
         {
             bool shrink = mode == HintMode.Shrink;

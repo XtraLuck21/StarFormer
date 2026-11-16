@@ -39,7 +39,7 @@ The former Advanced scene and GUID now belong to Level01. The previous Level01 s
 | [FanBlower.cs](../Assets/Scripts/FanSet/FanBlower.cs) | F toggles airflow; Q release is handled by the controller. Current targets are eligible non-possessable obstacles. |
 | [SpikeShooterAbility.cs](../Assets/Scripts/SpikeWall/SpikeShooterAbility.cs) / [SpikeProjectile.cs](../Assets/Scripts/SpikeWall/SpikeProjectile.cs) | Possessable spike-wall facing/fire and projectile behavior; Space remains Fire. |
 | [StarVisual.cs](../Assets/Scripts/StarVisual.cs), [CircleVisual.cs](../Assets/Scripts/CircleVisual.cs), [FormGlowHalo.cs](../Assets/Scripts/FanSet/FormGlowHalo.cs) | Star drawing, optional inward circle outlines and host glow. Sprite styling does not enlarge collision geometry. |
-| [MobileControlUI.cs](../Assets/Scripts/Mobile/MobileControlUI.cs) / [TouchHoldButton.cs](../Assets/Scripts/Mobile/TouchHoldButton.cs) | Scene-configured form-specific touch controls; release held input when hidden or focus is lost. AutoDetect for releases; AlwaysShow only for testing. |
+| [MobileFormControls.cs](../Assets/Scripts/Mobile/MobileFormControls.cs) / [MobileTouchTarget.cs](../Assets/Scripts/Mobile/MobileTouchTarget.cs) | Floating joystick and form-specific action buttons in all eight active scenes. Auto Detect selects the device layout and Always Show previews touch in the Editor. |
 
 Reusable prefabs live in Assets/Form: StarPlayer, BoxBody, BubbleBody and BouncyBall. They include internal physics/visual references, not a scene controller. Keep Boxes at scene root for resizing; assign scene instances to switches/goals/hints. BouncyBall's serialized form is 7, Spider's is 4. Do not rerun BouncyBallSetup just to repair one enum value: it also recreates assets/placements.
 

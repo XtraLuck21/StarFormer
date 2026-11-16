@@ -1,13 +1,21 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 [DisallowMultipleComponent]
 public sealed class MobileFormControls : MonoBehaviour
 {
-    [Tooltip("Auto Detect uses the device. Always Show previews touch controls with a mouse. Never Show uses the desktop HUD.")]
-    [SerializeField] private MobileControlsUI.ShowMode showMode = MobileControlsUI.ShowMode.AutoDetect;
+    private enum ShowMode { AutoDetect = 0, AlwaysShow = 1, NeverShow = 2 }
 
-    public bool MobileMode => isActiveAndEnabled && MobileControlsUI.ResolveShouldShow(showMode);
+    [Tooltip("Auto Detect uses the device. Always Show previews touch controls with a mouse. Never Show uses the desktop HUD.")]
+    [SerializeField] private ShowMode showMode = ShowMode.AutoDetect;
+
+    public bool MobileMode => isActiveAndEnabled && (showMode switch
+    {
+        ShowMode.AlwaysShow => true,
+        ShowMode.NeverShow => false,
+        _ => Application.isMobilePlatform || (Touchscreen.current != null && Mouse.current == null)
+    });
     private PlayerPossessionController player;
     private NavigationStarController navigation;
     private RectTransform surface;
