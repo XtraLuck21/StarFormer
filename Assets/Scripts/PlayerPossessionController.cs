@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
@@ -24,6 +25,9 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField] private bool quickRespawn;
     [SerializeField, Min(.05f)] private float quickRespawnSeconds = .18f;
 
+    private readonly List<RaycastResult> mouseHits = new List<RaycastResult>();
+    private bool mouseGrowHeld;
+    private bool mouseShrinkHeld;
     private RestartMenuUI restartMenu;
     private CheckpointFeedbackUI checkpointFeedback;
     public bool HasSavedCheckpoint => HasCheckpointInCurrentScene || HasBouncyBallCheckpointInCurrentScene;
@@ -88,7 +92,7 @@ public class PlayerPossessionController : MonoBehaviour
     public event System.Action<PossessableBody, PossessableBody> PossessionTransferred;
 
     /// <summary>
-    /// This frame's vertical input (-1 to 1): J/K for Box resizing, W/S otherwise,
+    /// This frame's vertical input (-1 to 1): J/K or mouse buttons for Box resizing, W/S otherwise,
     /// combined with touch Up/Down (Grow/Shrink for Box).
     /// Box resizing reads this value instead of polling the keyboard separately.
     /// </summary>
@@ -247,7 +251,9 @@ public class PlayerPossessionController : MonoBehaviour
     /// Toggle the Fan's wind (F on the keyboard): press once for on, again for off.
     /// Only applies while possessing Fan, matching the form-specific firing behavior.
     /// </summary>
-    public void PressTouchBlow()
+    public void PressTouchBlow() => ToggleFanWind();
+
+    private void ToggleFanWind()
     {
         if (!isActiveAndEnabled ||
             isDead ||
@@ -439,9 +445,12 @@ public class PlayerPossessionController : MonoBehaviour
         verticalInput = 0f;
         Keyboard keyboard = Keyboard.current;
 
+        bool isBox = currentBody != null && currentBody.Form == BodyForm.Box;
+        UpdateBoxMouseInput(isBox);
+
         if (restartMenu != null && restartMenu.IsOpen)
         {
-            if (keyboard != null && (keyboard.rKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame))
+            if (MenuEscapeInput.TryConsume() || (keyboard != null && keyboard.rKey.wasPressedThisFrame))
                 restartMenu.Close();
             return;
         }
@@ -490,17 +499,6 @@ public class PlayerPossessionController : MonoBehaviour
                 horizontalInput += 1f;
             }
 
-            bool isBox = currentBody != null && currentBody.Form == BodyForm.Box;
-            if (isBox ? keyboard.jKey.isPressed : keyboard.wKey.isPressed)
-            {
-                verticalInput += 1f;
-            }
-
-            if (isBox ? keyboard.kKey.isPressed : keyboard.sKey.isPressed)
-            {
-                verticalInput -= 1f;
-            }
-
             if (keyboard.qKey.wasPressedThisFrame)
             {
                 // Q pops Bubble or leaves Fan; Spider ignores this request.
@@ -514,7 +512,24 @@ public class PlayerPossessionController : MonoBehaviour
             }
         }
 
-        // ---- Add touch input to keyboard input (both work in the Editor) ----
+        Mouse mouse = Mouse.current;
+        bool isFan = currentBody != null && currentBody.Form == BodyForm.Fan;
+        if (isFan && ((keyboard != null && keyboard.fKey.wasPressedThisFrame) ||
+            (mouse != null && mouse.leftButton.wasPressedThisFrame && IsGameplayMousePress(mouse))))
+        {
+            ToggleFanWind();
+        }
+
+        if (currentBody != null && (isFan || currentBody.Form == BodyForm.Bubble) &&
+            mouse != null && mouse.rightButton.wasPressedThisFrame && IsGameplayMousePress(mouse))
+        {
+            RequestRelease();
+        }
+
+        bool upHeld = keyboard != null && (isBox ? keyboard.jKey : keyboard.wKey).isPressed;
+        bool downHeld = keyboard != null && (isBox ? keyboard.kKey : keyboard.sKey).isPressed;
+
+        // Combine equivalent bindings before subtracting opposing directions.
         if (touchLeftHeld)
         {
             horizontalInput -= 1f;
@@ -525,12 +540,12 @@ public class PlayerPossessionController : MonoBehaviour
             horizontalInput += 1f;
         }
 
-        if (touchUpHeld)
+        if (upHeld || mouseGrowHeld || touchUpHeld)
         {
             verticalInput += 1f;
         }
 
-        if (touchDownHeld)
+        if (downHeld || mouseShrinkHeld || touchDownHeld)
         {
             verticalInput -= 1f;
         }
@@ -538,6 +553,42 @@ public class PlayerPossessionController : MonoBehaviour
         // Opposing directions cancel; combined keyboard/touch input stays within [-1, 1].
         horizontalInput = Mathf.Clamp(horizontalInput, -1f, 1f);
         verticalInput = Mathf.Clamp(verticalInput, -1f, 1f);
+    }
+
+    private void UpdateBoxMouseInput(bool isBox)
+    {
+        Mouse mouse = Mouse.current;
+        if (!isBox || mouse == null || isDead || Time.timeScale == 0f ||
+            (restartMenu != null && restartMenu.IsOpen))
+        {
+            mouseGrowHeld = mouseShrinkHeld = false;
+            return;
+        }
+
+        // Only accept presses that begin in gameplay. Dragging off a HUD button
+        // while still holding the mouse must not start resizing the Box.
+        bool leftPressed = mouse.leftButton.wasPressedThisFrame;
+        bool rightPressed = mouse.rightButton.wasPressedThisFrame;
+        if (leftPressed || rightPressed)
+        {
+            bool inGameplay = IsGameplayMousePress(mouse);
+            if (leftPressed) mouseGrowHeld = inGameplay;
+            if (rightPressed) mouseShrinkHeld = inGameplay;
+        }
+
+        mouseGrowHeld &= mouse.leftButton.isPressed;
+        mouseShrinkHeld &= mouse.rightButton.isPressed;
+    }
+
+    private bool IsGameplayMousePress(Mouse mouse)
+    {
+        EventSystem events = EventSystem.current;
+        if (events == null)
+            return true;
+
+        mouseHits.Clear();
+        events.RaycastAll(new PointerEventData(events) { position = mouse.position.ReadValue() }, mouseHits);
+        return mouseHits.Count == 0;
     }
 
     private void FixedUpdate()
@@ -889,6 +940,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void OnDisable()
     {
+        mouseGrowHeld = mouseShrinkHeld = false;
         if (restartMenu != null) restartMenu.Close();
         RestoreBoxHandoffCollisions();
         bubblePopRequested = false;

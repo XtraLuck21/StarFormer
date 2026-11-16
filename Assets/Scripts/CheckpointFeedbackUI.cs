@@ -6,16 +6,6 @@ using UnityEngine.UI;
 /// <summary>Runtime HUD shared by positional and Bouncy Ball checkpoints.</summary>
 public sealed class CheckpointFeedbackUI : MonoBehaviour
 {
-    [Header("Level 1 Bubble Reminder")]
-    [SerializeField, Min(0.5f)] private float bubbleIdleDelay = 2f;
-    [Tooltip("Y displacement allowed while waiting; horizontal motion does not reset the timer.")]
-    [SerializeField, Min(0.001f)] private float bubbleVerticalTolerance = 0.05f;
-    [SerializeField] private string secondCheckpointName = "BouncyBall_Upper";
-    private TMP_Text bubbleIdleHint;
-    private PossessableBody trackedBubble;
-    private float bubbleIdleOriginY;
-    private float bubbleIdleTime;
-
     private sealed class Marker
     {
         public Transform Target;
@@ -67,10 +57,6 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
         respawnNotice.rectTransform.anchorMin = respawnNotice.rectTransform.anchorMax = Vector2.one * .5f;
         respawnNotice.text = "Respawning...";
         respawnNotice.enabled = false;
-        bubbleIdleHint = CreateLabel("Bubble pop reminder", root.transform, 18f, 0f, 260f);
-        bubbleIdleHint.rectTransform.anchorMin = bubbleIdleHint.rectTransform.anchorMax = Vector2.one * 0.5f;
-        bubbleIdleHint.text = "Press E to pop bubble";
-        bubbleIdleHint.enabled = false;
     }
 
     public void ShowSaved()
@@ -126,7 +112,6 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
             : "";
 
         if (worldCamera == null) worldCamera = Camera.main;
-        UpdateBubbleIdleHint();
         if (worldCamera == null) return;
         foreach (Marker marker in markers)
         {
@@ -157,62 +142,6 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
         }
     }
 
-    private void UpdateBubbleIdleHint()
-    {
-        bubbleIdleHint.enabled = false;
-        PossessableBody body = player.CurrentBody;
-        BouncyBallCheckpointSession session = BouncyBallCheckpointSession.Instance;
-        bool reachedSecondCheckpoint = session != null &&
-            session.HasReachedCheckpoint(gameObject.scene.path, secondCheckpointName);
-
-        // The promoted Level 1 has its own timed, world-space Bubble hints.
-        if (player.TryGetComponent<AdvancedCheckpointController>(out _) ||
-            gameObject.scene.name != "Level01" || !player.isActiveAndEnabled || player.IsDead ||
-            Time.timeScale <= 0f || reachedSecondCheckpoint || body == null ||
-            !body.isActiveAndEnabled || body.Form != BodyForm.Bubble || body.Body == null)
-        {
-            ResetBubbleIdleHint();
-            return;
-        }
-
-        float positionY = body.Body.position.y;
-        if (trackedBubble != body)
-        {
-            trackedBubble = body;
-            bubbleIdleOriginY = positionY;
-            bubbleIdleTime = 0f;
-        }
-        // A bubble can still slide sideways while blocked vertically.
-        // Only meaningful Y displacement resets the timer; tolerate small physics jitter.
-        if (Mathf.Abs(positionY - bubbleIdleOriginY) > bubbleVerticalTolerance)
-        {
-            bubbleIdleOriginY = positionY;
-            bubbleIdleTime = 0f;
-            return;
-        }
-
-        bubbleIdleTime += Time.deltaTime;
-        if (bubbleIdleTime < bubbleIdleDelay || worldCamera == null) return;
-
-        Vector3 screen = worldCamera.WorldToScreenPoint(body.transform.position);
-        if (screen.z <= 0f || !worldCamera.pixelRect.Contains((Vector2)screen)) return;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screen, null, out Vector2 local);
-        Vector2 hintPosition = local + Vector2.up * 55f;
-        // Keep the reminder readable when a bubble is stuck near a screen edge.
-        float marginX = Mathf.Min(140f, canvasRect.rect.width * 0.5f);
-        hintPosition.x = Mathf.Clamp(hintPosition.x, canvasRect.rect.xMin + marginX, canvasRect.rect.xMax - marginX);
-        hintPosition.y = Mathf.Clamp(hintPosition.y, canvasRect.rect.yMin + 30f, canvasRect.rect.yMax - 30f);
-        bubbleIdleHint.rectTransform.anchoredPosition = hintPosition;
-        bubbleIdleHint.enabled = true;
-    }
-
-    private void ResetBubbleIdleHint()
-    {
-        trackedBubble = null;
-        bubbleIdleTime = 0f;
-        if (bubbleIdleHint != null) bubbleIdleHint.enabled = false;
-    }
-
     private void OnEnable()
     {
         if (root != null) root.SetActive(true);
@@ -220,7 +149,6 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
 
     private void OnDisable()
     {
-        ResetBubbleIdleHint();
         if (root != null) root.SetActive(false);
     }
 

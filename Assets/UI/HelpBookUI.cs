@@ -192,7 +192,7 @@ public class HelpBookUI : MonoBehaviour
             return;
         }
 
-        if (closeWithKeyboard && keyboard.escapeKey.wasPressedThisFrame)
+        if (closeWithKeyboard && MenuEscapeInput.TryConsume())
         {
             Close();
             return;

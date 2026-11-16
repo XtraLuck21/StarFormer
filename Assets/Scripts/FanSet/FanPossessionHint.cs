@@ -9,18 +9,21 @@ using UnityEngine.UI;
 /// </summary>
 public class FanPossessionHint : MonoBehaviour
 {
+    public enum MouseBinding { None, Left, Right }
+
     [System.Serializable]
     public struct KeyHint
     {
         public string key;
         public string caption;
+        public MouseBinding mouseButton;
     }
 
     [Header("Content")]
     [SerializeField] private KeyHint[] hints =
     {
-        new KeyHint { key = "F", caption = "Activate air flow" },
-        new KeyHint { key = "Q", caption = "Quit form" }
+        new KeyHint { key = "F", caption = "Activate air flow", mouseButton = MouseBinding.Left },
+        new KeyHint { key = "Q", caption = "Quit form", mouseButton = MouseBinding.Right }
     };
 
     [Header("Anchor")]
@@ -172,14 +175,14 @@ public class FanPossessionHint : MonoBehaviour
             colRect.anchoredPosition = new Vector2(startX + i * (columnWidth + keySpacing), 0f);
             colRect.sizeDelta = new Vector2(columnWidth, columnHeight);
 
-            // Keycap: top of the column, centered.
+            bool hasMouse = hints[i].mouseButton != MouseBinding.None;
             var capObject = new GameObject("Key " + hints[i].key, typeof(RectTransform), typeof(Image));
             capObject.transform.SetParent(column.transform, false);
 
             RectTransform capRect = capObject.GetComponent<RectTransform>();
             capRect.anchorMin = capRect.anchorMax = new Vector2(0.5f, 1f);
             capRect.pivot = new Vector2(0.5f, 1f);
-            capRect.anchoredPosition = Vector2.zero;
+            capRect.anchoredPosition = hasMouse ? Vector2.left * keySize * 0.85f : Vector2.zero;
             capRect.sizeDelta = new Vector2(keySize, keySize);
 
             Image image = capObject.GetComponent<Image>();
@@ -203,6 +206,24 @@ public class FanPossessionHint : MonoBehaviour
             letter.alignment = TextAlignmentOptions.Center;
             letter.color = Color.white;
             letter.raycastTarget = false;
+
+            if (hasMouse)
+            {
+                var separator = new GameObject("or", typeof(RectTransform), typeof(TextMeshProUGUI));
+                var rect = (RectTransform)separator.transform;
+                rect.SetParent(colRect, false);
+                rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 1f);
+                rect.anchoredPosition = Vector2.down * (keySize * 0.5f);
+                rect.sizeDelta = new Vector2(keySize * 0.7f, keySize);
+                var text = separator.GetComponent<TextMeshProUGUI>();
+                text.text = "or";
+                text.fontSize = keyFontSize * 0.75f;
+                text.alignment = TextAlignmentOptions.Center;
+                text.raycastTarget = false;
+
+                MouseButtonHintIcon.DrawOnCanvas(colRect, new Vector2(0.85f, -0.5f) * keySize,
+                    keySize * 1.3f, hints[i].mouseButton == MouseBinding.Right, borderColor);
+            }
 
             // Caption: fixed size, no auto-scale, identical for every column.
             var captionObject = new GameObject("Caption", typeof(RectTransform), typeof(TextMeshProUGUI));
