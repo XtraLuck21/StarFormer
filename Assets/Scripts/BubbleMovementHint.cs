@@ -648,14 +648,7 @@ public class BubbleMovementHint : MonoBehaviour
     private void AddStickDiagram(bool swimming)
     {
         Vector2 center = !swimming && showIntroductionText ? Vector2.down * 0.2f : Vector2.zero;
-        var pad = MobileControlGraphic.CreateWorldHint(visuals.transform, MobileControlGraphic.Symbol.Base,
-            center, 0.88f, sortingOrder + 2);
-        var knob = (RectTransform)new GameObject("Stick Thumb", typeof(RectTransform)).transform;
-        knob.SetParent(pad, false);
-        knob.sizeDelta = Vector2.one * 0.45f;
-        var graphic = knob.gameObject.AddComponent<MobileControlGraphic>();
-        graphic.Icon = MobileControlGraphic.Symbol.Thumb;
-        graphic.raycastTarget = false;
+        MobileControlGraphic.CreateStickHint(visuals.transform, center, sortingOrder + 2);
         int count = swimming ? 8 : 2;
         for (int i = 0; i < count; i++)
         {

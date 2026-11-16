@@ -30,6 +30,17 @@ public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
         return rect;
     }
 
+    internal static void CreateStickHint(Transform parent, Vector2 center, int order)
+    {
+        var pad = CreateWorldHint(parent, Symbol.Base, center, 0.88f, order);
+        var knob = (RectTransform)new GameObject("Stick Thumb", typeof(RectTransform)).transform;
+        knob.SetParent(pad, false);
+        knob.sizeDelta = Vector2.one * 0.45f;
+        var graphic = knob.gameObject.AddComponent<MobileControlGraphic>();
+        graphic.Icon = Symbol.Thumb;
+        graphic.raycastTarget = false;
+    }
+
     internal void HighlightLesson(bool value)
     {
         if (highlighted == value) return;

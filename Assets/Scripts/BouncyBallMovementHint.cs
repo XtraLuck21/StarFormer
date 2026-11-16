@@ -37,6 +37,8 @@ public class BouncyBallMovementHint : MonoBehaviour
     private GameObject visuals;
     private Sprite strokeSprite;
     private bool rebuildRequested;
+    private MobileFormControls mobileControls;
+    private bool mobileLesson;
 
     private void OnEnable()
     {
@@ -50,11 +52,16 @@ public class BouncyBallMovementHint : MonoBehaviour
 
     private void Update()
     {
-        if (!rebuildRequested)
+        if (rebuildRequested && playerController != null)
+            mobileControls = playerController.GetComponent<MobileFormControls>();
+
+        bool mobile = Application.IsPlaying(gameObject) && mobileControls != null && mobileControls.MobileMode;
+        if (!rebuildRequested && mobile == mobileLesson)
         {
             return;
         }
 
+        mobileLesson = mobile;
         rebuildRequested = false;
         BuildVisuals();
     }
@@ -132,6 +139,14 @@ public class BouncyBallMovementHint : MonoBehaviour
         );
 
         strokeSprite.hideFlags = HideFlags.HideAndDontSave;
+
+        if (mobileLesson)
+        {
+            MobileControlGraphic.CreateStickHint(visuals.transform, Vector2.zero, sortingOrder + 2);
+            Arrow(Vector2.left * 0.5f, Vector2.left * 0.8f);
+            Arrow(Vector2.right * 0.5f, Vector2.right * 0.8f);
+            return;
+        }
 
         AddKey('A', new Vector2(-0.5f, 0));
         AddKey('D', new Vector2(0.5f, 0));
