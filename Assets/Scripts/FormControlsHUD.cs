@@ -2,11 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(PlayerPossessionController))]
+[DisallowMultipleComponent]
 public sealed class FormControlsHUD : MonoBehaviour
 {
-    [SerializeField] private Sprite starIcon;
-    [SerializeField] private Sprite bubbleIcon;
+    [SerializeField] private HelpBookContent formBook;
     [SerializeField] private MobileControlsUI touchControls;
 
     private static readonly Color Background = new Color32(25, 43, 62, 255);
@@ -18,6 +17,7 @@ public sealed class FormControlsHUD : MonoBehaviour
     private const float RowHeight = 30f;
 
     private PlayerPossessionController player;
+    private NavigationStarController navigation;
     private RectTransform bar;
     private Image background;
     private PossessableBody lastBody;
@@ -31,6 +31,7 @@ public sealed class FormControlsHUD : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<PlayerPossessionController>();
+        navigation = GetComponent<NavigationStarController>();
         var hud = new GameObject("Form Controls HUD", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
         hud.transform.SetParent(transform, false);
         var canvas = hud.GetComponent<Canvas>();
@@ -43,7 +44,7 @@ public sealed class FormControlsHUD : MonoBehaviour
         bar = Element("Controls", hud.transform);
         bar.anchorMin = bar.anchorMax = bar.pivot = Vector2.up;
         bar.anchoredPosition = new Vector2(20f, -18f);
-        bar.localScale = Vector3.one * 1.55f;
+        bar.localScale = Vector3.one * 1.25f;
         rounded = CreateRoundedSprite();
         Round(bar, Accent);
         content = Element("Content", bar);
@@ -52,6 +53,7 @@ public sealed class FormControlsHUD : MonoBehaviour
         content.offsetMin = Vector2.one * 2f;
         content.offsetMax = Vector2.one * -2f;
         background = Round(content, Background);
+        if (navigation != null) BuildCard(BodyForm.Star, false, false);
     }
 
     private void OnDisable()
@@ -61,8 +63,14 @@ public sealed class FormControlsHUD : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (navigation != null)
+        {
+            bool canNavigate = navigation.isActiveAndEnabled && !navigation.ControlsBlocked && !navigation.IsPreviewing;
+            if (bar.gameObject.activeSelf != canNavigate) bar.gameObject.SetActive(canNavigate);
+            return;
+        }
         var body = player.CurrentBody;
-        bool visible = body != null && body.isActiveAndEnabled && !player.IsDead && Time.timeScale > 0f;
+        bool visible = body != null && body.isActiveAndEnabled && body.Form != BodyForm.gravityBall && !player.IsDead && Time.timeScale > 0f;
         if (bar.gameObject.activeSelf != visible) bar.gameObject.SetActive(visible);
         if (!visible) return;
 
@@ -88,7 +96,12 @@ public sealed class FormControlsHUD : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        int rows = form == BodyForm.Box ? 3 : 2;
+        int rows = form switch
+        {
+            BodyForm.Box or BodyForm.Fan => 3,
+            BodyForm.Spider or BodyForm.BouncyBall => 1,
+            _ => navigation != null ? 3 : 2
+        };
         float height = 42f + rows * RowHeight;
         bar.sizeDelta = new Vector2(touch ? 278f : 256f, height);
 
@@ -100,11 +113,17 @@ public sealed class FormControlsHUD : MonoBehaviour
         else
         {
             var icon = Paint(iconRect, Color.white);
-            icon.sprite = form == BodyForm.Star ? starIcon : bubbleIcon;
+            foreach (var page in formBook.Pages)
+            {
+                if (page.unlockId != form.ToString()) continue;
+                icon.sprite = page.icon;
+                break;
+            }
             icon.preserveAspect = true;
         }
         Paint(Slot("Divider", 69f, 9f, 1.5f, height - 22f), new Color32(175, 187, 202, 255));
-        var title = Text(Slot("Form name", ActionX, 5f, 140f, 27f), form.ToString(), 22f, true);
+        string name = form == BodyForm.BouncyBall ? "Bouncy Ball" : form.ToString();
+        var title = Text(Slot("Form name", ActionX, 5f, 164f, 27f), name, 22f, true);
         title.fontStyle |= FontStyles.UpperCase;
         title.alignment = TextAlignmentOptions.MidlineLeft;
 
@@ -114,10 +133,15 @@ public sealed class FormControlsHUD : MonoBehaviour
         {
             case BodyForm.Star:
                 ActionRow(1, "Jump", touch ? "Jump" : "Space");
+                if (navigation != null) ActionRow(2, "Enter", null, false);
                 break;
             case BodyForm.Box:
                 ActionRow(1, "Grow", touch ? "Hold Grow" : "J", touch ? (bool?)null : false);
                 ActionRow(2, "Shrink", touch ? "Hold Shrink" : "K", touch ? (bool?)null : true);
+                break;
+            case BodyForm.Fan:
+                ActionRow(1, "Blow", touch ? "Blow" : "F", touch ? (bool?)null : false);
+                ActionRow(2, "Leave", touch ? "Leave" : "Q", touch ? (bool?)null : true);
                 break;
             case BodyForm.Bubble:
                 ActionRow(1, "Pop", touch ? "Pop" : "Q", touch ? (bool?)null : true);
@@ -131,17 +155,25 @@ public sealed class FormControlsHUD : MonoBehaviour
         var label = Text(Slot(action, ActionX, top, BindingX - ActionX - 8f, 26f), action, 20f, true);
         label.alignment = TextAlignmentOptions.MidlineLeft;
 
-        var cap = Slot(key + " key", BindingX, top, 26f, 26f);
-        Round(cap, KeyFace);
-        var letter = Text(cap, key, 18f, true);
-        letter.color = Background;
-        float width = Mathf.Max(26f, Mathf.Ceil(letter.preferredWidth) + 12f);
-        cap.sizeDelta = new Vector2(width, 26f);
+        float bindingX = BindingX;
+        if (key != null)
+        {
+            var cap = Slot(key + " key", bindingX, top, 26f, 26f);
+            Round(cap, KeyFace);
+            var letter = Text(cap, key, 18f, true);
+            letter.color = Background;
+            float width = Mathf.Max(26f, Mathf.Ceil(letter.preferredWidth) + 12f);
+            cap.sizeDelta = new Vector2(width, 26f);
+            bindingX += width + 4f;
+        }
         if (rightMouse.HasValue)
         {
-            float slashX = BindingX + width + 4f;
-            Text(Slot("Slash", slashX, top, 14f, 26f), "/", 19f, false);
-            var mouse = Slot("Mouse binding", slashX + 18f, top, 24f, 26f);
+            if (key != null)
+            {
+                Text(Slot("Slash", bindingX, top, 14f, 26f), "/", 19f, false);
+                bindingX += 18f;
+            }
+            var mouse = Slot("Mouse binding", bindingX, top, 24f, 26f);
             MouseButtonHintIcon.DrawOnCanvas(mouse, Vector2.down * 13f, 34f, rightMouse.Value, Color.white);
         }
     }

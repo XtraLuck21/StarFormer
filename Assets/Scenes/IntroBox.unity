@@ -8688,8 +8688,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b7a8025f7fd47cda0f7eca0a3971600, type: 3}
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FormControlsHUD
-  starIcon: {fileID: 4815476061570213978, guid: ee2f7f1399d47c944bb52ddc0ae5be8a, type: 3}
-  bubbleIcon: {fileID: -9136834448258697486, guid: 742349fc218e00c44a6cfa4a8ed37bbf, type: 3}
+  formBook: {fileID: 11400000, guid: 7ad88915ee1ed4c7987d980d9139f10d, type: 2}
   touchControls: {fileID: 1788887528}
 --- !u!114 &1643171616
 MonoBehaviour:
