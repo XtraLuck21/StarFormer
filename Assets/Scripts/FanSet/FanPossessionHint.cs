@@ -19,6 +19,8 @@ public class FanPossessionHint : MonoBehaviour
         public MouseBinding mouseButton;
     }
 
+    [SerializeField] private MobileFormControls mobileControls;
+
     [Header("Content")]
     [SerializeField] private KeyHint[] hints =
     {
@@ -52,7 +54,8 @@ public class FanPossessionHint : MonoBehaviour
     [SerializeField, Range(48, 128)] private int borderTextureSize = 96;
 
     private PossessableBody body;
-    private bool wasControlled;
+    private RectTransform desktopRow;
+    private RectTransform touchRow;
     private Vector3 starSpawn;
     private bool hasAnchor;
     private GameObject labelRoot;
@@ -74,39 +77,21 @@ public class FanPossessionHint : MonoBehaviour
     {
         starSpawn = FindStarSpawn();
         hasAnchor = true;
-        wasControlled = body != null && body.IsControlled;
-
         borderSprite = CreateKeycapSprite();
         CreateLabel();
-
-        if (labelRoot != null)
-        {
-            labelRoot.SetActive(wasControlled);
-        }
+        labelRoot.SetActive(false);
     }
 
     private void Update()
     {
-        if (body == null)
-        {
-            return;
-        }
+        if (labelRoot == null) return;
+        bool controlled = body != null && body.IsControlled;
+        if (labelRoot.activeSelf != controlled) labelRoot.SetActive(controlled);
+        if (!controlled) return;
 
-        bool controlled = body.IsControlled;
-
-        if (controlled && !wasControlled)
-        {
-            if (labelRoot != null)
-            {
-                labelRoot.SetActive(true);
-            }
-        }
-        else if (!controlled && wasControlled && labelRoot != null)
-        {
-            labelRoot.SetActive(false);
-        }
-
-        wasControlled = controlled;
+        bool touch = mobileControls != null && mobileControls.MobileMode;
+        if (touchRow.gameObject.activeSelf != touch) touchRow.gameObject.SetActive(touch);
+        if (desktopRow.gameObject.activeSelf == touch) desktopRow.gameObject.SetActive(!touch);
     }
 
     private void LateUpdate()
@@ -162,22 +147,17 @@ public class FanPossessionHint : MonoBehaviour
         float totalWidth = hints.Length * columnWidth + (hints.Length - 1) * keySpacing;
         labelRect.sizeDelta = new Vector2(totalWidth, columnHeight);
 
-        float startX = -totalWidth * 0.5f + columnWidth * 0.5f;
+        desktopRow = CreateRow("Desktop");
+        touchRow = CreateRow("Touch");
+        AddTouchColumn(0, MobileControlGraphic.Symbol.Wind, "Wind on/off");
+        AddTouchColumn(1, MobileControlGraphic.Symbol.Leave, "Leave Fan");
 
         for (int i = 0; i < hints.Length; i++)
         {
-            var column = new GameObject("Column " + hints[i].key, typeof(RectTransform));
-            column.transform.SetParent(labelRect, false);
-
-            RectTransform colRect = column.GetComponent<RectTransform>();
-            colRect.anchorMin = colRect.anchorMax = new Vector2(0.5f, 0.5f);
-            colRect.pivot = new Vector2(0.5f, 0.5f);
-            colRect.anchoredPosition = new Vector2(startX + i * (columnWidth + keySpacing), 0f);
-            colRect.sizeDelta = new Vector2(columnWidth, columnHeight);
-
+            RectTransform colRect = CreateColumn(desktopRow, "Column " + hints[i].key, i, hints.Length);
             bool hasMouse = hints[i].mouseButton != MouseBinding.None;
             var capObject = new GameObject("Key " + hints[i].key, typeof(RectTransform), typeof(Image));
-            capObject.transform.SetParent(column.transform, false);
+            capObject.transform.SetParent(colRect, false);
 
             RectTransform capRect = capObject.GetComponent<RectTransform>();
             capRect.anchorMin = capRect.anchorMax = new Vector2(0.5f, 1f);
@@ -225,24 +205,58 @@ public class FanPossessionHint : MonoBehaviour
                     keySize * 1.3f, hints[i].mouseButton == MouseBinding.Right, borderColor);
             }
 
-            // Caption: fixed size, no auto-scale, identical for every column.
-            var captionObject = new GameObject("Caption", typeof(RectTransform), typeof(TextMeshProUGUI));
-            captionObject.transform.SetParent(column.transform, false);
-
-            RectTransform captionRect = captionObject.GetComponent<RectTransform>();
-            captionRect.anchorMin = captionRect.anchorMax = new Vector2(0.5f, 1f);
-            captionRect.pivot = new Vector2(0.5f, 1f);
-            captionRect.anchoredPosition = new Vector2(0f, -(keySize + captionGap));
-            captionRect.sizeDelta = new Vector2(columnWidth, 40f);
-
-            TextMeshProUGUI caption = captionObject.GetComponent<TextMeshProUGUI>();
-            caption.text = hints[i].caption;
-            caption.fontSize = captionFontSize;
-            caption.alignment = TextAlignmentOptions.Center;
-            caption.color = Color.white;
-            caption.enableAutoSizing = false;
-            caption.raycastTarget = false;
+            AddCaption(colRect, hints[i].caption);
         }
+    }
+
+    private RectTransform CreateRow(string name)
+    {
+        var row = (RectTransform)new GameObject(name, typeof(RectTransform)).transform;
+        row.SetParent(labelRect, false);
+        return row;
+    }
+
+    private RectTransform CreateColumn(RectTransform row, string name, int index, int count)
+    {
+        var column = (RectTransform)new GameObject(name, typeof(RectTransform)).transform;
+        column.SetParent(row, false);
+        column.anchoredPosition = Vector2.right * ((index - (count - 1) * 0.5f) * (columnWidth + keySpacing));
+        column.sizeDelta = new Vector2(columnWidth, labelRect.sizeDelta.y);
+        return column;
+    }
+
+    private void AddTouchColumn(int index, MobileControlGraphic.Symbol symbol, string caption)
+    {
+        var column = CreateColumn(touchRow, symbol.ToString(), index, 2);
+        var icon = (RectTransform)new GameObject("Icon", typeof(RectTransform)).transform;
+        icon.SetParent(column, false);
+        icon.anchorMin = icon.anchorMax = icon.pivot = new Vector2(0.5f, 1f);
+        icon.sizeDelta = Vector2.one * keySize;
+        var graphic = icon.gameObject.AddComponent<MobileControlGraphic>();
+        graphic.Icon = symbol;
+        graphic.raycastTarget = false;
+        AddCaption(column, caption);
+    }
+
+    private void AddCaption(RectTransform colRect, string text)
+    {
+        // Caption: fixed size, no auto-scale, identical for every column.
+        var captionObject = new GameObject("Caption", typeof(RectTransform), typeof(TextMeshProUGUI));
+        captionObject.transform.SetParent(colRect, false);
+
+        RectTransform captionRect = captionObject.GetComponent<RectTransform>();
+        captionRect.anchorMin = captionRect.anchorMax = new Vector2(0.5f, 1f);
+        captionRect.pivot = new Vector2(0.5f, 1f);
+        captionRect.anchoredPosition = new Vector2(0f, -(keySize + captionGap));
+        captionRect.sizeDelta = new Vector2(columnWidth, 40f);
+
+        TextMeshProUGUI caption = captionObject.GetComponent<TextMeshProUGUI>();
+        caption.text = text;
+        caption.fontSize = captionFontSize;
+        caption.alignment = TextAlignmentOptions.Center;
+        caption.color = Color.white;
+        caption.enableAutoSizing = false;
+        caption.raycastTarget = false;
     }
 
     private void PositionLabel()
@@ -367,8 +381,10 @@ public class FanPossessionHint : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (labelRoot != null) Destroy(labelRoot);
         if (borderSprite != null)
         {
+            Destroy(borderSprite.texture);
             Destroy(borderSprite);
         }
     }

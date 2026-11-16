@@ -24,6 +24,8 @@ public sealed class MobileFormControls : MonoBehaviour
     private MobileTouchTarget grow;
     private MobileTouchTarget shrink;
     private MobileTouchTarget pop;
+    private MobileTouchTarget wind;
+    private MobileTouchTarget leave;
     private PossessableBody displayedBody;
     private Vector2 origin;
     private static bool showedStickDemo;
@@ -43,7 +45,7 @@ public sealed class MobileFormControls : MonoBehaviour
         var body = player.CurrentBody;
         bool visible = MobileMode && player.isActiveAndEnabled && !player.IsDead &&
             !player.IsRestarting && Time.timeScale > 0f && body != null && body.isActiveAndEnabled &&
-            (body.Form is BodyForm.Star or BodyForm.Box or BodyForm.Bubble or BodyForm.BouncyBall or BodyForm.Spider);
+            (body.Form is BodyForm.Star or BodyForm.Box or BodyForm.Bubble or BodyForm.BouncyBall or BodyForm.Spider or BodyForm.Fan);
         if (!visible)
         {
             Hide();
@@ -68,6 +70,19 @@ public sealed class MobileFormControls : MonoBehaviour
             {
                 pop.Cancel();
                 pop.gameObject.SetActive(body.Form == BodyForm.Bubble);
+            }
+            bool isFan = body.Form == BodyForm.Fan;
+            if (isFan && wind == null)
+            {
+                wind = Button("Wind", MobileControlGraphic.Symbol.Wind, false);
+                leave = Button("Leave", MobileControlGraphic.Symbol.Leave, true);
+            }
+            if (wind != null)
+            {
+                wind.Cancel();
+                leave.Cancel();
+                wind.gameObject.SetActive(isFan);
+                leave.gameObject.SetActive(isFan);
             }
             displayedBody = body;
             jump.gameObject.SetActive(body.Form == BodyForm.Star);
@@ -162,7 +177,10 @@ public sealed class MobileFormControls : MonoBehaviour
     internal void PressAction(MobileTouchTarget target)
     {
         if (displayedBody == null || displayedBody != player.CurrentBody) return;
-        if (target == pop && displayedBody.Form == BodyForm.Bubble)
+        if (target == wind && displayedBody.Form == BodyForm.Fan)
+            player.PressTouchBlow();
+        else if ((target == leave && displayedBody.Form == BodyForm.Fan) ||
+                 (target == pop && displayedBody.Form == BodyForm.Bubble))
             player.RequestRelease();
         else if (target == jump && displayedBody.Form == BodyForm.Star)
             player.PressTouchAction();

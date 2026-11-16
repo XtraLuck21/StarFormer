@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
 {
-    internal enum Symbol { Base, Thumb, Jump, Grow, Shrink, Pop }
+    internal enum Symbol { Base, Thumb, Jump, Grow, Shrink, Pop, Wind, Leave }
     internal Symbol Icon { get; set; }
     private static readonly Color32 Navy = new(21, 40, 57, 200);
     private static readonly Color32 Gold = new(255, 193, 63, 245);
@@ -146,6 +146,33 @@ public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
                     bubble + Radial(angle + Mathf.Deg2Rad * 9.5f) * 0.44f, 0.07f, Ink);
             }
             Star(new Vector2(0.32f, 0.36f), 0.29f);
+            return;
+        }
+        if (Icon == Symbol.Wind)
+        {
+            // Three offset streams distinguish airflow from the movement arrow.
+            for (int stream = -1; stream <= 1; stream++)
+            {
+                float offset = stream * 0.23f;
+                float length = stream == 0 ? 1.05f : 0.76f;
+                Vector2 previous = new(-length * 0.5f, offset);
+                for (int step = 1; step <= 12; step++)
+                {
+                    float t = step / 12f;
+                    Vector2 next = new((t - 0.5f) * length, offset + 0.09f * Mathf.Sin(t * 2f * Mathf.PI));
+                    Line(previous, next, 0.087f, Ink);
+                    previous = next;
+                }
+            }
+            return;
+        }
+        if (Icon == Symbol.Leave)
+        {
+            // Star leaving an open doorway.
+            Line(new Vector2(-0.08f, 0.45f), new Vector2(-0.48f, 0.45f), 0.08f, Ink);
+            Line(new Vector2(-0.48f, 0.45f), new Vector2(-0.48f, -0.45f), 0.08f, Ink);
+            Line(new Vector2(-0.48f, -0.45f), new Vector2(-0.08f, -0.45f), 0.08f, Ink);
+            Star(new Vector2(0.2f, 0f), 0.37f);
             return;
         }
         if (Icon == Symbol.Jump)
