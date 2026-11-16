@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 // Place on a separate scene root so the guide stays fixed as the box moves.
@@ -5,6 +6,7 @@ public class BoxGrowHint : MonoBehaviour
 {
     public enum HintMode { Grow, Shrink }
 
+    [SerializeField] private bool showHoldLabel;
     [SerializeField] private HintMode mode = HintMode.Grow;
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private PossessableBody targetBody;
@@ -62,6 +64,10 @@ public class BoxGrowHint : MonoBehaviour
         {
             AddGrowthPrompt(half);
         }
+
+        var touchControls = FindFirstObjectByType<MobileControlsUI>();
+        if (touchControls == null || !touchControls.ResolveShouldShow())
+            AddDesktopPrompt(half);
     }
 
     private void AddGrowthPrompt(Vector2 half)
@@ -84,20 +90,6 @@ public class BoxGrowHint : MonoBehaviour
                 AddStroke("ArrowHead", tip, headBase - perpendicular * (0.17f * unit), stroke, sortingOrder + 1);
             }
         }
-
-        // Draw J with a top bar and a hooked lower stroke.
-        Vector2[] letter =
-        {
-            new Vector2(-0.20f, 0.20f) * unit,
-            new Vector2(0.20f, 0.20f) * unit,
-            new Vector2(0.10f, 0.20f) * unit,
-            new Vector2(0.10f, -0.12f) * unit,
-            new Vector2(0.02f, -0.20f) * unit,
-            new Vector2(-0.12f, -0.20f) * unit,
-            new Vector2(-0.20f, -0.12f) * unit,
-            new Vector2(-0.20f, -0.04f) * unit
-        };
-        AddKeyPrompt(letter, unit);
     }
 
     private void AddShrinkPrompt(Vector2 half)
@@ -119,39 +111,65 @@ public class BoxGrowHint : MonoBehaviour
                 AddStroke("ArrowHead", tip, headBase - perpendicular * 0.13f, stroke, sortingOrder + 1);
             }
         }
-
-        // Draw K as strokes so this icon needs no font or imported artwork.
-        Vector2[] letter =
-        {
-            new Vector2(-0.18f, -0.20f) * unit,
-            new Vector2(-0.18f, 0.20f) * unit,
-            new Vector2(-0.18f, 0f) * unit,
-            new Vector2(0.20f, 0.20f) * unit,
-            new Vector2(-0.18f, 0f) * unit,
-            new Vector2(0.20f, -0.20f) * unit
-        };
-        AddKeyPrompt(letter, unit);
     }
 
-    private void AddKeyPrompt(Vector2[] letter, float unit)
+    private void AddDesktopPrompt(Vector2 half)
     {
-        float stroke = 0.055f * unit;
-        float keyHalf = 0.38f * unit;
-        AddRectangle("KeyBackground", Vector2.zero, Vector2.one * (keyHalf * 2f),
-            new Color(0.08f, 0.12f, 0.18f, 0.92f), sortingOrder + 1);
-        Vector2 bottomLeft = new Vector2(-keyHalf, -keyHalf);
-        Vector2 bottomRight = new Vector2(keyHalf, -keyHalf);
-        Vector2 topLeft = new Vector2(-keyHalf, keyHalf);
-        Vector2 topRight = new Vector2(keyHalf, keyHalf);
-        AddStroke("KeyBorder", bottomLeft, bottomRight, stroke, sortingOrder + 2);
-        AddStroke("KeyBorder", bottomRight, topRight, stroke, sortingOrder + 2);
-        AddStroke("KeyBorder", topRight, topLeft, stroke, sortingOrder + 2);
-        AddStroke("KeyBorder", topLeft, bottomLeft, stroke, sortingOrder + 2);
+        bool shrink = mode == HintMode.Shrink;
+        float unit = shrink ? 0.8f : Mathf.Min(frameSize.x, frameSize.y) / 3.2f;
+        Vector2 center = shrink ? Vector2.up * (half.y + 0.48f * unit) : Vector2.zero;
+        Color dark = new Color(0.08f, 0.12f, 0.18f, 0.96f);
+        AddRectangle("Input strip", center, new Vector2(2.18f, 0.78f) * unit, dark, sortingOrder + 2);
 
-        for (int i = 1; i < letter.Length; i++)
+        Vector2 key = center + Vector2.left * (0.67f * unit);
+        AddRectangle("Key border", key, Vector2.one * (0.65f * unit), frameColor, sortingOrder + 3);
+        AddRectangle("Key face", key, Vector2.one * (0.55f * unit), dark, sortingOrder + 4);
+        AddLabel(shrink ? "K" : "J", key, 5.5f * unit);
+        AddLabel("or", center, 3.4f * unit);
+        AddMouse(center + Vector2.right * (0.67f * unit), unit, shrink);
+
+        if (showHoldLabel)
         {
-            AddStroke("KeyLetter", letter[i - 1], letter[i], stroke, sortingOrder + 3);
+            Vector2 label = center + Vector2.up * (0.54f * unit);
+            AddRectangle("Hold background", label, new Vector2(1.02f, 0.36f) * unit, dark, sortingOrder + 2);
+            AddLabel("HOLD", label, 3.4f * unit);
         }
+    }
+
+    private void AddMouse(Vector2 center, float unit, bool rightButton)
+    {
+        // Bevel the corners of the mouse silhouette and divide the buttons above the palm.
+        Vector2[] outline =
+        {
+            new Vector2(-0.16f, 0.33f), new Vector2(0.16f, 0.33f),
+            new Vector2(0.25f, 0.24f), new Vector2(0.25f, -0.21f),
+            new Vector2(0.14f, -0.33f), new Vector2(-0.14f, -0.33f),
+            new Vector2(-0.25f, -0.21f), new Vector2(-0.25f, 0.24f)
+        };
+        for (int i = 0; i < outline.Length; i++)
+        {
+            AddStroke("Mouse outline", center + outline[i] * unit,
+                center + outline[(i + 1) % outline.Length] * unit, 0.04f * unit, sortingOrder + 3);
+        }
+
+        AddStroke("Button divider", center, center + Vector2.up * (0.33f * unit), 0.04f * unit, sortingOrder + 3);
+        AddStroke("Palm divider", center + Vector2.left * (0.25f * unit),
+            center + Vector2.right * (0.25f * unit), 0.04f * unit, sortingOrder + 3);
+        Vector2 button = center + new Vector2(rightButton ? 0.125f : -0.125f, 0.14f) * unit;
+        AddRectangle("Held mouse button", button, new Vector2(0.18f, 0.22f) * unit,
+            Color.white, sortingOrder + 4);
+    }
+
+    private void AddLabel(string text, Vector2 center, float fontSize)
+    {
+        var label = new GameObject(text, typeof(TextMeshPro)).GetComponent<TextMeshPro>();
+        label.transform.SetParent(visuals.transform, false);
+        label.transform.localPosition = center;
+        label.text = text;
+        label.fontSize = fontSize;
+        label.fontStyle = FontStyles.Bold;
+        label.alignment = TextAlignmentOptions.Center;
+        label.sortingOrder = sortingOrder + 5;
     }
 
     private void AddStroke(string objectName, Vector2 start, Vector2 end, float thickness, int order)

@@ -5175,7 +5175,7 @@ MonoBehaviour:
     lockedIcon: {fileID: 0}
   - title: BOX
     icon: {fileID: -3795119470717004479, guid: 0725892d4be3d25498a72892a6c14516, type: 3}
-    keys: "\nA/D\t\tMove\nHold J\tGrow\nHold K\tShrink"
+    keys: "<size=85%>Move<pos=16%>A/D\nGrow<pos=16%>Hold J or Left Mouse Button\nShrink<pos=16%>Hold K or Right Mouse Button</size>"
     demoFrames:
     - {fileID: 6433370066142020047, guid: a6f911309bf952f47a3c2bc9647c397f, type: 3}
     - {fileID: 1523970343703753843, guid: c767c5585695707469092857b353d3ba, type: 3}
