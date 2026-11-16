@@ -7937,6 +7937,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6719492656174699660, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6719492656174699660, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_Camera
+      value:
+      objectReference: {fileID: 1829855428}
+    - target: {fileID: 6719492656174699660, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6715123736558516478, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
       propertyPath: m_Name
       value: 12_CollectionBook
