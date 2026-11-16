@@ -43,7 +43,7 @@ public sealed class MobileFormControls : MonoBehaviour
         var body = player.CurrentBody;
         bool visible = MobileMode && player.isActiveAndEnabled && !player.IsDead &&
             !player.IsRestarting && Time.timeScale > 0f && body != null && body.isActiveAndEnabled &&
-            (body.Form is BodyForm.Star or BodyForm.Box or BodyForm.Bubble or BodyForm.BouncyBall);
+            (body.Form is BodyForm.Star or BodyForm.Box or BodyForm.Bubble or BodyForm.BouncyBall or BodyForm.Spider);
         if (!visible)
         {
             Hide();

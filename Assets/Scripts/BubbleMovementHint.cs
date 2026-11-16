@@ -109,7 +109,8 @@ public class BubbleMovementHint : MonoBehaviour
         if (rebuildRequested && playerController != null)
             mobileControls = playerController.GetComponent<MobileFormControls>();
         bool mobile = Application.IsPlaying(gameObject) && mobileControls != null && mobileControls.MobileMode &&
-            mode is HintMode.StarMove or HintMode.StarJump or HintMode.BubbleIntroduction or HintMode.Water or HintMode.ExitBubble;
+            mode is HintMode.StarMove or HintMode.StarJump or HintMode.BubbleIntroduction or HintMode.Water or HintMode.ExitBubble
+                or HintMode.SpiderControls or HintMode.SpiderBlockedExit;
         if (rebuildRequested || mobile != mobileLesson)
         {
             mobileLesson = mobile;
@@ -121,11 +122,11 @@ public class BubbleMovementHint : MonoBehaviour
         if (Application.IsPlaying(gameObject) && mode == HintMode.SpiderBlockedExit)
         {
             PossessableBody body = playerController != null ? playerController.CurrentBody : null;
-            if (body != reminderBody || body == null || body.Form != BodyForm.Spider || playerController.IsDead)
+            if (mobileLesson || body != reminderBody || body == null || body.Form != BodyForm.Spider || playerController.IsDead)
                 blockedKeyHintRemaining = 0f;
             reminderBody = body;
             blockedKeyHintRemaining = Mathf.Max(0f, blockedKeyHintRemaining - Time.deltaTime);
-            if (body != null && body.Form == BodyForm.Spider && !playerController.IsDead &&
+            if (!mobileLesson && body != null && body.Form == BodyForm.Spider && !playerController.IsDead &&
                 Time.timeScale > 0f && Keyboard.current != null && Keyboard.current.qKey.wasPressedThisFrame)
                 blockedKeyHintRemaining = blockedKeyHintSeconds;
         }
@@ -536,20 +537,10 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else if (mode == HintMode.SpiderControls)
         {
-            leftControlVisuals = CreateControlGroup("A Direction");
-            controlVisualParent = leftControlVisuals;
-            AddKeyFrame(new Vector2(-0.5f, 0), Vector2.one * 0.5f);
-            capturingLetter = leftLetterFill;
-            AddLetter('A', new Vector2(-0.5f, 0));
-            capturingLetter = null;
-            Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
-            rightControlVisuals = CreateControlGroup("D Direction");
-            controlVisualParent = rightControlVisuals;
-            AddKeyFrame(new Vector2(0.5f, 0), Vector2.one * 0.5f);
-            capturingLetter = rightLetterFill;
-            AddLetter('D', new Vector2(0.5f, 0));
-            capturingLetter = null;
-            Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
+            if (mobileLesson)
+                MobileControlGraphic.CreateStickHint(visuals.transform, Vector2.zero, sortingOrder + 2);
+            leftControlVisuals = BuildSpiderDirection(Vector2.left, 'A', leftLetterFill);
+            rightControlVisuals = BuildSpiderDirection(Vector2.right, 'D', rightLetterFill);
             controlVisualParent = null;
         }
         else if (mode == HintMode.Air || (mode == HintMode.StarMove && !mobileLesson))
@@ -635,6 +626,26 @@ public class BubbleMovementHint : MonoBehaviour
             if (!string.IsNullOrWhiteSpace(popDescription))
                 AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);
         }
+    }
+
+    private Transform BuildSpiderDirection(Vector2 direction, char key, List<LetterFillStroke> fill)
+    {
+        var group = CreateControlGroup(direction.x < 0f ? "Left Direction" : "Right Direction");
+        controlVisualParent = group;
+        if (mobileLesson)
+        {
+            Arrow(direction * 0.5f, direction * 0.8f);
+        }
+        else
+        {
+            var center = direction * 0.5f;
+            AddKeyFrame(center, Vector2.one * 0.5f);
+            capturingLetter = fill;
+            AddLetter(key, center);
+            capturingLetter = null;
+            Arrow(direction * 0.85f, direction * 1.25f);
+        }
+        return group;
     }
 
     private Transform CreateControlGroup(string groupName)
