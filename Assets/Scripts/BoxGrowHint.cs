@@ -126,7 +126,8 @@ public class BoxGrowHint : MonoBehaviour
         AddRectangle("Key face", key, Vector2.one * (0.55f * unit), dark, sortingOrder + 4);
         AddLabel(shrink ? "K" : "J", key, 5.5f * unit);
         AddLabel("or", center, 3.4f * unit);
-        AddMouse(center + Vector2.right * (0.67f * unit), unit, shrink);
+        MouseButtonHintIcon.Draw(visuals.transform, dashSprite, center + Vector2.right * (0.67f * unit),
+            unit, shrink, frameColor, sortingOrder + 3);
 
         if (showHoldLabel)
         {
@@ -134,30 +135,6 @@ public class BoxGrowHint : MonoBehaviour
             AddRectangle("Hold background", label, new Vector2(1.02f, 0.36f) * unit, dark, sortingOrder + 2);
             AddLabel("HOLD", label, 3.4f * unit);
         }
-    }
-
-    private void AddMouse(Vector2 center, float unit, bool rightButton)
-    {
-        // Bevel the corners of the mouse silhouette and divide the buttons above the palm.
-        Vector2[] outline =
-        {
-            new Vector2(-0.16f, 0.33f), new Vector2(0.16f, 0.33f),
-            new Vector2(0.25f, 0.24f), new Vector2(0.25f, -0.21f),
-            new Vector2(0.14f, -0.33f), new Vector2(-0.14f, -0.33f),
-            new Vector2(-0.25f, -0.21f), new Vector2(-0.25f, 0.24f)
-        };
-        for (int i = 0; i < outline.Length; i++)
-        {
-            AddStroke("Mouse outline", center + outline[i] * unit,
-                center + outline[(i + 1) % outline.Length] * unit, 0.04f * unit, sortingOrder + 3);
-        }
-
-        AddStroke("Button divider", center, center + Vector2.up * (0.33f * unit), 0.04f * unit, sortingOrder + 3);
-        AddStroke("Palm divider", center + Vector2.left * (0.25f * unit),
-            center + Vector2.right * (0.25f * unit), 0.04f * unit, sortingOrder + 3);
-        Vector2 button = center + new Vector2(rightButton ? 0.125f : -0.125f, 0.14f) * unit;
-        AddRectangle("Held mouse button", button, new Vector2(0.18f, 0.22f) * unit,
-            Color.white, sortingOrder + 4);
     }
 
     private void AddLabel(string text, Vector2 center, float fontSize)

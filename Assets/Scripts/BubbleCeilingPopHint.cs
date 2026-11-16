@@ -19,7 +19,6 @@ public class BubbleCeilingPopHint : MonoBehaviour
     private void Awake()
     {
         label = GetComponent<TMP_Text>();
-        label.text = "Press <b>Q</b>\nto pop";
         ResetContact();
         if (playerController == null || ceiling == null)
         {
