@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(PossessableBody))]
 public class FanBlower : MonoBehaviour
@@ -54,15 +53,6 @@ public class FanBlower : MonoBehaviour
         if (owner != null && owner.HorizontalInput != 0f)
         {
             facing = owner.HorizontalInput > 0f ? 1 : -1;
-        }
-
-        // Keyboard F toggles wind directly; touch calls ToggleBlow() through
-        // the controller's PressTouchBlow. Both update the same isBlowing state.
-        Keyboard keyboard = Keyboard.current;
-
-        if (keyboard != null && keyboard.fKey.wasPressedThisFrame)
-        {
-            ToggleBlow();
         }
     }
 

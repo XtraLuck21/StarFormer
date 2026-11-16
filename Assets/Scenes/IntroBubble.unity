@@ -12571,7 +12571,7 @@ MonoBehaviour:
     lockedIcon: {fileID: 0}
   - title: Fan
     icon: {fileID: 1710981365271166214, guid: a172090fcb0c23e40b4f2993592d1abb, type: 3}
-    keys: "\nA/D\t\tMove / face direction\nF\t\tWind ON / OFF\nQ\t\tReturn to Star"
+    keys: "<size=85%>Move / Face<pos=36%>A/D\nWind On / Off<pos=36%>F or Left Click\nReturn to Star<pos=36%>Q or Right Click</size>"
     demoFrames:
     - {fileID: 2597025747279460382, guid: 061b9615356630e4c89c96c30361cf54, type: 3}
     - {fileID: 8766669409027979516, guid: 2a76bfc7f84fd384f88717b170bd1a20, type: 3}

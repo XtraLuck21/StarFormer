@@ -251,7 +251,9 @@ public class PlayerPossessionController : MonoBehaviour
     /// Toggle the Fan's wind (F on the keyboard): press once for on, again for off.
     /// Only applies while possessing Fan, matching the form-specific firing behavior.
     /// </summary>
-    public void PressTouchBlow()
+    public void PressTouchBlow() => ToggleFanWind();
+
+    private void ToggleFanWind()
     {
         if (!isActiveAndEnabled ||
             isDead ||
@@ -511,7 +513,14 @@ public class PlayerPossessionController : MonoBehaviour
         }
 
         Mouse mouse = Mouse.current;
-        if (currentBody != null && currentBody.Form == BodyForm.Bubble &&
+        bool isFan = currentBody != null && currentBody.Form == BodyForm.Fan;
+        if (isFan && ((keyboard != null && keyboard.fKey.wasPressedThisFrame) ||
+            (mouse != null && mouse.leftButton.wasPressedThisFrame && IsGameplayMousePress(mouse))))
+        {
+            ToggleFanWind();
+        }
+
+        if (currentBody != null && (isFan || currentBody.Form == BodyForm.Bubble) &&
             mouse != null && mouse.rightButton.wasPressedThisFrame && IsGameplayMousePress(mouse))
         {
             RequestRelease();
