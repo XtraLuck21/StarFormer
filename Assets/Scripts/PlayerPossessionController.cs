@@ -510,6 +510,13 @@ public class PlayerPossessionController : MonoBehaviour
             }
         }
 
+        Mouse mouse = Mouse.current;
+        if (currentBody != null && currentBody.Form == BodyForm.Bubble &&
+            mouse != null && mouse.rightButton.wasPressedThisFrame && IsGameplayMousePress(mouse))
+        {
+            RequestRelease();
+        }
+
         bool upHeld = keyboard != null && (isBox ? keyboard.jKey : keyboard.wKey).isPressed;
         bool downHeld = keyboard != null && (isBox ? keyboard.kKey : keyboard.sKey).isPressed;
 
@@ -555,17 +562,24 @@ public class PlayerPossessionController : MonoBehaviour
         bool rightPressed = mouse.rightButton.wasPressedThisFrame;
         if (leftPressed || rightPressed)
         {
-            EventSystem events = EventSystem.current;
-            mouseHits.Clear();
-            if (events != null)
-                events.RaycastAll(new PointerEventData(events) { position = mouse.position.ReadValue() }, mouseHits);
-
-            if (leftPressed) mouseGrowHeld = mouseHits.Count == 0;
-            if (rightPressed) mouseShrinkHeld = mouseHits.Count == 0;
+            bool inGameplay = IsGameplayMousePress(mouse);
+            if (leftPressed) mouseGrowHeld = inGameplay;
+            if (rightPressed) mouseShrinkHeld = inGameplay;
         }
 
         mouseGrowHeld &= mouse.leftButton.isPressed;
         mouseShrinkHeld &= mouse.rightButton.isPressed;
+    }
+
+    private bool IsGameplayMousePress(Mouse mouse)
+    {
+        EventSystem events = EventSystem.current;
+        if (events == null)
+            return true;
+
+        mouseHits.Clear();
+        events.RaycastAll(new PointerEventData(events) { position = mouse.position.ReadValue() }, mouseHits);
+        return mouseHits.Count == 0;
     }
 
     private void FixedUpdate()
