@@ -9,6 +9,7 @@ public class ChaseFloorFracture : MonoBehaviour
     [SerializeField, Min(0.1f)] private float debrisLifetime = 2.5f;
 
     private BoxCollider2D floorCollider;
+    private EdgeCollider2D walkSurface;
     private SpriteRenderer visual;
     private bool wallReached;
     private bool cracking;
@@ -22,6 +23,21 @@ public class ChaseFloorFracture : MonoBehaviour
         floorCollider = GetComponent<BoxCollider2D>();
         visual = GetComponent<SpriteRenderer>();
         intactColor = visual.color;
+
+        // Give the walk surface straight continuation normals at each slab joint.
+        // The solid box underneath still blocks approach from the ends and below.
+        Vector2 half = floorCollider.size * .5f;
+        Vector2 left = floorCollider.offset + new Vector2(-half.x, half.y);
+        Vector2 right = left + Vector2.right * floorCollider.size.x;
+        walkSurface = gameObject.AddComponent<EdgeCollider2D>();
+        walkSurface.points = new[] { left, right };
+        walkSurface.adjacentStartPoint = left - Vector2.right * half.x;
+        walkSurface.adjacentEndPoint = right + Vector2.right * half.x;
+        walkSurface.useAdjacentStartPoint = walkSurface.useAdjacentEndPoint = true;
+        walkSurface.sharedMaterial = floorCollider.sharedMaterial;
+        float inset = Mathf.Min(half.y, .08f / Mathf.Max(.001f, Mathf.Abs(transform.lossyScale.y)));
+        floorCollider.size -= Vector2.up * inset;
+        floorCollider.offset -= Vector2.up * (inset * .5f);
     }
 
     private void FixedUpdate()
@@ -31,7 +47,7 @@ public class ChaseFloorFracture : MonoBehaviour
             return;
         }
 
-        Bounds bounds = floorCollider.bounds;
+        Bounds bounds = visual.bounds;
         if (!wallReached && spikeWall.FrontEdgeX >= bounds.min.x &&
             spikeWall.RearEdgeX <= bounds.max.x)
         {
@@ -71,7 +87,7 @@ public class ChaseFloorFracture : MonoBehaviour
 
         if (timer >= fractureDelay)
         {
-            Fracture(floorCollider.bounds);
+            Fracture(visual.bounds);
         }
     }
 
@@ -98,6 +114,7 @@ public class ChaseFloorFracture : MonoBehaviour
     private void Fracture(Bounds bounds)
     {
         floorCollider.enabled = false;
+        walkSurface.enabled = false;
         const int count = 5;
         for (int i = 0; i < count; i++)
         {

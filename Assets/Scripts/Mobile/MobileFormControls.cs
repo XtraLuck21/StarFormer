@@ -146,11 +146,12 @@ public sealed class MobileFormControls : MonoBehaviour
         }
         var zone = Node("Movement Area", safeArea);
         zone.anchorMin = Vector2.zero;
-        zone.anchorMax = new Vector2(0.5f, 0.68f);
+        zone.anchorMax = new Vector2(0.5f, navigation != null ? 0.68f : 1f);
         zone.offsetMin = zone.offsetMax = Vector2.zero;
         zone.gameObject.AddComponent<Image>().color = Color.clear;
         movement = zone.gameObject.AddComponent<MobileTouchTarget>();
         movement.Initialize(this, true);
+        if (player != null) movement.EnableGameplayTouchRecovery(player.HasSavedCheckpoint);
         if (navigation != null)
             zone.gameObject.AddComponent<NavigationMapTap>().Initialize(navigation);
 
