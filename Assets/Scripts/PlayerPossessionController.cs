@@ -450,7 +450,7 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (restartMenu != null && restartMenu.IsOpen)
         {
-            if (keyboard != null && (keyboard.rKey.wasPressedThisFrame || keyboard.escapeKey.wasPressedThisFrame))
+            if (MenuEscapeInput.TryConsume() || (keyboard != null && keyboard.rKey.wasPressedThisFrame))
                 restartMenu.Close();
             return;
         }

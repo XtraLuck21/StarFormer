@@ -54,10 +54,27 @@
     return Boolean(document.fullscreenElement || document.webkitFullscreenElement);
   }
 
+  // Capture before the Unity loader registers keyboard listeners. Some browsers
+  // handle Escape themselves; others deliver keydown before leaving fullscreen.
+  window.addEventListener("keydown", event => {
+    if (event.key !== "Escape") return;
+    if (isFullscreen()) {
+      event.stopImmediatePropagation();
+      if (!event.repeat) {
+        const exit = document.exitFullscreen || document.webkitExitFullscreen;
+        if (exit) Promise.resolve(exit.call(document)).catch(() => {});
+      }
+    } else if (event.repeat) {
+      // A held exit key must not become a fresh menu press in the smaller window.
+      event.stopImmediatePropagation();
+    }
+  }, true);
+
   function syncFullscreen() {
     fullscreen.textContent = isFullscreen() ? "Exit Fullscreen" : "Fullscreen";
     fullscreen.setAttribute("aria-pressed", String(isFullscreen()));
     resize();
+    if (started) canvas.focus();
   }
 
   function enterFullscreen() {

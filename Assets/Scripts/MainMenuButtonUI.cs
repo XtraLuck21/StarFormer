@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -74,11 +73,16 @@ public sealed class MainMenuButtonUI : MonoBehaviour
     {
         home.interactable = !IsOpen && CanOpen();
         icon.SetAvailable(home.interactable);
-        if (IsOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            if (confirmation != Confirmation.None) ShowPaused();
-            else ContinuePlaying();
-        }
+    }
+
+    // The book and restart dialog handle Escape in Update. Only an unclaimed press
+    // reaches the Home menu, even when closing a dialog has just resumed gameplay.
+    private void LateUpdate()
+    {
+        if (!MenuEscapeInput.TryConsume()) return;
+        if (!IsOpen) Show();
+        else if (confirmation != Confirmation.None) ShowPaused();
+        else ContinuePlaying();
     }
 
     public void Show()
