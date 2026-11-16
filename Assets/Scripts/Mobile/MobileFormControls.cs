@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-[DisallowMultipleComponent, RequireComponent(typeof(PlayerPossessionController))]
+[DisallowMultipleComponent]
 public sealed class MobileFormControls : MonoBehaviour
 {
     [Tooltip("Auto Detect uses the device. Always Show previews touch controls with a mouse. Never Show uses the desktop HUD.")]
@@ -9,6 +9,7 @@ public sealed class MobileFormControls : MonoBehaviour
 
     public bool MobileMode => isActiveAndEnabled && MobileControlsUI.ResolveShouldShow(showMode);
     private PlayerPossessionController player;
+    private NavigationStarController navigation;
     private RectTransform surface;
     private RectTransform safeArea;
     private RectTransform stick;
@@ -38,15 +39,21 @@ public sealed class MobileFormControls : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
     private static void ResetLesson() => showedStickDemo = false;
 
-    private void Awake() => player = GetComponent<PlayerPossessionController>();
+    private void Awake()
+    {
+        player = GetComponent<PlayerPossessionController>();
+        navigation = GetComponent<NavigationStarController>();
+    }
 
     private void LateUpdate()
     {
-        var body = player.CurrentBody;
-        bool visible = MobileMode && player.isActiveAndEnabled && !player.IsDead &&
-            !player.IsRestarting && Time.timeScale > 0f && body != null && body.isActiveAndEnabled &&
+        var body = player != null ? player.CurrentBody : null;
+        bool visible = navigation != null
+            ? navigation.isActiveAndEnabled && !navigation.IsPreviewing && !navigation.ControlsBlocked
+            : player != null && player.isActiveAndEnabled && !player.IsDead &&
+            !player.IsRestarting && body != null && body.isActiveAndEnabled &&
             (body.Form is BodyForm.Star or BodyForm.Box or BodyForm.Bubble or BodyForm.BouncyBall or BodyForm.Spider or BodyForm.Fan);
-        if (!visible)
+        if (!visible || !MobileMode || Time.timeScale <= 0f)
         {
             Hide();
             return;
@@ -118,6 +125,17 @@ public sealed class MobileFormControls : MonoBehaviour
         safeArea = Node("Safe Area", surface);
         safeArea.offsetMin = safeArea.offsetMax = Vector2.zero;
 
+        if (navigation != null)
+        {
+            // Receive taps outside the stick, including in the screen margins beyond the safe area.
+            var map = Node("Map Tap Area", surface);
+            map.SetAsFirstSibling();
+            map.anchorMin = Vector2.zero;
+            map.anchorMax = Vector2.one;
+            map.offsetMin = map.offsetMax = Vector2.zero;
+            map.gameObject.AddComponent<Image>().color = Color.clear;
+            map.gameObject.AddComponent<NavigationMapTap>().Initialize(navigation);
+        }
         var zone = Node("Movement Area", safeArea);
         zone.anchorMin = Vector2.zero;
         zone.anchorMax = new Vector2(0.5f, 0.68f);
@@ -125,6 +143,8 @@ public sealed class MobileFormControls : MonoBehaviour
         zone.gameObject.AddComponent<Image>().color = Color.clear;
         movement = zone.gameObject.AddComponent<MobileTouchTarget>();
         movement.Initialize(this, true);
+        if (navigation != null)
+            zone.gameObject.AddComponent<NavigationMapTap>().Initialize(navigation);
 
         stick = Symbol("Floating Stick", zone, MobileControlGraphic.Symbol.Base, 160f);
         thumb = Symbol("Stick Thumb", stick, MobileControlGraphic.Symbol.Thumb, 82f);
@@ -140,6 +160,12 @@ public sealed class MobileFormControls : MonoBehaviour
 
         jump = Button("Jump", MobileControlGraphic.Symbol.Jump, false);
         jumpIcon = jump.GetComponent<MobileControlGraphic>();
+        if (navigation != null)
+        {
+            // Leave space for the Collection Book in the navigation screen's bottom row.
+            ((RectTransform)jump.transform).anchoredPosition = new Vector2(-176f, 294f);
+            return;
+        }
         grow = Button("Grow", MobileControlGraphic.Symbol.Grow, false);
         shrink = Button("Shrink", MobileControlGraphic.Symbol.Shrink, true);
     }
@@ -176,6 +202,11 @@ public sealed class MobileFormControls : MonoBehaviour
 
     internal void PressAction(MobileTouchTarget target)
     {
+        if (navigation != null)
+        {
+            if (target == jump) navigation.RequestJump();
+            return;
+        }
         if (displayedBody == null || displayedBody != player.CurrentBody) return;
         if (target == wind && displayedBody.Form == BodyForm.Fan)
             player.PressTouchBlow();

@@ -7368,6 +7368,7 @@ GameObject:
   - component: {fileID: 760008691}
   - component: {fileID: 760008690}
   - component: {fileID: 760008694}
+  - component: {fileID: 760008695}
   m_Layer: 0
   m_Name: 09_NavigationStar
   m_TagString: Untagged
@@ -7375,6 +7376,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &760008695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 760008689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474f7a8b6b3a4999ba869f3392ff10d1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MobileFormControls
+  showMode: 0
 --- !u!114 &760008694
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7401,6 +7415,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f96897f7b76846238879ed1d6f157eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NavigationStarController
+  keyboardHints: {fileID: 743797376}
+  touchHintAnchor: {fileID: 2036491381}
   starVisual: {fileID: 993192556}
   enteringOverlay: {fileID: 332606244}
   enteringLabel: {fileID: 937025601}

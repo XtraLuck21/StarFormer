@@ -67,7 +67,8 @@ public sealed class FormControlsHUD : MonoBehaviour
     {
         if (navigation != null)
         {
-            bool canNavigate = navigation.isActiveAndEnabled && !navigation.ControlsBlocked && !navigation.IsPreviewing;
+            bool canNavigate = (mobileControls == null || !mobileControls.MobileMode) &&
+                navigation.isActiveAndEnabled && !navigation.ControlsBlocked && !navigation.IsPreviewing;
             if (bar.gameObject.activeSelf != canNavigate) bar.gameObject.SetActive(canNavigate);
             return;
         }
