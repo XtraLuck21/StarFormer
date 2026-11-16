@@ -6,6 +6,52 @@
   const frame = document.getElementById("game-frame");
   const canvas = document.getElementById("unity-canvas");
   canvas.addEventListener("contextmenu", event => event.preventDefault());
+
+  // Unity receives TouchEvents on the canvas. A drag can continue into the page's
+  // letterbox while its finger is still down, even when no UI release follows.
+  const canvasTouches = new Map();
+  function cancelCanvasTouches(ended, remaining) {
+    if (!ended.length) return;
+    const cancel = new Event("touchcancel", { bubbles: true, cancelable: true });
+    Object.assign(cancel, {
+      changedTouches: ended,
+      touches: remaining,
+      targetTouches: remaining.filter(touch => touch.target === canvas)
+    });
+    canvas.dispatchEvent(cancel);
+  }
+
+  function trackCanvasTouches(event) {
+    if (!event.isTrusted) return;
+    const live = Array.from(event.touches);
+    const bounds = canvas.getBoundingClientRect();
+    const ended = [];
+    for (const touch of event.changedTouches) {
+      if (event.type === "touchstart" && touch.target === canvas) {
+        canvasTouches.set(touch.identifier, touch);
+      } else if (canvasTouches.has(touch.identifier)) {
+        if (event.type === "touchmove") canvasTouches.set(touch.identifier, touch);
+        else {
+          canvasTouches.delete(touch.identifier);
+          if (event.target !== canvas) ended.push(touch);
+        }
+      }
+    }
+    for (const [id, touch] of canvasTouches) {
+      if (!live.some(finger => finger.identifier === id) ||
+          touch.clientX <= bounds.left || touch.clientX >= bounds.right ||
+          touch.clientY <= bounds.top || touch.clientY >= bounds.bottom) {
+        canvasTouches.delete(id);
+        ended.push(touch);
+      }
+    }
+    if (ended.length) cancelCanvasTouches(ended, live.filter(touch =>
+      !ended.some(finger => finger.identifier === touch.identifier)));
+  }
+
+  for (const type of ["touchstart", "touchmove", "touchend", "touchcancel"])
+    window.addEventListener(type, trackCanvasTouches, { capture: true, passive: true });
+
   const launch = document.getElementById("launch");
   const progress = document.getElementById("progress");
   const status = document.getElementById("load-status");
@@ -16,6 +62,7 @@
   const notice = document.getElementById("notice");
   const build = window.starFormerBuild;
   const touchDevice = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1) ||
     (navigator.maxTouchPoints > 0 && matchMedia("(pointer: coarse)").matches);
   const requestFullscreen = player.requestFullscreen || player.webkitRequestFullscreen;
   const canFullscreen = Boolean(requestFullscreen) &&
@@ -23,6 +70,8 @@
   let started = false;
   let failed = false;
   let noticeTimer;
+  let cornerRequestPending = false;
+  let shownExitHint = false;
 
   function showNotice(message) {
     clearTimeout(noticeTimer);
@@ -35,8 +84,9 @@
     const style = getComputedStyle(viewport);
     const width = viewport.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
     const height = viewport.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-    const cssWidth = Math.max(1, Math.min(width, height * 16 / 9));
-    const cssHeight = cssWidth * 9 / 16;
+    const landscapeTouch = touchDevice && width >= height;
+    const cssWidth = Math.max(1, landscapeTouch ? width : Math.min(width, height * 16 / 9));
+    const cssHeight = landscapeTouch ? Math.max(1, height) : cssWidth * 9 / 16;
     frame.style.width = `${cssWidth}px`;
     frame.style.height = `${cssHeight}px`;
 
@@ -44,7 +94,7 @@
     const density = Math.min(window.devicePixelRatio || 1, touchDevice ? 1.5 : 2);
     const maxWidth = touchDevice ? 1920 : 2560;
     const renderWidth = Math.max(16, Math.round(Math.min(cssWidth * density, maxWidth) / 16) * 16);
-    const renderHeight = renderWidth * 9 / 16;
+    const renderHeight = Math.max(1, Math.round(renderWidth * cssHeight / cssWidth));
     if (canvas.width !== renderWidth) canvas.width = renderWidth;
     if (canvas.height !== renderHeight) canvas.height = renderHeight;
     rotateHint.hidden = !started || !touchDevice || width >= height;
@@ -71,21 +121,34 @@
   }, true);
 
   function syncFullscreen() {
-    fullscreen.textContent = isFullscreen() ? "Exit Fullscreen" : "Fullscreen";
-    fullscreen.setAttribute("aria-pressed", String(isFullscreen()));
+    const active = isFullscreen();
+    fullscreen.hidden = !started || failed || touchDevice || !canFullscreen || active;
+    if (active && cornerRequestPending) {
+      window.starFormerCornerFullscreenEntries = (window.starFormerCornerFullscreenEntries || 0) + 1;
+      cornerRequestPending = false;
+    }
+    if (active && started && !touchDevice && !shownExitHint) {
+      shownExitHint = true;
+      showNotice("Press Esc to exit fullscreen.");
+    } else if (!active && notice.textContent === "Press Esc to exit fullscreen.") {
+      notice.hidden = true;
+    }
     resize();
+    if (started) canvas.focus();
+  }
+
+  function fullscreenFailed() {
+    cornerRequestPending = false;
+    showNotice("Fullscreen is unavailable. You can keep playing in this window.");
     if (started) canvas.focus();
   }
 
   function enterFullscreen() {
     if (!canFullscreen) return;
     try {
-      // Request immediately inside the user's click, before any asynchronous work.
-      Promise.resolve(requestFullscreen.call(player)).catch(() => {
-        showNotice("Fullscreen is unavailable. You can keep playing in this window.");
-      });
+      Promise.resolve(requestFullscreen.call(player)).catch(fullscreenFailed);
     } catch (_) {
-      showNotice("Fullscreen is unavailable. You can keep playing in this window.");
+      fullscreenFailed();
     }
   }
 
@@ -94,13 +157,12 @@
     if (wantsFullscreen) enterFullscreen();
     started = true;
     launch.hidden = true;
-    fullscreen.hidden = !canFullscreen;
-    resize();
-    canvas.focus();
+    syncFullscreen();
   }
 
   function fail(message) {
     failed = true;
+    fullscreen.hidden = true;
     console.error(message);
     launch.hidden = false;
     status.textContent = "The game could not load. Please refresh the page to try again.";
@@ -109,23 +171,17 @@
     playWindowed.disabled = true;
   }
 
-  playFullscreen.hidden = !canFullscreen;
-  if (!canFullscreen) playWindowed.textContent = "Play";
+  playFullscreen.hidden = touchDevice || !canFullscreen;
+  if (touchDevice || !canFullscreen) playWindowed.textContent = "Play";
   playFullscreen.addEventListener("click", () => start(true));
-  playWindowed.addEventListener("click", () => start(false));
+  playWindowed.addEventListener("click", () => start(touchDevice && canFullscreen));
   fullscreen.addEventListener("click", () => {
-    if (isFullscreen()) {
-      const exit = document.exitFullscreen || document.webkitExitFullscreen;
-      try {
-        Promise.resolve(exit.call(document)).catch(() => showNotice("Use your browser's fullscreen control to exit."));
-      } catch (_) {
-        showNotice("Use your browser's fullscreen control to exit.");
-      }
-    } else {
-      enterFullscreen();
-    }
-    canvas.focus();
+    if (fullscreen.hidden || cornerRequestPending) return;
+    cornerRequestPending = true;
+    enterFullscreen();
   });
+  document.addEventListener("fullscreenerror", fullscreenFailed);
+  document.addEventListener("webkitfullscreenerror", fullscreenFailed);
   document.addEventListener("fullscreenchange", syncFullscreen);
   document.addEventListener("webkitfullscreenchange", syncFullscreen);
   window.addEventListener("resize", resize);

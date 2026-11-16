@@ -5361,6 +5361,7 @@ GameObject:
   - component: {fileID: 20000102}
   - component: {fileID: 20000101}
   - component: {fileID: 20000104}
+  - component: {fileID: 20000105}
   - component: {fileID: 20000103}
   m_Layer: 0
   m_Name: PlayerControl
@@ -5369,6 +5370,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &20000105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 20000100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474f7a8b6b3a4999ba869f3392ff10d1, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MobileFormControls
+  showMode: 0
 --- !u!114 &20000104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5382,7 +5396,6 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FormControlsHUD
   formBook: {fileID: 11400000, guid: 7ad88915ee1ed4c7987d980d9139f10d, type: 2}
-  touchControls: {fileID: 0}
 --- !u!114 &20000101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12681,9 +12694,9 @@ Canvas:
   m_GameObject: {fileID: 965357337}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
+  m_RenderMode: 1
+  m_Camera: {fileID: 10000002}
+  m_PlaneDistance: 1
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0

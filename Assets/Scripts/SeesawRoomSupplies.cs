@@ -72,7 +72,6 @@ public class SeesawRoomSupplies : MonoBehaviour
         }
     }
 
-    // Retain explicit F/touch blow commands as an optional release path too.
     // A new ball does not fall just because the previous wind is still running.
     public bool HasFanBlowCommandAfter(ulong activation)
     {
@@ -161,8 +160,8 @@ public class SeesawRoomSupplies : MonoBehaviour
 
         FanBlower blower = fan.GetComponent<FanBlower>();
         blower.SetFacing(direction);
-        // The first direction input and each turn start wind without requiring F.
-        blower.StartBlowing();
+        // Turning can supply a ball only while the player already has the wind on.
+        if (!blower.IsBlowing) return;
         // Count immediately: the periodic population check may still be stale.
         // Any existing ball, including one stopped on the board, prevents a new one.
         RefreshPopulation();

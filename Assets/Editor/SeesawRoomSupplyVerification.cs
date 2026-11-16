@@ -3,6 +3,8 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 /// <summary>Opt-in physical checks in a disposable project; drives the existing input/door APIs.</summary>
 [InitializeOnLoad]
@@ -10,6 +12,7 @@ public static class SeesawRoomSupplyVerification
 {
     private const string RunningKey = "SeesawRoomSupplyVerification.Running";
     private static PlayerPossessionController player;
+    private static Keyboard keyboard;
     private static StarRoomDoor door;
     private static SeesawRoomSupplies supply;
     private static SeesawTilt2D tilt;
@@ -25,6 +28,7 @@ public static class SeesawRoomSupplyVerification
     private static float phaseAt;
     private static float moveStartX;
     private static int step;
+    private static int previousSceneHandle;
     private static double deadline;
     private static double nextReport;
 
@@ -33,6 +37,9 @@ public static class SeesawRoomSupplyVerification
         EditorApplication.playModeStateChanged += state =>
         {
             if (state != PlayModeStateChange.EnteredPlayMode || !SessionState.GetBool(RunningKey, false)) return;
+            InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+            keyboard = InputSystem.AddDevice<Keyboard>();
             deadline = EditorApplication.timeSinceStartup + 130;
             EditorApplication.update += Tick;
         };
@@ -40,7 +47,7 @@ public static class SeesawRoomSupplyVerification
 
     public static void RunBatch()
     {
-        EditorSceneManager.OpenScene("Assets/Scenes/NewLevel02.unity");
+        EditorSceneManager.OpenScene("Assets/Scenes/Level02.unity");
         SeesawRoomSupplySetup.Validate();
         if (UnityEngine.Object.FindFirstObjectByType<SeesawTilt2D>() != null) SeesawTiltSetup.Validate();
         SessionState.SetBool(RunningKey, true);
@@ -55,6 +62,7 @@ public static class SeesawRoomSupplyVerification
             if (EditorApplication.timeSinceStartup > deadline)
                 throw new Exception("Timed out at step " + step + ", player=" + player?.CurrentBody?.Form +
                     ", fan=" + Position(fan) + ", ball=" + Position(ball));
+            if (step == 20 && SceneManager.GetActiveScene().handle == previousSceneHandle) return;
             if (player == null) player = UnityEngine.Object.FindFirstObjectByType<PlayerPossessionController>();
             if (door == null) door = UnityEngine.Object.FindFirstObjectByType<StarRoomDoor>();
             if (supply == null) supply = UnityEngine.Object.FindFirstObjectByType<SeesawRoomSupplies>();
@@ -76,6 +84,9 @@ public static class SeesawRoomSupplyVerification
             switch (step)
             {
                 case 0:
+                    // Exercise replenishment in isolation. The completed gear puzzle normally removes the Fan.
+                    var stage = UnityEngine.Object.FindFirstObjectByType<SeesawRoomStage>();
+                    if (stage != null) stage.enabled = false;
                     Require(!supply.IsRoomActive && supply.SpawnedFan == null && supply.SpawnedBall == null,
                         "No supplies before entering the room.");
                     if (tilt != null) Require(tilt.TriggerCount == 0 && Mathf.Abs(tilt.CurrentAngle) < 0.01f, "Board starts level.");
@@ -107,7 +118,7 @@ public static class SeesawRoomSupplyVerification
                         Mathf.Abs(ball.transform.position.y - waitingY) < 0.001f, "Ball hovers; an outside-room Fan cannot release it.");
                     Debug.Log("ROOM SUPPLY HOVER PASS: door handoff, one controlled Fan, ordinary-only population and outside-room wind filtering.");
                     moveStartX = fan.transform.position.x;
-                    player.SetTouchRight(true);
+                    Move(Key.D);
                     Next(21);
                     break;
                 case 21:
@@ -115,8 +126,7 @@ public static class SeesawRoomSupplyVerification
                     Require(fan.transform.position.x > moveStartX + 1.5f && supply.FanCount == 1,
                         "The possessed Fan must move right without being pinned or duplicated.");
                     moveStartX = fan.transform.position.x;
-                    player.SetTouchRight(false);
-                    player.SetTouchLeft(true);
+                    Move(Key.A);
                     Next(22);
                     break;
                 case 22:
@@ -124,26 +134,24 @@ public static class SeesawRoomSupplyVerification
                     Require(fan.transform.position.x < moveStartX - 1.5f && supply.FanCount == 1,
                         "The possessed Fan must move left without the spawner pulling it back.");
                     Debug.Log("ROOM SUPPLY MOVEMENT PASS: controlled Fan walks both directions and retains collision support.");
-                    player.SetTouchLeft(false);
-                    player.SetTouchRight(true);
+                    Move(Key.D);
                     Next(23);
                     break;
                 case 23:
                     if (fan.transform.position.x < supplyX + 1.5f) break;
                     // Stand to the right of the ball, then face left to blow it left.
-                    player.SetTouchRight(false);
-                    player.SetTouchLeft(true);
+                    Move(Key.A);
                     Next(3);
                     break;
                 case 3:
                     if (Time.time - phaseAt < 0.2f) break;
                     Require(fan.GetComponent<FanBlower>().Facing == -1, "A input moves and turns the Fan left.");
-                    player.ReleaseAllTouchInput();
+                    Move();
                     player.PressTouchBlow();
                     Next(4);
                     break;
                 case 4:
-                    if (Time.time - phaseAt < 0.3f) break;
+                    if (ball.IsShaking || Time.time - phaseAt < 0.3f || (ball.HasBeenReleased && ball.transform.position.y >= waitingY - 0.1f)) break;
                     Require(ball.HasBeenReleased && ball.GetComponent<Rigidbody2D>().bodyType == RigidbodyType2D.Dynamic &&
                         ball.transform.position.y < waitingY - 0.1f, "Turning wind on releases the hovering ball.");
                     player.PressTouchBlow();
@@ -194,7 +202,7 @@ public static class SeesawRoomSupplyVerification
                     Next(27);
                     break;
                 case 27:
-                    if (Time.time - phaseAt < 0.2f) break;
+                    if (ball.IsShaking || Time.time - phaseAt < 0.2f) break;
                     Require(ball.HasBeenReleased && ball.GetComponent<Rigidbody2D>().bodyType == RigidbodyType2D.Dynamic,
                         "A fresh wind activation must release the replacement ball.");
                     Debug.Log("ROOM SUPPLY REARM PASS: replacement ignores old wind, then releases on a fresh off/on command.");
@@ -217,25 +225,24 @@ public static class SeesawRoomSupplyVerification
                     ball = supply.SpawnedBall;
                     Require(!ball.HasBeenReleased && supply.OrdinaryBallCount == 1, "Only the last ball's disappearance permits replenishment.");
                     Debug.Log("ROOM SUPPLY POPULATION PASS: all ordinary balls must disappear; Bouncy Ball is excluded.");
-                    player.SetTouchLeft(true);
+                    Move(Key.A);
                     Next(24);
                     break;
                 case 24:
                     if (fan.transform.position.x > supplyX - 1.5f) break;
                     // Stand to the left of the next ball, then face right.
-                    player.SetTouchLeft(false);
-                    player.SetTouchRight(true);
+                    Move(Key.D);
                     Next(11);
                     break;
                 case 11:
                     if (Time.time - phaseAt < 0.2f) break;
                     Require(fan.GetComponent<FanBlower>().Facing == 1, "D input turns the Fan right.");
-                    player.ReleaseAllTouchInput();
+                    Move();
                     player.PressTouchBlow();
                     Next(12);
                     break;
                 case 12:
-                    if (tilt != null && ball != null) player.SetTouchRight(ball.transform.position.x > fan.transform.position.x + 1.5f);
+                    if (tilt != null && ball != null) Move(ball.transform.position.x > fan.transform.position.x + 1.5f ? Key.D : Key.None);
                     if (ball != null && ball.transform.position.x <= supplyX + 2f) break;
                     Require(ball != null && ball.HasBeenReleased, "Right wind must visibly move the released ball right.");
                     Debug.Log("ROOM SUPPLY RIGHT PASS: right-facing wind moves the ordinary ball right.");
@@ -244,10 +251,10 @@ public static class SeesawRoomSupplyVerification
                 case 13:
                     if (ball != null)
                     {
-                        if (tilt != null) player.SetTouchRight(ball.transform.position.x > fan.transform.position.x + 1.5f);
+                        if (tilt != null) Move(ball.transform.position.x > fan.transform.position.x + 1.5f ? Key.D : Key.None);
                         break;
                     }
-                    player.ReleaseAllTouchInput();
+                    Move();
                     if (supply.SpawnedBall == null) break;
                     ball = supply.SpawnedBall;
                     waitingY = ball.transform.position.y;
@@ -291,14 +298,16 @@ public static class SeesawRoomSupplyVerification
                         Mathf.Abs(supply.SpawnedFan.transform.position.y - spawn.y) < 0.3f && supply.SpawnedFan.IsGrounded(),
                         "Fan respawns centrally and settles onto the board under gravity.");
                     Debug.Log("ROOM SUPPLY FAN PASS: last-Fan replenishment and disabled/destroyed-host recovery.");
-                    player.ReleaseAllTouchInput();
+                    Move();
+                    previousSceneHandle = player.gameObject.scene.handle;
+                    PlayerPossessionController.ResetCheckpointSession();
                     player = null; door = null; supply = null;
                     Next(20);
-                    EditorSceneManager.LoadSceneInPlayMode("Assets/Scenes/NewLevel02.unity", new LoadSceneParameters(LoadSceneMode.Single));
+                    EditorSceneManager.LoadSceneInPlayMode("Assets/Scenes/Level02.unity", new LoadSceneParameters(LoadSceneMode.Single));
                     break;
                 case 20:
                     Require(!supply.IsRoomActive && supply.SpawnedFan == null && supply.SpawnedBall == null && player.CurrentBody.Form == BodyForm.Star,
-                        "Scene reload resets activation, supplies and ownership.");
+                        "Fresh level entry resets activation, supplies and ownership.");
                     if (tilt != null) Require(tilt.TriggerCount == 0 && tilt.LastSide == SeesawTilt2D.Side.None &&
                         Mathf.Abs(tilt.CurrentAngle) < 0.01f, "Reload resets board angle and contact latches.");
                     Debug.Log("ROOM SUPPLY RESET PASS");
@@ -309,6 +318,12 @@ public static class SeesawRoomSupplyVerification
         catch (Exception ex) { Debug.LogError("ROOM SUPPLY FAIL: " + ex); Finish(1); }
     }
 
+    private static void Move(Key key = Key.None)
+    {
+        var state = key == Key.None ? new KeyboardState() : new KeyboardState(key);
+        InputSystem.QueueStateEvent(keyboard, state);
+    }
+
     private static void Next(int value) { step = value; phaseAt = Time.time; }
     private static string Position(Component value) => value != null ? value.transform.position.ToString() : "gone";
     private static T Get<T>(UnityEngine.Object obj, string field) where T : UnityEngine.Object => new SerializedObject(obj).FindProperty(field).objectReferenceValue as T;
@@ -316,6 +331,7 @@ public static class SeesawRoomSupplyVerification
     private static void Finish(int result)
     {
         EditorApplication.update -= Tick;
+        if (keyboard != null) InputSystem.RemoveDevice(keyboard);
         SessionState.SetBool(RunningKey, false);
         EditorApplication.Exit(result);
     }

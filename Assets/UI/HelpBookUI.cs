@@ -151,6 +151,13 @@ public class HelpBookUI : MonoBehaviour
 
     private void Awake()
     {
+        // The camera-sized canvas previews the book beside the map in Scene view.
+        // In play, draw it with the other screen overlays so the book retains its UI order.
+        if (TryGetComponent<Canvas>(out var canvas) && canvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        }
+
         if (helpPanel == null || helpButton == null)
         {
             Debug.LogError(

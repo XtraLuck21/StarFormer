@@ -10,6 +10,7 @@ public class BubbleCeilingRestartHint : MonoBehaviour
     [SerializeField] private Rect teachingArea = new Rect(7.4f, 5f, 8.9f, 5.6f);
     [SerializeField, Min(.1f)] private float stuckDelay = 1.5f;
 
+    private MobileFormControls mobileControls;
     private TMP_Text label;
     private PossessableBody trackedBubble;
     private float contactSeconds;
@@ -24,13 +25,16 @@ public class BubbleCeilingRestartHint : MonoBehaviour
         {
             Debug.LogError("Assign the player controller and the water tank ceiling.", this);
             enabled = false;
+            return;
         }
+        mobileControls = playerController.GetComponent<MobileFormControls>();
     }
 
     private void Update()
     {
         PossessableBody body = playerController != null ? playerController.CurrentBody : null;
-        if (playerController == null || !playerController.isActiveAndEnabled ||
+        if ((mobileControls != null && mobileControls.MobileMode) ||
+            playerController == null || !playerController.isActiveAndEnabled ||
             playerController.IsDead || Time.timeScale <= 0f || body == null ||
             !body.isActiveAndEnabled || !body.IsReady || !body.IsControlled ||
             body.Form != BodyForm.Bubble || !body.Body.simulated ||

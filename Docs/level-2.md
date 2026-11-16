@@ -2,13 +2,13 @@
 
 Beta 0.1.3 was published on November 10, 2026 to `/beta/`, including the promoted Level02 from PR #23, subsequent hints and Help cleanup. Its seven hosted runtime hashes match the verified export. The root remains Beta 0.1.2; historical release evidence remains in [Beta-0.1.2.md](Beta-0.1.2.md).
 
-Last updated: 2026-11-10.
+Touch controls reviewed November 16, 2026.
 
 Scene: [Level02.unity](../Assets/Scenes/Level02.unity), formerly NewLevel02. The previous layout is preserved as [Level02_legacy.unity](../Assets/Scenes/Level02_legacy.unity) and excluded from the build. Navigation's Level 2 entrance loads the promoted Level02 by name. The release preparation restores its original replacement-scene GUID, `7c566eddba60a82469938fe898ff5d22`, to match Build Settings; the legacy scene retains `688f3d52829cf43438b7318de504e103`.
 
 For shared controls, see [GameplaySpec.md](GameplaySpec.md). For recovery menus, see [CheckpointGuidance.md](CheckpointGuidance.md). For release configuration and verification limits, see [Beta-0.1.3.md](Beta-0.1.3.md) and [publish_instructions.md](publish_instructions.md).
 
-**Current controls:** A/D moves the active form; Space jumps as Star. J grows Box and K shrinks it; Q pops Bubble or leaves Fan. The current controller does not manually release Spider. Fan retains F as an optional wind toggle; the seesaw supply also starts wind and releases its waiting ball on the first direction input or a direction change. Controls belong to the current possessed body, not the inactive original Star.
+On touch screens, steer with the floating joystick. Tap Jump as Star, Pop as Bubble, or Blow / Leave as Fan. Hold the Box resize buttons through the final descent. BouncyBall and Spider use the stick alone. [Desktop equivalents and touch controls](GameplaySpec.md#2-controls)
 
 ## 1. Current route and progress
 
@@ -35,7 +35,7 @@ This change of pace gives the previous jumps a consequence without repeating the
 
 ### Seesaw room
 
-Four colored gears communicate progress. The first two goals are blue and green. A Fan directs an ordinary, non-possessable red ball toward either end of the seesaw; the board's rotation brings the colored key contacts into their corresponding lock buttons. The first direction input or a turn can start wind and release the waiting ball. It shakes twice before dropping. The single-ball population rule prevents turns from stacking new balls while an existing ordinary ball remains, including a stationary one. F remains available, but repeated F toggling is not required for this supply.
+Four colored gears communicate progress. The first two goals are blue and green. A Fan directs an ordinary, non-possessable red ball toward either end of the seesaw; the board's rotation brings the colored key contacts into their corresponding lock buttons. The Fan starts with wind off. Tap Blow, press F or left-click to turn it on. While wind is on, an initial direction input or turn can release the waiting ball. It shakes twice before dropping. The single-ball population rule prevents turns from stacking new balls while an existing ordinary ball remains, including a stationary one. Tap Blow again to stop the wind.
 
 The blue and green contacts can complete independently. Only after both are active does `SeesawRoomStage` remove the initial player barriers, return the board toward neutral, reveal the next controls and extend the connecting platform. If the player is still Fan, the supply returns control to Star, removes the spent Fan and clears loose ordinary balls while retaining or replacing the waiting spawner ball. The initial energy barriers block controlled forms, including Fan; ordinary balls pass through. The separate translucent blue gear guard prevents Spider from bypassing the intended sequence.
 
@@ -61,7 +61,7 @@ Beyond the door, the player must physically contact the waiting Spider. There is
 
 The hand's Box starts the final descent. Contact possession saves `SMILE_HAND_BOX`. K reduces its footprint for the spike-lined passage; J grows it where there is room. The currently restored layout has six larger spikes along the original contour, replacing the temporary small-spike layout. Passage is determined by real collider clearance, not an exact-size scripted gate; minimum scale is 0.5. The original descent uses normal physics and contains no added transport platform. The specific final spike placement still needs a fresh end-to-end playtest in the new export.
 
-Only the assigned Box can press the roof button. The button lowers and raises a flag, but does not itself win the level. The living controlled body must then touch the fully raised flag to display **Congratulations, / you are now a super star**. This gives the resize challenge a concrete endpoint while preserving a final, readable action after the mechanism responds.
+Only the assigned Box can press the roof button. The button lowers and raises a flag, but does not itself win the level. The living controlled body must then touch the fully raised flag to display **Level Complete** and **You are a super star now!**. Tap **Return to Main Menu** to reopen Navigation. This gives the resize challenge a concrete endpoint while preserving a final, readable action after the mechanism responds.
 
 ### Gameplay improvements and progression
 
@@ -109,7 +109,7 @@ Later route checkpoints cannot be overwritten by earlier ones. The automatic rig
 | Setting | Current value / behavior | Purpose |
 | --- | --- | --- |
 | Enabled Level02 identity | GUID `7c566eddba60a82469938fe898ff5d22`; build index 7 | Keep the promoted scene distinct from the disabled legacy scene |
-| Fan supply | First direction input or turn; one ordinary ball at a time | Reduce repeated F presses and prevent ball accumulation |
+| Fan supply | First direction input or turn while airflow is on, with one ordinary ball at a time | Steering alone leaves a newly possessed Fan silent |
 | Waiting ball cue | Two shakes, about 0.6 seconds | Connect the dashed spawner to the next falling ball |
 | Yellow entrance reminder | Yellow !, 5-second delay, font 16, slight bob | Point at the crack with minimal text |
 | Final underside impacts | 4 | Show progressive damage before the purple contact |
@@ -122,7 +122,7 @@ Later route checkpoints cannot be overwritten by earlier ones. The automatic rig
 | Death pause | About 0.18 seconds, then scene reload | Short recovery feedback rather than a two-second freeze |
 | Checkpoint presentation | Blue/yellow star outlines; no dark outer border | Match the formal Level01 visual language |
 
-Mobile controls remain form-specific and use the existing AutoDetect release configuration. Input comes from the same controller as keyboard movement, water swimming, Fan direction and Box resize. This documentation does not certify all touch/browser combinations or the post-revert spike clearance.
+The gear-room hint shows the wind icon and “Tap to blow the ball.” in touch mode. It shows the F prompt on desktop. For phone regression, release and reapply the stick after the chase door, turn the Fan away from the barrier, then drag the final Box to the canvas edge and steer away after checkpoint recovery.
 
 ## 4. Verification completed and its limits
 
@@ -132,7 +132,7 @@ Earlier isolated Unity checks exercised real wind-ball contacts, blue/green clea
 
 The November 10 release build and eight-scene validation passed. Local Chromium loaded Navigation, Level01 and the promoted Level02, switched fullscreen, and opened/closed the Level02 Home and Collection Book. Portrait touch emulation retained the 16:9 canvas and rotation hint. The initial export emitted a legacy empty-Help initialization warning; the obsolete LevelCanvas component and its owner-list entry have since been removed while preserving the configured six-page book. The rebuilt cleanup export passed the same focused browser checks with no Help warning or JavaScript/runtime errors. The final current-layout playthrough, real-device controls and production analytics/map acceptance remain open. A local intercepted request does not prove delivery to the live Sheet.
 
-**Known end-state limitation:** `SmileGoalFlag` currently displays its own congratulatory overlay and stops the winning body. It does not call the shared completion-analytics/Navigation-return flow. Home also requires an enabled player controller. Do not claim the final smile flag records `level_complete` or offers Return to Main Menu until that integration is implemented and tested. This release documentation does not silently change that gameplay behavior.
+The local Beta 0.1.4 fix connects the final flag to the shared result screen. On a phone, use its Return to Main Menu button after winning. [Beta 0.1.4 build record](Beta-0.1.4.md)
 
 ## 5. Historical October polish decisions
 
@@ -142,7 +142,7 @@ The November 10 release build and eight-scene validation passed. Local Chromium 
 - Keep an explicit completion screen with the celebratory subtitle and a user-selected return to Mainmenu.
 - Provide separate Restart Level and Retry Checkpoint actions beneath Return to Main Menu. Preserve their accepted top-right layout and existing Y positions.
 - Remove only the unused brown finish block. It was a sprite/collider named `wall (20)`, not a scripted pressure plate.
-- Keep mobile button positions unchanged for now. Standardize script comments, Inspector labels, tooltips and diagnostics in English without changing field/method names or gameplay logic.
+- The October layout kept its original mobile button positions. The current layout is described above. Standardize script comments, Inspector labels, tooltips and diagnostics in English without changing field/method names or gameplay logic.
 - Defer top-center form identity labels and broader instruction polish.
 
 Historical Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105970`). Local and online playtests passed according to the developer; the supplied analytics screenshot covers Level01 only, so Level02-specific data and map validation remain open.
@@ -151,8 +151,8 @@ Historical Beta 0.1.0 also includes this level (source `3a693ca`, gh-pages `1105
 ## 6. Remaining work and handoff
 
 1. Review the final six-spike Box descent in the exported player. Verify shrinking, both death recovery and manual checkpoint retry, the pressure button, retained flag state and actual flag contact.
-2. Review the custom final victory overlay's missing shared completion event and Navigation-return action before public release. This is distinct from the legacy LevelGoal object elsewhere in the scene.
+2. On a phone, reach the raised flag and tap Return to Main Menu on the result screen.
 3. Repeat opening chase -> dark passage -> seesaw -> lift -> face on desktop; test interruptions, full restart and Navigation re-entry. Inspect retained legacy CP01/CP02 callbacks separately rather than treating their presence as current-route coverage.
-4. Verify Home/Help/R interactions and all form controls on real phones, including multi-touch, focus loss, portrait/fullscreen transitions and held-input release. The obsolete empty Help component has been removed. Keep real-device input, pause ownership and all-form page coverage separate from the focused desktop book check.
+4. Verify Home, Collection Book and all form controls on real phones, including multi-touch, focus loss, portrait/fullscreen transitions and held-input release. The obsolete empty Help component has been removed. Keep real-device input, pause ownership and all-form page coverage separate from the focused desktop book check.
 5. Keep the seven freshly exported maps and historical entries; export again after subsequent gameplay scene changes. The game build does not deploy the Apps Script backend or update its image store. Verify current `map_version` bindings and production `beta-0.1.3` rows separately.
 6. Publication is complete after owner approval: `beta/` serves 0.1.3, with root Beta 0.1.2 and historical Alpha paths preserved. Keep future releases scoped and retain their verification evidence. See [the new release record](Beta-0.1.3.md) for the exact build, hashes, commits and acceptance status.

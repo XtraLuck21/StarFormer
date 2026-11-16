@@ -25,6 +25,10 @@ public class BoxGrowHint : MonoBehaviour
 
     private GameObject visuals;
     private Sprite dashSprite;
+    private MobileFormControls mobileControls;
+    private GameObject desktopPrompt;
+    private RectTransform touchPrompt;
+    private float holdDemoStart;
 
     private void Awake()
     {
@@ -65,9 +69,18 @@ public class BoxGrowHint : MonoBehaviour
             AddGrowthPrompt(half);
         }
 
-        var touchControls = FindFirstObjectByType<MobileControlsUI>();
-        if (touchControls == null || !touchControls.ResolveShouldShow())
-            AddDesktopPrompt(half);
+        mobileControls = playerController.GetComponent<MobileFormControls>();
+        desktopPrompt = new GameObject("Desktop Input");
+        desktopPrompt.transform.SetParent(visuals.transform, false);
+        AddDesktopPrompt(half);
+        if (mobileControls != null)
+        {
+            bool shrink = mode == HintMode.Shrink;
+            var icon = shrink ? MobileControlGraphic.Symbol.Shrink : MobileControlGraphic.Symbol.Grow;
+            Vector2 center = shrink ? Vector2.up * (half.y + 0.52f) : Vector2.zero;
+            touchPrompt = MobileControlGraphic.CreateWorldHint(visuals.transform, icon, center, 0.95f, sortingOrder + 3);
+            touchPrompt.gameObject.SetActive(false);
+        }
     }
 
     private void AddGrowthPrompt(Vector2 half)
@@ -119,20 +132,20 @@ public class BoxGrowHint : MonoBehaviour
         float unit = shrink ? 0.8f : Mathf.Min(frameSize.x, frameSize.y) / 3.2f;
         Vector2 center = shrink ? Vector2.up * (half.y + 0.48f * unit) : Vector2.zero;
         Color dark = new Color(0.08f, 0.12f, 0.18f, 0.96f);
-        AddRectangle("Input strip", center, new Vector2(2.18f, 0.78f) * unit, dark, sortingOrder + 2);
+        AddRectangle("Input strip", center, new Vector2(2.18f, 0.78f) * unit, dark, sortingOrder + 2, desktopPrompt.transform);
 
         Vector2 key = center + Vector2.left * (0.67f * unit);
-        AddRectangle("Key border", key, Vector2.one * (0.65f * unit), frameColor, sortingOrder + 3);
-        AddRectangle("Key face", key, Vector2.one * (0.55f * unit), dark, sortingOrder + 4);
+        AddRectangle("Key border", key, Vector2.one * (0.65f * unit), frameColor, sortingOrder + 3, desktopPrompt.transform);
+        AddRectangle("Key face", key, Vector2.one * (0.55f * unit), dark, sortingOrder + 4, desktopPrompt.transform);
         AddLabel(shrink ? "K" : "J", key, 5.5f * unit);
         AddLabel("or", center, 3.4f * unit);
-        MouseButtonHintIcon.Draw(visuals.transform, dashSprite, center + Vector2.right * (0.67f * unit),
+        MouseButtonHintIcon.Draw(desktopPrompt.transform, dashSprite, center + Vector2.right * (0.67f * unit),
             unit, shrink, frameColor, sortingOrder + 3);
 
         if (showHoldLabel)
         {
             Vector2 label = center + Vector2.up * (0.54f * unit);
-            AddRectangle("Hold background", label, new Vector2(1.02f, 0.36f) * unit, dark, sortingOrder + 2);
+            AddRectangle("Hold background", label, new Vector2(1.02f, 0.36f) * unit, dark, sortingOrder + 2, desktopPrompt.transform);
             AddLabel("HOLD", label, 3.4f * unit);
         }
     }
@@ -140,7 +153,7 @@ public class BoxGrowHint : MonoBehaviour
     private void AddLabel(string text, Vector2 center, float fontSize)
     {
         var label = new GameObject(text, typeof(TextMeshPro)).GetComponent<TextMeshPro>();
-        label.transform.SetParent(visuals.transform, false);
+        label.transform.SetParent(desktopPrompt.transform, false);
         label.transform.localPosition = center;
         label.text = text;
         label.fontSize = fontSize;
@@ -157,10 +170,10 @@ public class BoxGrowHint : MonoBehaviour
         segment.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
     }
 
-    private Transform AddRectangle(string objectName, Vector2 center, Vector2 size, Color color, int order)
+    private Transform AddRectangle(string objectName, Vector2 center, Vector2 size, Color color, int order, Transform parent = null)
     {
         GameObject rectangle = new GameObject(objectName);
-        rectangle.transform.SetParent(visuals.transform, false);
+        rectangle.transform.SetParent(parent != null ? parent : visuals.transform, false);
         rectangle.transform.localPosition = center;
         rectangle.transform.localScale = new Vector3(size.x, size.y, 1f);
         SpriteRenderer renderer = rectangle.AddComponent<SpriteRenderer>();
@@ -183,6 +196,22 @@ public class BoxGrowHint : MonoBehaviour
             visible = targetBody.BodyCollider.bounds.max.y >= frameBottom;
         }
 
+        if (visible && touchPrompt != null)
+        {
+            bool mobile = mobileControls != null && mobileControls.MobileMode;
+            if (mobile && (!visuals.activeSelf || !touchPrompt.gameObject.activeSelf))
+                holdDemoStart = Time.time;
+            if (desktopPrompt.activeSelf == mobile) desktopPrompt.SetActive(!mobile);
+            if (touchPrompt.gameObject.activeSelf != mobile) touchPrompt.gameObject.SetActive(mobile);
+            if (mobile)
+            {
+                // Press in, hold briefly, then release once when this lesson appears.
+                float age = Time.time - holdDemoStart;
+                float press = Mathf.SmoothStep(0f, 1f, age / 0.18f) *
+                    (1f - Mathf.SmoothStep(0f, 1f, (age - 0.9f) / 0.2f));
+                touchPrompt.localScale = Vector3.one * (1f - 0.18f * press);
+            }
+        }
         if (visuals != null && visuals.activeSelf != visible)
         {
             visuals.SetActive(visible);

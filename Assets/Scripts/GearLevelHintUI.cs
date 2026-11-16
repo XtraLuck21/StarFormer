@@ -33,6 +33,10 @@ public class GearLevelHintUI : MonoBehaviour
     private const string ButtonMessage =
         "Press the buttons, or have same-colored buttons collide, to set all the gears in motion.";
 
+    private enum Hint { None, Fan, Buttons }
+
+    private MobileFormControls mobileControls;
+    private MobileControlGraphic windIcon;
     private GameObject hudRoot;
     private TMP_Text hintText;
 
@@ -41,7 +45,7 @@ public class GearLevelHintUI : MonoBehaviour
     private bool fanHintPending;
     private bool anyButtonTriggered;
     private bool buttonHintPending;
-    private bool displaying;
+    private Hint currentHint;
 
     private float displayTimeRemaining;
     private float movedDistance;
@@ -62,6 +66,7 @@ public class GearLevelHintUI : MonoBehaviour
             return;
         }
 
+        mobileControls = playerController.GetComponent<MobileFormControls>();
         CreateHUD();
     }
 
@@ -112,6 +117,16 @@ public class GearLevelHintUI : MonoBehaviour
         rect.pivot = new Vector2(0.5f, 1f);
         rect.anchoredPosition = new Vector2(0f, topOffset);
         rect.sizeDelta = new Vector2(1500f, 110f);
+
+        var iconRect = (RectTransform)new GameObject("Wind Icon", typeof(RectTransform)).transform;
+        iconRect.SetParent(rect, false);
+        iconRect.pivot = new Vector2(0.5f, 0f);
+        iconRect.anchoredPosition = Vector2.up * (fontSize * 0.7f);
+        iconRect.sizeDelta = Vector2.one * (fontSize * 1.75f);
+        windIcon = iconRect.gameObject.AddComponent<MobileControlGraphic>();
+        windIcon.Icon = MobileControlGraphic.Symbol.Wind;
+        windIcon.raycastTarget = false;
+        windIcon.enabled = false;
     }
 
     private void LateUpdate()
@@ -132,22 +147,27 @@ public class GearLevelHintUI : MonoBehaviour
         }
 
         // Hide and pause hints while another checkpoint is current.
-        if (!targetCheckpointActive)
+        bool visible = targetCheckpointActive && !playerController.IsDead;
+        if (hudRoot.activeSelf != visible) hudRoot.SetActive(visible);
+        if (!visible)
         {
-            hintText.enabled = false;
             trackedBody = null;
             return;
         }
 
-        if (playerController.IsDead)
+        AdvanceHints();
+        bool touchFan = currentHint == Hint.Fan && mobileControls != null && mobileControls.MobileMode;
+        windIcon.enabled = touchFan;
+        hintText.text = currentHint switch
         {
-            hintText.enabled = false;
-            trackedBody = null;
-            return;
-        }
+            Hint.Fan => touchFan ? "Tap to blow the ball." : FanMessage,
+            Hint.Buttons => ButtonMessage,
+            _ => string.Empty
+        };
+    }
 
-        hintText.enabled = true;
-
+    private void AdvanceHints()
+    {
         // Pause the hint timers when gameplay is paused.
         if (Time.timeScale <= 0f)
             return;
@@ -163,26 +183,25 @@ public class GearLevelHintUI : MonoBehaviour
         DetectMovement(body);
 
         // Allow the current hint to finish before showing another.
-        if (displaying)
+        if (currentHint != Hint.None)
         {
             displayTimeRemaining -= Time.deltaTime;
 
             if (displayTimeRemaining > 0f)
                 return;
 
-            displaying = false;
-            hintText.text = string.Empty;
+            currentHint = Hint.None;
         }
 
         if (fanHintPending)
         {
             fanHintPending = false;
-            ShowHint(FanMessage);
+            ShowHint(Hint.Fan);
         }
         else if (buttonHintPending)
         {
             buttonHintPending = false;
-            ShowHint(ButtonMessage);
+            ShowHint(Hint.Buttons);
         }
     }
 
@@ -226,14 +245,10 @@ public class GearLevelHintUI : MonoBehaviour
         previousPosition = currentPosition;
     }
 
-    private void ShowHint(string message)
+    private void ShowHint(Hint hint)
     {
-        hintText.text = message;
-        hintText.alpha = 1f;
-        hintText.enabled = true;
-
+        currentHint = hint;
         displayTimeRemaining = hintDuration;
-        displaying = true;
     }
 
     // Connect each mechanism's On Pressed event to this method.
@@ -258,8 +273,7 @@ public class GearLevelHintUI : MonoBehaviour
 
     private void OnDisable()
     {
-        if (hintText != null)
-            hintText.enabled = false;
+        if (hudRoot != null) hudRoot.SetActive(false);
     }
 
     private void OnDestroy()

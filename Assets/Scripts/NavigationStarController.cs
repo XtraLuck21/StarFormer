@@ -15,6 +15,10 @@ public class NavigationStarController : MonoBehaviour
     [SerializeField] private float jumpSpeed = 13.2f;
     [SerializeField] private float gravityScale = 3.4f;
 
+    [SerializeField] private GameObject keyboardHints;
+    [SerializeField] private Transform touchHintAnchor;
+    private MobileFormControls mobileControls;
+    private GameObject touchHints;
     private Rigidbody2D body;
     private CapsuleCollider2D shape;
     private readonly RaycastHit2D[] groundHits = new RaycastHit2D[8];
@@ -50,6 +54,7 @@ public class NavigationStarController : MonoBehaviour
 
     private void Awake()
     {
+        mobileControls = GetComponent<MobileFormControls>();
         tint = new MaterialPropertyBlock();
         body = GetComponent<Rigidbody2D>();
         shape = GetComponent<CapsuleCollider2D>();
@@ -65,20 +70,66 @@ public class NavigationStarController : MonoBehaviour
 
     private void Update()
     {
+        bool touchMode = mobileControls != null && mobileControls.MobileMode;
+        UpdateMovementHints(touchMode);
         if (IsPreviewing || ControlsBlocked) return;
         var keyboard = Keyboard.current;
         horizontal = keyboard == null ? 0f :
             (keyboard.dKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed ? 1f : 0f);
-        if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame)
-            jumpUntil = Time.time + .12f;
+        if (touchMode)
+            horizontal = Mathf.Clamp(horizontal + mobileControls.Movement.x, -1f, 1f);
+        if (keyboard != null && keyboard.spaceKey.wasPressedThisFrame) RequestJump();
+
         var mouse = Mouse.current;
-        if (mouse != null && mouse.leftButton.wasPressedThisFrame && Camera.main != null && !PointerIsOverUI(mouse.position.ReadValue()))
+        if (!touchMode && mouse != null && mouse.leftButton.wasPressedThisFrame && !PointerIsOverUI(mouse.position.ReadValue()))
+            ActivateEntranceAt(mouse.position.ReadValue());
+    }
+
+    internal void RequestJump()
+    {
+        if (!IsPreviewing && !ControlsBlocked && isActiveAndEnabled)
+            jumpUntil = Time.time + .12f;
+    }
+
+    internal void ActivateEntranceAt(Vector2 screenPosition)
+    {
+        if (!isActiveAndEnabled || IsPreviewing || ControlsBlocked || Camera.main == null) return;
+        Vector2 point = Camera.main.ScreenToWorldPoint(screenPosition);
+        Physics2D.OverlapPoint(point)?.GetComponent<NavigationEntrance>()?.ActivateFromPointer(this, point);
+    }
+
+    private void UpdateMovementHints(bool touchMode)
+    {
+        if (keyboardHints == null || touchHintAnchor == null) return;
+        if (touchMode && touchHints == null)
         {
-            Vector2 point = Camera.main.ScreenToWorldPoint(mouse.position.ReadValue());
-            var hit = Physics2D.OverlapPoint(point);
-            if (hit != null)
-                hit.GetComponent<NavigationEntrance>()?.ActivateFromPointer(this, point);
+            touchHints = new GameObject("Touch movement hints");
+            touchHints.transform.SetParent(keyboardHints.transform.parent, false);
+            touchHints.transform.position = touchHintAnchor.position;
+            const float moveX = -0.78f;
+            const float jumpX = 0.78f;
+            MobileControlGraphic.CreateStickHint(touchHints.transform, new Vector2(moveX, 1.15f), 30);
+            MobileControlGraphic.CreateWorldHint(touchHints.transform, MobileControlGraphic.Symbol.Jump,
+                new Vector2(jumpX, 1.15f), 0.88f, 30);
+            AddTouchHintLabel("Move", moveX);
+            AddTouchHintLabel("Jump", jumpX);
         }
+        if (keyboardHints.activeSelf == touchMode) keyboardHints.SetActive(!touchMode);
+        if (touchHints != null && touchHints.activeSelf != touchMode) touchHints.SetActive(touchMode);
+    }
+
+    private void AddTouchHintLabel(string action, float x)
+    {
+        var label = new GameObject(action, typeof(TextMeshPro)).GetComponent<TextMeshPro>();
+        label.transform.SetParent(touchHints.transform, false);
+        label.rectTransform.localPosition = new Vector3(x, 0.42f, 0f);
+        label.rectTransform.sizeDelta = new Vector2(1.5f, 0.6f);
+        label.fontSize = 3.8f;
+        label.alignment = TextAlignmentOptions.Center;
+        label.color = new Color32(32, 55, 72, 255);
+        label.text = action;
+        label.renderer.sortingOrder = 30;
+        label.raycastTarget = false;
     }
 
     private void FixedUpdate()

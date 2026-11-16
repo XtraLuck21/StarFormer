@@ -7367,7 +7367,7 @@ GameObject:
   - component: {fileID: 760008692}
   - component: {fileID: 760008691}
   - component: {fileID: 760008690}
-  - component: {fileID: 760008694}
+  - component: {fileID: 760008695}
   m_Layer: 0
   m_Name: 09_NavigationStar
   m_TagString: Untagged
@@ -7375,7 +7375,7 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &760008694
+--- !u!114 &760008695
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7384,11 +7384,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 760008689}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7b7a8025f7fd47cda0f7eca0a3971600, type: 3}
+  m_Script: {fileID: 11500000, guid: 474f7a8b6b3a4999ba869f3392ff10d1, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::FormControlsHUD
-  formBook: {fileID: 11400000, guid: 7ad88915ee1ed4c7987d980d9139f10d, type: 2}
-  touchControls: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::MobileFormControls
+  showMode: 0
 --- !u!114 &760008690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7401,6 +7400,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f96897f7b76846238879ed1d6f157eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NavigationStarController
+  keyboardHints: {fileID: 743797376}
+  touchHintAnchor: {fileID: 2036491381}
   starVisual: {fileID: 993192556}
   enteringOverlay: {fileID: 332606244}
   enteringLabel: {fileID: 937025601}
@@ -7936,6 +7937,18 @@ PrefabInstance:
     - target: {fileID: 3179682215277756039, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6719492656174699660, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6719492656174699660, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_Camera
+      value:
+      objectReference: {fileID: 1829855428}
+    - target: {fileID: 6719492656174699660, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
+      propertyPath: m_PlaneDistance
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6715123736558516478, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
       propertyPath: m_Name
@@ -14769,6 +14782,7 @@ GameObject:
   - component: {fileID: 1829855429}
   - component: {fileID: 1829855428}
   - component: {fileID: 1829855430}
+  - component: {fileID: 1829855431}
   m_Layer: 0
   m_Name: 00_Camera
   m_TagString: MainCamera
@@ -14842,6 +14856,69 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1829855431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1829855427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef0668dd004a420fb5caef66be2d6822, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::NavigationRouteLines
+  strokes:
+  - {fileID: 66403153}
+  - {fileID: 68530499}
+  - {fileID: 108816998}
+  - {fileID: 161485132}
+  - {fileID: 324299876}
+  - {fileID: 360880694}
+  - {fileID: 387759778}
+  - {fileID: 423783416}
+  - {fileID: 513963825}
+  - {fileID: 548047114}
+  - {fileID: 558999190}
+  - {fileID: 561706011}
+  - {fileID: 566129264}
+  - {fileID: 660802792}
+  - {fileID: 667791854}
+  - {fileID: 688516907}
+  - {fileID: 692399561}
+  - {fileID: 697457649}
+  - {fileID: 708427682}
+  - {fileID: 715933500}
+  - {fileID: 728575506}
+  - {fileID: 800867645}
+  - {fileID: 827465231}
+  - {fileID: 931557389}
+  - {fileID: 987450857}
+  - {fileID: 1157244713}
+  - {fileID: 1203219957}
+  - {fileID: 1231864689}
+  - {fileID: 1281186271}
+  - {fileID: 1292841337}
+  - {fileID: 1348197830}
+  - {fileID: 1352364108}
+  - {fileID: 1397421036}
+  - {fileID: 1451191873}
+  - {fileID: 1453590247}
+  - {fileID: 1509293955}
+  - {fileID: 1603352469}
+  - {fileID: 1644393112}
+  - {fileID: 1657733383}
+  - {fileID: 1735812637}
+  - {fileID: 1766668995}
+  - {fileID: 1804694412}
+  - {fileID: 1871931622}
+  - {fileID: 1879282185}
+  - {fileID: 1897439753}
+  - {fileID: 1968821521}
+  - {fileID: 2052998758}
+  - {fileID: 2105578715}
+  - {fileID: 2140284920}
+  strokeWidth: 0.035
 --- !u!114 &1829855430
 MonoBehaviour:
   m_ObjectHideFlags: 0

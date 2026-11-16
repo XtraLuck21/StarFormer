@@ -46,7 +46,7 @@ public class FanBlower : MonoBehaviour
             return;
         }
 
-        // Read the controller's HorizontalInput, combining A/D and touch Left/Right.
+        // Read the controller's HorizontalInput, combining A/D and the horizontal joystick axis.
         // Avoid separate keyboard polling so facing still works when Keyboard.current is null.
         PlayerPossessionController owner = possessable.Owner;
 

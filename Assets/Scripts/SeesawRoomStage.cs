@@ -227,7 +227,8 @@ public sealed class SeesawRoomStage : MonoBehaviour
 
     public void GetCameraFrame(Camera camera, float z, out Vector3 position, out float size)
     {
-        float aspect = Mathf.Max(.1f, camera.aspect);
+        // Preserve the vertical view of the underpass when browser toolbars make the canvas wide.
+        float aspect = Mathf.Clamp(camera.aspect, .1f, 16f / 9f);
         position = new Vector3(fullView.center.x, fullView.center.y, z);
         size = Mathf.Max(fullView.height * .5f, fullView.width / (2f * aspect));
     }
