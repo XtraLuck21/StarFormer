@@ -6,6 +6,52 @@
   const frame = document.getElementById("game-frame");
   const canvas = document.getElementById("unity-canvas");
   canvas.addEventListener("contextmenu", event => event.preventDefault());
+
+  // Unity receives TouchEvents on the canvas. A drag can continue into the page's
+  // letterbox while its finger is still down, even when no UI release follows.
+  const canvasTouches = new Map();
+  function cancelCanvasTouches(ended, remaining) {
+    if (!ended.length) return;
+    const cancel = new Event("touchcancel", { bubbles: true, cancelable: true });
+    Object.assign(cancel, {
+      changedTouches: ended,
+      touches: remaining,
+      targetTouches: remaining.filter(touch => touch.target === canvas)
+    });
+    canvas.dispatchEvent(cancel);
+  }
+
+  function trackCanvasTouches(event) {
+    if (!event.isTrusted) return;
+    const live = Array.from(event.touches);
+    const bounds = canvas.getBoundingClientRect();
+    const ended = [];
+    for (const touch of event.changedTouches) {
+      if (event.type === "touchstart" && touch.target === canvas) {
+        canvasTouches.set(touch.identifier, touch);
+      } else if (canvasTouches.has(touch.identifier)) {
+        if (event.type === "touchmove") canvasTouches.set(touch.identifier, touch);
+        else {
+          canvasTouches.delete(touch.identifier);
+          if (event.target !== canvas) ended.push(touch);
+        }
+      }
+    }
+    for (const [id, touch] of canvasTouches) {
+      if (!live.some(finger => finger.identifier === id) ||
+          touch.clientX <= bounds.left || touch.clientX >= bounds.right ||
+          touch.clientY <= bounds.top || touch.clientY >= bounds.bottom) {
+        canvasTouches.delete(id);
+        ended.push(touch);
+      }
+    }
+    if (ended.length) cancelCanvasTouches(ended, live.filter(touch =>
+      !ended.some(finger => finger.identifier === touch.identifier)));
+  }
+
+  for (const type of ["touchstart", "touchmove", "touchend", "touchcancel"])
+    window.addEventListener(type, trackCanvasTouches, { capture: true, passive: true });
+
   const launch = document.getElementById("launch");
   const progress = document.getElementById("progress");
   const status = document.getElementById("load-status");
@@ -35,8 +81,9 @@
     const style = getComputedStyle(viewport);
     const width = viewport.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
     const height = viewport.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
-    const cssWidth = Math.max(1, Math.min(width, height * 16 / 9));
-    const cssHeight = cssWidth * 9 / 16;
+    const landscapeTouch = touchDevice && width >= height;
+    const cssWidth = Math.max(1, landscapeTouch ? width : Math.min(width, height * 16 / 9));
+    const cssHeight = landscapeTouch ? Math.max(1, height) : cssWidth * 9 / 16;
     frame.style.width = `${cssWidth}px`;
     frame.style.height = `${cssHeight}px`;
 
@@ -44,7 +91,7 @@
     const density = Math.min(window.devicePixelRatio || 1, touchDevice ? 1.5 : 2);
     const maxWidth = touchDevice ? 1920 : 2560;
     const renderWidth = Math.max(16, Math.round(Math.min(cssWidth * density, maxWidth) / 16) * 16);
-    const renderHeight = renderWidth * 9 / 16;
+    const renderHeight = Math.max(1, Math.round(renderWidth * cssHeight / cssWidth));
     if (canvas.width !== renderWidth) canvas.width = renderWidth;
     if (canvas.height !== renderHeight) canvas.height = renderHeight;
     rotateHint.hidden = !started || !touchDevice || width >= height;
@@ -109,10 +156,10 @@
     playWindowed.disabled = true;
   }
 
-  playFullscreen.hidden = !canFullscreen;
-  if (!canFullscreen) playWindowed.textContent = "Play";
+  playFullscreen.hidden = touchDevice || !canFullscreen;
+  if (touchDevice || !canFullscreen) playWindowed.textContent = "Play";
   playFullscreen.addEventListener("click", () => start(true));
-  playWindowed.addEventListener("click", () => start(false));
+  playWindowed.addEventListener("click", () => start(touchDevice && canFullscreen));
   fullscreen.addEventListener("click", () => {
     if (isFullscreen()) {
       const exit = document.exitFullscreen || document.webkitExitFullscreen;
