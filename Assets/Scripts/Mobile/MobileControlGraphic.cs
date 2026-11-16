@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
 {
-    internal enum Symbol { Base, Thumb, Jump, Grow, Shrink }
+    internal enum Symbol { Base, Thumb, Jump, Grow, Shrink, Pop }
     internal Symbol Icon { get; set; }
     private static readonly Color32 Navy = new(21, 40, 57, 200);
     private static readonly Color32 Gold = new(255, 193, 63, 245);
@@ -108,21 +108,38 @@ public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
             if (directional) Arrow(new Vector2(-0.38f, 0), new Vector2(0.4f, 0), 0.28f);
             return;
         }
-        if (Icon == Symbol.Jump)
+        void Star(Vector2 star, float radius)
         {
-            Vector2 star = new(-0.18f, -0.18f);
             for (int j = 0; j < 10; j++)
             {
                 float angle = Mathf.PI * (0.5f + j / 5f);
                 bool outerPoint = j % 2 == 0;
-                Vector2 a = star + Radial(angle) * (outerPoint ? 0.4f : 0.18f);
-                Vector2 b = star + Radial(angle + Mathf.PI / 5f) * (outerPoint ? 0.18f : 0.4f);
+                Vector2 a = star + Radial(angle) * (outerPoint ? radius : radius * 0.45f);
+                Vector2 b = star + Radial(angle + Mathf.PI / 5f) * (outerPoint ? radius * 0.45f : radius);
                 int i = mesh.currentVertCount;
                 Vertex(star, Ink);
                 Vertex(a, Ink);
                 Vertex(b, Ink);
                 mesh.AddTriangle(i, i + 1, i + 2);
             }
+        }
+
+        if (Icon == Symbol.Pop)
+        {
+            Vector2 bubble = new(-0.12f, -0.1f);
+            // Leave a gap in the bubble rim where Star emerges.
+            for (int i = 0; i < 32; i++)
+            {
+                float angle = Mathf.Deg2Rad * (77f + i * 9.5f);
+                Line(bubble + Radial(angle) * 0.44f,
+                    bubble + Radial(angle + Mathf.Deg2Rad * 9.5f) * 0.44f, 0.07f, Ink);
+            }
+            Star(new Vector2(0.32f, 0.36f), 0.29f);
+            return;
+        }
+        if (Icon == Symbol.Jump)
+        {
+            Star(new Vector2(-0.18f, -0.18f), 0.4f);
             Arrow(new Vector2(0.08f, 0.02f), new Vector2(0.37f, 0.52f), 0.18f);
             return;
         }

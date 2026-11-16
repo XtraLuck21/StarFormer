@@ -535,7 +535,9 @@ public class PlayerPossessionController : MonoBehaviour
         // Combine equivalent bindings before subtracting opposing directions.
         if (touchMode)
         {
-            horizontalInput += mobileControls.Horizontal;
+            horizontalInput += mobileControls.Movement.x;
+            if (currentBody != null && currentBody.Form == BodyForm.Bubble && currentBody.IsInWater)
+                verticalInput += mobileControls.Movement.y;
             upHeld |= isBox && mobileControls.GrowHeld;
             downHeld |= isBox && mobileControls.ShrinkHeld;
         }

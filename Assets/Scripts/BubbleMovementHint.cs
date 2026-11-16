@@ -90,7 +90,7 @@ public class BubbleMovementHint : MonoBehaviour
     private Sprite strokeSprite;
     private bool rebuildRequested;
     private MobileFormControls mobileControls;
-    private bool mobileStarLesson;
+    private bool mobileLesson;
     private bool highlightedJump;
     private float blockedKeyHintRemaining;
     private PossessableBody reminderBody;
@@ -106,13 +106,13 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void Update()
     {
-        if (rebuildRequested && playerController != null && (mode == HintMode.StarMove || mode == HintMode.StarJump))
+        if (rebuildRequested && playerController != null)
             mobileControls = playerController.GetComponent<MobileFormControls>();
         bool mobile = Application.IsPlaying(gameObject) && mobileControls != null && mobileControls.MobileMode &&
-            (mode == HintMode.StarMove || mode == HintMode.StarJump);
-        if (rebuildRequested || mobile != mobileStarLesson)
+            mode is HintMode.StarMove or HintMode.StarJump or HintMode.BubbleIntroduction or HintMode.Water or HintMode.ExitBubble;
+        if (rebuildRequested || mobile != mobileLesson)
         {
-            mobileStarLesson = mobile;
+            mobileLesson = mobile;
             highlightedJump = false;
             rebuildRequested = false;
             BuildVisuals();
@@ -197,8 +197,9 @@ public class BubbleMovementHint : MonoBehaviour
             else
             {
                 bool starMode = mode == HintMode.StarMove || mode == HintMode.StarJump;
-                // Pop guidance applies to whichever Bubble the player currently possesses.
-                PossessableBody body = mode == HintMode.ExitBubble && playerController != null
+                // The spare Bubble can use the same swimming and exit lessons.
+                bool useCurrentBubble = mode == HintMode.ExitBubble || (mobileLesson && !starMode);
+                PossessableBody body = useCurrentBubble && playerController != null
                     ? playerController.CurrentBody : targetBody;
                 visible = playerController != null && body != null &&
                     body.Form == (starMode ? BodyForm.Star : BodyForm.Bubble) &&
@@ -207,9 +208,9 @@ public class BubbleMovementHint : MonoBehaviour
                     (starMode || body.IsInWater == (mode == HintMode.Water)) && IsInsideArea(body);
             }
         }
-        if (mobileStarLesson)
+        if (mobileLesson && (mode == HintMode.StarMove || mode == HintMode.StarJump))
         {
-            // The left touch area already teaches movement and retires its cue after a swipe.
+            // The left touch area already teaches Star movement.
             visible &= mode == HintMode.StarJump && Time.timeScale > 0f;
             if (visible && !highlightedJump)
             {
@@ -551,7 +552,7 @@ public class BubbleMovementHint : MonoBehaviour
             Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
             controlVisualParent = null;
         }
-        else if (mode == HintMode.Air || (mode == HintMode.StarMove && !mobileStarLesson))
+        else if (mode == HintMode.Air || (mode == HintMode.StarMove && !mobileLesson))
         {
             AddKey('A', new Vector2(-0.5f, 0));
             AddKey('D', new Vector2(0.5f, 0));
@@ -562,6 +563,11 @@ public class BubbleMovementHint : MonoBehaviour
         {
             if (!string.IsNullOrWhiteSpace(waterDescription))
                 AddHintText("WaterDescription", waterDescription, new Vector2(0, -1.1f), new Vector2(3f, 0.8f));
+            if (mobileLesson)
+            {
+                AddStickDiagram(true);
+                return;
+            }
             AddKey('W', new Vector2(0, 0.65f));
             AddKey('A', new Vector2(-0.65f, 0));
             AddKey('S', Vector2.zero);
@@ -573,7 +579,7 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else if (mode == HintMode.StarJump)
         {
-            if (mobileStarLesson)
+            if (mobileLesson)
                 MobileControlGraphic.CreateWorldHint(visuals.transform, MobileControlGraphic.Symbol.Jump,
                     Vector2.down * 0.12f, 0.9f, sortingOrder + 2);
             else
@@ -603,20 +609,28 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else if (mode == HintMode.ExitBubble)
         {
-            var touchControls = FindFirstObjectByType<MobileControlsUI>();
-            bool useTouch = touchControls != null && touchControls.ResolveShouldShow();
-            float width = useTouch ? 1.4f : 2.18f;
-            Rectangle(Vector2.zero, new Vector2(width, 0.78f), keyBackground, sortingOrder);
-            if (useTouch)
+            if (mobileLesson)
             {
-                AddHintText("Pop input", "Tap Pop", Vector2.zero, new Vector2(width, 0.58f));
+                MobileControlGraphic.CreateWorldHint(visuals.transform, MobileControlGraphic.Symbol.Pop,
+                    Vector2.zero, 0.92f, sortingOrder + 2);
             }
             else
             {
-                AddKey('Q', Vector2.left * 0.67f);
-                AddHintText("Input separator", "or", Vector2.zero, new Vector2(0.54f, 0.58f));
-                MouseButtonHintIcon.Draw(visuals.transform, strokeSprite, Vector2.right * 0.67f,
-                    1f, true, inkColor, sortingOrder + 2);
+                var touchControls = FindFirstObjectByType<MobileControlsUI>();
+                bool useTouch = touchControls != null && touchControls.ResolveShouldShow();
+                float width = useTouch ? 1.4f : 2.18f;
+                Rectangle(Vector2.zero, new Vector2(width, 0.78f), keyBackground, sortingOrder);
+                if (useTouch)
+                {
+                    AddHintText("Pop input", "Tap Pop", Vector2.zero, new Vector2(width, 0.58f));
+                }
+                else
+                {
+                    AddKey('Q', Vector2.left * 0.67f);
+                    AddHintText("Input separator", "or", Vector2.zero, new Vector2(0.54f, 0.58f));
+                    MouseButtonHintIcon.Draw(visuals.transform, strokeSprite, Vector2.right * 0.67f,
+                        1f, true, inkColor, sortingOrder + 2);
+                }
             }
             if (!string.IsNullOrWhiteSpace(popDescription))
                 AddHintText("PopDescription", popDescription, new Vector2(0, -0.8f), new Vector2(3f, 0.8f), popDescriptionColor);
@@ -631,10 +645,32 @@ public class BubbleMovementHint : MonoBehaviour
         return group.transform;
     }
 
+    private void AddStickDiagram(bool swimming)
+    {
+        Vector2 center = !swimming && showIntroductionText ? Vector2.down * 0.2f : Vector2.zero;
+        var pad = MobileControlGraphic.CreateWorldHint(visuals.transform, MobileControlGraphic.Symbol.Base,
+            center, 0.88f, sortingOrder + 2);
+        var knob = (RectTransform)new GameObject("Stick Thumb", typeof(RectTransform)).transform;
+        knob.SetParent(pad, false);
+        knob.sizeDelta = Vector2.one * 0.45f;
+        var graphic = knob.gameObject.AddComponent<MobileControlGraphic>();
+        graphic.Icon = MobileControlGraphic.Symbol.Thumb;
+        graphic.raycastTarget = false;
+        int count = swimming ? 8 : 2;
+        for (int i = 0; i < count; i++)
+        {
+            float angle = 2f * Mathf.PI * i / count;
+            Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+            Arrow(center + direction * 0.5f, center + direction * 0.8f);
+        }
+    }
+
     private void BuildBubbleIntroduction()
     {
         bool spiderIntroduction = mode == HintMode.SpiderIntroduction;
-        if (!spiderIntroduction)
+        if (mobileLesson && !spiderIntroduction)
+            AddStickDiagram(false);
+        else if (!spiderIntroduction)
         {
             AddKey('A', new Vector2(-0.5f, 0));
             AddKey('D', new Vector2(0.5f, 0));

@@ -23,12 +23,13 @@ public sealed class MobileFormControls : MonoBehaviour
 
     private MobileTouchTarget grow;
     private MobileTouchTarget shrink;
+    private MobileTouchTarget pop;
     private PossessableBody displayedBody;
     private Vector2 origin;
     private static bool showedStickDemo;
     private float demoStart = float.NegativeInfinity;
 
-    internal float Horizontal { get; private set; }
+    internal Vector2 Movement { get; private set; }
     internal bool GrowHeld => grow != null && grow.Held && displayedBody == player.CurrentBody;
     internal bool ShrinkHeld => shrink != null && shrink.Held && displayedBody == player.CurrentBody;
 
@@ -42,7 +43,7 @@ public sealed class MobileFormControls : MonoBehaviour
         var body = player.CurrentBody;
         bool visible = MobileMode && player.isActiveAndEnabled && !player.IsDead &&
             !player.IsRestarting && Time.timeScale > 0f && body != null && body.isActiveAndEnabled &&
-            (body.Form == BodyForm.Star || body.Form == BodyForm.Box);
+            (body.Form is BodyForm.Star or BodyForm.Box or BodyForm.Bubble);
         if (!visible)
         {
             Hide();
@@ -61,6 +62,13 @@ public sealed class MobileFormControls : MonoBehaviour
             jump.Cancel();
             grow.Cancel();
             shrink.Cancel();
+            if (body.Form == BodyForm.Bubble && pop == null)
+                pop = Button("Pop", MobileControlGraphic.Symbol.Pop, true);
+            if (pop != null)
+            {
+                pop.Cancel();
+                pop.gameObject.SetActive(body.Form == BodyForm.Bubble);
+            }
             displayedBody = body;
             jump.gameObject.SetActive(body.Form == BodyForm.Star);
             grow.gameObject.SetActive(body.Form == BodyForm.Box);
@@ -153,7 +161,10 @@ public sealed class MobileFormControls : MonoBehaviour
 
     internal void PressAction(MobileTouchTarget target)
     {
-        if (target == jump && displayedBody == player.CurrentBody && displayedBody.Form == BodyForm.Star)
+        if (displayedBody == null || displayedBody != player.CurrentBody) return;
+        if (target == pop && displayedBody.Form == BodyForm.Bubble)
+            player.RequestRelease();
+        else if (target == jump && displayedBody.Form == BodyForm.Star)
             player.PressTouchAction();
     }
 
@@ -178,13 +189,14 @@ public sealed class MobileFormControls : MonoBehaviour
         if (delta.sqrMagnitude >= deadZone * deadZone)
             thumb.localRotation = Quaternion.Euler(0, 0, Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg);
 
-        // IntroBox's Star and Box walk horizontally. Jump and resize have their own buttons.
-        Horizontal = Mathf.Sign(delta.x) * Mathf.InverseLerp(deadZone, 1f, Mathf.Abs(delta.x));
+        Movement = new Vector2(
+            Mathf.Sign(delta.x) * Mathf.InverseLerp(deadZone, 1f, Mathf.Abs(delta.x)),
+            Mathf.Sign(delta.y) * Mathf.InverseLerp(deadZone, 1f, Mathf.Abs(delta.y)));
     }
 
     internal void EndStick()
     {
-        Horizontal = 0f;
+        Movement = Vector2.zero;
         if (stick == null || thumb == null) return;
         stick.anchorMin = stick.anchorMax = Vector2.zero;
         stick.anchoredPosition = RestPosition;
