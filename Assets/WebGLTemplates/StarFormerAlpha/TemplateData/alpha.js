@@ -5,6 +5,7 @@
   const viewport = document.getElementById("viewport");
   const frame = document.getElementById("game-frame");
   const canvas = document.getElementById("unity-canvas");
+  canvas.addEventListener("contextmenu", event => event.preventDefault());
   const launch = document.getElementById("launch");
   const progress = document.getElementById("progress");
   const status = document.getElementById("load-status");
