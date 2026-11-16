@@ -69,7 +69,9 @@ public class MobileControlsUI : MonoBehaviour
         }
     }
 
-    internal bool ResolveShouldShow()
+    internal bool ResolveShouldShow() => ResolveShouldShow(showMode);
+
+    internal static bool ResolveShouldShow(ShowMode showMode)
     {
         switch (showMode)
         {

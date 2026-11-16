@@ -16,6 +16,7 @@ public sealed class FormControlsHUD : MonoBehaviour
     private const float BindingX = 157f;
     private const float RowHeight = 30f;
 
+    private MobileFormControls mobileControls;
     private PlayerPossessionController player;
     private NavigationStarController navigation;
     private RectTransform bar;
@@ -31,6 +32,7 @@ public sealed class FormControlsHUD : MonoBehaviour
     private void Awake()
     {
         player = GetComponent<PlayerPossessionController>();
+        mobileControls = GetComponent<MobileFormControls>();
         navigation = GetComponent<NavigationStarController>();
         var hud = new GameObject("Form Controls HUD", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
         hud.transform.SetParent(transform, false);
@@ -70,7 +72,8 @@ public sealed class FormControlsHUD : MonoBehaviour
             return;
         }
         var body = player.CurrentBody;
-        bool visible = body != null && body.isActiveAndEnabled && body.Form != BodyForm.gravityBall && !player.IsDead && Time.timeScale > 0f;
+        bool visible = (mobileControls == null || !mobileControls.MobileMode) &&
+            body != null && body.isActiveAndEnabled && body.Form != BodyForm.gravityBall && !player.IsDead && Time.timeScale > 0f;
         if (bar.gameObject.activeSelf != visible) bar.gameObject.SetActive(visible);
         if (!visible) return;
 

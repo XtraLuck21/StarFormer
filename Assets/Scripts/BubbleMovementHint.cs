@@ -89,6 +89,9 @@ public class BubbleMovementHint : MonoBehaviour
     private GameObject visuals;
     private Sprite strokeSprite;
     private bool rebuildRequested;
+    private MobileFormControls mobileControls;
+    private bool mobileStarLesson;
+    private bool highlightedJump;
     private float blockedKeyHintRemaining;
     private PossessableBody reminderBody;
     private TextMeshPro introductionTitle;
@@ -103,8 +106,14 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void Update()
     {
-        if (rebuildRequested)
+        if (rebuildRequested && playerController != null && (mode == HintMode.StarMove || mode == HintMode.StarJump))
+            mobileControls = playerController.GetComponent<MobileFormControls>();
+        bool mobile = Application.IsPlaying(gameObject) && mobileControls != null && mobileControls.MobileMode &&
+            (mode == HintMode.StarMove || mode == HintMode.StarJump);
+        if (rebuildRequested || mobile != mobileStarLesson)
         {
+            mobileStarLesson = mobile;
+            highlightedJump = false;
             rebuildRequested = false;
             BuildVisuals();
         }
@@ -196,6 +205,16 @@ public class BubbleMovementHint : MonoBehaviour
                     body.isActiveAndEnabled && !playerController.IsDead &&
                     playerController.CurrentBody == body &&
                     (starMode || body.IsInWater == (mode == HintMode.Water)) && IsInsideArea(body);
+            }
+        }
+        if (mobileStarLesson)
+        {
+            // The left touch area already teaches movement and retires its cue after a swipe.
+            visible &= mode == HintMode.StarJump && Time.timeScale > 0f;
+            if (visible && !highlightedJump)
+            {
+                mobileControls.HighlightJumpLesson();
+                highlightedJump = true;
             }
         }
         if (spikeWarningText != null)
@@ -532,7 +551,7 @@ public class BubbleMovementHint : MonoBehaviour
             Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
             controlVisualParent = null;
         }
-        else if (mode == HintMode.Air || mode == HintMode.StarMove)
+        else if (mode == HintMode.Air || (mode == HintMode.StarMove && !mobileStarLesson))
         {
             AddKey('A', new Vector2(-0.5f, 0));
             AddKey('D', new Vector2(0.5f, 0));
@@ -554,10 +573,16 @@ public class BubbleMovementHint : MonoBehaviour
         }
         else if (mode == HintMode.StarJump)
         {
-            AddKeyFrame(Vector2.zero, new Vector2(1.9f, 0.5f));
-            const string label = "SPACE";
-            for (int i = 0; i < label.Length; i++)
-                AddLetter(label[i], new Vector2((i - 2) * 0.35f, 0));
+            if (mobileStarLesson)
+                MobileControlGraphic.CreateWorldHint(visuals.transform, MobileControlGraphic.Symbol.Jump,
+                    Vector2.down * 0.12f, 0.9f, sortingOrder + 2);
+            else
+            {
+                AddKeyFrame(Vector2.zero, new Vector2(1.9f, 0.5f));
+                const string label = "SPACE";
+                for (int i = 0; i < label.Length; i++)
+                    AddLetter(label[i], new Vector2((i - 2) * 0.35f, 0));
+            }
 
             // A short jump arc, drawn as strokes rather than font-dependent symbols.
             Vector2 previous = new Vector2(-0.85f, 0.4f);

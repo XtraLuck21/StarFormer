@@ -26,6 +26,7 @@ public class PlayerPossessionController : MonoBehaviour
     [SerializeField, Min(.05f)] private float quickRespawnSeconds = .18f;
 
     private readonly List<RaycastResult> mouseHits = new List<RaycastResult>();
+    private MobileFormControls mobileControls;
     private bool mouseGrowHeld;
     private bool mouseShrinkHeld;
     private RestartMenuUI restartMenu;
@@ -345,6 +346,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void Start()
     {
+        mobileControls = GetComponent<MobileFormControls>();
         if (initialBody == null ||
             !initialBody.isActiveAndEnabled ||
             !initialBody.IsReady)
@@ -446,7 +448,8 @@ public class PlayerPossessionController : MonoBehaviour
         Keyboard keyboard = Keyboard.current;
 
         bool isBox = currentBody != null && currentBody.Form == BodyForm.Box;
-        UpdateBoxMouseInput(isBox);
+        bool touchMode = mobileControls != null && mobileControls.MobileMode;
+        UpdateBoxMouseInput(isBox && !touchMode);
 
         if (restartMenu != null && restartMenu.IsOpen)
         {
@@ -512,7 +515,7 @@ public class PlayerPossessionController : MonoBehaviour
             }
         }
 
-        Mouse mouse = Mouse.current;
+        Mouse mouse = touchMode ? null : Mouse.current;
         bool isFan = currentBody != null && currentBody.Form == BodyForm.Fan;
         if (isFan && ((keyboard != null && keyboard.fKey.wasPressedThisFrame) ||
             (mouse != null && mouse.leftButton.wasPressedThisFrame && IsGameplayMousePress(mouse))))
@@ -530,6 +533,13 @@ public class PlayerPossessionController : MonoBehaviour
         bool downHeld = keyboard != null && (isBox ? keyboard.kKey : keyboard.sKey).isPressed;
 
         // Combine equivalent bindings before subtracting opposing directions.
+        if (touchMode)
+        {
+            horizontalInput += mobileControls.Horizontal;
+            upHeld |= isBox && mobileControls.GrowHeld;
+            downHeld |= isBox && mobileControls.ShrinkHeld;
+        }
+
         if (touchLeftHeld)
         {
             horizontalInput -= 1f;
