@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.UI;
 
 // Each target owns one finger, so releasing an action never cancels the stick.
 public sealed class MobileTouchTarget : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
@@ -8,6 +10,9 @@ public sealed class MobileTouchTarget : MonoBehaviour, IPointerDownHandler, IPoi
     private MobileFormControls controls;
     private bool isStick;
     private int? pointer;
+    private Touchscreen stickScreen;
+    private int stickTouchId;
+    private Mouse stickMouse;
     public bool Held => pointer.HasValue;
 
     internal void Initialize(MobileFormControls owner, bool movement)
@@ -20,10 +25,19 @@ public sealed class MobileTouchTarget : MonoBehaviour, IPointerDownHandler, IPoi
 
     public void OnPointerDown(PointerEventData e)
     {
-        if (Held || e.button != PointerEventData.InputButton.Left || Time.timeScale <= 0f) return;
+        if (e.button != PointerEventData.InputButton.Left || Time.timeScale <= 0f) return;
+        var input = e as ExtendedPointerEventData;
+        var screen = input?.device as Touchscreen;
+        // A fresh thumb press can reclaim the stick after an interrupted browser gesture.
+        if (Held && (!isStick || (screen == null && pointer != e.pointerId))) return;
         pointer = e.pointerId;
         if (isStick)
+        {
+            stickScreen = screen;
+            stickTouchId = input?.touchId ?? 0;
+            stickMouse = input?.device as Mouse;
             controls.StartStick(LocalPoint(e));
+        }
         else
         {
             transform.localScale = Vector3.one * 0.94f;
@@ -34,6 +48,22 @@ public sealed class MobileTouchTarget : MonoBehaviour, IPointerDownHandler, IPoi
     public void OnDrag(PointerEventData e)
     {
         if (isStick && pointer == e.pointerId) controls.MoveStick(LocalPoint(e));
+    }
+
+    private void LateUpdate()
+    {
+        // The browser can cancel a contact without delivering a UI pointer-up to this target.
+        if (stickScreen != null)
+        {
+            if (stickScreen.added)
+            {
+                foreach (var touch in stickScreen.touches)
+                    if (touch.touchId.ReadValue() == stickTouchId && touch.press.isPressed) return;
+            }
+            Cancel();
+        }
+        else if (stickMouse != null && (!stickMouse.added || !stickMouse.leftButton.isPressed))
+            Cancel();
     }
 
     private Vector2 LocalPoint(PointerEventData e)
@@ -52,6 +82,8 @@ public sealed class MobileTouchTarget : MonoBehaviour, IPointerDownHandler, IPoi
     {
         if (!Held) return;
         pointer = null;
+        stickScreen = null;
+        stickMouse = null;
         if (isStick) controls.EndStick();
         else transform.localScale = Vector3.one;
     }
