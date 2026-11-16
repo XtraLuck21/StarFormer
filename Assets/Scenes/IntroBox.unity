@@ -8668,6 +8668,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1643171617}
   - component: {fileID: 1643171616}
+  - component: {fileID: 1643171618}
   m_Layer: 0
   m_Name: PlayerControl
   m_TagString: Untagged
@@ -8675,6 +8676,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1643171618
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643171615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b7a8025f7fd47cda0f7eca0a3971600, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FormControlsHUD
+  starIcon: {fileID: 4815476061570213978, guid: ee2f7f1399d47c944bb52ddc0ae5be8a, type: 3}
+  bubbleIcon: {fileID: -9136834448258697486, guid: 742349fc218e00c44a6cfa4a8ed37bbf, type: 3}
+  touchControls: {fileID: 1788887528}
 --- !u!114 &1643171616
 MonoBehaviour:
   m_ObjectHideFlags: 0
