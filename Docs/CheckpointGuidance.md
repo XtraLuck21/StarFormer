@@ -1,6 +1,6 @@
 # Checkpoints, restart and pause menus
 
-Touch controls reviewed November 16, 2026. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). The Level01 recovery model and promoted Level02 recovery rules below remain; full-route/device acceptance is separate.
+Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
 ## Level01 checkpoints
 

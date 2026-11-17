@@ -1,8 +1,12 @@
 # Publish StarFormer to GitHub Pages
 
-## Gold 0.1.0 local preparation
+## Gold 0.1.0 published
 
-Build and preview the complete `Builds/WebGL-Gold-0.1.0/` directory using the [Gold build record](Gold-0.1.0.md). Gold has been prepared locally. The Pages destinations and copy commands below belong to earlier Beta releases.
+Gold 0.1.0 was published on November 17, 2026 to the main site and `gold/`. Both serve the verified `Builds/WebGL-Gold-0.1.0/` export. [Main site](https://xtraluck21.github.io/StarFormer/) · [Gold site](https://xtraluck21.github.io/StarFormer/gold/)
+
+The `gh-pages` publishing commit is `8b3075d`. GitHub Pages deployment succeeded, and all 14 hosted runtime files matched the local export by SHA-256. Build settings, reproduction steps and remaining gameplay checks are recorded in the Gold release document. [Deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/44143878818) · [Gold release record](Gold-0.1.0.md)
+
+For this release, the publishing checkout was `StarFormer-Pages` on `gh-pages`. Root `index.html`, `Build/` and `TemplateData/` were synchronized from the export, and the complete export was copied into `gold/`. Staged files were compared byte for byte before committing and pushing. The records and commands below describe earlier Beta releases.
 
 ## Beta 0.1.4 release history
 

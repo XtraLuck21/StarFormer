@@ -1,6 +1,6 @@
 # Gameplay Specification
 
-Touch controls reviewed November 16, 2026. Beta 0.1.3 is published at `/beta/` via `5603d2f`; Pages succeeded and all seven runtime hashes match. Root remains Beta 0.1.2. See [the current release record](Beta-0.1.3.md) and [historical 0.1.2 evidence](Beta-0.1.2.md). Package verification does not establish full gameplay correctness.
+Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
 ## 1. Scenes and progression
 
@@ -8,7 +8,7 @@ Touch controls reviewed November 16, 2026. Beta 0.1.3 is published at `/beta/` v
 Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
 ```
 
-Navigation offers Kindergarten → IntroBox, Level 1 → Level01, Elementary School → IntroSpider and Level 2 → Level02. The Star jumps into the upper entrances and drops onto the lower entrances; click selection is also supported. Bounce/flash feedback finishes before the Entering overlay and scene load. Menu entry starts a fresh checkpoint session. Mainmenu remains a disabled legacy scene.
+Navigation uses A/D to move and Space to jump. Navigation offers Kindergarten → IntroBox, Level 1 → Level01, Elementary School → IntroSpider and Level 2 → Level02. The Star jumps into the upper entrances and drops onto the lower entrances; click and touch selection are also supported. Bounce/flash feedback finishes before the Entering overlay and scene load. Menu entry starts a fresh checkpoint session. Mainmenu remains a disabled legacy scene.
 
 | Scene | Purpose |
 | --- | --- |
@@ -24,6 +24,8 @@ Navigation offers Kindergarten → IntroBox, Level 1 → Level01, Elementary Sch
 Enabled build indices are Navigation 0, IntroBox 1, IntroBubble 2, IntroBouncyBall 3, Level01 4, IntroSpider 5, IntroFan 6 and Level02 7. Play order follows named destinations, not consecutive build indices.
 
 ## 2. Controls
+
+In gameplay scenes, left/right arrow keys also steer every form. Navigation uses A/D for keyboard movement.
 
 | Form | Desktop gameplay | Left thumb | Right thumb |
 | --- | --- | --- | --- |

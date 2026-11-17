@@ -1,6 +1,14 @@
-# Gold 0.1.0 WebGL build
+# Gold 0.1.0 release
 
 Gold uses main at `c8f2444` with the Player and production Analytics versions set to `gold-0.1.0`. Since Beta 0.1.4, the eight active scenes have gained touch controls and form-specific hints. Navigation supports tapping level signs, mobile steering recovers from interrupted touches, and the Level02 seesaw Fan starts with its wind off until the player presses Blow.
+
+## Published November 17, 2026
+
+Gold 0.1.0 is live on the main site and the Gold path. [Play StarFormer](https://xtraluck21.github.io/StarFormer/) · [Play Gold](https://xtraluck21.github.io/StarFormer/gold/)
+
+The verified `Builds/WebGL-Gold-0.1.0/` export was published to the root runtime paths and `gold/` in `gh-pages` commit `8b3075d`. GitHub Pages deployment succeeded. All seven files at each destination returned successfully and matched the local export by SHA-256, covering 14 hosted files. [Publishing commit](https://github.com/XtraLuck21/StarFormer/commit/8b3075d79451e1e10e56c60460707b1961182f7f) · [Deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/44143878818)
+
+The source preparation is recorded in main commit `6de94f7`. The README screenshot was captured from this Gold export's Navigation screen at 1920 × 1080.
 
 ## Build configuration
 
@@ -31,7 +39,7 @@ Serve the complete export from the project root:
 python3 -m http.server 8010 --bind 127.0.0.1 --directory Builds/WebGL-Gold-0.1.0
 ```
 
-Open [the local game](http://127.0.0.1:8010/) and select **Play in Window**. Before publication, check touch steering, simultaneous actions and rotation on a phone, then play through the Level02 flag and return to Navigation. Check production analytics for the Gold version during the release playtest.
+Open [the local game](http://127.0.0.1:8010/) and select **Play in Window**. For the remaining gameplay checks, test touch steering, simultaneous actions and rotation on a phone, then play through the Level02 flag and return to Navigation. Check production analytics for the Gold version during the release playtest.
 
 ## Local verification on November 17, 2026
 
