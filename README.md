@@ -2,13 +2,19 @@
 
 StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses eligible objects on contact and uses their abilities to solve environmental puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce and float as a Bouncy Ball, then learn Spider and Fan abilities.
 
-## Published Beta 0.1.3
+## Gold 0.1.0 local build
 
-[Play StarFormer - latest Beta](https://xtraluck21.github.io/StarFormer/beta/)
+Gold brings the floating joystick and form-specific touch controls to all eight active scenes. The local WebGL package uses `gold-0.1.0` for the Player and production Analytics. [Build and preview Gold locally](Docs/Gold-0.1.0.md)
+
+## Published Beta 0.1.4
+
+Beta 0.1.4 added the Level02 flag-to-results transition and return to Navigation. The Pages release history records the Beta site update on November 10 and the main site update on November 12. [Play Beta](https://xtraluck21.github.io/StarFormer/beta/) · [Beta build notes](Docs/Beta-0.1.4.md)
+
+## Historical Beta 0.1.3
 
 Beta 0.1.3 includes the promoted Level02: the spike-wall chase, dark descent, four-gear seesaw, rising Star handoff, Smiley Face teeth/head route and final Box challenge. It also includes refreshed maps and the obsolete empty Help-component cleanup. Player and Analytics versions are both `beta-0.1.3`.
 
-Published November 10, 2026. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42806924119) succeeded, and all seven hosted files match the verified export by SHA-256. The main Play link above opens this Beta 0.1.3 build; the root website remains historical Beta 0.1.2 and Alpha paths are unchanged. See the [Beta 0.1.3 release record](Docs/Beta-0.1.3.md) for artifact hashes, local checks and remaining gameplay/device/backend acceptance.
+Published November 10, 2026. [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42806924119) succeeded, and all seven hosted files match the verified export by SHA-256. At that release, the root website served Beta 0.1.2. See the [Beta 0.1.3 release record](Docs/Beta-0.1.3.md) for artifact hashes, local checks and remaining gameplay/device/backend acceptance.
 
 ## Historical Beta 0.1.2
 
@@ -16,7 +22,7 @@ Published November 10, 2026. [GitHub Pages deployment](https://github.com/XtraLu
 
 Beta 0.1.2 was published on November 6, 2026 to both the [main website](https://xtraluck21.github.io/StarFormer/) and [Beta website](https://xtraluck21.github.io/StarFormer/beta/). Player Version and Analytics `buildVersion` are `beta-0.1.2`. The source checkout at publication was clean main `b93768f`; the published artifact is the completed local export.
 
-The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256. Alpha and other historical version directories were preserved. The root previously served Beta 0.1.0; `/beta/` previously served Beta 0.1.1. Both served Beta 0.1.2 at that publication; `/beta/` is the Beta 0.1.3 destination above.
+The same `Builds/WebGL-Beta-0.1.2` export was committed and pushed on `gh-pages` as [`64b35c6`](https://github.com/XtraLuck21/StarFormer/commit/64b35c6c5dbe50ffefc05e1590533cebf47888dc). [GitHub Pages deployment](https://github.com/XtraLuck21/StarFormer/actions/runs/42303613672) succeeded. All seven files at each URL (14 files total) returned HTTP 200 and matched the local export byte for byte by SHA-256. Alpha and other historical version directories were preserved. The root previously served Beta 0.1.0; `/beta/` previously served Beta 0.1.1. Both served Beta 0.1.2 at that publication.
 
 The release includes interactive Navigation, school/level entrances, Collection Book integration, shared Home menus, the IntroFan rename, Level01 traversal/camera/possession fixes and revised Spider guidance. Shape Closet and the books share session-only per-form discovery: controlling a form reveals its icon/help, scene changes and retries retain it, and a new game launch clears it. Completion grants no additional forms; old persistent unlock saves are ignored. Obsolete Help components were removed from IntroBox, IntroBubble and IntroSpider, with isolated Editor book/pause checks passing.
 

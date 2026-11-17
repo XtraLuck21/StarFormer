@@ -1,6 +1,12 @@
 # Publish StarFormer to GitHub Pages
 
-## Beta 0.1.4 local build
+## Gold 0.1.0 local preparation
+
+Build and preview the complete `Builds/WebGL-Gold-0.1.0/` directory using the [Gold build record](Gold-0.1.0.md). Gold has been prepared locally. The Pages destinations and copy commands below belong to earlier Beta releases.
+
+## Beta 0.1.4 release history
+
+The Pages branch recorded Beta 0.1.4 at `beta/` in `b4b979a` and at the root in `e291523`.
 
 See the [Beta 0.1.4 build notes](Beta-0.1.4.md) for Unity settings, the build command and local preview steps.
 
