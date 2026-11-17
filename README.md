@@ -4,7 +4,7 @@
 
 StarFormer is a 2D puzzle-platformer built in Unity. Play as a star that possesses objects on contact and uses their abilities to solve puzzles. Grow or shrink as a Box, rise and swim as a Bubble, bounce as a Bouncy Ball, climb as a Spider and move obstacles with a Fan.
 
-![Gold 0.1.0 Navigation screen with level entrances and Collection Book](Docs/Game_screenshot.png)
+![Gold 0.1.0 Navigation screen with level entrances and Collection Book](Docs/Navigation-Gold-0.1.0.png)
 
 ## Play
 
