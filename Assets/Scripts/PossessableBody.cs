@@ -127,6 +127,8 @@ public class PossessableBody : MonoBehaviour
 
     public void SetOwner(PlayerPossessionController newOwner)
     {
+        if (owner != newOwner && TryGetComponent(out SpiderSilkAbility silk))
+            silk.Cancel();
         owner = newOwner;
 
         if (owner != null && form == BodyForm.Bubble && !bubbleActivated)

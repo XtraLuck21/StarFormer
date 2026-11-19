@@ -75,21 +75,21 @@ MonoBehaviour:
     icon: {fileID: -7244493321671047126, guid: 44607da8d9788404ba73cf3190e55edb, type: 3}
   - title: Spider
     unlockId: Spider
-    collectionNote: "Attach to a nearby wall within range."
+    collectionNote: "Aim with mouse. Cast at nearby walls to pull."
     collectionQuote: "A little silk. A big shortcut."
     collectionControls:
     - action: "Crawl on surfaces"
       keys: "A|D"
       mouse: -1
       hold: 0
-    - action: "Aim"
-      keys: ""
-      mouse: 2
-      hold: 0
-    - action: "Web & pull"
+    - action: "Aim / release to cast"
       keys: ""
       mouse: 0
       hold: 1
+    - action: "Cancel aim"
+      keys: ""
+      mouse: 1
+      hold: 0
     icon: {fileID: 1059239481293130509, guid: d544ee28e31a764419c0f8dd59f8e589, type: 3}
   - title: Fan
     unlockId: Fan

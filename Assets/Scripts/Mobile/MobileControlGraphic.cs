@@ -5,7 +5,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
 {
-    internal enum Symbol { Base, Thumb, Jump, Grow, Shrink, Pop, Wind, Leave }
+    internal enum Symbol { Base, Thumb, Jump, Grow, Shrink, Pop, Wind, Leave, Silk, Cancel, SkillWheel }
     internal Symbol Icon { get; set; }
     private static readonly Color32 Navy = new(21, 40, 57, 200);
     private static readonly Color32 Gold = new(255, 193, 63, 245);
@@ -107,6 +107,18 @@ public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
         }
 
         bool joystick = Icon == Symbol.Base || Icon == Symbol.Thumb;
+        if (Icon == Symbol.SkillWheel)
+        {
+            Ring(0f, 1f, new Color32(65, 178, 225, 18));
+            Ring(0.982f, 1f, new Color32(107, 221, 255, 125));
+            Ring(0.78f, 0.786f, new Color32(107, 221, 255, 42));
+            for (int i = 0; i < 4; i++)
+            {
+                Vector2 axis = Radial(i * Mathf.PI * 0.5f);
+                Line(axis * 0.92f, axis * 0.97f, 0.015f, new Color32(147, 230, 255, 115));
+            }
+            return;
+        }
         Color32 face = Navy;
         if (Icon == Symbol.Base) face = new Color32(24, 43, 62, 86);
         if (Icon == Symbol.Thumb && !directional) face = new Color32(180, 204, 222, 218);
@@ -135,6 +147,26 @@ public sealed class MobileControlGraphic : MaskableGraphic, ICanvasRaycastFilter
             }
         }
 
+        if (Icon == Symbol.Cancel)
+        {
+            var red = new Color32(255, 119, 119, 255);
+            Line(new Vector2(-0.3f, -0.3f), new Vector2(0.3f, 0.3f), 0.1f, red);
+            Line(new Vector2(-0.3f, 0.3f), new Vector2(0.3f, -0.3f), 0.1f, red);
+            return;
+        }
+        if (Icon == Symbol.Silk)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                float angle = i * Mathf.PI / 3f;
+                Vector2 a = Radial(angle);
+                Vector2 b = Radial(angle + Mathf.PI / 3f);
+                Line(Vector2.zero, a * 0.62f, 0.055f, Ink);
+                Line(a * 0.3f, b * 0.3f, 0.045f, Ink);
+                Line(a * 0.53f, b * 0.53f, 0.045f, Ink);
+            }
+            return;
+        }
         if (Icon == Symbol.Pop)
         {
             Vector2 bubble = new(-0.12f, -0.1f);

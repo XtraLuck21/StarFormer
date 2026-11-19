@@ -24,6 +24,7 @@ Choose Kindergarten for the opening tutorials, Level 1 for the first puzzle leve
 | Swim as Bubble | WASD underwater, A/D to steer while rising in air |
 | Pop Bubble / leave Fan | Q or right mouse button |
 | Toggle Fan wind | F or left mouse button |
+| Aim Spider silk / pull to a wall | Hold left mouse to aim, release to cast; right mouse cancels. |
 | Pause / restart choices | Esc / R in gameplay scenes |
 
 Bouncy Ball bounces automatically. Use A/D to steer it or move Spider along connected surfaces. Touching an eligible object triggers possession.

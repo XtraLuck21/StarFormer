@@ -451,6 +451,20 @@ public static class SessionDiscoveryVerification
         Load("Navigation"); yield return .25f; CheckNavigation("Box", "Bubble");
         Load("IntroBouncyBall"); yield return .25f; Possess(BodyForm.BouncyBall);
         Load("IntroSpider"); yield return .3f; Possess(BodyForm.Spider);
+        Time.timeScale = 1;
+        yield return .05f;
+        var spider = Object.FindFirstObjectByType<PlayerPossessionController>().CurrentBody;
+        Check(spider.TryGetComponent(out SpiderSilkAbility silk), "Scene Spider receives the merged silk ability");
+        Check(silk.BeginAim(), "Discovered Spider can begin aiming silk");
+        var spiderBook = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+        spiderBook.Open();
+        yield return .15f;
+        Check(spiderBook.IsOpen && Time.timeScale == 0 && !silk.IsAiming && !silk.IsFiring,
+            "Opening collection pauses Spider and cancels pending aim without casting");
+        spiderBook.Close();
+        yield return .05f;
+        Check(Time.timeScale == 1 && !silk.IsFiring && silk.CanAim,
+            "Closing collection restores Spider control without an accidental cast");
         Expect("Box", "Bubble", "BouncyBall", "Spider");
         Load("IntroFan"); yield return .3f;
         while (Object.FindFirstObjectByType<PlayerPossessionController>().CurrentBody == null ||
