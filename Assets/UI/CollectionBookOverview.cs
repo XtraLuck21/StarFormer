@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// Navigation's static collection. Legacy controls help remains a separate presentation.
+// Shared static collection used by Navigation and scene entry buttons.
 public sealed class CollectionBookOverview : IDisposable
 {
     private sealed class Card

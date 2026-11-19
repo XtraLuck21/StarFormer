@@ -27,9 +27,6 @@ MonoBehaviour:
       mouse: -1
       hold: 0
     icon: {fileID: 4815476061570213978, guid: ee2f7f1399d47c944bb52ddc0ae5be8a, type: 3}
-    keys: "\nA/D\t\tMove\nSpace \tJump"
-    demoFrames: []
-    caption: Touch a possessable body to become it.
   - title: BOX
     unlockId: Box
     collectionNote: ""
@@ -48,9 +45,6 @@ MonoBehaviour:
       mouse: 1
       hold: 1
     icon: {fileID: -3795119470717004479, guid: 0725892d4be3d25498a72892a6c14516, type: 3}
-    keys: "<size=85%>Move<pos=16%>A/D\nGrow<pos=16%>Hold J or Left Mouse Button\nShrink<pos=16%>Hold K or Right Mouse Button</size>"
-    demoFrames: []
-    caption: Touch another body to switch.
   - title: BUBBLE
     unlockId: Bubble
     collectionNote: "Rises automatically in air."
@@ -69,9 +63,6 @@ MonoBehaviour:
       mouse: 1
       hold: 0
     icon: {fileID: -9136834448258697486, guid: 742349fc218e00c44a6cfa4a8ed37bbf, type: 3}
-    keys: "<size=85%>In air<pos=36%>A/D\nUnderwater<pos=36%>W/A/S/D\nPop<pos=36%>Q or Right Click</size>"
-    demoFrames: []
-    caption: Rises automatically in air. Pop to return to Star.
   - title: BOUNCY BALL
     unlockId: BouncyBall
     collectionNote: "Bounces automatically. Floats on water."
@@ -82,10 +73,6 @@ MonoBehaviour:
       mouse: -1
       hold: 0
     icon: {fileID: -7244493321671047126, guid: 44607da8d9788404ba73cf3190e55edb, type: 3}
-    keys: "\nA/D\t\tMove"
-    demoFrames: []
-    caption: Bounces automatically on land. Floats on water. Touch another body to
-      switch.
   - title: Spider
     unlockId: Spider
     collectionNote: "Attach to a nearby wall within range."
@@ -104,9 +91,6 @@ MonoBehaviour:
       mouse: 0
       hold: 1
     icon: {fileID: 1059239481293130509, guid: d544ee28e31a764419c0f8dd59f8e589, type: 3}
-    keys: "\nA/D\t\tMove along surfaces"
-    demoFrames: []
-    caption: Moves along walls and ceilings. Touch another body to switch.
   - title: Fan
     unlockId: Fan
     collectionNote: "Keeps blowing after you leave."
@@ -125,6 +109,3 @@ MonoBehaviour:
       mouse: 1
       hold: 0
     icon: {fileID: 1710981365271166214, guid: a172090fcb0c23e40b4f2993592d1abb, type: 3}
-    keys: "<size=85%>Move / Face<pos=36%>A/D\nWind On / Off<pos=36%>F or Left Click\nReturn to Star<pos=36%>Q or Right Click</size>"
-    demoFrames: []
-    caption: The fan stays in place after you leave, keeping its last wind direction.

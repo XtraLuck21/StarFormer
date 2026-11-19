@@ -1,18 +1,16 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-// Retains each scene's existing entry button and archived help panel, while displaying
+// Connects each scene's existing entry button while displaying
 // the same collection prefab used by Navigation. The instance belongs to this scene.
 public sealed class SceneCollectionBookUI : MonoBehaviour
 {
     [SerializeField] private Button entryButton;
-    [SerializeField] private GameObject legacyPanel;
     [SerializeField] private HelpBookUI collectionPrefab;
     private HelpBookUI book;
 
     private void Awake()
     {
-        if (legacyPanel != null) legacyPanel.SetActive(false);
         if (entryButton == null || collectionPrefab == null)
         {
             Debug.LogError("Collection book requires an entry button and shared prefab.", this);

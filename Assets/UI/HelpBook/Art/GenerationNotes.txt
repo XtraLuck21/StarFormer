@@ -1,6 +1,6 @@
 Collection Book artwork
 Generated with the built-in image generation tool on 2026-11-19.
-Only the Navigation CollectionBook variant references these assets. Legacy assets are retained.
+The standalone CollectionBook prefab shares these assets across Navigation and gameplay scenes. Retired help pages and demo frames have been removed.
 
 CollectionForms.png: original transparent 4 x 2 sheet. Runtime sprites use inset grid regions; no source image was edited. Order: Star, Box, Bubble, Bouncy Ball / Spider, Fan, mystery crate, empty.
 Prompt:

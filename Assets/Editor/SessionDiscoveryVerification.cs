@@ -79,8 +79,7 @@ public static class SessionDiscoveryVerification
             Check(books.Count(item => item.isActiveAndEnabled) == 1, path + " has exactly one active collection");
             var book = books.First(item => item.isActiveAndEnabled);
             Check(Field<HelpBookContent>(book, "content") == AssetDatabase.LoadAssetAtPath<HelpBookContent>("Assets/UI/HelpBook/CollectionContent.asset"), path + " uses shared Navigation content");
-            Check(Field<bool>(book, "collectionOverview"), path + " uses card overview");
-            Check(!Field<GameObject>(bridge, "legacyPanel").activeSelf, path + " old panel retained but hidden");
+            Check(books.Length == 1, path + " has no retained legacy help components");
             var entry = Field<UnityEngine.UI.Button>(bridge, "entryButton");
             Check(entry != null && entry.isActiveAndEnabled && entry.interactable, path + " entry available");
             entry.onClick.Invoke();
@@ -111,7 +110,6 @@ public static class SessionDiscoveryVerification
                 Check(card.Find("Form Name").GetComponent<TextMeshProUGUI>().text == (discovered ? page.title.ToUpperInvariant() : "???"), path + " discovery matches: " + page.unlockId);
             }
             Check(grid.Find("Spider Card/Form Icon").GetComponent<UnityEngine.UI.Image>().sprite.texture.name == "CollectionSpiderOrange", path + " orange Spider portrait");
-            Check(!book.GetComponentsInChildren<SpriteSequencePlayer>(true).Any(player => player.isActiveAndEnabled), path + " no active demos");
             Field<UnityEngine.UI.Button>(book, "closeButton").onClick.Invoke();
             Check(!book.IsOpen && Time.timeScale == 1, path + " close button resumes game");
             if (homeMenu != null)
@@ -163,6 +161,46 @@ public static class SessionDiscoveryVerification
         CaptureCollection("all", 1920, 1080);
         CaptureCollection("all-16x10", 1280, 800);
         Check(true, "Collection discoveries survive scene reload");
+        var modalBook = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+        Time.timeScale = .5f;
+        modalBook.Open(); modalBook.Close();
+        Check(Time.timeScale == .5f, "Closing restores the actual previous time scale");
+        Time.timeScale = 1;
+        var inputSettings = UnityEngine.InputSystem.InputSystem.settings;
+        var originalEditorInput = inputSettings.editorInputBehaviorInPlayMode;
+        var originalBackgroundInput = inputSettings.backgroundBehavior;
+        inputSettings.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+        inputSettings.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+        var keyboard = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+        modalBook.Open();
+        UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,
+            new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Escape));
+        PumpGameplayInput();
+        Check(keyboard.escapeKey.wasPressedThisFrame, "Synthetic Escape reaches the gameplay input update");
+        Invoke(modalBook, "Update");
+        UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+        PumpGameplayInput();
+        yield return .15f;
+        if (modalBook.IsOpen)
+        {
+            UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,
+                new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Escape));
+            PumpGameplayInput();
+            Invoke(modalBook, "Update");
+        }
+        Check(!modalBook.IsOpen && Time.timeScale == 1, "Escape closes the collection and resumes game");
+        UnityEngine.InputSystem.InputSystem.RemoveDevice(keyboard);
+        inputSettings.editorInputBehaviorInPlayMode = originalEditorInput;
+        inputSettings.backgroundBehavior = originalBackgroundInput;
+
+    }
+
+    // EditorApplication.update otherwise routes queued events to the Editor input phase.
+    private static void PumpGameplayInput()
+    {
+        typeof(UnityEngine.InputSystem.InputSystem).GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Static,
+            null, new[] { typeof(UnityEngine.InputSystem.LowLevel.InputUpdateType) }, null)
+            .Invoke(null, new object[] { UnityEngine.InputSystem.LowLevel.InputUpdateType.Dynamic });
     }
 
     private static IEnumerator VerifyCollectionNewLaunch()
@@ -247,12 +285,6 @@ public static class SessionDiscoveryVerification
     {
         if (type != LogType.Error && type != LogType.Exception && type != LogType.Assert) return;
         if (stack.Contains("UnityEditor.Search.SearchDatabase")) return;
-        if (message.StartsWith("HelpBookUI 缺少引用"))
-        {
-            SessionState.SetString(Prefix + "Results", SessionState.GetString(Prefix + "Results", "") +
-                "KNOWN EXISTING ISSUE: legacy gameplay Help component has missing button/panel references.\n");
-            return;
-        }
         errors += message + "\n";
     }
 
@@ -351,7 +383,6 @@ public static class SessionDiscoveryVerification
             var card = grid.Find(page.unlockId + " Card");
             Check(card.gameObject.activeInHierarchy, "Card visible: " + page.title);
             Check(card.Find("Unlock Status").GetComponent<TextMeshProUGUI>().text == (expected ? "DISCOVERED" : "UNDISCOVERED"), "Card discovery status: " + page.title);
-            Check(page.demoFrames.Length == 0, "Collection has no demo frames: " + page.title);
             Check(card.Find("Form Name").GetComponent<TextMeshProUGUI>().text == (expected ? page.title.ToUpperInvariant() : "???"), "Title reveals only discovered form: " + page.title);
             Check(card.Find("Controls").gameObject.activeSelf == expected, "Controls reveal only discovered form: " + page.title);
             Check(card.Find("Locked Hint").gameObject.activeSelf != expected, "Mystery hint matches lock: " + page.title);
@@ -363,7 +394,6 @@ public static class SessionDiscoveryVerification
             }
 
         }
-        Check(!book.GetComponentsInChildren<SpriteSequencePlayer>(true).Any(player => player.isActiveAndEnabled), "No active collection animations");
         Canvas.ForceUpdateCanvases();
         foreach (var label in overview.GetComponentsInChildren<TextMeshProUGUI>())
         {
@@ -386,6 +416,9 @@ public static class SessionDiscoveryVerification
         var player = Object.FindFirstObjectByType<PlayerPossessionController>();
         Check(player.CurrentBody.Form == BodyForm.Star, "Direct Level02 entry controls Star only");
         var goal = Object.FindFirstObjectByType<LevelGoalToMenu>();
+        // Arrange the gate prerequisite so this tests completion/discovery, not the gate puzzle.
+        var requiredGate = Field<GameObject>(goal, "requiredGate");
+        if (requiredGate != null) requiredGate.SetActive(!Field<bool>(goal, "gateMustBeGone"));
         Invoke(goal, "CheckPlayer", player.CurrentBody.BodyCollider);
         Check(Field<bool>(goal, "cleared"), "Level02 completion handler exercised");
         Expect(); // Completing the advanced level no longer grants all forms.
