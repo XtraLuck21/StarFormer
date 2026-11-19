@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 220000103}
   - component: {fileID: 220000104}
   - component: {fileID: 220000105}
+  - component: {fileID: 7251809900386154088}
   m_Layer: 0
   m_Name: Obstacle
   m_TagString: Untagged
@@ -170,3 +171,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircleVisual
   circleColor: {r: 0.9, g: 0.22, b: 0.22, a: 1}
+--- !u!114 &7251809900386154088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 220000100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6211c6feae811297fb4438a8d191cd5f, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SeesawObstacle
