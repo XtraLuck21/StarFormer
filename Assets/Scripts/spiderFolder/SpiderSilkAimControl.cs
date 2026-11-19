@@ -9,7 +9,7 @@ using UnityEngine.UI;
 public sealed class SpiderSilkAimControl : MonoBehaviour, IPointerDownHandler, IPointerUpHandler,
     IInitializePotentialDragHandler, IDragHandler
 {
-    private enum InputMode { None, Wheel, Mouse, Keyboard }
+    private enum InputMode { None, Wheel, Mouse }
     private PlayerPossessionController player;
     private MobileFormControls mobileControls;
     private bool ShowTouchWheel => mobileControls != null && mobileControls.MobileMode;
@@ -163,10 +163,8 @@ public sealed class SpiderSilkAimControl : MonoBehaviour, IPointerDownHandler, I
             (keyboard != null && keyboard.escapeKey.wasPressedThisFrame)) { CancelGesture(); return; }
         if (inputMode == InputMode.None)
         {
-            InputMode requested = keyboard != null && keyboard.fKey.wasPressedThisFrame ? InputMode.Keyboard :
-                mouse != null && mouse.leftButton.wasPressedThisFrame && gameplayMousePress ? InputMode.Mouse : InputMode.None;
-            if (requested == InputMode.None || !ability.BeginAim()) return;
-            inputMode = requested;
+            if (mouse == null || !mouse.leftButton.wasPressedThisFrame || !gameplayMousePress || !ability.BeginAim()) return;
+            inputMode = InputMode.Mouse;
             caption.text = "RELEASE TO CAST";
         }
         if (mouse != null && Camera.main != null)
@@ -175,15 +173,13 @@ public sealed class SpiderSilkAimControl : MonoBehaviour, IPointerDownHandler, I
             var plane = new Plane(Vector3.forward, ability.transform.position);
             if (plane.Raycast(ray, out float enter)) ability.Aim((Vector2)(ray.GetPoint(enter) - ability.transform.position));
         }
-        bool released = inputMode == InputMode.Mouse ? mouse != null && mouse.leftButton.wasReleasedThisFrame :
-            keyboard != null && keyboard.fKey.wasReleasedThisFrame;
+        bool released = mouse != null && mouse.leftButton.wasReleasedThisFrame;
         if (released)
         {
-            if (inputMode != InputMode.Mouse || gameplayMousePress) ability.ReleaseAim();
+            if (gameplayMousePress) ability.ReleaseAim();
             CancelGesture();
         }
-        else if ((inputMode == InputMode.Mouse && (mouse == null || !mouse.leftButton.isPressed)) ||
-            (inputMode == InputMode.Keyboard && (keyboard == null || !keyboard.fKey.isPressed))) CancelGesture();
+        else if (mouse == null || !mouse.leftButton.isPressed) CancelGesture();
     }
 
     public void OnInitializePotentialDrag(PointerEventData e) => e.useDragThreshold = false;

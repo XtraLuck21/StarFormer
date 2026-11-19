@@ -144,7 +144,7 @@ public sealed class FormControlsHUD : MonoBehaviour
                 ActionRow(2, "Leave", "Q", true);
                 break;
             case BodyForm.Spider:
-                ActionRow(1, "Aim", "F", false);
+                ActionRow(1, "Aim", null, false);
                 break;
             case BodyForm.Bubble:
                 ActionRow(1, "Pop", "Q", true);
