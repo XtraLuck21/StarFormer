@@ -31,6 +31,16 @@ public class HelpBookUI : MonoBehaviour
     /// 一页的内容。在 Inspector 的 Pages 列表里逐页填。
     /// </summary>
     [Serializable]
+    public class CollectionControl
+    {
+        public string action;
+        public string keys;
+        [Tooltip("-1: none; 0: left mouse; 1: right mouse; 2: mouse aim")]
+        public int mouse = -1;
+        public bool hold;
+    }
+
+    [Serializable]
     public class HelpPage
     {
         [Tooltip("页面标题，比如 STAR / BOX / BUBBLE。")]
@@ -60,6 +70,11 @@ public class HelpBookUI : MonoBehaviour
 
         [Tooltip("未解锁时显示的图标，比如一个锁或问号。留空则不显示图标。")]
         public Sprite lockedIcon;
+
+        [Header("Collection card (legacy help does not use these fields)")]
+        public CollectionControl[] collectionControls;
+        public string collectionNote;
+        public string collectionQuote;
     }
 
     [Header("页面内容")]
@@ -139,6 +154,12 @@ public class HelpBookUI : MonoBehaviour
     [Tooltip("每次重新打开都从第一页开始；不勾则停在上次看到的那页。")]
     [SerializeField] private bool resetToFirstPageOnOpen = true;
 
+    [SerializeField] private bool collectionOverview;
+    [SerializeField] private Texture2D collectionArt;
+    [SerializeField] private Texture2D collectionPaper;
+    [SerializeField] private Texture2D collectionSpiderArt;
+    private CollectionBookOverview overview;
+
     private float timeScaleBeforeOpen = 1f;
     private int currentPageIndex;
     private bool isOpen;
@@ -174,6 +195,47 @@ public class HelpBookUI : MonoBehaviour
             Debug.LogWarning("HelpBookUI 的 Pages 列表是空的，弹窗会显示空白页。", this);
         }
 
+        if (collectionOverview)
+        {
+            // The collection uses its own static content and never starts demo players.
+            var frame = (RectTransform)pageTitleText.transform.parent;
+            foreach (Transform child in frame) child.gameObject.SetActive(false);
+            if (prevButton != null) prevButton.gameObject.SetActive(false);
+            if (nextButton != null) nextButton.gameObject.SetActive(false);
+            if (pageIndicatorText != null) pageIndicatorText.gameObject.SetActive(false);
+            foreach (var player in helpPanel.GetComponentsInChildren<SpriteSequencePlayer>(true))
+            {
+                player.Stop();
+                player.enabled = false;
+                player.gameObject.SetActive(false);
+            }
+            var panel = (RectTransform)frame.parent;
+            panel.localScale = Vector3.one;
+            panel.anchorMin = new Vector2(.02f, .025f);
+            panel.anchorMax = new Vector2(.98f, .975f);
+            panel.offsetMin = panel.offsetMax = Vector2.zero;
+            frame.offsetMin = new Vector2(16, 16);
+            frame.offsetMax = new Vector2(-16, -16);
+            overview = new CollectionBookOverview(frame, pageTitleText.font, ActivePages, collectionArt, collectionPaper, collectionSpiderArt);
+            if (closeButton != null)
+            {
+                closeButton.gameObject.SetActive(true);
+                overview.StyleClose(closeButton);
+                var closeRect = (RectTransform)closeButton.transform;
+                closeRect.anchorMin = closeRect.anchorMax = Vector2.one;
+                closeRect.anchoredPosition = new Vector2(-55, -50);
+                closeRect.sizeDelta = new Vector2(60, 60);
+                closeRect.SetAsLastSibling();
+                var closeLabel = closeButton.GetComponentInChildren<TextMeshProUGUI>();
+                if (closeLabel != null)
+                {
+                    closeLabel.text = "X";
+                    closeLabel.fontSize = 34;
+                    closeLabel.color = new Color32(78, 49, 26, 255);
+                }
+            }
+        }
+
         helpButton.onClick.AddListener(Open);
 
         if (closeButton != null) closeButton.onClick.AddListener(Close);
@@ -205,7 +267,7 @@ public class HelpBookUI : MonoBehaviour
             return;
         }
 
-        if (!flipWithArrowKeys)
+        if (collectionOverview || !flipWithArrowKeys)
         {
             return;
         }
@@ -295,6 +357,7 @@ public class HelpBookUI : MonoBehaviour
     /// <summary>跳到指定页。页码从 0 开始。</summary>
     public void GoToPage(int index)
     {
+        if (collectionOverview) return;
         if (ActivePages == null || ActivePages.Length == 0)
         {
             return;
@@ -332,6 +395,11 @@ public class HelpBookUI : MonoBehaviour
 
     private void ShowPage(int index)
     {
+        if (collectionOverview)
+        {
+            overview?.Refresh();
+            return;
+        }
         if (ActivePages == null || ActivePages.Length == 0)
         {
             return;
@@ -453,6 +521,7 @@ public class HelpBookUI : MonoBehaviour
 
     private void OnDestroy()
     {
+        overview?.Dispose();
         if (helpButton != null) helpButton.onClick.RemoveListener(Open);
         if (closeButton != null) closeButton.onClick.RemoveListener(Close);
         if (backdropButton != null) backdropButton.onClick.RemoveListener(Close);

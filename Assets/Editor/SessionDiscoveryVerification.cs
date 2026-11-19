@@ -48,10 +48,107 @@ public static class SessionDiscoveryVerification
         EditorApplication.EnterPlaymode();
     }
 
+    public static void RunCollectionBatch()
+    {
+        RunBatch();
+        SessionState.SetInt(Prefix + "Phase", 3);
+    }
+
+    private static IEnumerator VerifyCollection()
+    {
+        yield return .4f;
+        CheckNavigation();
+        CaptureCollection("locked", 1920, 1080);
+        // Exercise the user's actual path: acquire a body in a level and return to Navigation.
+        Load("IntroBox"); yield return .4f;
+        Possess(BodyForm.Box);
+        Load("Navigation"); yield return .4f;
+        CheckNavigation("Box");
+        CaptureCollection("partial", 1920, 1080);
+        var discovered = new System.Collections.Generic.List<string> { "Box" };
+        foreach (string id in Forms.Skip(1))
+        {
+            var book = Object.FindFirstObjectByType<HelpBookUI>();
+            book.Open();
+            HelpBookUnlocks.RecordPossession((BodyForm)Enum.Parse(typeof(BodyForm), id));
+            var status = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview/Forms/" + id + " Card/Unlock Status");
+            Check(status.GetComponent<TextMeshProUGUI>().text == "DISCOVERED", "Open collection refreshes immediately: " + id);
+            book.Close();
+            discovered.Add(id);
+            CheckNavigation(discovered.ToArray());
+        }
+        Load("Navigation"); yield return .4f;
+        CheckNavigation(Forms);
+        CaptureCollection("all", 1920, 1080);
+        CaptureCollection("all-16x10", 1280, 800);
+        Check(true, "Collection discoveries survive scene reload");
+    }
+
+    private static IEnumerator VerifyCollectionNewLaunch()
+    {
+        yield return .4f;
+        CheckNavigation();
+        Check(true, "New Play session resets discoveries with domain reload disabled");
+    }
+
+    private static void CaptureCollection(string name, int width, int height)
+    {
+        var book = Object.FindFirstObjectByType<HelpBookUI>();
+        book.Open();
+        var canvas = book.GetComponent<Canvas>();
+        var oldMode = canvas.renderMode;
+        var oldCamera = canvas.worldCamera;
+        float oldDistance = canvas.planeDistance;
+        var cameraObject = new GameObject("Collection verification camera");
+        var camera = cameraObject.AddComponent<Camera>();
+        camera.enabled = false;
+        camera.orthographic = true;
+        camera.transform.position = new Vector3(0, 0, -1000);
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = new Color(.18f, .20f, .22f);
+        var target = new RenderTexture(width, height, 24);
+        camera.targetTexture = target;
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = camera;
+        canvas.planeDistance = 1;
+        Canvas.ForceUpdateCanvases();
+        var overview = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview");
+        foreach (var label in overview.GetComponentsInChildren<TextMeshProUGUI>())
+        {
+            label.ForceMeshUpdate();
+            Check(!label.isTextOverflowing, name + " text fits: " + label.name);
+        }
+        foreach (var glyph in overview.GetComponentsInChildren<CollectionBookGlyph>())
+        {
+            Check(glyph.GetComponent<CanvasRenderer>() != null, "Input symbol has renderer: " + glyph.name);
+            var mesh = glyph.canvasRenderer.GetMesh();
+            Check(mesh.vertexCount > 0, "Input symbol has visible geometry: " + glyph.name);
+            Object.Destroy(mesh);
+        }
+        camera.Render();
+        var oldTarget = RenderTexture.active;
+        RenderTexture.active = target;
+        var screenshot = new Texture2D(width, height, TextureFormat.RGB24, false);
+        screenshot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        screenshot.Apply();
+        string directory = "/tmp/starformer-collection-previews";
+        Directory.CreateDirectory(directory);
+        File.WriteAllBytes(Path.Combine(directory, name + ".png"), screenshot.EncodeToPNG());
+        RenderTexture.active = oldTarget;
+        canvas.renderMode = oldMode;
+        canvas.worldCamera = oldCamera;
+        canvas.planeDistance = oldDistance;
+        camera.targetTexture = null;
+        Object.Destroy(screenshot);
+        Object.Destroy(target);
+        Object.Destroy(cameraObject);
+        book.Close();
+    }
+
     private static void OnPlayState(PlayModeStateChange state)
     {
         int phase = SessionState.GetInt(Prefix + "Phase", 0);
-        if (state == PlayModeStateChange.EnteredEditMode && phase == 2)
+        if (state == PlayModeStateChange.EnteredEditMode && (phase == 2 || phase == 4))
         {
             EditorSceneManager.OpenScene("Assets/Scenes/Navigation.unity");
             EditorApplication.EnterPlaymode();
@@ -59,7 +156,7 @@ public static class SessionDiscoveryVerification
         if (state != PlayModeStateChange.EnteredPlayMode || phase == 0) return;
         errors = "";
         Application.logMessageReceived += OnLog;
-        routine = phase == 1 ? VerifySession() : VerifyNewLaunch();
+        routine = phase == 4 ? VerifyCollectionNewLaunch() : phase == 3 ? VerifyCollection() : phase == 1 ? VerifySession() : VerifyNewLaunch();
         resumeAt = 0;
         deadline = EditorApplication.timeSinceStartup + 120;
         EditorApplication.update += Tick;
@@ -95,6 +192,11 @@ public static class SessionDiscoveryVerification
             if (SessionState.GetInt(Prefix + "Phase", 0) == 1)
             {
                 SessionState.SetInt(Prefix + "Phase", 2);
+                EditorApplication.ExitPlaymode();
+            }
+            else if (SessionState.GetInt(Prefix + "Phase", 0) == 3)
+            {
+                SessionState.SetInt(Prefix + "Phase", 4);
                 EditorApplication.ExitPlaymode();
             }
             else Finish(0, "");
@@ -157,14 +259,37 @@ public static class SessionDiscoveryVerification
         var content = Field<HelpBookContent>(book, "content");
         book.Open();
         Check(book.IsOpen, "Navigation book opens");
-        for (int i = 0; i < content.Pages.Length; i++)
+        var overview = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview");
+        Check(overview != null, "Collection overview exists");
+        var grid = overview.Find("Forms");
+        Check(grid.childCount == 6, "All six forms visible together");
+        Check(grid.GetComponentsInChildren<UnityEngine.UI.Button>(true).Length == 0, "Static cards contain no practice or activation buttons");
+        foreach (var page in content.Pages)
         {
-            var page = content.Pages[i];
-            book.GoToPage(i);
-            bool expected = i == 0 || unlocked.Contains(page.unlockId);
-            Check(Field<TextMeshProUGUI>(book, "pageTitleText").text == (expected ? page.title : Field<string>(book, "lockedTitle")), "Book title gated: " + page.title);
-            Check(Field<SpriteSequencePlayer>(book, "demoPlayer").gameObject.activeSelf == expected, "Book demo gated: " + page.title);
+            bool expected = page.unlockId == "Star" || unlocked.Contains(page.unlockId);
+            var card = grid.Find(page.unlockId + " Card");
+            Check(card.gameObject.activeInHierarchy, "Card visible: " + page.title);
+            Check(card.Find("Unlock Status").GetComponent<TextMeshProUGUI>().text == (expected ? "DISCOVERED" : "UNDISCOVERED"), "Card discovery status: " + page.title);
+            Check(page.demoFrames.Length == 0, "Collection has no demo frames: " + page.title);
+            Check(card.Find("Form Name").GetComponent<TextMeshProUGUI>().text == (expected ? page.title.ToUpperInvariant() : "???"), "Title reveals only discovered form: " + page.title);
+            Check(card.Find("Controls").gameObject.activeSelf == expected, "Controls reveal only discovered form: " + page.title);
+            Check(card.Find("Locked Hint").gameObject.activeSelf != expected, "Mystery hint matches lock: " + page.title);
+            if (!expected)
+            {
+                var mystery = card.Find("Form Icon").GetComponent<UnityEngine.UI.Image>().sprite;
+                Check(mystery != null && mystery.texture.name == "CollectionForms", "Locked form uses mystery artwork");
+                Check(card.Find("Footer/Flavor").GetComponent<TextMeshProUGUI>().text == "Find a new form to reveal it.", "Locked card hides flavor text");
+            }
+
         }
+        Check(!book.GetComponentsInChildren<SpriteSequencePlayer>(true).Any(player => player.isActiveAndEnabled), "No active collection animations");
+        Canvas.ForceUpdateCanvases();
+        foreach (var label in overview.GetComponentsInChildren<TextMeshProUGUI>())
+        {
+            label.ForceMeshUpdate();
+            Check(!label.isTextOverflowing, "Collection text fits: " + label.name);
+        }
+        Check(overview.Find("Discovery Count").GetComponent<TextMeshProUGUI>().text == $"{unlocked.Length + 1} / 6 forms discovered", "Collection count matches discovery");
         book.Close();
         Check(Time.timeScale == 1, "Book closes and resumes navigation");
     }
@@ -238,6 +363,13 @@ public static class SessionDiscoveryVerification
         Expect("Box", "Spider", "Fan");
         Check(true, "Assigned starting Box counts as used but waiting Bubble stays locked");
         Load("Navigation"); yield return .3f; CheckNavigation("Box", "Spider", "Fan");
+        var book = Object.FindFirstObjectByType<HelpBookUI>();
+        book.Open();
+        HelpBookUnlocks.RecordPossession(BodyForm.Bubble);
+        var status = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview/Forms/Bubble Card/Unlock Status");
+        Check(status.GetComponent<TextMeshProUGUI>().text == "DISCOVERED", "Open collection updates immediately on discovery");
+        book.Close();
+        CheckNavigation("Box", "Bubble", "Spider", "Fan");
     }
 
     private static void SavePreference(string key)
