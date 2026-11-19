@@ -48,10 +48,226 @@ public static class SessionDiscoveryVerification
         EditorApplication.EnterPlaymode();
     }
 
+    public static void RunCollectionBatch()
+    {
+        RunBatch();
+        SessionState.SetInt(Prefix + "Phase", 3);
+    }
+
+    public static void RunAllScenesCollectionBatch()
+    {
+        RunBatch();
+        SessionState.SetInt(Prefix + "Phase", 5);
+    }
+
+    private static IEnumerator VerifyAllScenesCollection()
+    {
+        var paths = AssetDatabase.FindAssets("t:Scene", new[] { "Assets/Scenes" })
+            .Select(AssetDatabase.GUIDToAssetPath)
+            .Where(path => File.ReadAllText(path).Contains("Assembly-CSharp::SceneCollectionBookUI"))
+            .OrderBy(path => path).ToArray();
+        Check(paths.Length == 10, "All ten existing non-Navigation collection entries migrated");
+        foreach (string path in paths)
+        {
+            Time.timeScale = 1;
+            EditorSceneManager.LoadSceneInPlayMode(path, new LoadSceneParameters(LoadSceneMode.Single));
+            yield return .6f;
+            Time.timeScale = 1;
+            var bridge = Object.FindFirstObjectByType<SceneCollectionBookUI>();
+            Check(bridge != null && bridge.isActiveAndEnabled, path + " bridge enabled");
+            var books = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None);
+            Check(books.Count(item => item.isActiveAndEnabled) == 1, path + " has exactly one active collection");
+            var book = books.First(item => item.isActiveAndEnabled);
+            Check(Field<HelpBookContent>(book, "content") == AssetDatabase.LoadAssetAtPath<HelpBookContent>("Assets/UI/HelpBook/CollectionContent.asset"), path + " uses shared Navigation content");
+            Check(books.Length == 1, path + " has no retained legacy help components");
+            var entry = Field<UnityEngine.UI.Button>(bridge, "entryButton");
+            Check(entry != null && entry.isActiveAndEnabled && entry.interactable, path + " entry available");
+            entry.onClick.Invoke();
+            Check(book.IsOpen && Time.timeScale == 0, path + " entry opens collection and pauses game");
+            yield return .15f; // Allow the opened overlay to register its rendered UI depth.
+            var homeMenu = Object.FindFirstObjectByType<MainMenuButtonUI>();
+            if (homeMenu != null)
+            {
+                var homeCanvas = Field<GameObject>(homeMenu, "hud").GetComponent<Canvas>();
+                Check(book.GetComponent<Canvas>().sortingOrder > homeCanvas.sortingOrder, path + " collection renders above Home HUD");
+                Canvas.ForceUpdateCanvases();
+                var homeRect = (RectTransform)Field<UnityEngine.UI.Button>(homeMenu, "home").transform;
+                var pointer = new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current)
+                {
+                    position = RectTransformUtility.WorldToScreenPoint(null, homeRect.TransformPoint(homeRect.rect.center))
+                };
+                var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+                UnityEngine.EventSystems.EventSystem.current.RaycastAll(pointer, hits);
+                Check(hits.Count > 0 && hits[0].gameObject.transform.IsChildOf(book.transform), path + " collection intercepts clicks over Home button; point=" + pointer.position + "; hits=" + string.Join(", ", hits.Select(hit => hit.gameObject.name + "@" + hit.sortingOrder)));
+            }
+            HelpBookUnlocks.RecordPossession(BodyForm.Spider);
+            var grid = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview/Forms");
+            Check(grid.childCount == 6, path + " displays all six cards");
+            foreach (var page in Field<HelpBookContent>(book, "content").Pages)
+            {
+                var card = grid.Find(page.unlockId + " Card");
+                bool discovered = HelpBookUnlocks.IsUnlocked(page.unlockId);
+                Check(card.Find("Form Name").GetComponent<TextMeshProUGUI>().text == (discovered ? page.title.ToUpperInvariant() : "???"), path + " discovery matches: " + page.unlockId);
+            }
+            Check(grid.Find("Spider Card/Form Icon").GetComponent<UnityEngine.UI.Image>().sprite.texture.name == "CollectionSpiderOrange", path + " orange Spider portrait");
+            Field<UnityEngine.UI.Button>(book, "closeButton").onClick.Invoke();
+            Check(!book.IsOpen && Time.timeScale == 1, path + " close button resumes game");
+            if (homeMenu != null)
+                Check(Field<UnityEngine.UI.Button>(homeMenu, "home").gameObject.activeInHierarchy, path + " Home button remains available after closing collection");
+            entry.onClick.Invoke();
+            Check(book.IsOpen, path + " reopens with discovery preserved");
+            Field<UnityEngine.UI.Button>(book, "backdropButton").onClick.Invoke();
+            Check(!book.IsOpen && Time.timeScale == 1, path + " backdrop closes collection");
+            if (path.EndsWith("IntroBox.unity") || path.EndsWith("Level02.unity"))
+                CaptureCollection("shared-" + Path.GetFileNameWithoutExtension(path), 1920, 1080);
+            entry.onClick.Invoke();
+            bridge.enabled = false;
+            Check(!book.IsOpen && Time.timeScale == 1, path + " disabling owner restores time");
+        }
+        Time.timeScale = 1;
+        EditorSceneManager.LoadSceneInPlayMode("Assets/Scenes/Navigation.unity", new LoadSceneParameters(LoadSceneMode.Single));
+        yield return .5f;
+        var navigationBook = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(book => book.isActiveAndEnabled);
+        navigationBook.Open();
+        Check(navigationBook.IsOpen && HelpBookUnlocks.IsUnlocked("Spider"), "Navigation shares discoveries from other scenes");
+        navigationBook.Close();
+    }
+
+    private static IEnumerator VerifyCollection()
+    {
+        yield return .4f;
+        CheckNavigation();
+        CaptureCollection("locked", 1920, 1080);
+        // Exercise the user's actual path: acquire a body in a level and return to Navigation.
+        Load("IntroBox"); yield return .4f;
+        Possess(BodyForm.Box);
+        Load("Navigation"); yield return .4f;
+        CheckNavigation("Box");
+        CaptureCollection("partial", 1920, 1080);
+        var discovered = new System.Collections.Generic.List<string> { "Box" };
+        foreach (string id in Forms.Skip(1))
+        {
+            var book = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+            book.Open();
+            HelpBookUnlocks.RecordPossession((BodyForm)Enum.Parse(typeof(BodyForm), id));
+            var status = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview/Forms/" + id + " Card/Unlock Status");
+            Check(status.GetComponent<TextMeshProUGUI>().text == "DISCOVERED", "Open collection refreshes immediately: " + id);
+            book.Close();
+            discovered.Add(id);
+            CheckNavigation(discovered.ToArray());
+        }
+        Load("Navigation"); yield return .4f;
+        CheckNavigation(Forms);
+        CaptureCollection("all", 1920, 1080);
+        CaptureCollection("all-16x10", 1280, 800);
+        Check(true, "Collection discoveries survive scene reload");
+        var modalBook = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+        Time.timeScale = .5f;
+        modalBook.Open(); modalBook.Close();
+        Check(Time.timeScale == .5f, "Closing restores the actual previous time scale");
+        Time.timeScale = 1;
+        var inputSettings = UnityEngine.InputSystem.InputSystem.settings;
+        var originalEditorInput = inputSettings.editorInputBehaviorInPlayMode;
+        var originalBackgroundInput = inputSettings.backgroundBehavior;
+        inputSettings.editorInputBehaviorInPlayMode = UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+        inputSettings.backgroundBehavior = UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+        var keyboard = UnityEngine.InputSystem.InputSystem.AddDevice<UnityEngine.InputSystem.Keyboard>();
+        modalBook.Open();
+        UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,
+            new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Escape));
+        PumpGameplayInput();
+        Check(keyboard.escapeKey.wasPressedThisFrame, "Synthetic Escape reaches the gameplay input update");
+        Invoke(modalBook, "Update");
+        UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard, new UnityEngine.InputSystem.LowLevel.KeyboardState());
+        PumpGameplayInput();
+        yield return .15f;
+        if (modalBook.IsOpen)
+        {
+            UnityEngine.InputSystem.InputSystem.QueueStateEvent(keyboard,
+                new UnityEngine.InputSystem.LowLevel.KeyboardState(UnityEngine.InputSystem.Key.Escape));
+            PumpGameplayInput();
+            Invoke(modalBook, "Update");
+        }
+        Check(!modalBook.IsOpen && Time.timeScale == 1, "Escape closes the collection and resumes game");
+        UnityEngine.InputSystem.InputSystem.RemoveDevice(keyboard);
+        inputSettings.editorInputBehaviorInPlayMode = originalEditorInput;
+        inputSettings.backgroundBehavior = originalBackgroundInput;
+
+    }
+
+    // EditorApplication.update otherwise routes queued events to the Editor input phase.
+    private static void PumpGameplayInput()
+    {
+        typeof(UnityEngine.InputSystem.InputSystem).GetMethod("Update", BindingFlags.NonPublic | BindingFlags.Static,
+            null, new[] { typeof(UnityEngine.InputSystem.LowLevel.InputUpdateType) }, null)
+            .Invoke(null, new object[] { UnityEngine.InputSystem.LowLevel.InputUpdateType.Dynamic });
+    }
+
+    private static IEnumerator VerifyCollectionNewLaunch()
+    {
+        yield return .4f;
+        CheckNavigation();
+        Check(true, "New Play session resets discoveries with domain reload disabled");
+    }
+
+    private static void CaptureCollection(string name, int width, int height)
+    {
+        var book = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+        book.Open();
+        var canvas = book.GetComponent<Canvas>();
+        var oldMode = canvas.renderMode;
+        var oldCamera = canvas.worldCamera;
+        float oldDistance = canvas.planeDistance;
+        var cameraObject = new GameObject("Collection verification camera");
+        var camera = cameraObject.AddComponent<Camera>();
+        camera.enabled = false;
+        camera.orthographic = true;
+        camera.transform.position = new Vector3(0, 0, -1000);
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = new Color(.18f, .20f, .22f);
+        var target = new RenderTexture(width, height, 24);
+        camera.targetTexture = target;
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = camera;
+        canvas.planeDistance = 1;
+        Canvas.ForceUpdateCanvases();
+        var overview = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview");
+        foreach (var label in overview.GetComponentsInChildren<TextMeshProUGUI>())
+        {
+            label.ForceMeshUpdate();
+            Check(!label.isTextOverflowing, name + " text fits: " + label.name);
+        }
+        foreach (var glyph in overview.GetComponentsInChildren<CollectionBookGlyph>())
+        {
+            Check(glyph.GetComponent<CanvasRenderer>() != null, "Input symbol has renderer: " + glyph.name);
+            var mesh = glyph.canvasRenderer.GetMesh();
+            Check(mesh.vertexCount > 0, "Input symbol has visible geometry: " + glyph.name);
+            Object.Destroy(mesh);
+        }
+        camera.Render();
+        var oldTarget = RenderTexture.active;
+        RenderTexture.active = target;
+        var screenshot = new Texture2D(width, height, TextureFormat.RGB24, false);
+        screenshot.ReadPixels(new Rect(0, 0, width, height), 0, 0);
+        screenshot.Apply();
+        string directory = "/tmp/starformer-collection-previews";
+        Directory.CreateDirectory(directory);
+        File.WriteAllBytes(Path.Combine(directory, name + ".png"), screenshot.EncodeToPNG());
+        RenderTexture.active = oldTarget;
+        canvas.renderMode = oldMode;
+        canvas.worldCamera = oldCamera;
+        canvas.planeDistance = oldDistance;
+        camera.targetTexture = null;
+        Object.Destroy(screenshot);
+        Object.Destroy(target);
+        Object.Destroy(cameraObject);
+        book.Close();
+    }
+
     private static void OnPlayState(PlayModeStateChange state)
     {
         int phase = SessionState.GetInt(Prefix + "Phase", 0);
-        if (state == PlayModeStateChange.EnteredEditMode && phase == 2)
+        if (state == PlayModeStateChange.EnteredEditMode && (phase == 2 || phase == 4))
         {
             EditorSceneManager.OpenScene("Assets/Scenes/Navigation.unity");
             EditorApplication.EnterPlaymode();
@@ -59,7 +275,7 @@ public static class SessionDiscoveryVerification
         if (state != PlayModeStateChange.EnteredPlayMode || phase == 0) return;
         errors = "";
         Application.logMessageReceived += OnLog;
-        routine = phase == 1 ? VerifySession() : VerifyNewLaunch();
+        routine = phase == 5 ? VerifyAllScenesCollection() : phase == 4 ? VerifyCollectionNewLaunch() : phase == 3 ? VerifyCollection() : phase == 1 ? VerifySession() : VerifyNewLaunch();
         resumeAt = 0;
         deadline = EditorApplication.timeSinceStartup + 120;
         EditorApplication.update += Tick;
@@ -69,12 +285,6 @@ public static class SessionDiscoveryVerification
     {
         if (type != LogType.Error && type != LogType.Exception && type != LogType.Assert) return;
         if (stack.Contains("UnityEditor.Search.SearchDatabase")) return;
-        if (message.StartsWith("HelpBookUI 缺少引用"))
-        {
-            SessionState.SetString(Prefix + "Results", SessionState.GetString(Prefix + "Results", "") +
-                "KNOWN EXISTING ISSUE: legacy gameplay Help component has missing button/panel references.\n");
-            return;
-        }
         errors += message + "\n";
     }
 
@@ -95,6 +305,11 @@ public static class SessionDiscoveryVerification
             if (SessionState.GetInt(Prefix + "Phase", 0) == 1)
             {
                 SessionState.SetInt(Prefix + "Phase", 2);
+                EditorApplication.ExitPlaymode();
+            }
+            else if (SessionState.GetInt(Prefix + "Phase", 0) == 3)
+            {
+                SessionState.SetInt(Prefix + "Phase", 4);
                 EditorApplication.ExitPlaymode();
             }
             else Finish(0, "");
@@ -152,19 +367,40 @@ public static class SessionDiscoveryVerification
             Check(Field<GameObject>(slot, "unlockedVisual").activeSelf == expected, id + " Closet icon matches discovery");
             Check(Field<GameObject[]>(slot, "lockedVisuals").All(obj => obj.activeSelf == !expected), id + " locked artwork matches discovery");
         }
-        var book = Object.FindFirstObjectByType<HelpBookUI>();
+        var book = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
         Check(book.PageCount == 6, "Navigation book keeps all six pages");
         var content = Field<HelpBookContent>(book, "content");
         book.Open();
         Check(book.IsOpen, "Navigation book opens");
-        for (int i = 0; i < content.Pages.Length; i++)
+        var overview = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview");
+        Check(overview != null, "Collection overview exists");
+        var grid = overview.Find("Forms");
+        Check(grid.childCount == 6, "All six forms visible together");
+        Check(grid.GetComponentsInChildren<UnityEngine.UI.Button>(true).Length == 0, "Static cards contain no practice or activation buttons");
+        foreach (var page in content.Pages)
         {
-            var page = content.Pages[i];
-            book.GoToPage(i);
-            bool expected = i == 0 || unlocked.Contains(page.unlockId);
-            Check(Field<TextMeshProUGUI>(book, "pageTitleText").text == (expected ? page.title : Field<string>(book, "lockedTitle")), "Book title gated: " + page.title);
-            Check(Field<SpriteSequencePlayer>(book, "demoPlayer").gameObject.activeSelf == expected, "Book demo gated: " + page.title);
+            bool expected = page.unlockId == "Star" || unlocked.Contains(page.unlockId);
+            var card = grid.Find(page.unlockId + " Card");
+            Check(card.gameObject.activeInHierarchy, "Card visible: " + page.title);
+            Check(card.Find("Unlock Status").GetComponent<TextMeshProUGUI>().text == (expected ? "DISCOVERED" : "UNDISCOVERED"), "Card discovery status: " + page.title);
+            Check(card.Find("Form Name").GetComponent<TextMeshProUGUI>().text == (expected ? page.title.ToUpperInvariant() : "???"), "Title reveals only discovered form: " + page.title);
+            Check(card.Find("Controls").gameObject.activeSelf == expected, "Controls reveal only discovered form: " + page.title);
+            Check(card.Find("Locked Hint").gameObject.activeSelf != expected, "Mystery hint matches lock: " + page.title);
+            if (!expected)
+            {
+                var mystery = card.Find("Form Icon").GetComponent<UnityEngine.UI.Image>().sprite;
+                Check(mystery != null && mystery.texture.name == "CollectionForms", "Locked form uses mystery artwork");
+                Check(card.Find("Footer/Flavor").GetComponent<TextMeshProUGUI>().text == "Find a new form to reveal it.", "Locked card hides flavor text");
+            }
+
         }
+        Canvas.ForceUpdateCanvases();
+        foreach (var label in overview.GetComponentsInChildren<TextMeshProUGUI>())
+        {
+            label.ForceMeshUpdate();
+            Check(!label.isTextOverflowing, "Collection text fits: " + label.name);
+        }
+        Check(overview.Find("Discovery Count").GetComponent<TextMeshProUGUI>().text == $"{unlocked.Length + 1} / 6 forms discovered", "Collection count matches discovery");
         book.Close();
         Check(Time.timeScale == 1, "Book closes and resumes navigation");
     }
@@ -180,6 +416,9 @@ public static class SessionDiscoveryVerification
         var player = Object.FindFirstObjectByType<PlayerPossessionController>();
         Check(player.CurrentBody.Form == BodyForm.Star, "Direct Level02 entry controls Star only");
         var goal = Object.FindFirstObjectByType<LevelGoalToMenu>();
+        // Arrange the gate prerequisite so this tests completion/discovery, not the gate puzzle.
+        var requiredGate = Field<GameObject>(goal, "requiredGate");
+        if (requiredGate != null) requiredGate.SetActive(!Field<bool>(goal, "gateMustBeGone"));
         Invoke(goal, "CheckPlayer", player.CurrentBody.BodyCollider);
         Check(Field<bool>(goal, "cleared"), "Level02 completion handler exercised");
         Expect(); // Completing the advanced level no longer grants all forms.
@@ -212,6 +451,20 @@ public static class SessionDiscoveryVerification
         Load("Navigation"); yield return .25f; CheckNavigation("Box", "Bubble");
         Load("IntroBouncyBall"); yield return .25f; Possess(BodyForm.BouncyBall);
         Load("IntroSpider"); yield return .3f; Possess(BodyForm.Spider);
+        Time.timeScale = 1;
+        yield return .05f;
+        var spider = Object.FindFirstObjectByType<PlayerPossessionController>().CurrentBody;
+        Check(spider.TryGetComponent(out SpiderSilkAbility silk), "Scene Spider receives the merged silk ability");
+        Check(silk.BeginAim(), "Discovered Spider can begin aiming silk");
+        var spiderBook = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+        spiderBook.Open();
+        yield return .15f;
+        Check(spiderBook.IsOpen && Time.timeScale == 0 && !silk.IsAiming && !silk.IsFiring,
+            "Opening collection pauses Spider and cancels pending aim without casting");
+        spiderBook.Close();
+        yield return .05f;
+        Check(Time.timeScale == 1 && !silk.IsFiring && silk.CanAim,
+            "Closing collection restores Spider control without an accidental cast");
         Expect("Box", "Bubble", "BouncyBall", "Spider");
         Load("IntroFan"); yield return .3f;
         while (Object.FindFirstObjectByType<PlayerPossessionController>().CurrentBody == null ||
@@ -238,6 +491,13 @@ public static class SessionDiscoveryVerification
         Expect("Box", "Spider", "Fan");
         Check(true, "Assigned starting Box counts as used but waiting Bubble stays locked");
         Load("Navigation"); yield return .3f; CheckNavigation("Box", "Spider", "Fan");
+        var book = Object.FindObjectsByType<HelpBookUI>(FindObjectsSortMode.None).First(item => item.isActiveAndEnabled);
+        book.Open();
+        HelpBookUnlocks.RecordPossession(BodyForm.Bubble);
+        var status = book.transform.Find("Help Overlay/HelpPanel/BookFrame/Collection Overview/Forms/Bubble Card/Unlock Status");
+        Check(status.GetComponent<TextMeshProUGUI>().text == "DISCOVERED", "Open collection updates immediately on discovery");
+        book.Close();
+        CheckNavigation("Box", "Bubble", "Spider", "Fan");
     }
 
     private static void SavePreference(string key)
