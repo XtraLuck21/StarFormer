@@ -27,6 +27,7 @@ public class PlayerPossessionController : MonoBehaviour
 
     private readonly List<RaycastResult> mouseHits = new List<RaycastResult>();
     private MobileFormControls mobileControls;
+    private SpiderSilkAimControl silkControls;
     private bool mouseGrowHeld;
     private bool mouseShrinkHeld;
     private RestartMenuUI restartMenu;
@@ -320,6 +321,7 @@ public class PlayerPossessionController : MonoBehaviour
     private void Start()
     {
         mobileControls = GetComponent<MobileFormControls>();
+        silkControls = SpiderSilkAimControl.Create(this);
         if (initialBody == null ||
             !initialBody.isActiveAndEnabled ||
             !initialBody.IsReady)
@@ -527,6 +529,9 @@ public class PlayerPossessionController : MonoBehaviour
         // Opposing directions cancel; combined keyboard/touch input stays within [-1, 1].
         horizontalInput = Mathf.Clamp(horizontalInput, -1f, 1f);
         verticalInput = Mathf.Clamp(verticalInput, -1f, 1f);
+
+        if (silkControls != null)
+            silkControls.ProcessDesktopInput(mouse, keyboard, mouse != null && IsGameplayMousePress(mouse));
     }
 
     private void UpdateBoxMouseInput(bool isBox)
@@ -643,7 +648,8 @@ public class PlayerPossessionController : MonoBehaviour
 
         if (currentBody.Form == BodyForm.Spider)
         {
-            if (currentBody.TryGetComponent(
+            bool pulling = currentBody.TryGetComponent(out SpiderSilkAbility silk) && silk.TickPhysics();
+            if (!pulling && currentBody.TryGetComponent(
                 out HexagonSurfaceMovement hexagon))
             {
                 hexagon.Tick(horizontalInput);
@@ -912,6 +918,8 @@ public class PlayerPossessionController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (silkControls != null) silkControls.CancelGesture();
+        if (currentBody != null && currentBody.TryGetComponent(out SpiderSilkAbility silk)) silk.Cancel();
         mouseGrowHeld = mouseShrinkHeld = false;
         if (restartMenu != null) restartMenu.Close();
         RestoreBoxHandoffCollisions();

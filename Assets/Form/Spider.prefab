@@ -210,6 +210,7 @@ GameObject:
   - component: {fileID: 6896853863633847359}
   - component: {fileID: 3799781869917660986}
   - component: {fileID: 7788203956102451001}
+  - component: {fileID: 7788203956102451002}
   m_Layer: 6
   m_Name: Spider
   m_TagString: Untagged
@@ -353,3 +354,26 @@ MonoBehaviour:
   gravityInfluence: 0.035
   accelerationInfluence: 0.008
   movementWiggle: 0.018
+--- !u!114 &7788203956102451002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8487251107228437932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292a9d73fb62467c941e5e36ab74a8bf, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SpiderSilkAbility
+  range: 3
+  shootSpeed: 14
+  cooldown: 0.7
+  fadeSeconds: 0.25
+  width: 0.045
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967291
+  silkColor: {r: 0.85, g: 0.95, b: 1, a: 1}
+  pullSpeed: 8
+  maximumPullSeconds: 1.5

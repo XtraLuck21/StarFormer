@@ -14,7 +14,7 @@ public sealed class MobileFormControls : MonoBehaviour
     {
         ShowMode.AlwaysShow => true,
         ShowMode.NeverShow => false,
-        _ => Application.isMobilePlatform || (Touchscreen.current != null && Mouse.current == null)
+        _ => UnityEngine.Device.Application.isMobilePlatform || (Touchscreen.current != null && Mouse.current == null)
     });
     private PlayerPossessionController player;
     private NavigationStarController navigation;

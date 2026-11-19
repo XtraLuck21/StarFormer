@@ -40,6 +40,24 @@ public class HexagonSurfaceMovement : MonoBehaviour
     public bool IsAttached { get; private set; }
     public Collider2D AttachedSurface { get; private set; }
     public Transform Visual => visual;
+    public Vector2 SurfaceTangent => new Vector2(surfaceNormal.y, -surfaceNormal.x);
+    public float WorldRadius => circle.radius * Mathf.Max(Mathf.Abs(transform.lossyScale.x), Mathf.Abs(transform.lossyScale.y));
+    public float AttachmentDistance => WorldRadius + surfaceGap;
+
+    public bool CanClimb(Collider2D surface) => surface != null && !surface.isTrigger &&
+        (surfaceMask.value & (1 << surface.gameObject.layer)) != 0;
+
+    public bool TryAttachFromSilk(Collider2D surface, Vector2 normal)
+    {
+        if (!CanClimb(surface) || !surface.enabled || !surface.gameObject.activeInHierarchy) return false;
+        Vector2 center = transform.TransformPoint(circle.offset);
+        if (Vector2.Distance(center, surface.ClosestPoint(center)) > AttachmentDistance + searchDistance) return false;
+        surfaceNormal = normal.normalized;
+        AttachedSurface = surface;
+        IsAttached = true;
+        body.gravityScale = 0f;
+        return true;
+    }
 
     private void Awake()
     {
@@ -51,6 +69,8 @@ public class HexagonSurfaceMovement : MonoBehaviour
         // Also covers spiders authored directly in scenes before eyes were added.
         if (possessable.Form == BodyForm.Spider && !TryGetComponent<SpiderGooglyEyes>(out _))
             gameObject.AddComponent<SpiderGooglyEyes>();
+        if (possessable.Form == BodyForm.Spider && !TryGetComponent<SpiderSilkAbility>(out _))
+            gameObject.AddComponent<SpiderSilkAbility>();
 
         if (visual != null)
         {
