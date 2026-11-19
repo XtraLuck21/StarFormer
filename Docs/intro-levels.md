@@ -22,14 +22,17 @@ Navigation's **Kindergarten** entrance starts IntroBox; **Level 1** starts Level
 
 ## IntroBox
 
-Scene: [IntroBox.unity](../Assets/Scenes/IntroBox.unity).
+Current source on `gold-polish-kindergarten` replaces the former two-box route with a three-box carrying lesson. See [the layout and verification notes](IntroBoxCarryPolish.md) and [English concept map](IntroBox-Carry-Map-English.png). This source change has not been published.
 
-1. Begin as Star and use horizontal movement and a jump to pass the low step.
-2. Touch BoxA to possess it. Move into the growth area and hold Grow to reach the elevated BoxB; contact transfers control upward. The Star cannot bypass this transfer with a direct jump in the tested layout.
-3. Move BoxB over the gap and hold Shrink to drop safely.
-4. Walk through the low tunnel. The flag opens the small exit door only for controlled BoxB. A right-pointing arrow then appears beside the exit; continue right through a separate trigger to load IntroBubble. This scene-to-scene continuation does not show a Level up overlay.
+1. Begin as Star, practice A/D or arrow-key movement and Space over a low step.
+2. A low, tall-sided entry tunnel makes BoxA the first unavoidable possession. The Star cannot jump over A into the later hosts.
+3. Move A right into BoxB. BoxC already rests on B, so the existing possession contact locks prevent an immediate second transfer.
+4. Carry C right to the receiving ledge. A scene-local support helper matches C's horizontal velocity only while it rests on controlled B; normal possession rules stay in charge.
+5. Stop at the ledge and hold K to shrink B. C's forward overhang leaves it supported by the fixed ledge. A visible gap and a short stable-separation check advance the hint.
+6. Hold J to regrow B into C. Control changes to C through ordinary contact possession. Move C right and shrink through the low passage to the flag.
+7. Controlled C opens the exit door. Continue right into IntroBubble; no Level up overlay interrupts the passage. Returning from IntroBubble restores small C near this flag with the gate open.
 
-Boxes cannot jump or exit to Star. Fixed growth/shrink outlines, outward/inward arrows and mode-specific resize prompts appear only while the corresponding Box is controlled and inside its activation region. Leave lateral clearance for growth; a Box pressed against a wall cannot expand through it.
+English lessons are persistent, state-driven world-space callouts near the controlled body/docking area; the old top-center IntroFormHintUI is disabled in this scene. Touch mode substitutes joystick, Jump, Grow and Shrink wording. Dropped or prematurely possessed cargo resets the carrying portion to B+C with a nearby explanation, without replaying the opening jump. R and Home keep the existing full restart/menu behavior. Boxes still cannot jump or manually release Star; their ordinary size limits and shared contact-lock rules are unchanged.
 
 ## IntroBubble
 
@@ -48,7 +51,7 @@ Both intro cameras remain fixed. Old route geometry and unused legacy objects re
 
 ### Return to IntroBox
 
-Walking left through IntroBubble's entrance exit loads IntroBox at its endpoint, controlling BoxB at `(7.8, -2.64)` with size `0.5` and the exit door open. This works even when IntroBubble was opened directly. The return setup is consumed once; it is not a complete snapshot of the previous scene. The player can move back into IntroBox or continue forward to IntroBubble again. A full restart still starts the current scene normally.
+Walking left through IntroBubble's entrance exit loads IntroBox at its endpoint, controlling BoxC at `(13.1, -0.78)` with size `0.5` and the exit door open. This works even when IntroBubble was opened directly. The return setup is consumed once; it is not a complete snapshot of the previous scene. The player can move back into IntroBox or continue forward to IntroBubble again. A full restart still starts the current scene normally.
 
 ## IntroBouncyBall
 
@@ -110,7 +113,7 @@ These lessons follow the same Show Mode as the controls. The joystick and action
 
 ### Top-center form messages
 
-IntroBubble disables `IntroFormHintUI`, TutorialTitle and TutorialInstructions; it uses the map hints above. The Bubble rows below describe the retained script capability, not visible messages in the rebuilt scene. IntroBox continues using the top-center messages.
+IntroBubble disables `IntroFormHintUI`, TutorialTitle and TutorialInstructions; it uses the map hints above. The Bubble rows below describe the retained script capability, not visible messages in the rebuilt scene. IntroBox now uses original visual keycaps and short local contact-rule hints; its top-center messages are disabled.
 
 `IntroFormHintUI` updates the title/subtitle from the controlled form and Bubble water state. Titles remain visible; subtitles hold for 4 seconds and fade over 0.75 seconds, using scaled game time. A new qualifying state restarts that timer.
 
