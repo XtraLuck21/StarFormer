@@ -99,7 +99,7 @@ public sealed class FormControlsHUD : MonoBehaviour
         int rows = form switch
         {
             BodyForm.Box or BodyForm.Fan => 3,
-            BodyForm.Spider or BodyForm.BouncyBall => 1,
+            BodyForm.BouncyBall => 1,
             _ => navigation != null ? 3 : 2
         };
         float height = 42f + rows * RowHeight;
@@ -142,6 +142,9 @@ public sealed class FormControlsHUD : MonoBehaviour
             case BodyForm.Fan:
                 ActionRow(1, "Blow", "F", false);
                 ActionRow(2, "Leave", "Q", true);
+                break;
+            case BodyForm.Spider:
+                ActionRow(1, "Aim", null, false);
                 break;
             case BodyForm.Bubble:
                 ActionRow(1, "Pop", "Q", true);

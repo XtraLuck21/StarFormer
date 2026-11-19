@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Scene-start camera intro: lock the player and hold on a focus target
 /// for a fixed time with a close orthographic size and a hint label.
-/// Then smooth back to the camera's authored room view and stay there.
+/// Optionally show the seesaw next, then return to the authored room view.
 /// Attach to the Main Camera.
 /// </summary>
 public class CameraFocusIntro : MonoBehaviour
@@ -37,12 +37,23 @@ public class CameraFocusIntro : MonoBehaviour
     [SerializeField] private Vector3 labelWorldOffset = new Vector3(0f, 2f, 0f);
     [SerializeField, Min(1f)] private float labelFontSize = 22f;
 
+    [Header("Seesaw Preview")]
+    [SerializeField] private Transform seesawFocusTarget;
+    [SerializeField, Min(0f)] private float seesawHoldDuration = 3f;
+    [SerializeField, Min(0.05f)] private float seesawTravelDuration = 0.8f;
+    [SerializeField] private Vector3 seesawOffset = new Vector3(0f, 1f, -10f);
+    [SerializeField, Min(0.1f)] private float seesawOrthographicSize = 4.2f;
+    [SerializeField] private string seesawHintText = "Find a way to raise the flag.";
+
     private Camera attachedCamera;
     private Vector3 roomPosition;
     private float roomOrthographicSize;
     private bool previousControllerEnabled;
     private bool introStarted;
-    private bool returning;
+    private bool transitioning;
+    private Transform activeFocusTarget;
+    private Vector3 activeOffset;
+    private bool worldSpaceLabel = true;
     private GameObject labelRoot;
     private TMP_Text labelText;
     private RectTransform labelRect;
@@ -83,18 +94,21 @@ public class CameraFocusIntro : MonoBehaviour
         attachedCamera.orthographicSize = introOrthographicSize;
 
         CreateLabel();
+        activeFocusTarget = focusTarget;
+        activeOffset = offset;
         introStarted = true;
-        StartCoroutine(ReturnToRoomView());
+        UpdateLabelPosition();
+        StartCoroutine(PlayIntro());
     }
 
     private void LateUpdate()
     {
-        if (returning || focusTarget == null)
+        if (transitioning || activeFocusTarget == null)
         {
             return;
         }
 
-        Vector3 desired = focusTarget.position + offset;
+        Vector3 desired = activeFocusTarget.position + activeOffset;
 
         if (smoothSpeed <= 0f)
         {
@@ -106,46 +120,88 @@ public class CameraFocusIntro : MonoBehaviour
             transform.position = Vector3.Lerp(transform.position, desired, t);
         }
 
-        UpdateLabelPosition();
+        if (worldSpaceLabel) UpdateLabelPosition();
     }
 
-    private IEnumerator ReturnToRoomView()
+    private IEnumerator PlayIntro()
     {
         yield return new WaitForSeconds(duration);
 
-        returning = true;
+        transitioning = true;
+        if (labelRoot != null) labelRoot.SetActive(false);
 
-        if (labelRoot != null)
+        if (seesawFocusTarget != null && seesawHoldDuration > 0f)
         {
-            labelRoot.SetActive(false);
+            Vector3 position = seesawFocusTarget.position + seesawOffset;
+            yield return MoveCamera(position, GetSeesawShotSize(position), seesawTravelDuration);
+            activeFocusTarget = seesawFocusTarget;
+            activeOffset = seesawOffset;
+            transitioning = false;
+            ShowSeesawHint();
+            // The full hold starts after arrival, so travel never consumes the three-second preview.
+            yield return new WaitForSeconds(seesawHoldDuration);
+            transitioning = true;
+            if (labelRoot != null) labelRoot.SetActive(false);
         }
+
+        yield return MoveCamera(roomPosition, roomOrthographicSize, returnDuration);
 
         if (playerController != null)
         {
             playerController.enabled = previousControllerEnabled;
         }
+        DestroyLabel();
+        introStarted = false;
+        enabled = false;
+    }
 
+    private float GetSeesawShotSize(Vector3 cameraPosition)
+    {
+        float size = seesawOrthographicSize;
+        float aspect = Mathf.Max(0.1f, attachedCamera.aspect);
+        foreach (SpriteRenderer renderer in seesawFocusTarget.GetComponentsInChildren<SpriteRenderer>())
+        {
+            if (!renderer.enabled || !renderer.gameObject.activeInHierarchy) continue;
+            Bounds bounds = renderer.bounds;
+            float width = Mathf.Max(Mathf.Abs(bounds.min.x - cameraPosition.x), Mathf.Abs(bounds.max.x - cameraPosition.x));
+            float height = Mathf.Max(Mathf.Abs(bounds.min.y - cameraPosition.y), Mathf.Abs(bounds.max.y - cameraPosition.y));
+            size = Mathf.Max(size, (width + 0.5f) / aspect, height + 0.5f);
+        }
+        return size;
+    }
+
+    private void ShowSeesawHint()
+    {
+        if (labelRoot == null) return;
+        worldSpaceLabel = false;
+        labelText.text = seesawHintText;
+        labelText.enabled = true;
+        labelRect.anchorMin = labelRect.anchorMax = labelRect.pivot = new Vector2(0.5f, 1f);
+        labelRect.anchoredPosition = new Vector2(0f, -80f);
+        labelRoot.SetActive(true);
+    }
+
+    private IEnumerator MoveCamera(Vector3 destination, float orthographicSize, float seconds)
+    {
         Vector3 startPosition = transform.position;
         float startSize = attachedCamera.orthographicSize;
         float elapsed = 0f;
+        float travelDuration = Mathf.Max(0.05f, seconds);
 
-        while (elapsed < returnDuration)
+        while (elapsed < travelDuration)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / returnDuration);
+            float t = Mathf.Clamp01(elapsed / travelDuration);
             // Smoothstep for a soft arrival at the room view.
             t = t * t * (3f - 2f * t);
 
-            transform.position = Vector3.Lerp(startPosition, roomPosition, t);
-            attachedCamera.orthographicSize = Mathf.Lerp(startSize, roomOrthographicSize, t);
+            transform.position = Vector3.Lerp(startPosition, destination, t);
+            attachedCamera.orthographicSize = Mathf.Lerp(startSize, orthographicSize, t);
             yield return null;
         }
 
-        transform.position = roomPosition;
-        attachedCamera.orthographicSize = roomOrthographicSize;
-
-        DestroyLabel();
-        enabled = false;
+        transform.position = destination;
+        attachedCamera.orthographicSize = orthographicSize;
     }
 
     private void CreateLabel()
@@ -236,6 +292,7 @@ public class CameraFocusIntro : MonoBehaviour
         }
 
         introStarted = false;
+        StopAllCoroutines();
 
         // If the scene unloads mid-intro, do not leave the player locked
         // or the camera stuck on the focus shot.
