@@ -172,6 +172,8 @@ public class HelpBookUI : MonoBehaviour
 
     private void Awake()
     {
+        // Disabled legacy components remain serialized for the final cleanup.
+        if (!enabled) return;
         // The camera-sized canvas previews the book beside the map in Scene view.
         // In play, draw it with the other screen overlays so the book retains its UI order.
         if (TryGetComponent<Canvas>(out var canvas) && canvas.renderMode == RenderMode.ScreenSpaceCamera)
@@ -280,6 +282,15 @@ public class HelpBookUI : MonoBehaviour
         {
             NextPage();
         }
+    }
+
+    public void UseExternalEntry(Button entry)
+    {
+        if (entry == null || entry == helpButton) return;
+        helpButton.onClick.RemoveListener(Open);
+        helpButton.gameObject.SetActive(false);
+        helpButton = entry;
+        helpButton.onClick.AddListener(Open);
     }
 
     public void Open()

@@ -6329,6 +6329,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
+  - component: {fileID: 850000000000000000}
   - component: {fileID: 1272626092}
   - component: {fileID: 1272626091}
   - component: {fileID: 1272626090}
@@ -6545,7 +6546,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1272626088}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba5a67b392f73564bac6abbc235f7b7f, type: 3}
   m_Name: 
@@ -11335,3 +11336,18 @@ SceneRoots:
   - {fileID: 762427613}
   - {fileID: 108449019}
   - {fileID: 2145001002}
+--- !u!114 &850000000000000000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1272626088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc436f2a520c4de1bcd28a493cca5138, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SceneCollectionBookUI
+  entryButton: {fileID: 1593527840}
+  legacyPanel: {fileID: 2005089219}
+  collectionPrefab: {fileID: 9200370307143686128, guid: 6b0002ceb52f8439db7b43d32785aed1, type: 3}
