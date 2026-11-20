@@ -9,6 +9,8 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
     [SerializeField] private SeesawTilt2D seesaw;
     [SerializeField] private BoxCollider2D board;
     [SerializeField] private SpriteRenderer boardVisual;
+    [SerializeField] private SpriteRenderer beamSkin;
+    private Vector2 visibleSize, visibleCenter;
     [SerializeField] private BoxCollider2D returnBarrier;
     [SerializeField] private BoxCollider2D purpleSensor;
     [SerializeField] private SpriteRenderer purpleSensorVisual;
@@ -24,6 +26,7 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
     private BouncyBallAbility ability;
     private Color originalColor;
     private float colorProgress;
+    private readonly Sprite[] brokenSprites = new Sprite[2];
     private PossessableBody ignoredControlledBody;
     private Rigidbody2D leftBridgeBody;
     private BoxCollider2D leftBridgeCollider;
@@ -33,10 +36,37 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
     public int BounceCount { get; private set; }
     public bool HasLifted { get; private set; }
     public bool IsComplete => purpleContact.IsPressed;
+    public bool IsBoardCracked => passage.IsCracked;
 
     private void Awake()
     {
         originalColor = boardVisual.color;
+        visibleSize = board.size;
+        visibleCenter = board.offset;
+        if (beamSkin != null)
+        {
+            // Beam.png has transparent margins on both sides of its painted face.
+            Sprite beam = beamSkin.sprite;
+            Vector2 padding = new Vector2(9f, 12f);
+            Vector2 low = (padding - beam.pivot) / beam.pixelsPerUnit;
+            Vector2 high = (beam.rect.size - padding - beam.pivot) / beam.pixelsPerUnit;
+            Vector3 min = board.transform.InverseTransformPoint(beamSkin.transform.TransformPoint(low));
+            Vector3 max = board.transform.InverseTransformPoint(beamSkin.transform.TransformPoint(high));
+            visibleCenter = (min + max) * .5f;
+            visibleSize = new Vector2(Mathf.Abs(max.x - min.x), Mathf.Abs(max.y - min.y));
+            board.size = visibleSize;
+            board.offset = visibleCenter;
+            var paint = new GameObject("Seesaw impact paint").AddComponent<SpriteRenderer>();
+            paint.transform.SetParent(board.transform, false);
+            paint.transform.localPosition = visibleCenter;
+            paint.sprite = boardVisual.sprite;
+            paint.transform.localScale = new Vector3(visibleSize.x / paint.sprite.bounds.size.x,
+                visibleSize.y / paint.sprite.bounds.size.y, 1f);
+            paint.sortingLayerID = beamSkin.sortingLayerID;
+            paint.sortingOrder = beamSkin.sortingOrder + 1;
+            paint.enabled = false;
+            boardVisual = paint;
+        }
         purpleSensor.enabled = false;
         purpleSensorVisual.enabled = false;
         ability = ball.GetComponent<BouncyBallAbility>();
@@ -67,23 +97,38 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
     private void Update()
     {
         if (player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
-        colorProgress = Mathf.MoveTowards(colorProgress, BounceCount / (float)Mathf.Max(1, requiredImpacts), Time.deltaTime / .25f);
-        boardVisual.color = Color.Lerp(originalColor, ballColor, colorProgress);
+        float target = BounceCount / (float)Mathf.Max(1, requiredImpacts);
+        if (colorProgress >= target) return;
+        colorProgress = Mathf.MoveTowards(colorProgress, target, Time.deltaTime / (.14f * requiredImpacts));
+        // The green is baked into the beam sprite. Overlay paint on the visible beam
+        // instead of multiplying its texture by purple or tinting its hidden backing.
+        Color paint = beamSkin != null ? ballColor : Color.Lerp(originalColor, ballColor, colorProgress);
+        if (beamSkin != null) paint.a *= colorProgress;
+        boardVisual.color = paint;
+        boardVisual.enabled = true;
+        if (colorProgress >= 1f) BreakAndLowerBoard();
     }
 
     private void OnCeilingStruck(Collision2D collision)
     {
-        if (!CanAct || HasLifted || collision.collider != board || !bounceArea.Contains(ball.Body.position)) return;
+        if (!CanAct || BounceCount >= requiredImpacts || collision.collider != board || !bounceArea.Contains(ball.Body.position)) return;
         BounceCount++;
         passage.SetFinaleImpactProgress(BounceCount / (float)Mathf.Max(1, requiredImpacts));
-        if (BounceCount < requiredImpacts) return;
+    }
+
+    private void BreakAndLowerBoard()
+    {
         HasLifted = true;
-        colorProgress = 1f;
-        boardVisual.color = ballColor;
         BreakLeftHalf();
+        // Only the painted right-hand board can press the matching floor switch.
+        Transform sensor = purpleSensor.transform;
+        sensor.SetParent(board.transform, false);
+        sensor.localPosition = board.offset;
+        sensor.localRotation = Quaternion.identity;
+        sensor.localScale = Vector3.one;
+        purpleSensor.size = board.size;
+        purpleSensor.offset = Vector2.zero;
         purpleSensor.gameObject.SetActive(true);
-        purpleSensorVisual.color = ballColor;
-        purpleSensorVisual.enabled = true;
         purpleSensor.enabled = true;
         seesaw.LiftLeftFromBall(finalRightDownDegrees);
     }
@@ -96,25 +141,26 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
             fractureGap / Mathf.Max(.001f, Mathf.Abs(board.transform.lossyScale.x)));
         float halfWidth = (board.size.x - gap) * .5f;
         float centerOffset = (board.size.x + gap) * .25f;
-        SpriteRenderer left = CreateHalf("Seesaw Broken Left Half", -centerOffset, halfWidth);
-        CreateHalf("Seesaw Supported Right Half", centerOffset, halfWidth);
+        Transform left = CreateHalf(true, centerOffset, halfWidth);
+        CreateHalf(false, centerOffset, halfWidth);
+        if (beamSkin != null) beamSkin.enabled = false;
         boardVisual.enabled = false;
         board.offset += Vector2.right * centerOffset;
         board.size = new Vector2(halfWidth, board.size.y);
         passage.HideBoardCrack();
 
-        left.transform.SetParent(null, true);
+        left.SetParent(transform, true);
         leftBridgeBody = left.gameObject.AddComponent<Rigidbody2D>();
         leftBridgeBody.bodyType = RigidbodyType2D.Kinematic;
         leftBridgeBody.gravityScale = 0f;
         leftBridgeBody.interpolation = RigidbodyInterpolation2D.Interpolate;
         leftBridgeCollider = left.gameObject.AddComponent<BoxCollider2D>();
-        leftBridgeCollider.size = left.sprite.bounds.size;
+        leftBridgeCollider.size = new Vector2(halfWidth, board.size.y);
         leftBridgeCollider.enabled = false;
         bridgeFrom = leftBridgeBody.position;
         bridgeFromAngle = leftBridgeBody.rotation;
-        float width = left.sprite.bounds.size.x * Mathf.Abs(left.transform.lossyScale.x);
-        float height = left.sprite.bounds.size.y * Mathf.Abs(left.transform.lossyScale.y);
+        float width = halfWidth * Mathf.Abs(left.lossyScale.x);
+        float height = board.size.y * Mathf.Abs(left.lossyScale.y);
         // The whole half spans the left cliff with overlap onto both banks.
         bridgeTarget = new Vector2(leftCliffEdge.bounds.max.x - .2f + width * .5f,
             leftCliffLanding.bounds.max.y - height * .5f);
@@ -138,24 +184,62 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
         IsLeftBridgeReady = true;
     }
 
-    private SpriteRenderer CreateHalf(string name, float x, float width)
+    private Transform CreateHalf(bool left, float centerOffset, float width)
     {
-        var half = new GameObject(name);
+        // Keep an ordinary scene transform for the bridge collider.
+        // Only the sprite child is scaled to the artwork's dimensions.
+        float sign = left ? -1f : 1f;
+        var half = new GameObject(left ? "Seesaw Broken Left Half" : "Seesaw Supported Right Half");
         half.transform.SetParent(board.transform, false);
-        half.transform.localPosition = new Vector3(board.offset.x + x, board.offset.y, 0f);
-        half.transform.localScale = new Vector3(width / boardVisual.sprite.bounds.size.x,
-            board.size.y / boardVisual.sprite.bounds.size.y, 1f);
-        var visual = half.AddComponent<SpriteRenderer>();
-        visual.sprite = boardVisual.sprite;
-        visual.sharedMaterial = boardVisual.sharedMaterial;
-        visual.sortingLayerID = boardVisual.sortingLayerID;
-        visual.sortingOrder = boardVisual.sortingOrder;
-        visual.color = ballColor;
-        return visual;
+        half.transform.localPosition = board.offset + Vector2.right * (sign * centerOffset);
+
+        const int columns = 512, rows = 64;
+        float scaleX = Mathf.Max(.001f, Mathf.Abs(board.transform.localScale.x));
+        float maxOffset = 0f;
+        for (int i = 0; i < SeesawOverloadSequence.FractureRows; i++)
+            maxOffset = Mathf.Max(maxOffset, Mathf.Abs(SeesawOverloadSequence.FractureOffset(i)));
+        float extent = width * .5f + maxOffset / scaleX;
+        var pixels = new Color32[columns * rows];
+        Color32 face = ballColor;
+        Color32 edge = Color.Lerp(ballColor, new Color32(74, 49, 126, 255), .7f);
+        for (int y = 0; y < rows; y++)
+        {
+            float row = (1f - (y + .5f) / rows) * (SeesawOverloadSequence.FractureRows - 1);
+            int i = Mathf.FloorToInt(row);
+            float seam = -sign * width * .5f + Mathf.Lerp(SeesawOverloadSequence.FractureOffset(i),
+                SeesawOverloadSequence.FractureOffset(i + 1), row - i) / scaleX;
+            for (int x = 0; x < columns; x++)
+            {
+                float localX = ((x + .5f) / columns * 2f - 1f) * extent;
+                float depth = (localX - seam) * sign;
+                if (depth >= 0f && localX * sign <= width * .5f)
+                    pixels[y * columns + x] = depth * scaleX < .11f ? edge : face;
+            }
+        }
+        var texture = new Texture2D(columns, rows, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+        texture.SetPixels32(pixels);
+        texture.Apply(false, true);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, columns, rows), new Vector2(.5f, .5f),
+            rows, 0, SpriteMeshType.FullRect);
+        brokenSprites[left ? 0 : 1] = sprite;
+        var skin = new GameObject("Fractured beam face").AddComponent<SpriteRenderer>();
+        skin.transform.SetParent(half.transform, false);
+        skin.transform.localScale = new Vector3(2f * extent / sprite.bounds.size.x, board.size.y / sprite.bounds.size.y, 1f);
+        skin.sprite = sprite;
+        skin.sortingLayerID = boardVisual.sortingLayerID;
+        skin.sortingOrder = boardVisual.sortingOrder;
+        return half.transform;
     }
 
     private void OnDestroy()
     {
+        if (leftBridgeBody != null) Destroy(leftBridgeBody.gameObject);
+        foreach (Sprite sprite in brokenSprites)
+        {
+            if (sprite == null) continue;
+            Destroy(sprite.texture);
+            Destroy(sprite);
+        }
         if (ability == null) return;
         ability.CeilingStruck -= OnCeilingStruck;
     }

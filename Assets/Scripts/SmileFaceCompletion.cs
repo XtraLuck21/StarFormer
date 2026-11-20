@@ -13,8 +13,8 @@ public sealed class SmileFaceCompletion : MonoBehaviour
     [SerializeField, Min(.1f)] private float transitionSeconds = 2.6f;
     [SerializeField] private Vector2 teethCameraLocalCenter = new Vector2(43.5f, -44.8f);
     [SerializeField] private Vector2 teethCameraSize = new Vector2(24.8f, 14.5f);
-    [SerializeField] private Vector2 foreheadCameraLocalCenter = new Vector2(44.5f, -36.1f);
-    [SerializeField] private Vector2 foreheadCameraSize = new Vector2(45f, 25.6f);
+    [SerializeField] private Vector2 foreheadCameraLocalCenter = new Vector2(46.4f, -34.3f);
+    [SerializeField] private Vector2 foreheadCameraSize = new Vector2(35f, 19.2f);
     [SerializeField, Min(0f)] private float completedSmileHoldSeconds = 1.4f;
     public bool HasStarted { get; private set; }
     public float Progress { get; private set; }
@@ -34,6 +34,8 @@ public sealed class SmileFaceCompletion : MonoBehaviour
     private bool showCompletionReveal;
     private enum SmileCameraFrame { Follow, TeethRoom, Completion, Forehead }
     private SmileCameraFrame cameraFrame;
+    private SpriteRenderer highlightedStar;
+    private Color originalStarColor;
 
     public void RestoreCompletedPose()
     {
@@ -276,6 +278,20 @@ public sealed class SmileFaceCompletion : MonoBehaviour
 
     private void ShowCameraFrame(SmileCameraFrame next)
     {
+        if (next == SmileCameraFrame.Forehead && player.CurrentBody.Form == BodyForm.Star)
+        {
+            if (highlightedStar == null)
+            {
+                var visual = player.CurrentBody.GetComponentInChildren<StarVisual>();
+                if (visual != null && visual.TryGetComponent(out highlightedStar))
+                {
+                    originalStarColor = highlightedStar.color;
+                    highlightedStar.color = new Color32(66, 50, 174, 255);
+                }
+            }
+        }
+        else RestoreStarColor();
+
         if (next == SmileCameraFrame.Follow)
         {
             if (roomCamera.IsSmileOverview) roomCamera.EndSmileOverview();
@@ -290,6 +306,13 @@ public sealed class SmileFaceCompletion : MonoBehaviour
         cameraFrame = next;
     }
 
+    private void RestoreStarColor()
+    {
+        if (highlightedStar == null) return;
+        highlightedStar.color = originalStarColor;
+        highlightedStar = null;
+    }
+
     private void OnDestroy()
     {
         if (face != null) face.sharedMaterial = originalFaceMaterial;
@@ -300,6 +323,7 @@ public sealed class SmileFaceCompletion : MonoBehaviour
 
     private void OnDisable()
     {
+        RestoreStarColor();
         if (Application.isPlaying && player != null) player.CheckpointFeedback.SetTextSuppressed(false);
         if (Application.isPlaying && roomCamera != null) roomCamera.EndSmileOverview();
         if (levelTitle != null) levelTitle.enabled = titleWasVisible;

@@ -14,6 +14,8 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
     [SerializeField] private SeesawTilt2D seesaw;
     [SerializeField] private BoxCollider2D board;
     [SerializeField] private Transform[] gears;
+    [SerializeField] private SeesawGear2D yellowGear;
+    private bool gustRequested;
     [SerializeField] private BoxCollider2D entrance;
     [SerializeField] private BoxCollider2D exit;
     [SerializeField] private SeesawGateShatter entranceShatter;
@@ -44,6 +46,10 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         new List<LineRenderer>();
 
     private Vector3[] boardCrackPoints;
+    // Horizontal offsets along the same top-to-bottom seam used by the two broken faces.
+    private static readonly float[] FractureOffsets = { -.22f, .21f, -.10f, .36f, -.25f, .12f, -.18f };
+    internal static int FractureRows => FractureOffsets.Length;
+    internal static float FractureOffset(int row) => FractureOffsets[row];
     private float finaleImpactProgress;
     private bool boardBroken;
 
@@ -79,7 +85,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
     public void BeginYellowGust()
     {
-        if (HasStarted ||
+        if (gustRequested || HasStarted ||
             !stage.IsUnlocked ||
             stage.IsRevealing ||
             player.IsDead ||
@@ -88,6 +94,12 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             return;
         }
 
+        gustRequested = true;
+    }
+
+    private void StartGust()
+    {
+        gustRequested = false;
         HasStarted = true;
         supplies.BeginGustBatch();
         seesaw.HoldLeftForOverload();
@@ -113,14 +125,15 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
     private void Update()
     {
-        if (!HasStarted ||
-            player.IsDead ||
+        if (player.IsDead ||
             player.IsRestarting ||
             Time.timeScale <= 0f)
         {
             return;
         }
 
+        if (gustRequested && (yellowGear == null || !yellowGear.WaitingForAssemblyTurn)) StartGust();
+        if (!HasStarted) return;
         elapsed += Time.deltaTime;
 
         if (ReleasedBallCount < 3 &&
@@ -138,11 +151,13 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         if (!IsCracked)
             return;
 
+        float previousCrackProgress = crackProgress;
         crackProgress = Mathf.Min(
             1f,
             crackProgress + Time.deltaTime
         );
 
+        if (crackProgress > previousCrackProgress) stage.RevealPurpleButton(crackProgress);
         boardCrack.enabled = !boardBroken;
         boardCrack.widthMultiplier = Mathf.Lerp(.09f, .24f, finaleImpactProgress);
         entranceCrack.enabled = !IsPassageOpen;
@@ -160,7 +175,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             Vector3 point = boardCrackPoints[i];
-            point.x += (i % 2 == 0 ? -1f : 1f) * finaleImpactProgress * .13f;
+            point.x += FractureOffset(i) * finaleImpactProgress * .4f;
             boardCrack.SetPosition(i, point);
         }
 
@@ -350,16 +365,16 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             9
         );
 
-        boardCrackPoints = new Vector3[9];
+        boardCrackPoints = new Vector3[FractureOffsets.Length];
         Vector3 center = board.transform.localPosition;
 
         for (int i = 0; i < boardCrackPoints.Length; i++)
         {
             boardCrackPoints[i] = center + new Vector3(
-                i % 2 == 0 ? -.18f : .20f,
+                FractureOffset(i) * .6f,
                 board.size.y *
                 Mathf.Abs(board.transform.localScale.y) *
-                (.5f - i / 8f),
+                (.5f - i / (float)(boardCrackPoints.Length - 1)),
                 0f
             );
         }

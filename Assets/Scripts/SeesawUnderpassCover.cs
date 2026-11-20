@@ -1,6 +1,6 @@
 using UnityEngine;
 
-/// <summary>Conceals the underpass as solid black ground until the controlled Spider enters.</summary>
+/// <summary>Fades the floor-colored cover when the controlled Spider enters the underpass.</summary>
 public sealed class SeesawUnderpassCover : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
@@ -29,8 +29,9 @@ public sealed class SeesawUnderpassCover : MonoBehaviour
 
     private void ApplyOpacity()
     {
-        Color black = new Color(0f, 0f, 0f, Opacity);
-        upperCover.color = black;
-        lowerCover.color = black;
+        Color ground = upperCover.color;
+        ground.a = Opacity;
+        upperCover.color = ground;
+        lowerCover.color = ground;
     }
 }

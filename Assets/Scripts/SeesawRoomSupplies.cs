@@ -355,6 +355,14 @@ public class SeesawRoomSupplies : MonoBehaviour
         if (bouncyOnlyBarrier != null) Physics2D.IgnoreCollision(bouncyOnlyBarrier, ball);
     }
 
+    public bool IsOverCliff(Bounds ball)
+    {
+        if (!useCliffExits) return false;
+        Bounds deck = boardSurface.bounds;
+        return ball.min.y < deck.max.y &&
+            (ball.max.x < deck.min.x || ball.min.x > deck.max.x);
+    }
+
     public bool HasBallLeftBoard(Vector2 point)
     {
         // Spike rooms keep balls alive after the end sensor and during their fall.

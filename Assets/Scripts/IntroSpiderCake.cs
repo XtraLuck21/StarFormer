@@ -28,7 +28,8 @@ public class IntroSpiderCake : MonoBehaviour
 
     private GameObject generatedRoot;
     private GameObject decorations;
-    private Sprite rectangleSprite;
+    private Mesh cakeMesh;
+    private Material cakeMaterial;
     private bool rebuild;
     private bool revealed;
 
@@ -76,36 +77,49 @@ public class IntroSpiderCake : MonoBehaviour
         decorations.hideFlags = HideFlags.HideAndDontSave;
         decorations.transform.SetParent(generatedRoot.transform, false);
 
-        Texture2D texture = Texture2D.whiteTexture;
-        rectangleSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
-            Vector2.one * 0.5f, texture.width);
-        rectangleSprite.hideFlags = HideFlags.HideAndDontSave;
         float cakeBottom = sitsOnFloor ? bounds.min.y : bounds.max.y;
         float cakeTop = sitsOnFloor ? bounds.max.y + cakeHeight * 0.5f : bounds.max.y + cakeHeight;
-        Vector3 cakePosition = new Vector3(bounds.center.x, (cakeBottom + cakeTop) * 0.5f, transform.position.z);
-        var cake = new GameObject("Yellow Cake", typeof(SpriteRenderer));
-        cake.hideFlags = HideFlags.HideAndDontSave;
-        cake.transform.SetParent(decorations.transform, false);
-        cake.transform.position = cakePosition;
-        cake.transform.localScale = new Vector3(bounds.size.x + 0.12f, cakeTop - cakeBottom, 1f);
-        var cakeRenderer = cake.GetComponent<SpriteRenderer>();
-        cakeRenderer.sprite = rectangleSprite;
-        cakeRenderer.color = cakeColor;
-        cakeRenderer.sortingOrder = 4;
-
+        float width = bounds.size.x + .12f;
+        float height = cakeTop - cakeBottom;
+        float left = -width * .5f, right = width * .5f;
+        Color cream = new Color32(255, 241, 212, 255);
+        Color crust = new Color32(161, 94, 49, 255);
+        Color filling = new Color32(185, 77, 72, 255);
+        var art = new SchoolSceneDrawing();
+        // A sponge cross-section with a visible filling and piped icing.
+        art.Rect(0, height * .5f, width, height, crust);
+        art.Rect(0, height * .5f + .015f, width - .045f, height - .045f, cakeColor);
+        art.Rect(0, height * .43f, width - .045f, height * .13f, filling);
+        art.Rect(0, height * .57f, width - .045f, height * .10f, cream);
+        art.Rect(0, height - .04f, width, .12f, cream);
+        int scallops = Mathf.Max(3, Mathf.RoundToInt(width / .16f));
+        for (int i = 0; i < scallops; i++)
+        {
+            float x = Mathf.Lerp(left + .06f, right - .06f, i / (float)(scallops - 1));
+            art.Circle(new Vector2(x, height - .08f), .07f, cream);
+        }
+        art.Rect(0, -.015f, width + .12f, .035f, new Color32(213, 220, 210, 255));
         for (int i = 0; i < cherryCount; i++)
         {
-            var cherry = new GameObject("Red Cherry " + (i + 1), typeof(SpriteRenderer));
-            cherry.hideFlags = HideFlags.HideAndDontSave;
-            cherry.transform.SetParent(decorations.transform, false);
-            cherry.transform.position = new Vector3(Mathf.Lerp(bounds.min.x, bounds.max.x,
-                (i + 0.5f) / cherryCount), sitsOnFloor ? cakeTop + cherryDiameter * 0.35f
-                : bounds.min.y - cherryDiameter * 0.35f, transform.position.z);
-            cherry.transform.localScale = Vector3.one * cherryDiameter;
-            cherry.AddComponent<CircleVisual>();
-            cherry.GetComponent<SpriteRenderer>().sortingOrder = 4;
+            float x = Mathf.Lerp(left, right, (i + .5f) / cherryCount);
+            float radius = cherryDiameter * .5f;
+            float y = sitsOnFloor ? height + radius * .65f : -radius * .65f;
+            art.Circle(new Vector2(x, y - radius * .6f), radius * 1.1f, cream);
+            art.Circle(new Vector2(x, y), radius, new Color32(164, 43, 55, 255));
+            art.Circle(new Vector2(x + radius * .12f, y + radius * .08f), radius * .78f,
+                new Color32(221, 67, 70, 255));
+            art.Circle(new Vector2(x - radius * .26f, y + radius * .34f), radius * .20f,
+                new Color32(255, 194, 168, 255));
+            art.Line(new Vector2(x, y + radius * .75f), new Vector2(x + .035f, y + radius + .09f),
+                .022f, new Color32(83, 109, 65, 255));
         }
-
+        cakeMaterial = new Material(Shader.Find("Sprites/Default")) { hideFlags = HideFlags.HideAndDontSave };
+        cakeMaterial.mainTexture = Texture2D.whiteTexture;
+        var visual = art.Build("Layered sponge cake and cherries", decorations.transform, cakeMaterial, 4, out cakeMesh);
+        visual.transform.position = new Vector3(bounds.center.x, cakeBottom, transform.position.z);
+        visual.transform.rotation = Quaternion.identity;
+        Vector3 scale = decorations.transform.lossyScale;
+        visual.transform.localScale = new Vector3(1f / scale.x, 1f / scale.y, 1f / scale.z);
     }
 
     private void OnDisable() => Release();
@@ -118,9 +132,11 @@ public class IntroSpiderCake : MonoBehaviour
             generatedRoot.SetActive(false);
             DestroyGenerated(generatedRoot);
         }
-        if (rectangleSprite != null) DestroyGenerated(rectangleSprite);
+        if (cakeMesh != null) DestroyGenerated(cakeMesh);
+        if (cakeMaterial != null) DestroyGenerated(cakeMaterial);
         generatedRoot = decorations = null;
-        rectangleSprite = null;
+        cakeMesh = null;
+        cakeMaterial = null;
     }
 
     private static void DestroyGenerated(Object item)

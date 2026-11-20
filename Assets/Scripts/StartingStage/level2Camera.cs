@@ -468,9 +468,10 @@ public class level2Camera : MonoBehaviour
         if (roomShakeDuration > 0f && roomShakeElapsed < roomShakeDuration)
         {
             roomShakeElapsed += Time.deltaTime;
-            float strength = roomShakeStrength * (1f - Mathf.Clamp01(roomShakeElapsed / roomShakeDuration));
-            transform.position += new Vector3(Mathf.Sin(roomShakeElapsed * 89f),
-                Mathf.Sin(roomShakeElapsed * 113f) * .65f, 0f) * strength;
+            float fade = Mathf.InverseLerp(roomShakeDuration * .55f, roomShakeDuration, roomShakeElapsed);
+            float strength = roomShakeStrength * (1f - Mathf.SmoothStep(0f, 1f, fade));
+            transform.position += new Vector3(Mathf.Sin(roomShakeElapsed * 36f),
+                Mathf.Sin(roomShakeElapsed * 48f) * .7f, 0f) * strength;
         }
     }
 

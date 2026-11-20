@@ -28,10 +28,10 @@ public sealed class SeesawRoomStage : MonoBehaviour
     public bool IsUnlocked { get; private set; }
     public float RevealProgress { get; private set; }
     public bool IsRevealing { get; private set; }
-    private Vector3 yellowRest, purpleRest;
+    private Vector3 yellowRest, purpleFullScale;
     private Collider2D yellowSensor, purpleSensor;
     private SpriteRenderer yellowRenderer, purpleRenderer;
-    private int yellowOrder, purpleOrder;
+    private int yellowOrder;
     private PossessableBody frozenBody;
     private RigidbodyType2D previousBodyType;
     private RigidbodyConstraints2D previousConstraints;
@@ -49,13 +49,13 @@ public sealed class SeesawRoomStage : MonoBehaviour
     private void Awake()
     {
         yellowRest = yellowButton.position;
-        purpleRest = purpleButton.position;
+        purpleFullScale = purpleButton.localScale;
         yellowSensor = yellowButton.GetComponent<Collider2D>();
         purpleSensor = purpleButton.GetComponent<Collider2D>();
         yellowRenderer = yellowButton.GetComponent<SpriteRenderer>();
         purpleRenderer = purpleButton.GetComponent<SpriteRenderer>();
         yellowOrder = yellowRenderer.sortingOrder;
-        purpleOrder = purpleRenderer.sortingOrder;
+
         yellowSensor.enabled = purpleSensor.enabled = false;
         yellowButton.gameObject.SetActive(false);
         purpleButton.gameObject.SetActive(false);
@@ -94,7 +94,7 @@ public sealed class SeesawRoomStage : MonoBehaviour
     public void AllowBall(Collider2D ball)
     {
         if (ball == null) return;
-        if (gearBarrier != null) gearBarrier.AllowBall(ball);
+        if (gearBarrier != null) gearBarrier.BlockBall(ball);
         if (gate.enabled) Physics2D.IgnoreCollision(gate, ball);
         if (leftGate.enabled) Physics2D.IgnoreCollision(leftGate, ball);
     }
@@ -115,7 +115,8 @@ public sealed class SeesawRoomStage : MonoBehaviour
             }
             if (Time.timeScale > 0f) BeginReveal();
         }
-        if (!IsRevealing || Time.timeScale <= 0f) return;
+        if (!IsRevealing || Time.timeScale <= 0f ||
+            blueGear.WaitingForAssemblyTurn || greenGear.WaitingForAssemblyTurn) return;
         RevealProgress = Mathf.Min(1f, RevealProgress + Time.deltaTime / revealDuration);
         ApplyReveal(Mathf.SmoothStep(0f, 1f, RevealProgress));
         if (RevealProgress >= 1f) FinishReveal();
@@ -129,17 +130,15 @@ public sealed class SeesawRoomStage : MonoBehaviour
         seesaw.HoldNeutral();
         checkpoint.SaveBlueGreenStage();
         LockControls();
-        // The wall/floor sprites occlude the buried parts while the buttons emerge.
-        yellowRenderer.sortingOrder = purpleRenderer.sortingOrder = -1;
+        // The ceiling hides the yellow button until it emerges.
+        yellowRenderer.sortingOrder = -1;
         ApplyReveal(0f);
     }
 
     private void ApplyReveal(float t)
     {
         yellowButton.position = yellowRest + Vector3.up * (.5f * (1f - t));
-        purpleButton.position = purpleRest - Vector3.up * (.95f * (1f - t));
         yellowButton.gameObject.SetActive(true);
-        purpleButton.gameObject.SetActive(true);
         yellowSensor.enabled = purpleSensor.enabled = false;
         rightPlatform.SetRevealProgress(t);
         rightGateShatter.SetProgress(t);
@@ -151,15 +150,31 @@ public sealed class SeesawRoomStage : MonoBehaviour
         IsRevealing = false;
         RevealProgress = 1f;
         yellowButton.position = yellowRest;
-        purpleButton.position = purpleRest;
         yellowRenderer.sortingOrder = yellowOrder;
-        purpleRenderer.sortingOrder = purpleOrder;
-        yellowSensor.enabled = purpleSensor.enabled = true;
+        yellowSensor.enabled = true;
         gate.enabled = false;
         gateVisual.SetActive(false);
         leftGate.enabled = false;
         leftGateVisual.SetActive(false);
         RestoreControls();
+    }
+
+    public void RevealPurpleButton(float progress)
+    {
+        if (!purpleButton.gameObject.activeSelf) purpleButton.gameObject.SetActive(true);
+        float t = Mathf.SmoothStep(0f, 1f, progress);
+        Bounds floor = rightPlatform.GetComponent<BoxCollider2D>().bounds;
+        Vector3 scale = purpleFullScale;
+        scale.y *= Mathf.Max(.001f, t);
+        purpleButton.localScale = scale;
+        Bounds cap = purpleRenderer.bounds;
+        Vector3 position = purpleButton.position;
+        // Keep the whole cap supported at the inner end of the extended floor.
+        position.x += floor.min.x + cap.extents.x - cap.center.x;
+        position.y += floor.max.y - cap.min.y;
+        purpleButton.position = position;
+        purpleRenderer.sortingOrder = -1;
+        purpleSensor.enabled = progress >= 1f;
     }
 
     private void LockControls()

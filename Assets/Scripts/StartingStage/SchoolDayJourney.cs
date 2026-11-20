@@ -7,14 +7,12 @@ public sealed class SchoolDayJourney : MonoBehaviour
     [SerializeField] private PlayerPossessionController player;
     [SerializeField] private level2Camera levelCamera;
     [SerializeField] private SpikeWallEnemyChase alarm;
-    [SerializeField] private BoxCollider2D doorLatch;
     [SerializeField] private DarkStarPassage passage;
     [SerializeField] private GameObject busPlatform;
 
     [SerializeField] private StarRoomDoor schoolEntrance;
-    [SerializeField, Min(0f)] private float wakeUpDelay = 1.25f;
 
-    private const float Ground = 10.51f, GateX = -57.4f, BusX = -26.55f;
+    private const float Ground = 10.51f, BusX = -26.55f;
     private static readonly Vector2 Stop = new Vector2(-23f, -22.70f);
     private static readonly float[] Stations = { -72f, -66.5f, -61f };
     private static readonly Color Ink = new Color32(49,66,73,255), Honey = new Color32(244,181,69,255),
@@ -24,27 +22,26 @@ public sealed class SchoolDayJourney : MonoBehaviour
     private enum Stage { Ready, Chase, Boarding, Falling, School }
     private Stage stage;
     private SchoolMorningScenery scenery;
-    private Transform bus, doorLeaf, busDoor;
+    private Transform bus, busDoor;
     private readonly Transform[] tokens = new Transform[3];
     private SpriteRenderer passenger;
     private int savedOrder;
     private static readonly Vector2 BusLanding = new Vector2(Stop.x - .7f, Stop.y - .4f);
-    private readonly Transform[] lamps = new Transform[3], students = new Transform[5];
+    private readonly Transform[] students = new Transform[5];
     private readonly float[] taskTime = { -1, -1, -1 };
     private static readonly Vector2[] MeetingSpots = {
         new Vector2(-17.55f,-22.83f), new Vector2(-15.05f,-22.71f),
         new Vector2(-12.5f,-22.83f), new Vector2(-10f,-22.70f), new Vector2(-7.45f,-22.82f)
     };
     // A null line is a silent fist bump.
-    private static readonly string[] Greetings = { "What's up?", null, "Hello!", null, "How are you?" };
+    private static readonly string[] Greetings = { "Hi!", "Hello!", "What's up?", "How are you?", null };
     private enum StudentStage { Waiting, Greeting, Running, Inside }
     private readonly StudentStage[] studentStages = new StudentStage[MeetingSpots.Length];
     private readonly float[] greetingAges = new float[MeetingSpots.Length];
     private readonly Transform[] bubbles = new Transform[MeetingSpots.Length];
     private Transform starFist, friendFist, bumpFlash;
-    private Transform starPalm, friendPalm;
     private bool greetingOwnsInput;
-    private float doorOpen, timer;
+    private float timer;
     private PossessableBody rider;
     private bool savedInput, savedSimulation;
     private Vector3 boardFrom;
@@ -72,8 +69,7 @@ public sealed class SchoolDayJourney : MonoBehaviour
         room.Rect(-76.65f,11.23f,3.1f,.26f,Cream);
         room.Rect(-76.22f,11.24f,2.24f,.26f,Teal);
         room.Rect(-77.67f,11.4f,.74f,.19f,new Color32(255,247,221,255));
-        room.Rect(GateX,12.04f,1.8f,3.06f,Ink);
-        Place(room,"Bedroom and front door",0,0,-8);
+        Place(room,"Bedroom",0,0,-8);
 
         for (int i = 0; i < tokens.Length; i++)
         {
@@ -95,15 +91,6 @@ public sealed class SchoolDayJourney : MonoBehaviour
         var brush=Place(item,"Toothbrush",0,0,5,tokens[2]);
         brush.localRotation=Quaternion.Euler(0,0,20);
 
-        item=new SchoolSceneDrawing();
-        item.Rect(.8f,1.43f,1.6f,2.86f,Timber); item.Circle(P(1.33f,1.4f),.09f,Honey);
-        doorLeaf=Place(item,"Hinged front door",GateX-.8f,Ground,-5);
-        for(int i=0;i<3;i++)
-        {
-            item=new SchoolSceneDrawing();item.Star(Vector2.zero,.12f,Honey);
-            lamps[i]=Place(item,"Finished morning task",GateX-.4f+i*.4f,13.8f,-3);
-            lamps[i].gameObject.SetActive(false);
-        }
         BuildBus();
         var curb=new SchoolSceneDrawing();
         curb.Rect(-14.3f,-23.06f,20.5f,.08f,new Color32(125,142,141,255));
@@ -127,9 +114,10 @@ public sealed class SchoolDayJourney : MonoBehaviour
     private Transform BuildBubble(string words, Vector2 spot)
     {
         var bubble = new SchoolSceneDrawing();
-        bubble.Rect(0,0,2.12f,.62f,Cream);
-        bubble.Circle(P(-1.06f,0),.31f,Cream);
-        bubble.Circle(P(1.06f,0),.31f,Cream);
+        float halfWidth = words.Length > 12 ? 1.65f : 1.06f;
+        bubble.Rect(0,0,halfWidth*2f,.62f,Cream);
+        bubble.Circle(P(-halfWidth,0),.31f,Cream);
+        bubble.Circle(P(halfWidth,0),.31f,Cream);
         bubble.Polygon(Cream,P(-.22f,-.28f),P(-.08f,-.50f),P(.12f,-.28f));
         var speech=Place(bubble,"Class greeting",spot.x,spot.y+.95f,135);
         var caption=new GameObject("Spoken words",typeof(TextMeshPro));
@@ -141,7 +129,7 @@ public sealed class SchoolDayJourney : MonoBehaviour
         speechText.fontSize=3.5f;
         speechText.fontStyle=FontStyles.Bold;
         speechText.color=Ink;
-        speechText.rectTransform.sizeDelta=P(2.5f,.6f);
+        speechText.rectTransform.sizeDelta=P(halfWidth*2f+.3f,.6f);
         speechText.renderer.sortingOrder=136;
         speech.gameObject.SetActive(false);
         return speech;
@@ -150,9 +138,7 @@ public sealed class SchoolDayJourney : MonoBehaviour
     private void BuildGreetings()
     {
         starFist=BuildFist(Honey);
-        friendFist=BuildFist(Teal);
-        starPalm=BuildPalm(Honey);
-        friendPalm=BuildPalm(Honey);
+        friendFist=BuildFist(Glass);
         var flash=new SchoolSceneDrawing();
         for (int i=0;i<5;i++)
         {
@@ -173,24 +159,6 @@ public sealed class SchoolDayJourney : MonoBehaviour
         var fist=Place(hand,"Greeting fist",0,0,132);
         fist.gameObject.SetActive(false);
         return fist;
-    }
-
-    private Transform BuildPalm(Color sleeve)
-    {
-        var hand = new SchoolSceneDrawing();
-        hand.Rect(0,-.17f,.15f,.22f,sleeve);
-        hand.Rect(0,0,.23f,.25f,Cream);
-        for (int i=0;i<4;i++)
-        {
-            float x=-.09f+i*.06f;
-            float tip=.22f-Mathf.Abs(i-1.5f)*.035f;
-            hand.Line(P(x,.06f),P(x,tip),.046f,Cream);
-            hand.Circle(P(x,tip),.023f,Cream);
-        }
-        hand.Line(P(-.08f,-.03f),P(-.19f,.075f),.065f,Cream);
-        var palm=Place(hand,"High-five palm",0,0,132);
-        palm.gameObject.SetActive(false);
-        return palm;
     }
 
     private void BuildBus()
@@ -214,7 +182,7 @@ public sealed class SchoolDayJourney : MonoBehaviour
 
     private void Update()
     {
-        if(!Application.isPlaying || !doorLeaf || player==null || player.CurrentBody==null ||
+        if(!Application.isPlaying || !bus || player==null || player.CurrentBody==null ||
            player.IsDead || player.IsRestarting || Time.timeScale<=0) return;
         var star=player.CurrentBody;
         if(star.Form!=BodyForm.Star || passage.IsComplete)
@@ -227,20 +195,16 @@ public sealed class SchoolDayJourney : MonoBehaviour
             ArriveWithClass();
         if(stage==Stage.School) { MeetClass(star); return; }
         if(stage==Stage.Boarding || stage==Stage.Falling) { Travel(); return; }
-        if (stage == Stage.Ready && star.IsReady && pos.y >= Ground && pos.x < GateX)
-        {
-            timer += Time.deltaTime;
-            if (timer >= wakeUpDelay)
-            {
-                stage = Stage.Chase;
-                alarm.gameObject.SetActive(true);
-                Physics2D.SyncTransforms();
-                levelCamera.BeginDoorChase();
-            }
-        }
         CollectOnContact(star);
+        if (stage == Stage.Ready && star.IsReady && taskTime[0] >= 0f)
+        {
+            stage = Stage.Chase;
+            alarm.gameObject.SetActive(true);
+            Physics2D.SyncTransforms();
+            levelCamera.BeginDoorChase();
+        }
         if (stage != Stage.Chase) return;
-        if(!doorLatch.enabled && pos.x>=BusX-.55f && pos.y>11.36f)
+        if(pos.x>=BusX-.55f && pos.y>11.36f)
         {
             stage=Stage.Boarding;timer=0;rider=star;boardFrom=star.transform.position;
             savedInput=player.enabled;savedSimulation=rider.Body.simulated;
@@ -266,7 +230,6 @@ public sealed class SchoolDayJourney : MonoBehaviour
                 Vector2 center = token.position;
                 if ((star.BodyCollider.ClosestPoint(center) - center).sqrMagnitude > .61f * .61f) continue;
                 taskTime[i] = 0;
-                lamps[i].gameObject.SetActive(true);
             }
             if (taskTime[i] >= 1) continue;
             taskTime[i] = Mathf.MoveTowards(taskTime[i], 1, Time.deltaTime * 6);
@@ -274,12 +237,6 @@ public sealed class SchoolDayJourney : MonoBehaviour
             token.position = Vector3.Lerp(token.position, star.transform.position, t);
             token.localScale = Vector3.one * (1-t);
             if (t >= 1) token.gameObject.SetActive(false);
-        }
-        if (doorLatch.enabled && taskTime[0]>=0 && taskTime[1]>=0 && taskTime[2]>=0)
-        {
-            doorOpen=Mathf.MoveTowards(doorOpen,1,Time.deltaTime*4);
-            doorLeaf.localScale=PScale(1-.95f*doorOpen,1);
-            if(doorOpen>=1)doorLatch.enabled=false;
         }
     }
 
@@ -372,14 +329,11 @@ public sealed class SchoolDayJourney : MonoBehaviour
                     }
                     else
                     {
-                        bool highFive = i == 3;
-                        float progress = Mathf.Clamp01(greetingAges[i] / (highFive ? .56f : .42f));
-                        AnimateBump(star.Body.position, mate.position, progress, highFive);
+                        float progress = Mathf.Clamp01(greetingAges[i] / .42f);
+                        AnimateBump(star.Body.position, mate.position, progress);
                         if (progress < 1f) break;
                         starFist.gameObject.SetActive(false);
                         friendFist.gameObject.SetActive(false);
-                        starPalm.gameObject.SetActive(false);
-                        friendPalm.gameObject.SetActive(false);
                         RestoreGreetingInput();
                     }
                     studentStages[i] = StudentStage.Running;
@@ -407,13 +361,13 @@ public sealed class SchoolDayJourney : MonoBehaviour
         }
     }
 
-    private void AnimateBump(Vector2 star, Vector2 friend, float progress, bool highFive)
+    private void AnimateBump(Vector2 star, Vector2 friend, float progress)
     {
         float extend = Mathf.Sin(progress * Mathf.PI);
-        Vector2 contact = (star + friend) * .5f + Vector2.up * (highFive ? .65f : 0f);
+        Vector2 contact = (star + friend) * .5f;
         float facing = friend.x >= star.x ? 1f : -1f;
-        PoseFist(highFive ? starPalm : starFist, star, contact, facing, extend);
-        PoseFist(highFive ? friendPalm : friendFist, friend, contact, -facing, extend);
+        PoseFist(starFist, star, contact, facing, extend);
+        PoseFist(friendFist, friend, contact, -facing, extend);
         bumpFlash.position = contact;
         bumpFlash.gameObject.SetActive(extend > .88f);
     }

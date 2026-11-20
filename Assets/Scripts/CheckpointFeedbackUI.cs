@@ -21,6 +21,8 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
     private RectTransform canvasRect;
     private TMP_Text toast;
     private TMP_Text respawnNotice;
+    private TMP_Text routeHint;
+    private float routeHintUntil;
     private float savedUntil;
     private Camera worldCamera;
     public bool TextSuppressed { get; private set; }
@@ -69,6 +71,15 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
         respawnNotice.enabled = true;
     }
 
+    public void ShowRouteHint(string message)
+    {
+        if (routeHint == null)
+            routeHint = CreateLabel("Route hint", root.transform, 30f, -98f, 900f);
+        routeHint.text = message;
+        routeHint.enabled = true;
+        routeHintUntil = Time.time + 4f;
+    }
+
     public void RegisterMarker(Transform target, string id, bool isBall = false)
     {
         TMP_Text label = CreateLabel("Checkpoint " + id, root.transform, 16f, 0f, 180f);
@@ -106,6 +117,7 @@ public sealed class CheckpointFeedbackUI : MonoBehaviour
     private void LateUpdate()
     {
         if (player == null || root == null) return;
+        if (routeHint != null && Time.time >= routeHintUntil) routeHint.enabled = false;
 
         toast.text = !TextSuppressed && Time.unscaledTime < savedUntil
             ? "CHECKPOINT SAVED"

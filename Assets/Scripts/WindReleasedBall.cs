@@ -6,6 +6,7 @@ public class WindReleasedBall : MonoBehaviour
 {
     private SeesawRoomSupplies supply;
     private Rigidbody2D body;
+    private CircleCollider2D ballCollider;
     private float fallingGravity;
     private RigidbodyConstraints2D fallingConstraints;
     private ulong armedAfterActivation;
@@ -22,6 +23,8 @@ public class WindReleasedBall : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
+        ballCollider = GetComponent<CircleCollider2D>();
+        body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
         fallingGravity = body.gravityScale;
         fallingConstraints = body.constraints;
         body.linearVelocity = Vector2.zero;
@@ -56,6 +59,12 @@ public class WindReleasedBall : MonoBehaviour
     private void ReportLoad(Collision2D collision)
     {
         if (gust != null && collision.collider == gust.BoardSurface) gust.RegisterLoad(this);
+        if (HasBeenReleased && !ballCollider.isTrigger && collision.collider.TryGetComponent<SeesawGearBarrier>(out _))
+        {
+            float outside = collision.collider.bounds.max.x + ballCollider.bounds.extents.x;
+            body.position = new Vector2(Mathf.Max(body.position.x, outside), body.position.y);
+            BeginCliffDrop();
+        }
     }
 
     public bool TryUseSeesawTrigger(SeesawRoomSupplies owner)
@@ -101,10 +110,22 @@ public class WindReleasedBall : MonoBehaviour
                 body.WakeUp();
             }
         }
-        if (gust != null && gust.IsWindActive)
+        // Beyond the board the pit must collect ordinary balls even if a wall or
+        // bridge lip would otherwise catch them above the collection trigger.
+        if (HasBeenReleased && !ballCollider.isTrigger && supply.IsOverCliff(ballCollider.bounds))
+            BeginCliffDrop();
+        if (!ballCollider.isTrigger && gust != null && gust.IsWindActive)
             body.linearVelocity = new Vector2(Mathf.MoveTowards(body.linearVelocity.x, -4f,
                 12f * Time.fixedDeltaTime), body.linearVelocity.y);
         if (HasBeenReleased && supply.HasBallLeftBoard(body.position)) Destroy(gameObject);
+    }
+
+    private void BeginCliffDrop()
+    {
+        ballCollider.isTrigger = true;
+        body.linearVelocity = Vector2.down * Mathf.Max(1f, -body.linearVelocity.y);
+        body.constraints |= RigidbodyConstraints2D.FreezePositionX;
+        body.WakeUp();
     }
 
     public bool BeginReleaseShake()

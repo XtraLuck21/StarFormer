@@ -11,6 +11,8 @@ public sealed class SchoolMorningScenery : MonoBehaviour
     [SerializeField] private BoxCollider2D landingFloor;
     [SerializeField] private Transform schoolDoor;
     [SerializeField] private Transform deskRuler;
+    [SerializeField] private Transform smileRoom;
+    [SerializeField] private bool showRulerMarkings = true;
     private readonly List<GameObject> drawings = new List<GameObject>();
     private readonly List<Mesh> meshes = new List<Mesh>();
     private Material material;
@@ -35,7 +37,8 @@ public sealed class SchoolMorningScenery : MonoBehaviour
         material=new Material(Shader.Find("Sprites/Default")) { hideFlags=HideFlags.HideAndDontSave };
         material.mainTexture=Texture2D.whiteTexture;
         BuildStreet(); BuildAlley();
-        BuildDesk();
+        BuildSeesawPlayground();
+        BuildSmileCourtyard();
         if(bridgePlanks!=null)foreach(var plank in bridgePlanks)
         {
             if(plank==null)continue;
@@ -46,53 +49,56 @@ public sealed class SchoolMorningScenery : MonoBehaviour
         }
         GetComponent<SchoolDayJourney>().BuildArt(this);
     }
-    private void BuildDesk()
+    private void BuildSeesawPlayground()
     {
         if (deskRuler == null) return;
-        Color paper = new Color32(242, 232, 207, 255);
-        Color timber = new Color32(163, 117, 76, 255);
-        Color grain = new Color32(174, 131, 88, 255);
-        var backdrop = new SchoolSceneDrawing();
-        backdrop.Rect(28f, -20f, 60f, 48f, new Color32(219, 211, 191, 255));
-        Draw(backdrop, "Classroom backdrop behind desk", -39);
-        var desk = new SchoolSceneDrawing();
-        desk.Rect(27.5f, -20f, 34f, 16f, timber);
-        for (int i = 0; i < 13; i++)
+        var yard = new SchoolSceneDrawing();
+        yard.ShadedRect(-2f, -44f, 58f, 4f, new Color32(243, 234, 209, 255), new Color32(179, 216, 225, 255));
+        Color roof = new Color32(172, 157, 140, 255);
+        Color windows = new Color32(164, 191, 192, 255);
+        yard.Rect(19f, -16.2f, 11.6f, 3.8f, new Color32(229, 213, 181, 255));
+        yard.Rect(19f, -14.3f, 12f, .22f, roof);
+        for (int column = 0; column < 8; column++)
         {
-            float y = -27.2f + i * 1.13f;
-            desk.Line(new Vector2(11.3f, y), new Vector2(43.4f, y + .12f), .025f, grain);
+            float x = 14.3f + column * 1.35f;
+            yard.Rect(x, -15.2f, .85f, .68f, windows);
+            yard.Rect(x, -16.65f, .85f, .68f, windows);
         }
-        desk.Rect(27.5f, -27.4f, 34f, .5f, Wood);
-        Draw(desk, "School desk wood grain", -35);
+        Color leaves = new Color32(160, 190, 164, 255);
+        foreach (float x in new[] { 10.8f, 26.5f, 36.7f, 44f })
+        {
+            yard.Rect(x, -17.45f, .22f, 1.5f, roof);
+            yard.Circle(new Vector2(x, -16.25f), 1.08f, leaves);
+            yard.Circle(new Vector2(x + .66f, -16.55f), .74f, leaves);
+        }
+        yard.Rect(28f, -31f, 60f, 26f, new Color32(179, 202, 173, 255));
+        yard.ShadedRect(-2f, -44f, 58f, -20.2f, new Color32(190, 152, 133, 255), new Color32(215, 179, 159, 255));
+        Color chalk = new Color32(234, 213, 191, 255);
+        for (int lane = 1; lane <= 4; lane++)
+        {
+            float y = -20.2f - lane * lane * .24f;
+            yard.Rect(28f, y, 60f, .045f, chalk);
+        }
+        Color post = new Color32(151, 167, 164, 255);
+        yard.Rect(40.1f, -17.45f, .16f, 3.45f, post);
+        yard.Rect(40.1f, -15.8f, 1.8f, 1.12f, new Color32(233, 228, 207, 255));
+        yard.Rect(40.1f, -16.05f, .68f, .09f, roof);
+        yard.Line(new Vector2(39.8f, -16.1f), new Vector2(39.96f, -16.48f), .045f, chalk);
+        yard.Line(new Vector2(40.4f, -16.1f), new Vector2(40.24f, -16.48f), .045f, chalk);
+        Draw(yard, "Elementary school playground", -39);
 
-        var notebook = new SchoolSceneDrawing();
-        notebook.Rect(37.1f, -17f, 7.6f, 2.15f, new Color32(115, 139, 136, 255));
-        notebook.Rect(37f, -16.9f, 7.4f, 2f, paper);
-        for (int i = 0; i < 4; i++)
-            notebook.Rect(37f, -17.65f + i * .45f, 7f, .018f, new Color32(187, 200, 190, 255));
-        notebook.Rect(34f, -16.9f, .025f, 1.9f, new Color32(208, 151, 130, 255));
-        Draw(notebook, "Exercise book behind ruler", -25);
-
-        // The gears sit in a desk-mounted hand-cranked pencil sharpener.
         var mechanism = new SchoolSceneDrawing();
-        mechanism.Rect(12.55f, -18.7f, 2.6f, 9.8f, Ink);
-        mechanism.Rect(12.55f, -18.7f, 2.35f, 9.55f, new Color32(137, 159, 150, 255));
-        foreach (float y in new[] { -14.25f, -23.1f })
-            foreach (float x in new[] { 11.65f, 13.45f })
-            {
-                mechanism.Circle(new Vector2(x,y), .09f, Ink);
-                mechanism.Rect(x,y,.10f,.02f,paper);
-            }
         mechanism.Rect(12.55f,-13.55f,1.2f,.5f,Wood);
         mechanism.Circle(new Vector2(12.55f,-13.55f),.18f,Ink);
-        Draw(mechanism, "Desk pencil sharpener gear housing", -12);
+        Draw(mechanism, "Desk pencil holder", -12);
 
         var pencil = new SchoolSceneDrawing();
         pencil.Rect(12.55f, -12.94f, .24f, .92f, new Color32(236, 184, 77, 255));
-        pencil.Rect(12.61f, -12.94f, .045f, .92f, paper);
+        pencil.Rect(12.61f, -12.94f, .045f, .92f, new Color32(242, 232, 207, 255));
         pencil.Rect(12.55f, -12.46f, .25f, .12f, new Color32(198, 126, 111, 255));
         Draw(pencil, "Pencil in desk sharpener", -11);
 
+        if (!showRulerMarkings) return;
         var ruler = new SchoolSceneDrawing();
         ruler.Rect(0, 0, 1f, 1f, new Color32(224, 184, 109, 255));
         ruler.Rect(0, -.38f, 1f, .20f, new Color32(193, 145, 76, 255));
@@ -102,6 +108,60 @@ public sealed class SchoolMorningScenery : MonoBehaviour
             ruler.Rect(-.49f + i * .98f / 60f, .49f - length / 2f, .0017f, length, Ink);
         }
         Draw(ruler, "Tilting wooden ruler", 1, deskRuler);
+    }
+
+    private void BuildSmileCourtyard()
+    {
+        if (smileRoom == null) return;
+        var yard = new SchoolSceneDrawing();
+        Color peach = new Color32(243, 172, 141, 255);
+        yard.ShadedRect(-12, -74, 104, -32, new Color32(255, 216, 161, 255), peach);
+        yard.ShadedRect(-12, -32, 104, -5, peach, new Color32(134, 129, 166, 255));
+
+        Vector2 sunset = new Vector2(61.3f, -27.5f);
+        yard.Circle(sunset, 2.55f, new Color32(255, 206, 155, 90));
+        yard.Circle(sunset, 1.95f, new Color32(255, 225, 169, 255));
+        // Draw the ridge over the lower rim of the sun.
+        Vector2[] ridge = {
+            new Vector2(-12, -36), new Vector2(8, -32), new Vector2(22, -35),
+            new Vector2(39, -39), new Vector2(54, -33), new Vector2(63, -27.6f),
+            new Vector2(74, -31), new Vector2(87, -28), new Vector2(104, -34)
+        };
+        Color hills = new Color32(183, 150, 157, 255);
+        for (int i = 1; i < ridge.Length; i++)
+            yard.Polygon(hills, new Vector2(ridge[i - 1].x, -49), ridge[i - 1],
+                ridge[i], new Vector2(ridge[i].x, -49));
+
+        // Frame the face with two distant school wings. Keep the forehead against open sky.
+        Color plaster = new Color32(187, 154, 151, 255);
+        Color trim = new Color32(149, 127, 138, 255);
+        Color glass = new Color32(235, 188, 151, 255);
+        foreach (float x in new[] { 14f, 75f })
+        {
+            yard.Rect(x, -44, 17, 9, plaster);
+            yard.Rect(x, -39.5f, 17.5f, .35f, trim);
+            for (int column = 0; column < 7; column++)
+            {
+                float windowX = x - 6.6f + column * 2.2f;
+                yard.Rect(windowX, -41.5f, 1.4f, 1.7f, glass);
+                yard.Rect(windowX, -44.6f, 1.4f, 1.7f, glass);
+            }
+        }
+        Color canopy = new Color32(138, 146, 146, 255);
+        foreach (float x in new[] { 9f, 21f, 27f, 64f, 72f, 81f })
+        {
+            yard.Rect(x, -46.8f, .5f, 4.6f, trim);
+            yard.Circle(new Vector2(x, -44), 2.6f, canopy);
+            yard.Circle(new Vector2(x + 1.6f, -44.6f), 1.8f, canopy);
+        }
+        yard.ShadedRect(-12, -74, 104, -48.7f,
+            new Color32(150, 149, 148, 255), new Color32(191, 177, 153, 255));
+        yard.ShadedRect(-12, -58, 104, -52.5f,
+            new Color32(174, 137, 139, 255), new Color32(206, 161, 145, 255));
+        Color lane = new Color32(229, 194, 166, 255);
+        yard.Rect(46, -53.6f, 116, .07f, lane);
+        yard.Rect(46, -55.4f, 116, .09f, lane);
+        Draw(yard, "Smile face school courtyard", -120, smileRoom);
     }
 
     private void BuildStreet()
@@ -197,7 +257,6 @@ public sealed class SchoolMorningScenery : MonoBehaviour
         float bottom = landingFloor != null ? landingFloor.bounds.max.y - 10f : -31f;
         float width = right + 39f;
         float center = (right - 39f) * .5f;
-        // The coping is the top of the brickwork; the rail has open air behind it.
         a.ShadedRect(-39, bottom, right, -17.4f, new Color32(54,70,78,255), new Color32(73,91,98,255));
         for(float y=-23;y< -18.2f;y+=.85f)
         {
@@ -205,12 +264,9 @@ public sealed class SchoolMorningScenery : MonoBehaviour
             for(float x=-38+((int)(y*10)%2==0?0:1);x<right-1f;x+=2)
                 a.Rect(x,y+.42f,.035f,.85f,new Color32(91,106,110,255));
         }
-        // A continuous rail keeps the school boundary readable behind the path.
         a.Rect(center,-17.4f,width,.2f,Ink);
-        for(float x=-37;x<right;x+=.7f)a.Rect(x,-16.1f,.075f,2.5f,Ink);
-        a.Rect(center,-14.85f,width,.10f,Ink);
         a.Rect(-12.7f,-19.25f,18.2f,.45f,new Color32(61,78,86,255));
-        Draw(a,"School wall and fence",80);
+        Draw(a,"School wall",80);
         a=new SchoolSceneDrawing();
         for(float x=-24;x<-4;x+=1.3f)a.Rect(x,-23.15f,1.2f,.16f,new Color32(137,144,137,255));
         Draw(a,"Alley paving",89);
@@ -222,7 +278,6 @@ public sealed class SchoolMorningScenery : MonoBehaviour
         a.Rect(p.x,p.y,1.65f,3.35f,new Color32(255,219,146,255));
         a.Rect(p.x-1.75f,p.y,.24f,4,Wood);a.Rect(p.x+1.75f,p.y,.24f,4,Wood);
         a.Polygon(Warm,new Vector2(p.x-1.85f,p.y+2),new Vector2(p.x,p.y+3),new Vector2(p.x+1.85f,p.y+2));
-        for(int i=0;i<5;i++)a.Rect(p.x-2.8f-i*.36f,p.y-.3f,.07f,2.6f,Ink);
         Draw(a,"School gate and warm entrance",110);
         Sign(new Vector2(p.x,p.y+2.25f),"ELEMENTARY",3.4f,115);
         a=new SchoolSceneDrawing();

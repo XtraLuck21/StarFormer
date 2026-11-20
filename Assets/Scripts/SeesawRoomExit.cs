@@ -35,13 +35,16 @@ public sealed class SeesawRoomExit : MonoBehaviour
     private Rigidbody2D platformBody;
     private GameObject portalCues;
     private Vector2 platformRest;
+    private Vector2 assemblyBay;
     private float completionAge;
+    private bool fractureFelt;
     private PossessableBody travellingBody;
     private BouncyBallAbility travellingAbility;
     private bool controllerWasEnabled, abilityWasEnabled, bodyWasSimulated;
     private float travellingHalfHeight;
     private float roomExitHeight;
     private SeesawBallShellExit shellEffect;
+    private SeesawLiftAssembly assembly;
 
     private void Awake()
     {
@@ -54,23 +57,17 @@ public sealed class SeesawRoomExit : MonoBehaviour
         Surface = platform.AddComponent<BoxCollider2D>();
         Surface.size = platformSize;
         Surface.enabled = false;
-        var deck = new GameObject("Elevator Platform Surface");
-        deck.transform.SetParent(platform.transform, false);
-        deck.transform.localScale = new Vector3(platformSize.x / sourceVisual.sprite.bounds.size.x,
-            platformSize.y / sourceVisual.sprite.bounds.size.y, 1f);
-        var renderer = deck.AddComponent<SpriteRenderer>();
-        renderer.sprite = sourceVisual.sprite;
-        renderer.sharedMaterial = sourceVisual.sharedMaterial;
-        renderer.sortingLayerID = sourceVisual.sortingLayerID;
-        renderer.sortingOrder = 4;
-        renderer.color = new Color32(154, 120, 220, 255);
+        assemblyBay = platformRest + Vector2.up * 2.35f;
+        platform.transform.position = assemblyBay;
+        platformBody.position = assemblyBay;
+        assembly = new SeesawLiftAssembly(platform.transform, gears, platformSize, sourceVisual.sortingLayerID);
         BuildLiftCues();
-        platform.SetActive(false);
     }
 
     private void Start()
     {
         RefreshEntryCheckpoint();
+        assembly.RestoreDecks();
         if (!player.IsCurrentCheckpoint(SmileCheckpointId) && !SmileFaceFinalRoute.IsRouteCheckpoint(player)) return;
         HasTransferred = true;
         roomCamera.BeginRemainingFollow();
@@ -98,13 +95,24 @@ public sealed class SeesawRoomExit : MonoBehaviour
         if (HasTransferred || player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
         if (!CompletionStarted)
         {
-            if (!AllGearsRunning()) return;
+            if (finale.HasLifted && !fractureFelt)
+            {
+                fractureFelt = true;
+                roomCamera.ShakeSeesawRoom(.55f, shakeStrength * .75f);
+            }
+            if (!assembly.Advance(Time.deltaTime, finale) ||
+                !AllGearsRunning()) return;
             CompletionStarted = true;
             roomCamera.ShakeSeesawRoom(shakeSeconds, shakeStrength);
         }
         completionAge += Time.deltaTime;
-        if (IsReady || completionAge < shakeSeconds) return;
-        platform.SetActive(true);
+        if (IsReady) return;
+        if (completionAge < shakeSeconds)
+        {
+            float align = Mathf.SmoothStep(0f, 1f, completionAge / shakeSeconds);
+            platformBody.position = Vector2.Lerp(assemblyBay, platformRest + Vector2.down * 1.2f, align);
+            return;
+        }
         RevealProgress = Mathf.Clamp01((completionAge - shakeSeconds) / Mathf.Max(.1f, revealSeconds));
         platformBody.position = platformRest + Vector2.down *
             Mathf.Lerp(1.2f, 0f, Mathf.SmoothStep(0f, 1f, RevealProgress));
@@ -293,11 +301,11 @@ public sealed class SeesawRoomExit : MonoBehaviour
             line.sharedMaterial = sourceVisual.sharedMaterial;
             line.useWorldSpace = false;
             line.positionCount = 3;
-            line.widthMultiplier = .045f;
-            line.startColor = line.endColor = new Color(.8f, .65f, 1f);
+            line.widthMultiplier = .10f;
+            line.startColor = line.endColor = new Color32(91, 41, 141, 255);
             line.sortingOrder = 8;
-            float y = .5f + i * .3f;
-            line.SetPositions(new[] { new Vector3(-.3f, y, 0f), new Vector3(0f, y + .2f, 0f), new Vector3(.3f, y, 0f) });
+            float y = .34f + i * .34f;
+            line.SetPositions(new[] { new Vector3(-.34f, y, 0f), new Vector3(0f, y + .20f, 0f), new Vector3(.34f, y, 0f) });
         }
         portalCues.SetActive(false);
     }
@@ -308,4 +316,6 @@ public sealed class SeesawRoomExit : MonoBehaviour
         StopAllCoroutines();
         RestoreControl();
     }
+
+    private void OnDestroy() => assembly?.Dispose();
 }

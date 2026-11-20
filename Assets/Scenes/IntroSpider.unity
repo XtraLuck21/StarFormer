@@ -471,7 +471,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.15
+      value: 2.95
       objectReference: {fileID: 0}
     - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2024,8 +2024,8 @@ Transform:
   m_GameObject: {fileID: 509045976}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -13.78678, y: -0.13888, z: 0}
-  m_LocalScale: {x: 0.6, y: 9.6, z: 1}
+  m_LocalPosition: {x: -13.78678, y: -0.73888, z: 0}
+  m_LocalScale: {x: 0.6, y: 8.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2102728578}
@@ -4407,7 +4407,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.15
+      value: 2.95
       objectReference: {fileID: 0}
     - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5862,116 +5862,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &2111000020
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5327792087346557561, guid: b41d1dfc8ad5c4940af3030abddc6410, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 8.250001
-      objectReference: {fileID: 0}
-    - target: {fileID: 5327792087346557561, guid: b41d1dfc8ad5c4940af3030abddc6410, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.0300002
-      objectReference: {fileID: 0}
-    - target: {fileID: 5327792087346557561, guid: b41d1dfc8ad5c4940af3030abddc6410, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6308927343685157019, guid: b41d1dfc8ad5c4940af3030abddc6410, type: 3}
-      propertyPath: m_Name
-      value: SpiderExitBubble
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: b41d1dfc8ad5c4940af3030abddc6410, type: 3}
---- !u!1 &2111000030
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2111000031}
-  - component: {fileID: 2111000032}
-  m_Layer: 0
-  m_Name: BubbleReturnToStarHint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2111000031
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2111000030}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.11, y: 3.2, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2111000032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2111000030}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cbfcf891f5c45be85d43e715df605f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BubbleMovementHint
-  mode: 2
-  spikeCake: {fileID: 0}
-  playerController: {fileID: 1168412333}
-  targetBody: {fileID: 0}
-  previewInEditor: 1
-  flagGate: {fileID: 0}
-  spiderControlsOffset: {x: 0, y: 1.5}
-  directionPracticeSeconds: 0.5
-  practicedColor: {r: 0.3, g: 0.9, b: 0.4, a: 1}
-  bottomReminderSeconds: 7
-  spiderUpReminder: {fileID: 0}
-  blockedKeyHintSeconds: 6
-  blockedKeyHintOffset: {x: 0, y: 3.5}
-  spiderIntroductionSurfaceRoot: {fileID: 0}
-  spiderTextColor: {r: 0.13725491, g: 0.27450982, b: 0.3647059, a: 1}
-  spiderSubtitle: No floor, no problem.
-  spiderIntroductionFadeInSeconds: 1
-  spiderSubtitleHoldSeconds: 4
-  spiderSubtitleFadeSeconds: 0.75
-  useSpiderHintSequence: 0
-  spiderClimbSurface: {fileID: 0}
-  spiderWallArrowPositions: []
-  spiderWallArrowTexts: []
-  spiderArrowSeconds: 8
-  activationAreaSize: {x: 12, y: 8}
-  activationAreaOffset: {x: -2, y: 0}
-  showIntroductionText: 1
-  waterDescription: 
-  popDescription: 'Pop Bubble
-
-    Return to Star'
-  popDescriptionColor: {r: 1, g: 1, b: 1, a: 1}
-  iconScale: 0.8
-  continueArrowWidth: 0.08
-  inkColor: {r: 1, g: 0.85, b: 0.5, a: 1}
-  keyBackground: {r: 0.08, g: 0.12, b: 0.18, a: 0.95}
-  sortingOrder: 30
 --- !u!114 &2111000040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6001,6 +5891,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::IntroSpiderEntranceSeal
   playerController: {fileID: 1168412333}
   entranceBarrier: {fileID: 2111000060}
+  roomFloor: {fileID: 2111000011}
+  roomRoof: {fileID: 2111000001}
 --- !u!1 &2111000060
 GameObject:
   m_ObjectHideFlags: 0
@@ -6013,7 +5905,7 @@ GameObject:
   - component: {fileID: 2111000062}
   - component: {fileID: 2111000061}
   m_Layer: 0
-  m_Name: BubbleRoomEntranceBarrier
+  m_Name: SpiderRoomEntranceBarrier
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6495,9 +6387,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::IntroSpiderCake
   cakeColor: {r: 1, g: 0.82, b: 0.22, a: 1}
-  cakeHeight: 0.25
-  cherryCount: 4
-  cherryDiameter: 0.16
+  cakeHeight: 0.55
+  cherryCount: 3
+  cherryDiameter: 0.22
   sitsOnFloor: 1
 --- !u!114 &2124000612
 MonoBehaviour:
@@ -6706,8 +6598,6 @@ SceneRoots:
   - {fileID: 2111000063}
   - {fileID: 2111000003}
   - {fileID: 2111000013}
-  - {fileID: 2111000020}
-  - {fileID: 2111000031}
   - {fileID: 2108000001}
   - {fileID: 2108000011}
   - {fileID: 351486059}

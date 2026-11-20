@@ -7,6 +7,8 @@ public sealed class SeesawGear2D : MonoBehaviour
 {
     [SerializeField] private float degreesPerSecond = 60f;
     public bool IsRunning { get; private set; }
+    private float runningAge;
+    public bool WaitingForAssemblyTurn { get; set; }
     private Texture2D texture;
     private Sprite sprite;
 
@@ -45,8 +47,10 @@ public sealed class SeesawGear2D : MonoBehaviour
 
     private void Update()
     {
-        if (Application.isPlaying && IsRunning)
-            transform.Rotate(0f, 0f, degreesPerSecond * Time.deltaTime);
+        if (!Application.isPlaying || !IsRunning) return;
+        runningAge += Time.deltaTime;
+        float speed = Mathf.SmoothStep(0f, 1f, (runningAge - .2f) / .85f);
+        transform.Rotate(0f, 0f, degreesPerSecond * speed * Time.deltaTime);
     }
 
     private void OnDisable()

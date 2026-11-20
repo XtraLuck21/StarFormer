@@ -43,6 +43,7 @@ public class IntroSpiderSilkHint : MonoBehaviour
     private Transform traveller;
     private TextMeshPro label;
     private GameObject mouseIcon;
+    private SpiderSilkTutorialVisual mouseDemo;
     private MobileFormControls mobileControls;
     private bool mobileLesson;
     private bool rebuild;
@@ -72,7 +73,12 @@ public class IntroSpiderSilkHint : MonoBehaviour
         if (!Application.IsPlaying(gameObject))
         {
             visuals.SetActive(previewInEditor);
-            Animate(1f, 0.55f);
+            if (mouseDemo != null)
+            {
+                mouseDemo.Hide();
+                mouseDemo.Draw(transform.TransformPoint(launchPoint), transform.TransformPoint(anchorPoint), 1.35f);
+            }
+            else Animate(1f, 0.55f);
             return;
         }
 
@@ -86,6 +92,16 @@ public class IntroSpiderSilkHint : MonoBehaviour
         {
             completed = true;
             successAge = 0f;
+        }
+
+        if (mouseDemo != null)
+        {
+            bool demonstrate = inside && !completed && silk != null && !silk.IsAiming && !silk.IsFiring;
+            visuals.SetActive(demonstrate);
+            if (demonstrate)
+                mouseDemo.Draw(body.BodyCollider.bounds.center, transform.TransformPoint(anchorPoint), Time.deltaTime);
+            else mouseDemo.Hide();
+            return;
         }
 
         if (completed)
@@ -162,6 +178,12 @@ public class IntroSpiderSilkHint : MonoBehaviour
             texture.width, 0, SpriteMeshType.FullRect);
         sprite.hideFlags = HideFlags.HideAndDontSave;
 
+        if (!mobileLesson)
+        {
+            mouseDemo = new SpiderSilkTutorialVisual(visuals.transform, sprite, sortingOrder);
+            return;
+        }
+
         // Dashed demonstration strand.
         Vector2 delta = anchorPoint - launchPoint;
         float angle = Mathf.Atan2(delta.y, delta.x) * Mathf.Rad2Deg;
@@ -232,6 +254,8 @@ public class IntroSpiderSilkHint : MonoBehaviour
 
     private void Release()
     {
+        mouseDemo?.Dispose();
+        mouseDemo = null;
         dashes.Clear();
         ring.Clear();
         ringRoot = null;

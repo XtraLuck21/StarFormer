@@ -83,16 +83,26 @@ public sealed class SmileFaceFinalRoute : MonoBehaviour
 
     private void Update()
     {
-        if (foreheadRecoveryZone == null || !player.IsCurrentCheckpoint(ForeheadCheckpoint) ||
+        if (!player.IsCurrentCheckpoint(ForeheadCheckpoint) ||
             player.CurrentBody == null || player.IsDead || player.IsRestarting || Time.timeScale <= 0f)
             return;
-        // Only the lower right-ear landing is a recovery zone. Keep the upper
-        // Bubble approach and the left-hand Box route available normally.
-        Bounds recovery = foreheadRecoveryZone.bounds;
-        recovery.Expand(new Vector3(4f, 1.2f, 0f));
-        if (!recovery.Intersects(player.CurrentBody.BodyCollider.bounds)) return;
+        if (player.CurrentBody.Form == BodyForm.Box) return;
+
+        // The hand sits at (31.61, -30.42). Catch a missed pickup below
+        // its ledge, including falls off the outside of the left ear.
+        Vector2 local = transform.InverseTransformPoint(player.CurrentBody.Body.position);
+        bool missedBox = local.x < 34f && local.y < -31.65f;
+        if (!missedBox)
+        {
+            if (foreheadRecoveryZone == null) return;
+            Bounds recovery = foreheadRecoveryZone.bounds;
+            recovery.Expand(new Vector3(4f, 1.2f, 0f));
+            if (!recovery.Intersects(player.CurrentBody.BodyCollider.bounds)) return;
+        }
         if (!player.TryReturnToStarCheckpoint(ForeheadCheckpoint)) return;
         expression.RestoreForeheadCamera();
+        if (missedBox)
+            player.CheckpointFeedback.ShowRouteHint("Touch the Box on the left hand before dropping down.");
     }
 
     public bool SaveCheckpoint(bool upper, Vector3 position, bool forehead = false, bool box = false)

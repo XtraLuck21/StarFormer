@@ -20,7 +20,8 @@ public sealed class SeesawGearBarrier : MonoBehaviour
         {
             if (other == barrier || other.gameObject.scene != gameObject.scene) continue;
             Rigidbody2D body = other.attachedRigidbody;
-            if (body == null || !body.TryGetComponent(out PossessableBody _))
+            if (body == null || (!body.TryGetComponent(out PossessableBody _) &&
+                !body.TryGetComponent(out WindReleasedBall _)))
                 Physics2D.IgnoreCollision(barrier, other);
         }
         var feedback = gameObject.AddComponent<SeesawGateFeedback>();
@@ -28,10 +29,10 @@ public sealed class SeesawGearBarrier : MonoBehaviour
             collisionReveal: true, energyColor: new Color(.2f, .65f, 1f, .85f));
     }
 
-    public void AllowBall(Collider2D ball)
+    public void BlockBall(Collider2D ball)
     {
         if (barrier == null) barrier = GetComponent<BoxCollider2D>();
-        if (ball != null) Physics2D.IgnoreCollision(barrier, ball);
+        if (ball != null) Physics2D.IgnoreCollision(barrier, ball, false);
     }
 
 }

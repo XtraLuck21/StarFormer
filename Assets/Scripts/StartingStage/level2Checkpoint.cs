@@ -12,6 +12,8 @@ public class level2Checkpoint : MonoBehaviour
     [SerializeField] private string checkpointId = "CP01";
     [SerializeField] private bool showTextFeedback = true;
 
+    [SerializeField] private bool hideWorldMarker;
+
     [Header("Events")]
     // Invoked when the player enters this checkpoint.
     [SerializeField] private UnityEvent onCheckpointReached =
@@ -33,7 +35,7 @@ public class level2Checkpoint : MonoBehaviour
 
     private void Start()
     {
-        if (showTextFeedback && player != null && respawnPoint != null)
+        if (showTextFeedback && !hideWorldMarker && player != null && respawnPoint != null)
         {
             player.CheckpointFeedback.RegisterMarker(respawnPoint, checkpointId);
         }
