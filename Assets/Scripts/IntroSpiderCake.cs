@@ -8,6 +8,8 @@ public class IntroSpiderCake : MonoBehaviour
     [SerializeField, Min(0.01f)] private float cakeHeight = 0.25f;
     [SerializeField, Range(1, 8)] private int cherryCount = 3;
     [SerializeField, Min(0.01f)] private float cherryDiameter = 0.16f;
+    [Tooltip("Floor rows: the cake covers the upward spikes and the cherries sit on top.")]
+    [SerializeField] private bool sitsOnFloor;
     public bool IsRevealed => revealed;
     public bool ShowFirstContactMessage { get; private set; }
     private static bool hasTouchedCake;
@@ -78,12 +80,14 @@ public class IntroSpiderCake : MonoBehaviour
         rectangleSprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height),
             Vector2.one * 0.5f, texture.width);
         rectangleSprite.hideFlags = HideFlags.HideAndDontSave;
-        Vector3 cakePosition = new Vector3(bounds.center.x, bounds.max.y + cakeHeight * 0.5f, transform.position.z);
+        float cakeBottom = sitsOnFloor ? bounds.min.y : bounds.max.y;
+        float cakeTop = sitsOnFloor ? bounds.max.y + cakeHeight * 0.5f : bounds.max.y + cakeHeight;
+        Vector3 cakePosition = new Vector3(bounds.center.x, (cakeBottom + cakeTop) * 0.5f, transform.position.z);
         var cake = new GameObject("Yellow Cake", typeof(SpriteRenderer));
         cake.hideFlags = HideFlags.HideAndDontSave;
         cake.transform.SetParent(decorations.transform, false);
         cake.transform.position = cakePosition;
-        cake.transform.localScale = new Vector3(bounds.size.x + 0.12f, cakeHeight, 1f);
+        cake.transform.localScale = new Vector3(bounds.size.x + 0.12f, cakeTop - cakeBottom, 1f);
         var cakeRenderer = cake.GetComponent<SpriteRenderer>();
         cakeRenderer.sprite = rectangleSprite;
         cakeRenderer.color = cakeColor;
@@ -95,7 +99,8 @@ public class IntroSpiderCake : MonoBehaviour
             cherry.hideFlags = HideFlags.HideAndDontSave;
             cherry.transform.SetParent(decorations.transform, false);
             cherry.transform.position = new Vector3(Mathf.Lerp(bounds.min.x, bounds.max.x,
-                (i + 0.5f) / cherryCount), bounds.min.y - cherryDiameter * 0.35f, transform.position.z);
+                (i + 0.5f) / cherryCount), sitsOnFloor ? cakeTop + cherryDiameter * 0.35f
+                : bounds.min.y - cherryDiameter * 0.35f, transform.position.z);
             cherry.transform.localScale = Vector3.one * cherryDiameter;
             cherry.AddComponent<CircleVisual>();
             cherry.GetComponent<SpriteRenderer>().sortingOrder = 4;
