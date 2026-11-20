@@ -36,7 +36,9 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField, Min(.1f)] private float spikeSinkSeconds = 1.6f;
     [SerializeField, Min(.7f)] private float spikeSinkDistance = 1f;
     [SerializeField, Min(.1f)] private float safeRevealSeconds = 1.2f;
-    [SerializeField, Min(0f)] private float safeDemonstrationSeconds = 5.3f;
+    [SerializeField, Min(.1f)] private float safeCameraMoveSeconds = .45f;
+    [SerializeField, Min(.1f)] private float safeSpikeSinkSeconds = 1.6f;
+    [SerializeField, Min(0f)] private float safeRevealHoldSeconds = 2f;
     [SerializeField, Min(0f)] private float buttonPressDistance = .12f;
     [SerializeField, Min(.1f)] private float previewHalfWidth = 1.4f;
     [SerializeField] private float previewMinimumY = 11.25f;
@@ -230,12 +232,15 @@ public class AdvancedRouteSwitch : MonoBehaviour
 
     private IEnumerator RevealRoute(bool brief)
     {
-        float moveSeconds = brief ? cameraMoveSeconds * .55f : cameraMoveSeconds;
+        bool selectingSafe = CurrentRoute == RouteState.Safe;
+        float moveSeconds = selectingSafe ? safeCameraMoveSeconds :
+            (brief ? cameraMoveSeconds * .55f : cameraMoveSeconds);
         yield return MoveCamera(overviewCenter, FramedSize(overviewSize), moveSeconds);
-        yield return new WaitForSecondsRealtime(brief ? .1f : .25f);
+        yield return new WaitForSecondsRealtime(selectingSafe || brief ? .1f : .25f);
         Vector3[] starts = new Vector3[hazards.Length];
         for (int i = 0; i < hazards.Length; i++) starts[i] = hazards[i].AnimationPosition;
-        float duration = brief ? spikeSinkSeconds * .6f : spikeSinkSeconds;
+        float duration = selectingSafe ? safeSpikeSinkSeconds :
+            (brief ? spikeSinkSeconds * .6f : spikeSinkSeconds);
         float elapsed = 0f;
         while (elapsed < duration)
         {
@@ -260,10 +265,10 @@ public class AdvancedRouteSwitch : MonoBehaviour
                     Mathf.Clamp01(revealTime / safeRevealSeconds)));
                 yield return null;
             }
-            safeObstacles.BeginDemonstration();
-            yield return new WaitForSecondsRealtime(
-                Mathf.Max(safeDemonstrationSeconds, safeObstacles.MinimumPreviewSeconds));
-            FinishRouteChange(preserveSafeMotion: true);
+            // Let players read the fully revealed route without waiting for a movement cycle.
+            safeObstacles.SetRevealAmount(1f);
+            yield return new WaitForSecondsRealtime(safeRevealHoldSeconds);
+            FinishRouteChange();
         }
         else
         {
@@ -276,16 +281,13 @@ public class AdvancedRouteSwitch : MonoBehaviour
 
     private bool ShouldShow(int index) => index == 0 ? CurrentRoute != RouteState.Safe : CurrentRoute == RouteState.Hard;
 
-    private void FinishRouteChange(bool preserveSafeMotion = false)
+    private void FinishRouteChange()
     {
         if (hazards == null) return;
         for (int i = 0; i < hazards.Length; i++) hazards[i].Finish(ShouldShow(i));
         routeB.SetActive(CurrentRoute == RouteState.Safe);
         if (CurrentRoute == RouteState.Safe && safeObstacles != null)
-        {
-            if (preserveSafeMotion) safeObstacles.FinishDemonstration();
-            else safeObstacles.RestoreLayout();
-        }
+            safeObstacles.RestoreLayout();
         changingRoute = false;
         UpdateButtons();
     }

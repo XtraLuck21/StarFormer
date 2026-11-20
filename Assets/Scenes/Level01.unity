@@ -10911,7 +10911,9 @@ MonoBehaviour:
   spikeSinkSeconds: 1.6
   spikeSinkDistance: 1
   safeRevealSeconds: 1.2
-  safeDemonstrationSeconds: 5.3
+  safeCameraMoveSeconds: 0.45
+  safeSpikeSinkSeconds: 1.6
+  safeRevealHoldSeconds: 2
   buttonPressDistance: 0.12
   previewHalfWidth: 1.4
   previewMinimumY: 11.25
