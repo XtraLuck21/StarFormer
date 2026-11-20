@@ -2,7 +2,7 @@
 
 Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
-**Current source:** Kindergarten polish updates the opening tutorials and graduation flow; `gold-level-1-polish` extends the woodland theme to Level01, adds water-route choices and revises reminders, checkpoint placement and shared Collection Book icons after the recorded Gold export. The sections below describe that source state; historical publication evidence remains separate.
+**Current source:** Kindergarten polish updates the opening tutorials and graduation flow; `gold-level-1-polish` extends the woodland theme to Level01, adds water-route choices and revises reminders, checkpoint placement and shared Collection Book icons after the recorded Gold export. Later polish adds the acceptance-letter completion page, shorter SAVE presentations, SAVE rearming after any contact separation, direct RUIN activation and reminder rendering behind player forms. The sections below describe that source state; historical publication evidence remains separate.
 
 ## 1. Scenes and progression
 

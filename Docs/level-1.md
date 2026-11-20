@@ -1,6 +1,6 @@
 # Level 1
 
-**Current source:** `gold-level-1-polish` extends the Kindergarten woodland theme to Level01, adds two entrance-water routes, updates reminders and checkpoint 2, and makes the lower-door hint replayable. These changes are not part of the recorded Gold 0.1.0 export.
+**Current source:** `gold-level-1-polish` extends the Kindergarten woodland theme to Level01, adds two entrance-water routes, updates reminders and checkpoint 2, and makes the lower-door hint replayable. Subsequent polish adds the acceptance-letter completion page, revised SAVE timing/contact, direct RUIN activation, saved book-icon cleanup and reminders behind player forms. Gameplay changes through `c57d2aa` are covered by the [source acceptance record](AnalyticsTestPlan.md#level01-polish-source-acceptance). These changes are not part of the recorded Gold 0.1.0 export.
 
 The November 6 Beta 0.1.2 release was published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
 
@@ -10,7 +10,7 @@ Touch controls reviewed November 16, 2026. Promotion baseline: `8834a4d`; record
 
 [Level01.unity](../Assets/Scenes/Level01.unity) is the former Advanced layout. Open this scene for further Level 1 work; there is no separate active `Level01_Advanced.unity`.
 
-The previous scene and its original `.meta` are preserved unchanged as [Level01_Legacy.unity](../Assets/Scenes/Level01_Legacy.unity). It is excluded from builds. `Level01_Reference` is a separate, older design reference. Neither backup is the current playable map; the old G/G2, held-plate, ball-checkpoint and U2-regeneration layout must not be used as the specification for this scene.
+The previous gameplay layout and its original scene GUID are retained as [Level01_Legacy.unity](../Assets/Scenes/Level01_Legacy.unity). The later shared Collection Book cleanup updated its entry UI; it is no longer a byte-for-byte scene backup. It is excluded from builds. `Level01_Reference` is a separate, older design reference. Neither backup is the current playable map; the old G/G2, held-plate, ball-checkpoint and U2-regeneration layout must not be used as the specification for this scene.
 
 ```text
 Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
@@ -114,7 +114,7 @@ The branch’s existing Editor checks and developer playtests cover water traver
 
 Retained Editor tools: `StarFormer → Level01 → Verify Water Routes in Play Mode` and `Verify Water Pocket Recovery`. These exercise the final ability-reminders-only design. Earlier experiments with choice cards, optional water hints, platform highlights and route arrows were removed and are not current behavior.
 
-Remaining playtest follow-ups: SAVE/RUIN meaning still needs clearer new-player validation; the two-hit RUIN cover has been removed; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
+Remaining playtest follow-ups: SAVE/RUIN meaning still needs clearer new-player validation after removing the RUIN cover; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Automatic possession and the separation required before switching back, form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 

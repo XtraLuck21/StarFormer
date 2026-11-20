@@ -74,6 +74,8 @@ Shape discovery is separate from checkpoint state. A menu return/full level rest
 
 Checkpoint 2’s marker, trigger and respawn were moved left together in the polish branch; the developer reported the new placement works. Its fixed Ball form and ordered checkpoint rules are unchanged. See [authored positions](level-1.md#checkpoints-and-restart) and [branch acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance).
 
-Developer playtests passed for checkpoint implementation and formal Level01 promotion. Isolated Unity regression checks passed for all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
+Historical checkpoint implementation and formal-Level01 promotion passed developer playtests. The isolated Unity checks at that time covered all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
+
+After RUIN cover removal (`c57d2aa`), isolated Unity checks passed checkpoint capture, HARD retention on Return to Checkpoint and NORMAL restoration on full restart, with no cover recreated. The removed cover state is no longer part of checkpoint recovery.
 
 The developer reported final Beta local and hosted playtests passed. The Level01 analytics screenshot confirms records, not a checkpoint-by-checkpoint metric audit. Continue targeted browser regression, including input/focus loss, narrow windows, real touch devices where controls exist, and pause during the death delay. Editor checks do not establish hosted-build or Google Sheets delivery results. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for gameplay checkpoint IDs versus analytics Run/Attempt lifecycle.
