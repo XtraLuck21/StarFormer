@@ -2641,7 +2641,7 @@ MonoBehaviour:
   inkColor: {r: 0.027451, g: 0.058824, b: 0.047059, a: 1}
   keyBackground: {r: 0.960784, g: 0.858824, b: 0.639216, a: 1}
   sortingOrder: 30
-  showForStarInArea: 1
+  showForStarInArea: 0
 --- !u!1 &779215913
 GameObject:
   m_ObjectHideFlags: 0
