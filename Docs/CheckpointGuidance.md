@@ -23,7 +23,6 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | Active checkpoint and reached markers | Retained; restore its fixed host and safe position | Cleared; start as Star at entrance |
 | Latest completed NORMAL/SAFE/HARD mode | Retained, without replaying its cinematic | NORMAL |
 | Upper one-way platform | Highest completed lift retained | Authored low height |
-| RUIN cover | Broken state retained | Intact |
 | Viewed SAVE warning and route presentations | Retained | Cleared |
 | Lower reversible lift/door | Authored initial state | Authored initial state |
 | Loose bodies, sizes and consumed Bubbles | Recreated at authored scene state, then place checkpoint host | Authored initial state |
@@ -31,7 +30,7 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | HARD falling spike | Restored to its ceiling and rearmed when HARD is active | Hidden in NORMAL |
 | Water ability reminders and replayable lower-door Hint | Fresh scene-local state; door Hint must reach its offer delay again | Fresh scene-local state |
 
-The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
+The controller captures completed progress after checkpoint activation, including later route/lift changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
 
 ## Shared Home menu
 
@@ -46,9 +45,11 @@ Each of the seven enabled gameplay scenes has the top-right house-and-Star squar
 
 Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Escape from Paused resumes. The menu blocks background interaction, does not stack over the R menu or a route cinematic, and restores its owned pause when disabled. It does not add Hint/Controls actions.
 
-### Kindergarten graduation exception
+### Completion-screen exceptions
 
 After IntroBouncyBall completion, gameplay remains paused on the graduation screen. The house stays visible and clickable above its backdrop, with a `Main Menu` tooltip. It loads Navigation directly instead of opening Paused or asking to abandon an already-completed run. Next Level loads Level01. Both routes clear checkpoint sessions and restore normal time; form discoveries still last for the application session. Escape does not bypass graduation into the ordinary Home menu. See [completion feedback](intro-levels.md#completion-feedback).
+
+Level01 uses the same direct Home exit on its Elementary School acceptance page. Home stays above the backdrop and is clickable during and after the reveal. Next Level loads IntroSpider; neither the reveal nor waiting advances the level automatically. Both exits restore time and clear checkpoint sessions without reporting abandonment of the completed run.
 
 IntroBox's dropped-cargo retry restores just its carrying lesson, not a checkpoint or scene reload. Backward scene passages also remain separate from checkpoints.
 
@@ -73,6 +74,8 @@ Shape discovery is separate from checkpoint state. A menu return/full level rest
 
 Checkpoint 2’s marker, trigger and respawn were moved left together in the polish branch; the developer reported the new placement works. Its fixed Ball form and ordered checkpoint rules are unchanged. See [authored positions](level-1.md#checkpoints-and-restart) and [branch acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance).
 
-Developer playtests passed for checkpoint implementation and formal Level01 promotion. Isolated Unity regression checks passed for all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
+Historical checkpoint implementation and formal-Level01 promotion passed developer playtests. The isolated Unity checks at that time covered all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
+
+After RUIN cover removal (`c57d2aa`), isolated Unity checks passed checkpoint capture, HARD retention on Return to Checkpoint and NORMAL restoration on full restart, with no cover recreated. The removed cover state is no longer part of checkpoint recovery.
 
 The developer reported final Beta local and hosted playtests passed. The Level01 analytics screenshot confirms records, not a checkpoint-by-checkpoint metric audit. Continue targeted browser regression, including input/focus loss, narrow windows, real touch devices where controls exist, and pause during the death delay. Editor checks do not establish hosted-build or Google Sheets delivery results. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for gameplay checkpoint IDs versus analytics Run/Attempt lifecycle.

@@ -18,7 +18,6 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField] private TMP_Text label;
     [SerializeField] private Transform buttonFace;
     [SerializeField] private BoxCollider2D ruinSensor;
-    [SerializeField] private RuinButtonGuard ruinGuard;
     [SerializeField] private TMP_Text ruinLabel;
     [SerializeField] private Transform ruinButtonFace;
     [SerializeField] private AdvancedLevelCamera2D levelCamera;
@@ -36,7 +35,9 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField, Min(.1f)] private float spikeSinkSeconds = 1.6f;
     [SerializeField, Min(.7f)] private float spikeSinkDistance = 1f;
     [SerializeField, Min(.1f)] private float safeRevealSeconds = 1.2f;
-    [SerializeField, Min(0f)] private float safeDemonstrationSeconds = 5.3f;
+    [SerializeField, Min(.1f)] private float safeCameraMoveSeconds = .45f;
+    [SerializeField, Min(.1f)] private float safeSpikeSinkSeconds = 1.6f;
+    [SerializeField, Min(0f)] private float safeRevealHoldSeconds = 2f;
     [SerializeField, Min(0f)] private float buttonPressDistance = .12f;
     [SerializeField, Min(.1f)] private float previewHalfWidth = 1.4f;
     [SerializeField] private float previewMinimumY = 11.25f;
@@ -65,7 +66,6 @@ public class AdvancedRouteSwitch : MonoBehaviour
     private bool hardShown;
     private bool saveArmed = true;
     private bool ruinArmed = true;
-    private float savePressX;
     private float ruinPressX;
     public RouteState CurrentRoute { get; private set; } = RouteState.Normal;
     public bool IsActivated => CurrentRoute == RouteState.Safe;
@@ -81,7 +81,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
         ruinRenderer = ruinButtonFace != null ? ruinButtonFace.GetComponent<SpriteRenderer>() : null;
         if (playerController == null || targetBox == null || targetBall == null ||
             routeA == null || routeB == null || hardFloorSpikes == null || hardCeilingSpikes == null ||
-            ruinSensor == null || ruinGuard == null || buttonRenderer == null || ruinRenderer == null || routeA == routeB)
+            ruinSensor == null || buttonRenderer == null || ruinRenderer == null || routeA == routeB)
         {
             Debug.LogError("Assign both route buttons, Box D, R2, and the separate route/hazard roots.", this);
             enabled = false;
@@ -119,9 +119,9 @@ public class AdvancedRouteSwitch : MonoBehaviour
             !controlled.Body.simulated || controlled.Body.bodyType != RigidbodyType2D.Dynamic || !controlled.BodyCollider.enabled)
             return;
         Bounds body = controlled.BodyCollider.bounds;
-        // Vertical bounces and held Box contact never rearm a button. The whole
-        // controlled body must leave its horizontal band, with a little margin.
-        if (!saveArmed && HasLeftHorizontally(sensor, body, savePressX)) saveArmed = true;
+        // SAVE rearms after contact ends in any direction (including a bounce or shrink).
+        // RUIN retains its deliberate horizontal departure requirement.
+        if (!saveArmed && !sensor.IsTouching(controlled.BodyCollider)) saveArmed = true;
         if (!ruinArmed && HasLeftHorizontally(ruinSensor, body, ruinPressX)) ruinArmed = true;
         if ((!isBox && !isBall && !isStar) || (isBox && !controlled.IsGrounded())) return;
 
@@ -142,11 +142,10 @@ public class AdvancedRouteSwitch : MonoBehaviour
         {
             if (SelectRoute(CurrentRoute == RouteState.Safe ? RouteState.Normal : RouteState.Safe))
             {
-                savePressX = body.center.x;
                 saveArmed = false;
             }
         }
-        else if (ruinArmed && isBall && ruinGuard.CanActivate && TouchesFromBelow(ruinSensor, controlled))
+        else if (ruinArmed && isBall && TouchesFromBelow(ruinSensor, controlled))
         {
             if (SelectRoute(CurrentRoute == RouteState.Hard ? RouteState.Normal : RouteState.Hard))
             {
@@ -230,12 +229,15 @@ public class AdvancedRouteSwitch : MonoBehaviour
 
     private IEnumerator RevealRoute(bool brief)
     {
-        float moveSeconds = brief ? cameraMoveSeconds * .55f : cameraMoveSeconds;
+        bool selectingSafe = CurrentRoute == RouteState.Safe;
+        float moveSeconds = selectingSafe ? safeCameraMoveSeconds :
+            (brief ? cameraMoveSeconds * .55f : cameraMoveSeconds);
         yield return MoveCamera(overviewCenter, FramedSize(overviewSize), moveSeconds);
-        yield return new WaitForSecondsRealtime(brief ? .1f : .25f);
+        yield return new WaitForSecondsRealtime(selectingSafe || brief ? .1f : .25f);
         Vector3[] starts = new Vector3[hazards.Length];
         for (int i = 0; i < hazards.Length; i++) starts[i] = hazards[i].AnimationPosition;
-        float duration = brief ? spikeSinkSeconds * .6f : spikeSinkSeconds;
+        float duration = selectingSafe ? safeSpikeSinkSeconds :
+            (brief ? spikeSinkSeconds * .6f : spikeSinkSeconds);
         float elapsed = 0f;
         while (elapsed < duration)
         {
@@ -260,10 +262,10 @@ public class AdvancedRouteSwitch : MonoBehaviour
                     Mathf.Clamp01(revealTime / safeRevealSeconds)));
                 yield return null;
             }
-            safeObstacles.BeginDemonstration();
-            yield return new WaitForSecondsRealtime(
-                Mathf.Max(safeDemonstrationSeconds, safeObstacles.MinimumPreviewSeconds));
-            FinishRouteChange(preserveSafeMotion: true);
+            // Let players read the fully revealed route without waiting for a movement cycle.
+            safeObstacles.SetRevealAmount(1f);
+            yield return new WaitForSecondsRealtime(safeRevealHoldSeconds);
+            FinishRouteChange();
         }
         else
         {
@@ -276,16 +278,13 @@ public class AdvancedRouteSwitch : MonoBehaviour
 
     private bool ShouldShow(int index) => index == 0 ? CurrentRoute != RouteState.Safe : CurrentRoute == RouteState.Hard;
 
-    private void FinishRouteChange(bool preserveSafeMotion = false)
+    private void FinishRouteChange()
     {
         if (hazards == null) return;
         for (int i = 0; i < hazards.Length; i++) hazards[i].Finish(ShouldShow(i));
         routeB.SetActive(CurrentRoute == RouteState.Safe);
         if (CurrentRoute == RouteState.Safe && safeObstacles != null)
-        {
-            if (preserveSafeMotion) safeObstacles.FinishDemonstration();
-            else safeObstacles.RestoreLayout();
-        }
+            safeObstacles.RestoreLayout();
         changingRoute = false;
         UpdateButtons();
     }

@@ -1,0 +1,24 @@
+{
+  "purpose": "Level01 completion acceptance letter; native UI text, envelope and buttons with independent Star animation",
+  "source_kind": "OpenAI image generation",
+  "source_file": "/Users/castro/.codex/generated_images/01a1f750-fe06-79e2-9e02-0e7624e95970/exec-c1428a6a-8a96-4e87-a361-99e5a63fba1e.png",
+  "reference_file": "/Users/castro/.codex/generated_images/01a1f750-fe06-79e2-9e02-0e7624e95970/exec-f788aac0-7252-4661-9f0a-814f00323e9c.png",
+  "license": "Generated for StarFormer from the user-approved concept",
+  "asset": "StudentStar.png",
+  "alpha": true,
+  "ppu": 100,
+  "filter": "Bilinear",
+  "compression": "Uncompressed",
+  "mipmaps": false,
+  "physics_shape": false,
+  "prompt": "Extract the faceless five-point yellow Star with teal notebook and pencil. Transparent background; no envelope, text, backpack, scenery or UI.",
+  "qa": {
+    "alpha_check_passed": true,
+    "technical_checks_passed": true,
+    "in_engine_review": "Unity 6000.3.22f1: 15-second paused hold, Next Level to IntroSpider, topmost Home click during and after reveal to Navigation, time restoration and original Kindergarten progression passed. 1920x1080 and 1280x960 rendered layouts reviewed: envelope and seal visible, text fits, character alpha clean, Next Level unobstructed."
+  },
+  "dimensions": [
+    1312,
+    1199
+  ]
+}

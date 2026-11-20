@@ -103,7 +103,7 @@ public sealed class Level01WaterRouteHints : MonoBehaviour
         Vector2 half = card.sizeDelta * scale * .5f;
         screen.x = Mathf.Clamp(screen.x, safe.xMin + half.x + 12f * scale, safe.xMax - half.x - 12f * scale);
         screen.y = Mathf.Clamp(screen.y, safe.yMin + half.y + 65f * scale, safe.yMax - half.y - 24f * scale);
-        RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)canvas.transform, screen, null, out var local);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)canvas.transform, screen, worldCamera, out var local);
         card.anchoredPosition = local;
     }
 
@@ -111,7 +111,13 @@ public sealed class Level01WaterRouteHints : MonoBehaviour
     {
         var obj = new GameObject("Water lesson HUD", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
         obj.transform.SetParent(transform, false);
-        canvas = obj.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 20;
+        canvas = obj.GetComponent<Canvas>();
+        // Share the scene's sorting order: water (-2), reminder (-1), bodies (0), Star (10).
+        // Overlay canvases always cover sprites, regardless of their sortingOrder.
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = worldCamera;
+        canvas.planeDistance = worldCamera != null ? worldCamera.nearClipPlane + 1f : 1f;
+        canvas.sortingOrder = -1;
         var scale = obj.GetComponent<CanvasScaler>(); scale.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scale.referenceResolution = new Vector2(1280, 720); scale.matchWidthOrHeight = .5f;
         var panel = new GameObject("Current lesson", typeof(RectTransform), typeof(Image), typeof(Outline));

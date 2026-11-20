@@ -1,6 +1,6 @@
 # Level 1
 
-**Current source:** `gold-level-1-polish` extends the Kindergarten woodland theme to Level01, adds two entrance-water routes, updates reminders and checkpoint 2, and makes the lower-door hint replayable. These changes are not part of the recorded Gold 0.1.0 export.
+**Current source:** `gold-level-1-polish` extends the Kindergarten woodland theme to Level01, adds two entrance-water routes, updates reminders and checkpoint 2, and makes the lower-door hint replayable. Subsequent polish adds the acceptance-letter completion page, revised SAVE timing/contact, direct RUIN activation, saved book-icon cleanup and reminders behind player forms. Gameplay changes through `c57d2aa` are covered by the [source acceptance record](AnalyticsTestPlan.md#level01-polish-source-acceptance). These changes are not part of the recorded Gold 0.1.0 export.
 
 The November 6 Beta 0.1.2 release was published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
 
@@ -10,7 +10,7 @@ Touch controls reviewed November 16, 2026. Promotion baseline: `8834a4d`; record
 
 [Level01.unity](../Assets/Scenes/Level01.unity) is the former Advanced layout. Open this scene for further Level 1 work; there is no separate active `Level01_Advanced.unity`.
 
-The previous scene and its original `.meta` are preserved unchanged as [Level01_Legacy.unity](../Assets/Scenes/Level01_Legacy.unity). It is excluded from builds. `Level01_Reference` is a separate, older design reference. Neither backup is the current playable map; the old G/G2, held-plate, ball-checkpoint and U2-regeneration layout must not be used as the specification for this scene.
+The previous gameplay layout and its original scene GUID are retained as [Level01_Legacy.unity](../Assets/Scenes/Level01_Legacy.unity). The later shared Collection Book cleanup updated its entry UI; it is no longer a byte-for-byte scene backup. It is excluded from builds. `Level01_Reference` is a separate, older design reference. Neither backup is the current playable map; the old G/G2, held-plate, ball-checkpoint and U2-regeneration layout must not be used as the specification for this scene.
 
 ```text
 Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → IntroSpider → IntroFan → Level02
@@ -19,8 +19,9 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 - Navigation’s Level 1 entrance targets `Level01` through NavigationEntrance; both contact and click paths run the entry feedback before loading.
 - IntroBouncyBall's Star/BouncyBall goal opens graduation; choosing Next Level loads `Level01`; IntroBubble first opens a passage to that tutorial.
 - Level01 is at enabled build index 4, after IntroBouncyBall; IntroSpider, IntroFan and Level02 follow at indices 5, 6 and 7. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
-- The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, label `Level 2 Intro`, and a 1.5-second transition. Any living controlled form can finish.
-- Completion pauses gameplay, shows `Level up! / Entering Level 2 Intro...`, clears checkpoint sessions and loads the next scene with normal time. The final wait-for-menu completion screen belongs to Level02.
+- The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, and the Elementary School admission presentation enabled. Any living controlled form can finish.
+- Completion pauses gameplay and opens a woodland-green/gold acceptance letter: `LEVEL UP!`, `Level 1 Complete!`, `Dear Star,`, `You're accepted!`, and `Welcome to Elementary School`. A yellow Star with a teal notebook and pencil emerges from a cream envelope. Native UI text and buttons remain separate from the transparent character sprite.
+- A roughly one-second unscaled envelope opening and Star hop settles into a still page. There is no automatic advance: `Next Level →` loads IntroSpider; the top-right Home stays clickable above the backdrop from the start of the reveal and returns directly to Navigation. Its tooltip reads `Main Menu`. Both exits clear checkpoint sessions and restore normal time; completion is recorded once at the flag. Keyboard up/down connects the two buttons. The saved timed-transition fields are only a fallback for other LevelGoal instances.
 
 ## Playable route
 
@@ -33,7 +34,7 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 | Right ascent | Checkpoint 2 sits on the open ground left of the Bubble shelf and restores the lower ball there. It can bounce around the shelf edge to possess `BubbleU2_RightAscent` and rise through the central opening. |
 | Upper landing choice | Pop on the left to continue as Star, or on the right to possess the offset `BoxD_UpperTunnel` on its small platform. Grow Box to negotiate the gap toward the left landing, then shrink for the narrow tunnel. The Bubble ascent opening stays clear. Landing on the left as Star or Box activates checkpoint 3. |
 | SAVE and upper lift | Star, grounded Box D, or R2 can touch SAVE from below. The nearby thick platform has one centered upward arrow. Box growth raises it; it retains that height when Box shrinks or a ball lands on it. |
-| Ball and optional RUIN | `BallR2_UpperReturn` can continue left without choosing RUIN. Raising the platform enables the deliberate higher approach to the recessed RUIN button. The first upward R2 hit breaks its cover and sends the ball downward; after landing, a later bounce can activate RUIN. The ball can return to SAVE. |
+| Ball and optional RUIN | `BallR2_UpperReturn` can continue left without choosing RUIN. Raising the platform enables the deliberate higher approach to the recessed RUIN button. R2 activates RUIN on its first contact from below; there is no cover or landing prerequisite. The ball can return to SAVE. |
 | Upper return and endpoint | Travel left through the selected NORMAL, SAFE or HARD route to the flag. All forms use the same completion trigger. |
 
 Box, Bubble and BouncyBall use glow to identify possessable hosts. Box has a black outline; Bubble has a pale-blue fill and darker-blue outline. A centered Star marks the controlled host. These visuals do not change the collision size.
@@ -50,15 +51,15 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 
 | State | Upper return route | Selection |
 | --- | --- | --- |
-| NORMAL | Default floor spikes; SAFE boards and HARD-only hazards hidden | Initial state, or return to the currently selected button after leaving its horizontal band |
+| NORMAL | Default floor spikes; SAFE boards and HARD-only hazards hidden | Initial state, or reactivate the selected button after its rearm condition is met |
 | SAFE | All spikes hidden. Three black boards form a safe S-shaped timing route: the rightmost is stationary and the other two translate vertically in opposite directions | Touch SAVE from below as Star, grounded Box D or R2 |
-| HARD | Default floor spikes plus additional floor and aligned ceiling spikes; one ceiling spike is a proximity-triggered falling trap | R2 touches RUIN from below after its breakable cover is cleared |
+| HARD | Default floor spikes plus additional floor and aligned ceiling spikes; one ceiling spike is a proximity-triggered falling trap | R2 touches RUIN directly from below |
 
 - SAVE and RUIN are mutually exclusive. Selecting the other button changes mode directly.
-- The selected button reads `BACK TO NORMAL`. The whole controlled body must leave its horizontal band with a margin and return before that button can toggle NORMAL. Vertical bounces, held contact and shrinking at the edge do not rearm it.
-- Mode changes preserve the upper lift height and broken-cover state. Full restart resets both.
+- The selected button reads `BACK TO NORMAL`. SAVE rearms whenever the controlled body stops touching its sensor, regardless of direction. A vertical bounce or Box shrink followed by renewed eligible contact can toggle it again; continuous contact never repeats. RUIN still requires the whole body to leave its horizontal band with a margin before returning.
+- Mode changes preserve the upper lift height. Full restart resets it.
 - On first arrival under SAVE in NORMAL, Box or Star triggers a shared camera preview of the left hazards. Being in the lower room does not trigger it. Viewing once as Star also counts when later returning as Box.
-- Selecting a mode pauses player control and frames the changed route. SAFE sinks the spikes, reveals the boards, then demonstrates a full exchange in both directions before restoring control. HARD reveals the extra floor and ceiling hazards. NORMAL restores the default layout.
+- Selecting a mode pauses player control and frames the changed route. SAFE uses quick camera transitions with a full reveal: 0.45 seconds to frame the route, a 0.1-second beat, 1.6 seconds to sink spikes, 1.2 seconds to reveal the boards, a 2-second hold on the fully revealed layout, then 0.45 seconds to return the camera (about 5.8 seconds total). It does not wait for an up/down cycle; board motion starts when gameplay resumes. HARD reveals the extra floor and ceiling hazards. NORMAL restores the default layout.
 - The two moving SAFE boards keep fixed dimensions and a shared opposite phase. They have no arrows. The shorter left board permits a jump over its low position or passage underneath its high position. If a leading edge would catch a possessable body, both boards pause together without losing their phase.
 - The HARD trap activates only for the controlled body approaching its horizontal band in the upper corridor, outside cinematics. It falls quickly, stays visible on the floor and remains lethal. It does not fade out. Route resets and checkpoint retries rearm it.
 - `AdvancedLevelCamera2D` handles ordinary regional framing; route presentations temporarily take control and restore it afterward. Editor Game-view Scale only affects the preview display, not the camera's saved zoom.
@@ -88,16 +89,16 @@ All three markers remain hollow stars: blue before activation, yellow after bein
 
 Checkpoint 3 requires Star or Box to land on the left floor; flying over it as Bubble does not save. Respawn form is fixed by the checkpoint, not copied from the entering form. Automatic last-possessed-ball checkpoints are disabled in this scene.
 
-Death and Return to Checkpoint reload the scene, restore the configured body and retain the latest completed route choice, upper lift height, broken RUIN cover and viewed route-presentation history. Loose bodies return to authored placements; the lower reversible door resets. SAFE boards restart a predictable motion cycle and the HARD falling spike rearms. A half-finished cinematic is not saved. This is in-memory session recovery, not a save across application launches.
+Death and Return to Checkpoint reload the scene, restore the configured body and retain the latest completed route choice, upper lift height and viewed route-presentation history. Loose bodies return to authored placements; the lower reversible door resets. SAFE boards restart a predictable motion cycle and the HARD falling spike rearms. A half-finished cinematic is not saved. This is in-memory session recovery, not a save across application launches.
 
-Restart Level, returning to Navigation, a new menu entry and forward level progression clear checkpoint sessions. Restart Level restores NORMAL, the upper lift's initial low position, the intact cover and all original bodies. See [CheckpointGuidance.md](CheckpointGuidance.md) for the menus and recovery matrix.
+Restart Level, returning to Navigation, a new menu entry and forward level progression clear checkpoint sessions. Restart Level restores NORMAL, the upper lift's initial low position and all original bodies. See [CheckpointGuidance.md](CheckpointGuidance.md) for the menus and recovery matrix.
 
 ## Hints and Home menu
 
 | Hint / control | Trigger and behavior |
 | --- | --- |
 | Movable-door hint | After 20 seconds without lower-door movement, an optional star sign appears above the route. Clicking the visible sign, deliberate Box growth or Ball contact triggers a short paused lift preview with “A little lift?”. Mouse clicks on the sign do not resize Box. The sign returns after every preview and can be replayed without limit until the real door rises by 0.8 units. Leaving the room does not retire it. Spawn overlap and continued contact after a preview do not automatically activate it. |
-| Water-route ability reminders | No choice card, optional Hint button, platform highlight, route arrow or idle/pacing hint is created in this water section. First possession of each form per scene visit automatically shows REMEMBER? with Bouncy balls float! or Bubbles swim in water and float in air. The brief reminder lasts 5 seconds (or through Ball ascent) at a fixed nearby scene anchor, and does not replay on repeat possession. Only a Ball trapped in the right-hand water pocket receives a persistent automatic No ground to bounce. / Press R to restart. notice without a REMEMBER? heading (touch: Home > Restart Level). Pauses and cinematics hide the card and pause its timer. |
+| Water-route ability reminders | No choice card, optional Hint button, platform highlight, route arrow or idle/pacing hint is created in this water section. First possession of each form per scene visit automatically shows REMEMBER? with Bouncy balls float! or Bubbles swim in water and float in air. The brief reminder lasts 5 seconds (or through Ball ascent) at a fixed nearby scene anchor, and does not replay on repeat possession. The card renders above water but behind form sprites, so a passing Bubble and its controlled Star remain visible in front of it. Only a Ball trapped in the right-hand water pocket receives a persistent automatic No ground to bounce. / Press R to restart. notice without a REMEMBER? heading (touch: Home > Restart Level). Pauses and cinematics hide the card and pause its timer. |
 | Bubble exits | The water exit and upper landing use the same Bubble controls as the rest of Level01. Tap Pop on mobile, or press Q or right-click on desktop. |
 | Home | Top-right square house outline with a small Star; tooltip `Home · Restart`. Opens a paused menu with Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled before a save; full restart and Main Menu require confirmation. |
 | Collection Book | Caption-free square book icon matching Home, using the shared non-Navigation presentation. Opens paged form help; possession discovers pages for the current application session. |
@@ -107,11 +108,13 @@ Restart Level, returning to Navigation, a new menu entry and forward level progr
 
 ## Verification and remaining work
 
+Elementary admission update: isolated Unity Play Mode checks passed the real Level01 flag trigger, a 15-second paused hold, stable post-reveal Star, Next Level → IntroSpider, topmost Home pointer hits during and after reveal → Navigation, restored time on both exits, and the original Kindergarten graduation/Next Level path. Text bounds were checked at 1920 × 1080 and 1280 × 960. Physical touch and exported-player verification remain separate.
+
 The branch’s existing Editor checks and developer playtests cover water traversal, reminders, matching renewable Bubbles, checkpoint placement, book presentation and clickable/replayable door help. See [Level01 polish source acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance) for evidence and remaining browser/device checks. This documentation sync does not rerun gameplay or publish a build.
 
 Retained Editor tools: `StarFormer → Level01 → Verify Water Routes in Play Mode` and `Verify Water Pocket Recovery`. These exercise the final ability-reminders-only design. Earlier experiments with choice cards, optional water hints, platform highlights and route arrows were removed and are not current behavior.
 
-Remaining playtest follow-ups: SAVE/RUIN meaning and the two-hit RUIN cover still need clearer new-player validation; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
+Remaining playtest follow-ups: SAVE/RUIN meaning still needs clearer new-player validation after removing the RUIN cover; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Automatic possession and the separation required before switching back, form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 

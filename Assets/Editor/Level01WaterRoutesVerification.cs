@@ -277,7 +277,11 @@ public static class Level01WaterRoutesVerification
     {
         var rect = GameObject.Find("Current lesson").GetComponent<RectTransform>();
         Vector3[] corners = new Vector3[4]; rect.GetWorldCorners(corners);
-        var box = new Rect(corners[0], corners[2] - corners[0]);
+        var canvas = rect.GetComponentInParent<Canvas>();
+        var uiCamera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+        Vector2 bottomLeft = RectTransformUtility.WorldToScreenPoint(uiCamera, corners[0]);
+        Vector2 topRight = RectTransformUtility.WorldToScreenPoint(uiCamera, corners[2]);
+        var box = new Rect(bottomLeft, topRight - bottomLeft);
         Vector2 point = Camera.main.WorldToScreenPoint(player.CurrentBody.Body.position);
         Check(!box.Contains(point), "Help card does not cover the player");
         Vector2 nearest = new Vector2(Mathf.Clamp(point.x, box.xMin, box.xMax), Mathf.Clamp(point.y, box.yMin, box.yMax));
@@ -293,13 +297,16 @@ public static class Level01WaterRoutesVerification
         var camera = Camera.main; if (camera == null) return;
         var rt = new RenderTexture(1600, 900, 24); var previous = camera.targetTexture;
         var hud = Object.FindObjectsByType<Canvas>(FindObjectsSortMode.None).FirstOrDefault(c => c.name == "Water lesson HUD");
+        var originalMode = hud != null ? hud.renderMode : RenderMode.ScreenSpaceOverlay;
+        var originalCamera = hud != null ? hud.worldCamera : null;
+        float originalDistance = hud != null ? hud.planeDistance : 1f;
         if (hud != null) { hud.renderMode = RenderMode.ScreenSpaceCamera; hud.worldCamera = camera; hud.planeDistance = 1; }
         camera.targetTexture = rt; Canvas.ForceUpdateCanvases(); camera.Render(); var active = RenderTexture.active; RenderTexture.active = rt;
         var image = new Texture2D(1600, 900, TextureFormat.RGB24, false);
         image.ReadPixels(new Rect(0, 0, 1600, 900), 0, 0); image.Apply();
         File.WriteAllBytes(Output + "/" + name + ".png", image.EncodeToPNG());
         camera.targetTexture = previous; RenderTexture.active = active;
-        if (hud != null) hud.renderMode = RenderMode.ScreenSpaceOverlay;
+        if (hud != null) { hud.renderMode = originalMode; hud.worldCamera = originalCamera; hud.planeDistance = originalDistance; }
         Object.DestroyImmediate(image); Object.DestroyImmediate(rt);
     }
 }
