@@ -103,5 +103,18 @@
       "Book button opens; close button resumes play",
       "No world transform or physics changes"
     ]
+  },
+  "reused_in_scenes": [
+    "Assets/Scenes/IntroBox.unity",
+    "Assets/Scenes/IntroBubble.unity"
+  ],
+  "woodland_extension": {
+    "date": "2026-11-19",
+    "assets": "Reuses the approved woodland raster assets without texture or importer changes",
+    "camera": "Backdrop alone follows and fits the existing camera after tutorial pan/zoom; camera parameters unchanged",
+    "terrain": "Soil and inward grass edges are children of original solid objects, including the exit gate; no new colliders",
+    "water": "Depth artwork uses existing water bounds and sorting order",
+    "ui": "Scene-local dark ink/cream hints and square book button match IntroBouncyBall",
+    "qa": "Original world transforms, physics and gameplay components compared against pre-edit scenes; no changes. IntroBox entry, possession and camera reveal visually checked in Unity."
   }
 }
