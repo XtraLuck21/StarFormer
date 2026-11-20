@@ -34,7 +34,7 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 | Right ascent | Checkpoint 2 sits on the open ground left of the Bubble shelf and restores the lower ball there. It can bounce around the shelf edge to possess `BubbleU2_RightAscent` and rise through the central opening. |
 | Upper landing choice | Pop on the left to continue as Star, or on the right to possess the offset `BoxD_UpperTunnel` on its small platform. Grow Box to negotiate the gap toward the left landing, then shrink for the narrow tunnel. The Bubble ascent opening stays clear. Landing on the left as Star or Box activates checkpoint 3. |
 | SAVE and upper lift | Star, grounded Box D, or R2 can touch SAVE from below. The nearby thick platform has one centered upward arrow. Box growth raises it; it retains that height when Box shrinks or a ball lands on it. |
-| Ball and optional RUIN | `BallR2_UpperReturn` can continue left without choosing RUIN. Raising the platform enables the deliberate higher approach to the recessed RUIN button. The first upward R2 hit breaks its cover and sends the ball downward; after landing, a later bounce can activate RUIN. The ball can return to SAVE. |
+| Ball and optional RUIN | `BallR2_UpperReturn` can continue left without choosing RUIN. Raising the platform enables the deliberate higher approach to the recessed RUIN button. R2 activates RUIN on its first contact from below; there is no cover or landing prerequisite. The ball can return to SAVE. |
 | Upper return and endpoint | Travel left through the selected NORMAL, SAFE or HARD route to the flag. All forms use the same completion trigger. |
 
 Box, Bubble and BouncyBall use glow to identify possessable hosts. Box has a black outline; Bubble has a pale-blue fill and darker-blue outline. A centered Star marks the controlled host. These visuals do not change the collision size.
@@ -53,11 +53,11 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 | --- | --- | --- |
 | NORMAL | Default floor spikes; SAFE boards and HARD-only hazards hidden | Initial state, or reactivate the selected button after its rearm condition is met |
 | SAFE | All spikes hidden. Three black boards form a safe S-shaped timing route: the rightmost is stationary and the other two translate vertically in opposite directions | Touch SAVE from below as Star, grounded Box D or R2 |
-| HARD | Default floor spikes plus additional floor and aligned ceiling spikes; one ceiling spike is a proximity-triggered falling trap | R2 touches RUIN from below after its breakable cover is cleared |
+| HARD | Default floor spikes plus additional floor and aligned ceiling spikes; one ceiling spike is a proximity-triggered falling trap | R2 touches RUIN directly from below |
 
 - SAVE and RUIN are mutually exclusive. Selecting the other button changes mode directly.
 - The selected button reads `BACK TO NORMAL`. SAVE rearms whenever the controlled body stops touching its sensor, regardless of direction. A vertical bounce or Box shrink followed by renewed eligible contact can toggle it again; continuous contact never repeats. RUIN still requires the whole body to leave its horizontal band with a margin before returning.
-- Mode changes preserve the upper lift height and broken-cover state. Full restart resets both.
+- Mode changes preserve the upper lift height. Full restart resets it.
 - On first arrival under SAVE in NORMAL, Box or Star triggers a shared camera preview of the left hazards. Being in the lower room does not trigger it. Viewing once as Star also counts when later returning as Box.
 - Selecting a mode pauses player control and frames the changed route. SAFE uses quick camera transitions with a full reveal: 0.45 seconds to frame the route, a 0.1-second beat, 1.6 seconds to sink spikes, 1.2 seconds to reveal the boards, a 2-second hold on the fully revealed layout, then 0.45 seconds to return the camera (about 5.8 seconds total). It does not wait for an up/down cycle; board motion starts when gameplay resumes. HARD reveals the extra floor and ceiling hazards. NORMAL restores the default layout.
 - The two moving SAFE boards keep fixed dimensions and a shared opposite phase. They have no arrows. The shorter left board permits a jump over its low position or passage underneath its high position. If a leading edge would catch a possessable body, both boards pause together without losing their phase.
@@ -89,9 +89,9 @@ All three markers remain hollow stars: blue before activation, yellow after bein
 
 Checkpoint 3 requires Star or Box to land on the left floor; flying over it as Bubble does not save. Respawn form is fixed by the checkpoint, not copied from the entering form. Automatic last-possessed-ball checkpoints are disabled in this scene.
 
-Death and Return to Checkpoint reload the scene, restore the configured body and retain the latest completed route choice, upper lift height, broken RUIN cover and viewed route-presentation history. Loose bodies return to authored placements; the lower reversible door resets. SAFE boards restart a predictable motion cycle and the HARD falling spike rearms. A half-finished cinematic is not saved. This is in-memory session recovery, not a save across application launches.
+Death and Return to Checkpoint reload the scene, restore the configured body and retain the latest completed route choice, upper lift height and viewed route-presentation history. Loose bodies return to authored placements; the lower reversible door resets. SAFE boards restart a predictable motion cycle and the HARD falling spike rearms. A half-finished cinematic is not saved. This is in-memory session recovery, not a save across application launches.
 
-Restart Level, returning to Navigation, a new menu entry and forward level progression clear checkpoint sessions. Restart Level restores NORMAL, the upper lift's initial low position, the intact cover and all original bodies. See [CheckpointGuidance.md](CheckpointGuidance.md) for the menus and recovery matrix.
+Restart Level, returning to Navigation, a new menu entry and forward level progression clear checkpoint sessions. Restart Level restores NORMAL, the upper lift's initial low position and all original bodies. See [CheckpointGuidance.md](CheckpointGuidance.md) for the menus and recovery matrix.
 
 ## Hints and Home menu
 
@@ -114,7 +114,7 @@ The branch’s existing Editor checks and developer playtests cover water traver
 
 Retained Editor tools: `StarFormer → Level01 → Verify Water Routes in Play Mode` and `Verify Water Pocket Recovery`. These exercise the final ability-reminders-only design. Earlier experiments with choice cards, optional water hints, platform highlights and route arrows were removed and are not current behavior.
 
-Remaining playtest follow-ups: SAVE/RUIN meaning and the two-hit RUIN cover still need clearer new-player validation; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
+Remaining playtest follow-ups: SAVE/RUIN meaning still needs clearer new-player validation; the two-hit RUIN cover has been removed; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 

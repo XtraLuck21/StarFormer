@@ -103,9 +103,9 @@ See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn pos
 | SAFE | No spikes; three black fixed-length boards form an S-shaped timing route. Rightmost board is stationary; the other two translate vertically in opposite phase. The left board permits low-position jumping and high-position passage below. Anti-crush checks pause the pair together. |
 | HARD | Default and additional floor spikes plus aligned ceiling spikes. One ceiling spike drops when the controlled body approaches its upper-corridor trigger band; it remains lethal on the floor until reset. |
 
-SAVE accepts Star, grounded Box D or R2 from below. RUIN is R2-only and protected by a breakable cover: the first upward hit breaks it and forces a descent; a later bounce after landing can press the button. Raising the optional upper platform gives access to the button. R2 can return to SAVE.
+SAVE accepts Star, grounded Box D or R2 from below. RUIN is R2-only and activates on the first contact from below, without a cover or a prior landing. Raising the optional upper platform gives access to the button. R2 can return to SAVE.
 
-The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. SAVE can toggle again after contact ends in any direction and the body touches it again, including vertical bounce or shrink/grow cycles. Held contact does not repeat. RUIN retains its horizontal leave-and-return requirement. Route switching retains upper-platform height and cover progress.
+The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. SAVE can toggle again after contact ends in any direction and the body touches it again, including vertical bounce or shrink/grow cycles. Held contact does not repeat. RUIN retains its horizontal leave-and-return requirement. Route switching retains upper-platform height.
 
 The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE fully animates sinking hazards and emerging boards, holds the completed layout for 2 seconds, then returns the camera and control without waiting for a movement cycle; camera transitions remain quick; see [presentation timing](level-1.md#route-selection-and-camera-presentation). HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
 
@@ -119,7 +119,7 @@ SpikeHazard kills the controlled body; unpossessed bodies do not themselves caus
 
 Current Level01 uses ADV_CP1 → ADV_CP2 → ADV_CP3, restoring Box → BouncyBall → Star. Hollow markers turn blue to yellow and briefly show CHECKPOINT SAVED. Only grounded Star/Box activates the upper landing checkpoint; earlier checkpoints cannot replace later ones.
 
-Retry/death retains the latest completed mode, raised upper platform, broken RUIN cover and viewed camera presentations. Loose bodies and the lower door reset; SAFE motion restarts predictably and the falling trap rearms. Full restart, menu departure/entry and forward progression clear the session. Checkpoint state is not stored across application launches.
+Retry/death retains the latest completed mode, raised upper platform and viewed camera presentations. Loose bodies and the lower door reset; SAFE motion restarts predictably and the falling trap rearms. Full restart, menu departure/entry and forward progression clear the session. Checkpoint state is not stored across application launches.
 
 The Level01 Home square shows a house outline with a small Star. Its Home · Restart tooltip leads to Paused: Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled without a save; full restart and Main Menu require confirmation. R retains its own restart-choice menu. Opening/cancelling menus changes no progress, and the R menu pauses the death countdown.
 

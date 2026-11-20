@@ -23,7 +23,6 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | Active checkpoint and reached markers | Retained; restore its fixed host and safe position | Cleared; start as Star at entrance |
 | Latest completed NORMAL/SAFE/HARD mode | Retained, without replaying its cinematic | NORMAL |
 | Upper one-way platform | Highest completed lift retained | Authored low height |
-| RUIN cover | Broken state retained | Intact |
 | Viewed SAVE warning and route presentations | Retained | Cleared |
 | Lower reversible lift/door | Authored initial state | Authored initial state |
 | Loose bodies, sizes and consumed Bubbles | Recreated at authored scene state, then place checkpoint host | Authored initial state |
@@ -31,7 +30,7 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | HARD falling spike | Restored to its ceiling and rearmed when HARD is active | Hidden in NORMAL |
 | Water ability reminders and replayable lower-door Hint | Fresh scene-local state; door Hint must reach its offer delay again | Fresh scene-local state |
 
-The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
+The controller captures completed progress after checkpoint activation, including later route/lift changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
 
 ## Shared Home menu
 

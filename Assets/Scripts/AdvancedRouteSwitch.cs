@@ -18,7 +18,6 @@ public class AdvancedRouteSwitch : MonoBehaviour
     [SerializeField] private TMP_Text label;
     [SerializeField] private Transform buttonFace;
     [SerializeField] private BoxCollider2D ruinSensor;
-    [SerializeField] private RuinButtonGuard ruinGuard;
     [SerializeField] private TMP_Text ruinLabel;
     [SerializeField] private Transform ruinButtonFace;
     [SerializeField] private AdvancedLevelCamera2D levelCamera;
@@ -82,7 +81,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
         ruinRenderer = ruinButtonFace != null ? ruinButtonFace.GetComponent<SpriteRenderer>() : null;
         if (playerController == null || targetBox == null || targetBall == null ||
             routeA == null || routeB == null || hardFloorSpikes == null || hardCeilingSpikes == null ||
-            ruinSensor == null || ruinGuard == null || buttonRenderer == null || ruinRenderer == null || routeA == routeB)
+            ruinSensor == null || buttonRenderer == null || ruinRenderer == null || routeA == routeB)
         {
             Debug.LogError("Assign both route buttons, Box D, R2, and the separate route/hazard roots.", this);
             enabled = false;
@@ -146,7 +145,7 @@ public class AdvancedRouteSwitch : MonoBehaviour
                 saveArmed = false;
             }
         }
-        else if (ruinArmed && isBall && ruinGuard.CanActivate && TouchesFromBelow(ruinSensor, controlled))
+        else if (ruinArmed && isBall && TouchesFromBelow(ruinSensor, controlled))
         {
             if (SelectRoute(CurrentRoute == RouteState.Hard ? RouteState.Normal : RouteState.Hard))
             {
