@@ -67,7 +67,6 @@ public class AdvancedRouteSwitch : MonoBehaviour
     private bool hardShown;
     private bool saveArmed = true;
     private bool ruinArmed = true;
-    private float savePressX;
     private float ruinPressX;
     public RouteState CurrentRoute { get; private set; } = RouteState.Normal;
     public bool IsActivated => CurrentRoute == RouteState.Safe;
@@ -121,9 +120,9 @@ public class AdvancedRouteSwitch : MonoBehaviour
             !controlled.Body.simulated || controlled.Body.bodyType != RigidbodyType2D.Dynamic || !controlled.BodyCollider.enabled)
             return;
         Bounds body = controlled.BodyCollider.bounds;
-        // Vertical bounces and held Box contact never rearm a button. The whole
-        // controlled body must leave its horizontal band, with a little margin.
-        if (!saveArmed && HasLeftHorizontally(sensor, body, savePressX)) saveArmed = true;
+        // SAVE rearms after contact ends in any direction (including a bounce or shrink).
+        // RUIN retains its deliberate horizontal departure requirement.
+        if (!saveArmed && !sensor.IsTouching(controlled.BodyCollider)) saveArmed = true;
         if (!ruinArmed && HasLeftHorizontally(ruinSensor, body, ruinPressX)) ruinArmed = true;
         if ((!isBox && !isBall && !isStar) || (isBox && !controlled.IsGrounded())) return;
 
@@ -144,7 +143,6 @@ public class AdvancedRouteSwitch : MonoBehaviour
         {
             if (SelectRoute(CurrentRoute == RouteState.Safe ? RouteState.Normal : RouteState.Safe))
             {
-                savePressX = body.center.x;
                 saveArmed = false;
             }
         }

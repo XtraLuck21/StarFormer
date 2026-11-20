@@ -51,12 +51,12 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 
 | State | Upper return route | Selection |
 | --- | --- | --- |
-| NORMAL | Default floor spikes; SAFE boards and HARD-only hazards hidden | Initial state, or return to the currently selected button after leaving its horizontal band |
+| NORMAL | Default floor spikes; SAFE boards and HARD-only hazards hidden | Initial state, or reactivate the selected button after its rearm condition is met |
 | SAFE | All spikes hidden. Three black boards form a safe S-shaped timing route: the rightmost is stationary and the other two translate vertically in opposite directions | Touch SAVE from below as Star, grounded Box D or R2 |
 | HARD | Default floor spikes plus additional floor and aligned ceiling spikes; one ceiling spike is a proximity-triggered falling trap | R2 touches RUIN from below after its breakable cover is cleared |
 
 - SAVE and RUIN are mutually exclusive. Selecting the other button changes mode directly.
-- The selected button reads `BACK TO NORMAL`. The whole controlled body must leave its horizontal band with a margin and return before that button can toggle NORMAL. Vertical bounces, held contact and shrinking at the edge do not rearm it.
+- The selected button reads `BACK TO NORMAL`. SAVE rearms whenever the controlled body stops touching its sensor, regardless of direction. A vertical bounce or Box shrink followed by renewed eligible contact can toggle it again; continuous contact never repeats. RUIN still requires the whole body to leave its horizontal band with a margin before returning.
 - Mode changes preserve the upper lift height and broken-cover state. Full restart resets both.
 - On first arrival under SAVE in NORMAL, Box or Star triggers a shared camera preview of the left hazards. Being in the lower room does not trigger it. Viewing once as Star also counts when later returning as Box.
 - Selecting a mode pauses player control and frames the changed route. SAFE uses quick camera transitions with a full reveal: 0.45 seconds to frame the route, a 0.1-second beat, 1.6 seconds to sink spikes, 1.2 seconds to reveal the boards, a 2-second hold on the fully revealed layout, then 0.45 seconds to return the camera (about 5.8 seconds total). It does not wait for an up/down cycle; board motion starts when gameplay resumes. HARD reveals the extra floor and ceiling hazards. NORMAL restores the default layout.

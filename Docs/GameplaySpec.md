@@ -105,7 +105,7 @@ See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn pos
 
 SAVE accepts Star, grounded Box D or R2 from below. RUIN is R2-only and protected by a breakable cover: the first upward hit breaks it and forces a descent; a later bounce after landing can press the button. Raising the optional upper platform gives access to the button. R2 can return to SAVE.
 
-The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. After horizontally leaving its band and returning, touching it restores NORMAL. Continuous vertical bouncing and edge shrinking cannot retrigger it. Route switching retains upper-platform height and cover progress.
+The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. SAVE can toggle again after contact ends in any direction and the body touches it again, including vertical bounce or shrink/grow cycles. Held contact does not repeat. RUIN retains its horizontal leave-and-return requirement. Route switching retains upper-platform height and cover progress.
 
 The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE fully animates sinking hazards and emerging boards, holds the completed layout for 2 seconds, then returns the camera and control without waiting for a movement cycle; camera transitions remain quick; see [presentation timing](level-1.md#route-selection-and-camera-presentation). HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
 
