@@ -2,6 +2,8 @@
 
 Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
+**Current source:** the script table below reflects the Kindergarten polish changes after the published Gold export.
+
 ## 1. Scenes and build configuration
 
 | Enabled index | Scene | Role / continuation |
@@ -9,7 +11,7 @@ Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deploym
 | 0 | [Navigation](../Assets/Scenes/Navigation.unity) | Interactive startup; Kindergarten, Level 1, Elementary School and Level 2 entrances |
 | 1 | [IntroBox](../Assets/Scenes/IntroBox.unity) | Box flag opens an exit to IntroBubble |
 | 2 | [IntroBubble](../Assets/Scenes/IntroBubble.unity) | Grounded-Star flag opens passage to IntroBouncyBall; return to IntroBox |
-| 3 | [IntroBouncyBall](../Assets/Scenes/IntroBouncyBall.unity) | Bounce/float/compressed-bounce tutorial; return to Bubble, flag to Level01 |
+| 3 | [IntroBouncyBall](../Assets/Scenes/IntroBouncyBall.unity) | Bounce/float/compressed-bounce tutorial; return to Bubble, graduation choices to Level01 or Navigation |
 | 4 | [Level01](../Assets/Scenes/Level01.unity) | Advanced map promoted to formal first level; flag loads IntroSpider |
 | 5 | [IntroSpider](../Assets/Scenes/IntroSpider.unity) | Continues to IntroFan |
 | 6 | [IntroFan](../Assets/Scenes/IntroFan.unity) | Continues to Level02 |
@@ -31,10 +33,10 @@ The former Advanced scene and GUID now belong to Level01. The previous Level01 s
 | --- | --- |
 | [PlayerPossessionController.cs](../Assets/Scripts/PlayerPossessionController.cs) | One local controller per scene. Assign the configured Star scene instance as Initial Body; Starting Host is optional. Owns contact transfers, input, original-Star restoration, death/reload, checkpoints and analytics. AdvancedCheckpointController takes priority for current Level01 recovery. |
 | [PossessableBody.cs](../Assets/Scripts/PossessableBody.cs) | Form identity, readiness, Rigidbody2D/collider access, controlled state, grounding and host lifecycle. Keep serialized BodyForm values stable. |
-| [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | J/K size changes with bottom anchoring while supported and center anchoring otherwise; checks all growth obstacles before moving permitted lifts. Requires an upright unparented positive-scale Box with zero collider edge radius. |
+| [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | J/K size changes with bottom anchoring while supported and center anchoring otherwise; checks all growth obstacles before moving permitted lifts. RestoreSceneEntryWidth preserves incoming world width with feet anchored during scene handoff. Requires an upright unparented positive-scale Box with zero collider edge radius. |
 | [BouncyBallAbility.cs](../Assets/Scripts/BouncyBallAbility.cs) | Dormant ball activation, automatic bounce, overhead-clearance compression and water float. Read scene overrides before changing shared prefab defaults. |
-| [WaterZone.cs](../Assets/Scripts/WaterZone.cs) / [BodyWaterPhysics.cs](../Assets/Scripts/BodyWaterPhysics.cs) | Water membership, cached air physics, damping and form-specific water behavior; WaterZone requires a trigger collider. |
-| [RatchetingCeiling.cs](../Assets/Scripts/RatchetingCeiling.cs) | Box lift/ball lowering with clearance protection. Lower Level01 door allows ball lowering. Upper lift uses `boxOnlyLift = true`, `ballPushesDown = false`, retaining its height after Box shrinks. |
+| [WaterZone.cs](../Assets/Scripts/WaterZone.cs) / [BodyWaterPhysics.cs](../Assets/Scripts/BodyWaterPhysics.cs) | Water membership, cached air physics, damping and form-specific water behavior; WaterZone requires a trigger collider. Ball surface lookup uses the bottom-center support position, so side overlap while on a bank does not suppress bouncing. |
+| [RatchetingCeiling.cs](../Assets/Scripts/FanSet/RatchetingCeiling.cs) | Box lift/ball lowering with clearance protection. Lower Level01 door allows ball lowering. Upper lift uses `boxOnlyLift = true`, `ballPushesDown = false`, retaining its height after Box shrinks. |
 | [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Steers Spider along connected surfaces. Contact or an authored handoff changes form. |
 | [FanBlower.cs](../Assets/Scripts/FanSet/FanBlower.cs) | The player controller routes keyboard, mouse and touch Blow to the same wind toggle and handles Leave. Current targets are eligible non-possessable obstacles. |
 | [SpikeShooterAbility.cs](../Assets/Scripts/SpikeWall/SpikeShooterAbility.cs) / [SpikeProjectile.cs](../Assets/Scripts/SpikeWall/SpikeProjectile.cs) | Possessable spike-wall facing/fire and projectile behavior; Space remains Fire. |
@@ -72,21 +74,27 @@ Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, C
 | Script / asset | Current responsibility |
 | --- | --- |
 | [BoxGrowHint.cs](../Assets/Scripts/BoxGrowHint.cs) | Assigned Box/area, dashed size guide and mode-aware resize icons. Visual root is separate from the moving host. |
-| [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Intro Air/Water/Q-exit, Star movement/jump, Bubble introduction and ContinueRight modes. Q-exit follows any current Bubble in its safe landing area; ordinary assigned-body hints keep their binding. |
-| [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | IntroBox form title/subtitle and Box-to-Box feedback. Disabled with old title objects in rebuilt IntroBubble, which uses world hints instead. Do not enable TutorialIntroUI alongside it. |
-| [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxB opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
-| [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Two-way IntroBox ↔ IntroBubble ↔ IntroBouncyBall passages. Return to Box uses BoxB; return to Bubble uses Star near its flag, with the destination gate open. One-shot destination setup is not a full previous-scene snapshot. |
+| [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Intro Air/Water/Q-exit, Star movement/jump, Bubble introduction and ContinueRight modes. bubbleRiseDescription replaces the introduction heading and lowers A/D for spacing; useControlledBubble supports respawned backups. Q-exit uses the current Bubble in its configured area, which still includes part of the right water shaft. |
+| [IntroBoxCarryLesson.cs](../Assets/Scripts/IntroBoxCarryLesson.cs) | IntroBox-only carrying support, dock/separation state, local retry, fixed resize guides and uninterrupted camera reveal. Uses TryRestoreLessonBody for recovery; ordinary possession remains in the player controller. |
+| [IntroBoxArrival.cs](../Assets/Scripts/IntroBoxArrival.cs) | One-shot incoming Box world width and camera/floor continuity in IntroBubble; direct entry fallback and post-possession overview reveal. |
+| [IntroFormHintUI.cs](../Assets/Scripts/IntroFormHintUI.cs) | Retained legacy form title/subtitle capability. Disabled in both current IntroBox and IntroBubble; local/map lessons replace it. |
+| [IntroFlagGate.cs](../Assets/Scripts/IntroFlagGate.cs) | IntroBox's required BoxC opens its door; IntroBubble requires its grounded Star. Open() supports return travel. |
+| [IntroSceneExit.cs](../Assets/Scripts/IntroSceneExit.cs) | Two-way IntroBox ↔ IntroBubble ↔ IntroBouncyBall passages. Return to Box uses BoxC; return to Bubble uses Star near its flag, with the destination gate open. preserveBoxOnEntry records outgoing Box width/camera framing for IntroBoxArrival. One-shot destination setup is not a full previous-scene snapshot. |
 | [IntroStarGoal.cs](../Assets/Scripts/IntroStarGoal.cs) | Shared intro transition used by IntroSpider/IntroFan. IntroBubble now uses flag + passage instead. |
-| [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion, 1.5-second Level 1 transition to Level01. |
-| [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Short anchored headlines for bounce/float/land/low ceiling and spike death; subtitle disabled. |
-| [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Shows horizontal joystick guidance or desktop movement keys for the controlled tutorial ball. |
+| [IntroBouncyBallGoal.cs](../Assets/Scripts/IntroBouncyBallGoal.cs) | Living controlled Star/BouncyBall flag completion; records completion once and opens graduation using its graduateStar sprite and Level01 destination. |
+| [IntroBouncyBallHints.cs](../Assets/Scripts/IntroBouncyBallHints.cs) | Repeatable fixed-region lessons with hysteresis, high-bounce/float/low-ceiling/spike diagrams and spike-death text; subtitle disabled. The entry text and arc use the same right-shifted anchor. |
+| [BouncyBallMovementHint.cs](../Assets/Scripts/BouncyBallMovementHint.cs) | Shows horizontal joystick guidance or desktop movement keys for the controlled tutorial ball. IntroBouncyBall keeps showForStarInArea false: no opening A/D lesson while Star is controlled. |
 | [IntroSpiderCamera.cs](../Assets/Scripts/IntroSpiderCamera.cs), [IntroSpiderEntranceSeal.cs](../Assets/Scripts/IntroSpiderEntranceSeal.cs), [CameraFocusIntro.cs](../Assets/Scripts/FanSet/CameraFocusIntro.cs) | Existing Spider/Fan introduction camera and entrance behavior; retain local scene wiring. |
 | [GoalFlagVisual.prefab](../Assets/Form/GoalFlagVisual.prefab) | Visual pole/flag only; gameplay goals have separate triggers and scene references. |
 | [HeldPressurePlate.cs](../Assets/Scripts/HeldPressurePlate.cs), [BoxHeightSwitch.cs](../Assets/Scripts/BoxHeightSwitch.cs) | Retained plate/height-switch interactions for legacy layouts. G/G2 are not formal Level01 prerequisites. |
-| [BubbleRespawnOnPop.cs](../Assets/Scripts/BubbleRespawnOnPop.cs), [ReturnToSpawnOnLeave.cs](../Assets/Scripts/FanSet/ReturnToSpawnOnLeave.cs) | Explicit respawn/return opt-ins, not global Bubble rules. Old U2 regeneration belongs to Level01_Legacy. |
+| [BubbleRespawnOnPop.cs](../Assets/Scripts/BubbleRespawnOnPop.cs), [ReturnToSpawnOnLeave.cs](../Assets/Scripts/FanSet/ReturnToSpawnOnLeave.cs) | Explicit respawn/return opt-ins, not global Bubble rules. IntroBubbleBackup.prefab uses BubbleRespawnOnPop for repeatable dormant replacements at the configured spawn. Old U2 regeneration belongs to Level01_Legacy. |
 | [BouncyBallCheckpointSession.cs](../Assets/Scripts/BouncyBallCheckpointSession.cs) | Retained last-ball recovery for opted-in scenes; disabled for current Level01. |
 | [CheckpointFeedbackUI.cs](../Assets/Scripts/CheckpointFeedbackUI.cs) | Generic checkpoint feedback for other scenes; legacy E-pop lesson is suppressed when AdvancedCheckpointController is present. Formal Level01 uses its own marker and checkpoint text. |
 | [SpikeHazard.cs](../Assets/Scripts/SpikeHazard.cs), [BubblePopHazard.cs](../Assets/Scripts/BubblePopHazard.cs) | Controlled-body lethal spikes; Bubble-only pop / Box death hazard respectively. Keep scene controller references. |
+
+The woodland authoring utilities are explicit Editor actions: [IntroBouncyBallForestSetup.cs](../Assets/Editor/IntroBouncyBallForestSetup.cs) creates the sample surface art; [IntroWoodlandExtension.cs](../Assets/Editor/IntroWoodlandExtension.cs) applies the shared sprites to Box/Bubble; [WoodlandCameraBackdrop.cs](../Assets/Scripts/WoodlandCameraBackdrop.cs) fits the backdrop at runtime. The saved scenes include later font/color/visibility adjustments, so these initial authoring commands are not required to play the final branch and may reapply earlier authoring defaults.
+
+[IntroBoxCarrySetup.cs](../Assets/Editor/IntroBoxCarrySetup.cs) builds/polishes the carrying layout explicitly; [IntroBoxCarryVerification.cs](../Assets/Editor/IntroBoxCarryVerification.cs) retains its route check. Temporary water/graduation checks are not shipped as Editor tools. [KindergartenGraduationUI.cs](../Assets/UI/KindergartenGraduationUI.cs) owns only native UI and unscaled reveal animation; LevelTransitionUI owns pause and exit behavior. [GraduateStar.png provenance](../Assets/Art/KindergartenGraduation/manifest.json) records the generated sprite.
 
 See [intro-levels.md](intro-levels.md) for hint placement, return travel, spare Bubble and the current touch lessons. These scene-specific references must not point into another scene.
 
@@ -112,11 +120,11 @@ The promoted scene replaces the old layout, retained as Level02_legacy and exclu
 | Script | Behavior and wiring |
 | --- | --- |
 | [MainMenuUI.cs](../Assets/Scripts/MainMenuUI.cs) | OpenIntroLevels → IntroBox; OpenTutorial aliases it; OpenLevel1 → Level01; OpenLevel2Intro → IntroSpider; OpenLevel2 → Level02. Clears checkpoint sessions and restores time before loading. |
-| [MainMenuButtonUI.cs](../Assets/Scripts/MainMenuButtonUI.cs) / [HomeButtonGraphic.cs](../Assets/Scripts/HomeButtonGraphic.cs) | Shared runtime Home square in all seven gameplay scenes, house/Star graphic, Home · Restart tooltip, Paused menu, conditional checkpoint action, and restart/menu confirmations. Owns/restores pause and blocks underlying input. |
+| [MainMenuButtonUI.cs](../Assets/Scripts/MainMenuButtonUI.cs) / [HomeButtonGraphic.cs](../Assets/Scripts/HomeButtonGraphic.cs) | Shared runtime Home square in all seven gameplay scenes, house/Star graphic, Home · Restart tooltip, Paused menu, conditional checkpoint action, and restart/menu confirmations. Owns/restores pause and blocks underlying input. SetCompletionExit temporarily raises Home above graduation, changes its tooltip to Main Menu and routes directly through the completion owner, with navigation to Next Level. |
 | [RestartMenuUI.cs](../Assets/Scripts/RestartMenuUI.cs) | R/touch restart choices; conditional Return to Checkpoint, Restart Level and Cancel. Escape/R cancels. Delegates recovery to the local player controller. |
 | [LevelNavigationUI.cs](../Assets/Scripts/LevelNavigationUI.cs) | Retained navigation callbacks; current visible gameplay menu is shared Home. Full restart clears progress; Retry preserves it. Uses current-scene identity; do not hardcode the old Advanced name. |
 | [LevelGoal.cs](../Assets/Scripts/LevelGoal.cs) | Optional required gate: an assigned active gate blocks, an absent gate does not. Validates destination and accepts a living controlled form. Current Level01 uses IntroSpider / Level 2 Intro / 1.5 seconds and no gate. |
-| [LevelTransitionUI.cs](../Assets/Scripts/LevelTransitionUI.cs) | Generated overlay; disables player, pauses time, blocks pointer input, clears selection and loads after real-time delay. Clears sessions and restores time. Final-result mode waits for the menu button. |
+| [LevelTransitionUI.cs](../Assets/Scripts/LevelTransitionUI.cs) | Owns pause, selection, duplicate guarding and scene loads. Timed mode loads after a real-time delay; final-result mode waits for its menu button. Kindergarten mode builds KindergartenGraduationUI, exposes Home above the backdrop and waits for Next Level or Navigation. Both exits clear checkpoint sessions and restore time. |
 | [LevelGoaltoMenu.cs](../Assets/Scripts/LevelGoaltoMenu.cs) | Class LevelGoalToMenu: Level02 completion event and final-result overlay with Return to Main Menu. |
 | [MenuUIPlatform.cs](../Assets/Scripts/MenuUIPlatform.cs) | Aligns one-way colliders to UI rectangle tops using the menu camera. Contact does not submit buttons. |
 
@@ -127,7 +135,7 @@ Navigation entrance targets are IntroBox, Level01, IntroSpider and Level02. Intr
 | [NavigationStarController.cs](../Assets/Scripts/NavigationStarController.cs) | A/D and Space movement, contact/click entrance selection, bounce/flash animation, Entering overlay and destination load |
 | [NavigationEntrance.cs](../Assets/Scripts/NavigationEntrance.cs) | Scene destination and upper/lower interaction rules; Coming Soon has no scene |
 | [NavigationHelpBook.cs](../Assets/Scripts/NavigationHelpBook.cs) | Align book control with its world anchor, block Star input while open and disable entry-time interaction |
-| [CollectionBookGraphic.cs](../Assets/UI/CollectionBookGraphic.cs) | Procedural book icon; reusable CollectionBook/ControlsHelp prefabs reference shared content rather than duplicate demo images |
+| [CollectionBookGraphic.cs](../Assets/UI/CollectionBookGraphic.cs) | Procedural book icon with opt-in squareCover. The three Kindergarten scenes use 88 × 88 cover art and hide their caption; shared book content/discovery stays unchanged |
 | [HelpBookUnlocks.cs](../Assets/UI/HelpBookUnlocks.cs) | Sole in-memory form discovery record; RecordPossession after successful ownership, Changed event for both views, reset on application/Play launch. No PlayerPrefs access. |
 | [ShapeClosetSlot.cs](../Assets/UI/ShapeClosetSlot.cs) | Event-driven per-form visual; all five slot roots remain active, only locked artwork/unlocked icons toggle |
 | [IntroSpiderCake.cs](../Assets/Scripts/IntroSpiderCake.cs) / [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Cake/spike reveal, contextual climbing prompts, directional arrows and center death feedback |
@@ -155,6 +163,8 @@ Historical Alpha 0.1.2 (October 18) used gameplay/UI `9b35f8e`, source configura
 Use [publish_instructions.md](publish_instructions.md) for future releases. Preserve completed exports and historical paths; use a new agreed version/output for the next build. Do not merge gh-pages into source. See [AnalyticsImplementation.md](AnalyticsImplementation.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for version-specific production event/map acceptance; Editor JSON and package verification do not prove delivery.
 
 ## 5. Verification and remaining work
+
+For this branch, see [Kindergarten verification and remaining acceptance](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance). No new release or analytics backend deployment was performed. The dated evidence below applies to earlier integration work.
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 

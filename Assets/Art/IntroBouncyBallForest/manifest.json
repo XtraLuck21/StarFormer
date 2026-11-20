@@ -1,7 +1,7 @@
 {
   "scene": "Assets/Scenes/IntroBouncyBall.unity",
   "direction": "A - Woodland adventure",
-  "status": "Implemented sample; pending user art approval",
+  "status": "Implemented in all three Kindergarten scenes; accepted in developer playtests on 2026-11-19; not a new published build",
   "date": "2026-11-19",
   "brief": {
     "scope": "Background, soil platforms, grass edges and pool depth; scene-local sprite overlays only",
@@ -76,14 +76,15 @@
       "High ledge and water traversal",
       "Low ceiling and regional hints"
     ],
-    "full_level_completion_tested": false
+    "full_level_completion_tested": true,
+    "completion_evidence": "Developer reported successful stage and final playtests; graduation goal and both exits also exercised in Unity. No WebGL/mobile certification."
   },
   "ui_readability": {
     "scope": "IntroBouncyBall only; opt-in serialized settings preserve other scenes",
     "ink": "#070F0C",
     "roof_ink_and_keycaps": "#F5DBA3",
     "diagram_edges": "Contrasting rim, world-fixed",
-    "movement_hint": "Visible for star and possessed ball inside entry area; reappears on return",
+    "movement_hint": "IntroBouncyBall: visible only for the controlled assigned ball inside the entry area; hidden as Star; reappears on return while still possessing that ball",
     "book": {
       "source": "Project-authored vector geometry in Assets/UI/CollectionBookGraphic.cs",
       "license": "Project-authored",
@@ -97,7 +98,7 @@
     },
     "validated": [
       "Unity compilation and Play Mode",
-      "Star and possessed ball hint visibility",
+      "Hint hidden for Star and visible for possessed ball (final scene setting)",
       "Return to entry restores hint",
       "Wall hint contrast",
       "Book button opens; close button resumes play",
@@ -114,7 +115,7 @@
     "camera": "Backdrop alone follows and fits the existing camera after tutorial pan/zoom; camera parameters unchanged",
     "terrain": "Soil and inward grass edges are children of original solid objects, including the exit gate; no new colliders",
     "water": "Depth artwork uses existing water bounds and sorting order",
-    "ui": "Scene-local dark ink/cream hints and square book button match IntroBouncyBall",
+    "ui": "Square caption-free book in all three scenes. IntroBox: larger black scenery text and gold wall text; Bubble: dark scenery ink and pale-gold wall ink. Original graphical controls retained.",
     "qa": "Original world transforms, physics and gameplay components compared against pre-edit scenes; no changes. IntroBox entry, possession and camera reveal visually checked in Unity."
   }
 }

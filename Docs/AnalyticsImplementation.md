@@ -186,6 +186,10 @@ not upload production rows.
 - `LevelGoalToMenu` records Level 2 completion when the flag is reached, then shows the final overlay. Return to Main Menu happens only after its button is selected.
 - `LevelNavigationUI` records restart/abandonment before loading another scene. Level01 Home and R use the same controller restart/menu paths. Opening/cancelling a confirmation emits no restart; confirming manual retry still starts a new analytics Run even when gameplay progress is retained.
 
+### Kindergarten graduation and revised maps
+
+The Kindergarten polish branch keeps completion at the IntroBouncyBall flag, before the player chooses an exit. Waiting on graduation must not create another completion. Its Home exit goes through LevelTransitionUI directly and does not call the ordinary abandonment path; Navigation stays untracked. No schema, endpoint or backend change is part of this branch. The three changed tutorial scenes need fresh map exports for the next release. See [source acceptance](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance); Editor JSON is not production-delivery evidence.
+
 ## Editor and release behavior
 
 The Editor prints event JSON when `logPayloadsInEditor` is enabled and does not

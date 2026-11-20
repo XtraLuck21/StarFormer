@@ -2,6 +2,8 @@
 
 Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
+**Current source:** the Kindergarten polish branch updates the three opening tutorials, woodland presentation and graduation flow after the recorded Gold export. The sections below describe that source state; historical publication evidence remains separate.
+
 ## 1. Scenes and progression
 
 ```text
@@ -12,9 +14,9 @@ Navigation uses A/D to move and Space to jump. Navigation offers Kindergarten â†
 
 | Scene | Purpose |
 | --- | --- |
-| IntroBox | Star movement/jump, automatic contact possession, Box growth/shrink and flag-opened exit |
+| IntroBox | Star movement/jump, contact possession, carrying/docking and separation/recontact through three Boxes, then a flag-opened exit |
 | IntroBubble | EntryBox, dormant Bubble, air/water control, Q pop and a grounded-Star flag opening the BouncyBall passage; optional return to IntroBox endpoint |
-| IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, final flag to Level01 |
+| IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, graduation with Next Level or Main Menu choices |
 | Level01 | Former Advanced layout: two lifts, right-side Star/Box landing choice, SAVE/NORMAL/RUIN upper routes, three fixed-form checkpoints and Home menu |
 | IntroSpider / IntroFan | Existing teaching sequence before Level02; Spider exits through authored handoffs, Q leaves Fan and F toggles Fan wind |
 | Level02 | Star chase, dark descent, four-gear seesaw, rising shell-release exit, Smiley Face teeth/forehead puzzles and final Box resizing |
@@ -42,13 +44,13 @@ In gameplay scenes, left/right arrow keys also steer every form. Navigation uses
 
 The seven gameplay scenes show a form controls card on desktop and replace it with the touch controls on mobile. Navigation teaches Move and Jump beside the star and has no corner card in either mode. All seven gameplay scenes have paged Collection Books. The six form pages use shared keyboard and mouse descriptions on all devices. The possessable SpikeWall in legacy/test content uses Space to fire and has no touch layout in the active route.
 
-**Pause and restart.** Tap the house in any gameplay scene to continue, return to a saved checkpoint, restart the level or return to Navigation. Desktop also supports Esc for Home and R for restart choices. In desktop WebGL, the lower-right fullscreen button resumes ordinary Home pause after fullscreen entry succeeds. The first Esc exits fullscreen. In windowed play, Esc closes the current menu layer or opens Home.
+**Pause and restart.** During gameplay, tap the house to continue, return to a saved checkpoint, restart the level or return to Navigation. On the Kindergarten graduation screen, the house stays accessible and returns directly to Navigation. Desktop also supports Esc for Home and R for restart choices. In desktop WebGL, the lower-right fullscreen button resumes ordinary Home pause after fullscreen entry succeeds. The first Esc exits fullscreen. In windowed play, Esc closes the current menu layer or opens Home.
 
 ## 3. Possession and body behavior
 
 - Contact with an eligible existing host requests possession; there is no possession key or duplicate body spawned at the old location.
 - The original Star becomes inactive while hosted. The controlled host displays a centered Star. Q release restores the original Star for Bubble or Fan; Spider handoffs are scene-driven.
-- Contacts are validated before transfer. Nearby previous hosts must separate before reacquisition; Box growth cannot continuously flip between touching hosts. An abandoned Box stops receiving horizontal drive.
+- Contacts are validated before transfer. Nearby hosts are locked at a handoff and must remain physically separated for the configured consecutive physics frames before reacquisition. Box-to-Box separation uses actual collider clearance; this is contact rearming, not an elapsed-time possession cooldown. Fan retains its separate release/repossess cooldown. Box growth cannot continuously flip between touching hosts. An abandoned Box stops receiving horizontal drive.
 - Box-to-Bubble handoff temporarily ignores that body's old Box collider until separation, allowing escape without disabling unrelated collisions. PR #21 also handles Box-to-BouncyBall recovery so the abandoned Box does not trap the controlled ball.
 - Untouched Bubbles wait motionless until first possession. Activated Bubbles retain environmental physics after transfer; abandoned BouncyBalls stop and wait.
 - `Starting Host` is optional: IntroBubble starts in EntryBox while retaining StarPlayer as its Initial Body. Scene return setup is distinct from checkpoints.
@@ -72,15 +74,15 @@ Water membership uses the body's root position inside registered water regions, 
 - Water: automatic rise is disabled; WASD supports diagonals with a capped total speed, acceleration and braking. Unpossessed activated Bubbles retain water damping.
 - Q pops the controlled Bubble and returns Star at its position. Horizontal/downward velocity is retained; upward velocity is removed. Pop requests are processed before pending possession transfers.
 - By default, a popped Bubble stays inactive until scene reload. ReturnToSpawnOnLeave and BubbleRespawnOnPop are explicit opt-ins, not universal behavior. The old Bubble_U2 regeneration rule belongs to the Legacy map, not the promoted Level01.
-- IntroBubble provides one spare Bubble, not unlimited regeneration. Premature pops can still require restarting.
+- IntroBubble provides a renewable backup beside the underwater divider. Each backup pop creates a fresh dormant instance at its original spawn, including when a replacement is popped again. The original Bubble does not regenerate; popping it before reaching the tank can still require restarting. See [the recovery route](intro-levels.md#introbubble).
 
 ### BouncyBall
 
 A controlled ball automatically bounces on supporting ground. A/D steering uses acceleration/braking. It checks overhead clearance before launch; a low roof compresses the bounce and accelerates its rhythm. Open space permits the configured full bounce again. Scene-specific heights and timing override prefab defaults; the lower and upper Level01 balls must not be retuned from old Legacy-map values.
 
-IntroBouncyBall overrides bounce height to 3.2 and seconds to apex to 0.8 locally; it does not retune the Level01/Level02 balls. Its route demonstrates a high ledge, a short water float, a safe low ceiling, then one spike in an open area before the flag. Fixed diagrams and short hints repeat when their horizontal region is revisited, without forced pauses. The low-ceiling lesson explicitly describes more bounces per second and compares vertical bounce animations. Local NoFriction terrain colliders keep wall contact from suppressing the initial climb; shared ball physics is unchanged. A spike death displays a short warning during the existing death pause.
+IntroBouncyBall overrides bounce height to 3.2 and seconds to apex to 0.8 locally; it does not retune the Level01/Level02 balls. Its route demonstrates a high ledge, a short water float, a safe low ceiling, then one spike in an open area before the flag. Fixed diagrams and short hints repeat when their horizontal region is revisited, without forced pauses. The low-ceiling lesson explicitly describes more bounces per second and compares vertical bounce animations. Local NoFriction terrain colliders keep wall contact from suppressing the initial climb; shared bounce tuning is unchanged; the water-support lookup correction below is shared. A spike death displays a short warning during the existing death pause.
 
-The ball floats on the highest overlapping water surface, loses vertical motion there and uses reduced horizontal speed. On land, bouncing resumes. Environmental spikes remain lethal. Possessing a ball is not a checkpoint in current Level01.
+The ball floats on the highest eligible water surface when its bottom-center lies horizontally inside the water bounds and its collider reaches the surface. Side overlap alone does not suppress bouncing on the bank. Floating removes vertical motion and uses reduced horizontal speed. On land, bouncing resumes. Environmental spikes remain lethal. Possessing a ball is not a checkpoint in current Level01.
 
 ### Spider, Fan and projectiles
 
@@ -122,16 +124,18 @@ The promoted Level02 uses dedicated drop/seesaw recovery and five ordered Smiley
 
 ## 7. Completion and navigation
 
-- IntroBox's controlled-Box flag opens the gate; its separate exit loads IntroBubble directly. IntroBubble can also return to IntroBox's endpoint using one-shot BoxB setup.
+- IntroBox's controlled BoxC opens the gate; its separate exit loads IntroBubble directly, preserving the outgoing Box width and floor/camera framing. IntroBubble can also return to IntroBox's endpoint using one-shot BoxC setup.
 - IntroBubble requires grounded Star to open its exit door; walking right loads IntroBouncyBall directly, without a Level up overlay. The ball tutorial left exit returns to Bubble as Star at its flag with the door open. This one-shot return setup is not a full scene snapshot.
-- IntroBouncyBall accepts controlled Star or BouncyBall at its flag, then shows Entering Level 1 before loading Level01.
+- IntroBouncyBall accepts controlled Star or BouncyBall at its flag, records completion and opens the animated Kindergarten graduation screen. Gameplay stays paused until Next Level loads Level01 or the accessible house loads Navigation. There is no automatic transition; see [completion feedback](intro-levels.md#completion-feedback).
 - Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to IntroFan, then Level02.
-- Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
+- Other timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
 - In Level02 the assigned final Box presses the roof button. Touching the raised flag with the controlled body records completion and opens the result screen. Tap Return to Main Menu to load Navigation.
 - Navigation replaces the old playable Mainmenu as startup and return destination. It uses authored entrance interactions, not the legacy UI-platform landing behavior. Coming Soon has no destination.
 - Collection Book uses reusable UI assets and blocks Navigation movement while open. Navigationâ€™s book, configured gameplay books and Shape Closet all read session-only `HelpBookUnlocks`. Successful possession reveals only the controlled form; an assigned starting/recovery host also counts. Star help is always available. Completion adds no form groups. Scene changes, death and level restart retain discoveries; refreshing/reopening the game or starting a new Editor Play session clears them. Old persistent completion saves are ignored. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## 8. Validation and remaining work
+
+Current Kindergarten source was accepted in developer playtests, including graduation and its two exits. See [Kindergarten evidence and remaining acceptance](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance); prior release evidence below does not certify this branch on WebGL/mobile.
 
 Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. That November 2 evidence confirms Beta 0.1.0 Level01 records. Dashboard Version 9 subsequently resolved historical release-map matching; it does not certify 0.1.1 event delivery or its refreshed map deployment.
 

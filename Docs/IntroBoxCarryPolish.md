@@ -1,6 +1,6 @@
 # IntroBox: possess, carry, switch
 
-Branch: `gold-polish-kindergarten`. Source-only change, not a deployed build.
+Branch: `gold-polish-kindergarten`. Source-only change, not a deployed build. Updated for the final woodland/hint polish.
 
 ![English concept map](IntroBox-Carry-Map-English.png)
 
@@ -12,11 +12,11 @@ The scene has a dedicated `IntroBox Carry Layout` root. The previous layout rema
 
 ### Visual controls and brief contextual hints
 
-The original warm gray camera background, charcoal terrain, orange boxes and yellow Star are retained. No A/B/C letters appear on the bodies. The existing form-controls HUD remains intact. World-space `BubbleMovementHint` guides show the original A/D keycaps and Space keycap with a jump arc. `BoxGrowHint` supplies dashed size outlines, inward/outward arrows, J/K keycaps and mouse-button icons at the dock, reconnect step and low passage. Mobile mode uses the existing touch control graphics.
+The final scene uses the shared woodland backdrop, dark soil and grass edges; orange boxes and the yellow Star retain their original form colors. See [woodland presentation](intro-levels.md#woodland-theme-and-readability). No A/B/C letters appear on the bodies. The existing form-controls HUD remains intact. World-space `BubbleMovementHint` guides show the original A/D keycaps and Space keycap with a jump arc. `BoxGrowHint` supplies dashed size outlines, inward/outward arrows, J/K keycaps and mouse-button icons at the dock, reconnect step and low passage. Mobile mode uses the existing touch control graphics.
 
 The first-touch sign stays in the entry wall. Later brief local prompts have no backplate; a slash below indicates a line break:
 
-- First contact: a permanent gold/white sign inside the black entry roof reads “Touch it. Become it!” and “Find a new body. Make it yours.” A Star → Star-inside-box diagram clarifies eligible bodies.
+- First contact: a permanent gold sign inside the dark entry roof reads “Touch it. Become it!” and “Find a new body. Make it yours.” A Star → Star-inside-box diagram clarifies eligible bodies.
 - First box: “Touch the next box.”
 - Starting to carry: “Can you figure out how to become / the box above you?”
 - Approaching the ledge: “A spot for your passenger!” plus the dotted route and landing outline.
@@ -25,18 +25,18 @@ The first-touch sign stays in the entry wall. Later brief local prompts have no 
 - If growth is blocked: “Move a little left.”
 - Recovery: “Carry it to the ledge.”
 
-The opening runway extends four units farther left, with the Star and A/D guide moved left together. A/D appears first; Space takes over near the unchanged jump step.
+The opening runway extends four units farther left, with the Star and A/D guide moved left together. The Space keycap and jump arc are centered directly above the low step. A/D appears first; Space takes over near the unchanged jump step.
 
 Movement, jumping, growing and shrinking are demonstrated visually, with no explanatory paragraphs or plain-text keyboard instructions. External pause hides contextual hints and lesson control guides. The carry reveal now eases the camera right with uninterrupted input and physics, then presents the question for a few seconds. A gold dotted path and downward arrow lead to a fixed passenger-sized outline at the ledge. There are no forced reading pauses or countdown bars. Dock shrink/grow diagrams and recontact text remain at the platform; walking away hides the local prompts without moving them.
 
-The existing gate-open arrow replaces the extra EXIT label.
+The existing gate-open arrow replaces the extra EXIT label. Background callouts use black text; wall text uses gold. The local callout is enlarged to font size 3.8 in its existing world-space TMP scale, with the wall title/description at 4.0/3.0. These are scene values, not screen-pixel sizes; the dedicated hint material keeps this styling local.
 
 ## Implementation boundaries
 
 - `IntroBoxCarryLesson` observes the existing physics and ownership state. While unacquired C is physically supported by controlled B, it matches B's horizontal velocity. This avoids relying on friction alone when starting, stopping or reversing. It does not parent C or carry it through a gap.
-- Possession still goes through `PlayerPossessionController`'s existing target locks and recontact checks. There is no added possession cooldown.
+- Possession still goes through `PlayerPossessionController`'s existing target locks and recontact checks. There is no added possession cooldown. The controller blocks nearby contacts at handoff, requires stable separation, and only then permits recontact. The lesson's larger visible-gap check advances its hint independently; it is not a new global possession rule.
 - Premature shrinking/possession or dropping C from the ledge resets just the B+C lesson. Once C is docked, carrier/passenger horizontal distance is no longer a failure condition: walking away and returning is valid progress. `TryRestoreLessonBody` is guarded to IntroBox and clears queued input/contacts before re-locking the restored stack. It does not change ordinary transfers elsewhere.
-- The exit and return-body references now target C. A return from IntroBubble preserves the completed state rather than triggering cargo recovery.
+- The exit and return-body references now target C. A return from IntroBubble preserves the completed state rather than triggering cargo recovery. Forward travel records Box world width and camera/floor framing for IntroBoxArrival; see [Box-to-Bubble continuity](intro-levels.md#box-to-bubble-continuity-verification).
 - `IntroBoxCarrySetup` is an explicit scene-authoring utility; it never runs automatically when opening Unity. It refuses to rebuild an already-authored carry scene.
 
 ## Verification
