@@ -464,8 +464,8 @@ Transform:
   m_GameObject: {fileID: 114066374}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.1217165, y: -3.5162, z: 0}
-  m_LocalScale: {x: 21.756567, y: 1.0322609, z: 1}
+  m_LocalPosition: {x: -1.1217165, y: -6.5, z: 0}
+  m_LocalScale: {x: 21.756567, y: 7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1921,6 +1921,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1928,6 +1929,27 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e327479c3f64f0c97d4f55ffaab69d0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::IntroBoxArrival
+  player: {fileID: 1643171616}
+  entryBox: {fileID: 470202030}
+  entryFloor: {fileID: 114066375}
+  spawnLeftEdge: -9.6
+  viewLeftEdge: -10.25
+  directEntryWidth: 0.45
+  directEntryCameraSize: 5.3
+  directEntryFloorViewport: 0.3566
+  revealSeconds: 1.5
 --- !u!81 &519420029
 AudioListener:
   m_ObjectHideFlags: 0
@@ -2514,8 +2536,8 @@ Transform:
   m_GameObject: {fileID: 535408264}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -9, y: -0.9, z: 0}
-  m_LocalScale: {x: 0.5, y: 1.8, z: 1}
+  m_LocalPosition: {x: -9, y: -0.45, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -4589,6 +4611,7 @@ GameObject:
   - component: {fileID: 936718040}
   - component: {fileID: 936718039}
   - component: {fileID: 936718038}
+  - component: {fileID: 936718045}
   m_Layer: 0
   m_Name: BackupBubble
   m_TagString: Untagged
@@ -4763,6 +4786,19 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &936718045
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 936718037}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3a7b12cc0f94a2d9ea941653770fe51, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BubbleRespawnOnPop
+  bubblePrefab: {fileID: 936718037, guid: f7a30835de9a4e32b08c7b763f924c2f, type: 3}
 --- !u!4 &936718044
 Transform:
   m_ObjectHideFlags: 0
@@ -4772,7 +4808,7 @@ Transform:
   m_GameObject: {fileID: 936718037}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.95, y: -1.25, z: 0}
+  m_LocalPosition: {x: 0.1, y: -1.35, z: 0}
   m_LocalScale: {x: 0.9, y: 0.9, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8435,6 +8471,7 @@ MonoBehaviour:
   mode: 1
   playerController: {fileID: 1643171616}
   targetBody: {fileID: 934574713}
+  useControlledBubble: 1
   previewInEditor: 1
   flagGate: {fileID: 0}
   blockedKeyHintSeconds: 3
@@ -8446,7 +8483,7 @@ MonoBehaviour:
   spiderSubtitleHoldSeconds: 4
   spiderSubtitleFadeSeconds: 0.75
   activationAreaSize: {x: 7, y: 10}
-  activationAreaOffset: {x: 1.725, y: 0.65}
+  activationAreaOffset: {x: 2.025, y: -0.25}
   showIntroductionText: 1
   waterDescription: Move freely underwater
   popDescription: 
@@ -8465,7 +8502,7 @@ Transform:
   m_GameObject: {fileID: 1920257502}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.85, y: -0.9, z: 0}
+  m_LocalPosition: {x: -1.15, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8805,6 +8842,7 @@ MonoBehaviour:
   activationAreaSize: {x: 7, y: 8}
   activationAreaOffset: {x: -1.25, y: -0.5}
   showIntroductionText: 1
+  bubbleRiseDescription: "Bubbles float up\nautomatically\nin air."
   waterDescription: 
   popDescription: 
   popDescriptionColor: {r: 1, g: 1, b: 1, a: 1}

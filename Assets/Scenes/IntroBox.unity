@@ -10182,6 +10182,7 @@ MonoBehaviour:
   requiredFlagGate: {fileID: 1650643065}
   requireFlagGate: 1
   nextSceneName: IntroBubble
+  preserveBoxOnEntry: 1
   returnToPreviousExit: 0
   returnBody: {fileID: 1190341460}
   returnPosition: {x: 13.1, y: -0.78}
