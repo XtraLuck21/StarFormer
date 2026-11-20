@@ -15,6 +15,13 @@ public sealed class MovableDoorContactHint : MonoBehaviour
     [SerializeField, Min(.1f)] private float solvedRise = .8f;
     [SerializeField, Min(.5f)] private float demonstrationSeconds = 2.8f;
 
+    [Header("Hint palette")]
+    [SerializeField] private Color hintInk = new Color(.08f, .18f, .22f);
+    [SerializeField] private Color buttonInk = new Color(.08f, .18f, .22f);
+    [SerializeField] private Color hintFace = Color.white;
+    [SerializeField] private Color hintPulse = new Color(.85f, .95f, 1f);
+    [SerializeField] private Color previewColor = new Color(.5f, .83f, 1f, .32f);
+
     private const float ButtonScale = 1.3f;
 
     private Transform buttonVisual, buttonStar, demoStar;
@@ -121,7 +128,7 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         attentionSeconds += Time.deltaTime;
         float hop = attentionSeconds < 1f ? .2f * Mathf.Abs(Mathf.Sin(attentionSeconds * Mathf.PI * 2f)) : 0f;
         buttonStar.localPosition = new Vector3(0f, .08f + hop, -.02f);
-        buttonFace.color = Color.Lerp(new Color(.85f, .95f, 1f), Color.white,
+        buttonFace.color = Color.Lerp(hintPulse, hintFace,
             .25f + .15f * Mathf.Sin(attentionSeconds * 2f));
         if (armed && contact.isValid && contact.distance <= .01f) BeginDemo();
     }
@@ -210,7 +217,7 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         text.rectTransform.sizeDelta = size;
         text.fontSize = fontSize;
         text.alignment = TextAlignmentOptions.Center;
-        text.color = new Color(.08f, .18f, .22f);
+        text.color = hintInk;
         text.GetComponent<MeshRenderer>().sortingOrder = 24;
         text.text = name;
         return text;
@@ -250,15 +257,15 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         buttonVisual.SetParent(transform, false);
         buttonVisual.position = new Vector3(buttonPosition.x, buttonPosition.y, -.1f);
         buttonVisual.localScale = Vector3.one * ButtonScale;
-        Square("Border", buttonVisual, Vector3.zero, Vector2.one, new Color(.08f, .18f, .22f), 20);
-        buttonFace = Square("Face", buttonVisual, new Vector3(0, 0, -.01f), Vector2.one * .88f, Color.white, 21);
+        Square("Border", buttonVisual, Vector3.zero, Vector2.one, buttonInk, 20);
+        buttonFace = Square("Face", buttonVisual, new Vector3(0, 0, -.01f), Vector2.one * .88f, hintFace, 21);
         sensor = buttonVisual.gameObject.AddComponent<BoxCollider2D>();
         sensor.size = Vector2.one;
         sensor.isTrigger = true;
         buttonStar = Star("Hint star", buttonVisual);
         buttonStar.localPosition = new Vector3(0f, .08f, -.02f);
-        Text("Hint", buttonVisual, new Vector3(0f, -.3f, -.03f), new Vector2(.9f, .3f), 2.2f);
-        ghostDoor = Square("Door preview (no collider)", transform, Vector3.zero, Vector2.one, new Color(.5f, .83f, 1f, .32f), 20);
+        Text("Hint", buttonVisual, new Vector3(0f, -.3f, -.03f), new Vector2(.9f, .3f), 2.2f).color = buttonInk;
+        ghostDoor = Square("Door preview (no collider)", transform, Vector3.zero, Vector2.one, previewColor, 20);
         demoStar = Star("Helpful star", transform);
         caption = Text("Door hint caption", transform, new Vector3(captionPosition.x, captionPosition.y, -.2f), new Vector2(4.9f, 1.2f), 4.4f);
     }
