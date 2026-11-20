@@ -71,13 +71,15 @@ Walking left through IntroBubble's entrance exit loads IntroBox at its endpoint,
 
 Scene: [IntroBouncyBall.unity](../Assets/Scenes/IntroBouncyBall.unity).
 
-1. Enter as Star through the left opening. The left boundary is inset from the camera edge, keeping the entrance readable.
-2. Touch the glowing BouncyBall; it bounces automatically. This scene alone uses bounce height `3.2` and seconds to apex `0.8`.
-3. Cross the water between aligned, equally sized banks. The ball floats instead of bouncing on the surface; returning to land resumes bouncing.
-4. Cross the separated floor spikes and enter the low-ceiling section on the forward route. The continuous floor prevents falling out of the map. The previous four-spike dead end is removed; the compressed-bounce lesson is part of progression.
-5. Reach the final flag as controlled Star or BouncyBall to show `Entering Level 1...` and load Level01.
+1. Enter as Star through the left opening and touch the glowing BouncyBall. The existing graphical movement keys appear near the first lesson.
+2. Use the automatic high bounce to climb the 2.2-unit ledge. This scene retains bounce height `3.2` and seconds to apex `0.8`; shared ball tuning is unchanged.
+3. Cross a short 2.1-unit water pool with level banks. A canopy brings the ball down to the surface for a brief floating experience. Leaving water restores automatic bouncing without another text lesson. A thin surface edge marks the blue water; floating uses the ball’s bottom-center position, so side overlap alone cannot stop a bounce on the black bank.
+4. Drop onto the continuous floor and pass through the safe low-ceiling section. There are no spikes inside this section. Local NoFriction terrain colliders prevent wall rubbing from suppressing the introductory climb.
+5. In the open area after the ceiling, observe the single spike, bounce over it and reach the final flag. The goal shows `Entering Level 1...` and loads Level01.
 
-`IntroBouncyBallHints` shows short headlines at map-related anchors: `A little more bounce?`, `Born to bounce.`, `On water, we float!`, `Dry land. Bounce time!` and `Small space. Speedy bounces!`. Explanatory subtitles stay hidden; movement keys remain on the map. Spike death displays `Ouch! Spikes aren't for hugs.` during the existing death pause without adding a respawn delay. Low ceilings shorten the bounce cycle through the existing ball physics; this is not a global movement-speed boost.
+`IntroBouncyBallHints` uses fixed map anchors and repeatable horizontal regions, with boundary hysteresis to avoid flicker. Returning to an area shows its lesson again; there are no one-shot timers or forced tutorial pauses. The entry says `Touch the ball. Reach the high ledge!`, then `You bounce high automatically!` after possession. The water lesson says `A little floating break.` with a floating-ball/wave diagram. The low roof says `Lower ceiling. More bounces per second.` with two animated vertical bounces that differ in height and frequency, not horizontal speed. The final area says `Watch the spike! Bounce over it.` with a jump arc. Spike death displays `Ouch! Spikes aren't for hugs.` during the existing death pause without adding a respawn delay. Explanatory subtitles remain hidden; the existing palette and graphical controls are retained.
+
+Desktop Unity Play Mode validation (November 19, 2026): possession and high-ledge traversal, water floating/land recovery, low-ceiling passage, returning to earlier hint regions, spike-death feedback/restart, and successful flag transition into Level01 were exercised. The shoreline regression also passed four real-physics cases: left/right black banks still bounce despite side overlap with water, and left/right blue-water positions float without bouncing. Browser/mobile validation of this revision remains pending.
 
 ### Return to IntroBubble
 
