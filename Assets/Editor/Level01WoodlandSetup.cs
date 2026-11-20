@@ -39,6 +39,7 @@ public static class Level01WoodlandSetup
         var material = solids[0].GetComponent<SpriteRenderer>().sharedMaterial;
         foreach (var col in solids)
         {
+            if (col.name == "EntranceTitleWall") continue; // Keep the title backing quiet and untextured.
             Bounds b = WorldBounds(col);
             col.GetComponent<SpriteRenderer>().color = Hex("44473B");
             var surface = new GameObject("Woodland Surface").transform;
@@ -80,7 +81,7 @@ public static class Level01WoodlandSetup
                 bool wall = solids.Any(c => WorldBounds(c).Contains(new Vector3(
                     text.transform.position.x, text.transform.position.y, WorldBounds(c).center.z)));
                 bool onMechanism = text.GetComponentInParent<RatchetingCeiling>() != null;
-                text.color = wall || onMechanism ? Cream : Ink;
+                text.color = text.name == "LevelOneTitle" ? Hex("FFD34D") : wall || onMechanism ? Cream : Ink;
             }
             foreach (var hint in root.GetComponentsInChildren<MovableDoorContactHint>(true))
             {
