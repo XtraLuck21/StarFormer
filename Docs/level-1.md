@@ -28,7 +28,7 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 | Water tank | Walk directly into water as Star. Jump into the entry Bubble for the underwater route, or continue to the submerged BouncyBall. The choice card sits inside the pool and retires after selecting either form. First possession of each form briefly explains its ability: REMEMBER / Balls float!, or Bubbles swim in water and float in air. Ball rises gradually during its reminder. Horizontal steering resumes at the surface; move right onto the dry grassy deck, then bounce through the upper opening. Bubble swims beneath the deck and right wall, then rises in the exit shaft. Entry and pool-floor backup Bubbles use the same blue fill, outline, glow, scale and collider, including replacements after Pop. |
 | Water exit and Box drop | Both routes rejoin at `BoxB_DropShaft`: Bubble rises and pops above the exit; Ball clears the upper dividers and drops onto Box B. The first checkpoint is on the lower route beyond the drop. |
 | Lower lift and ball passage | Growing Box lifts the lower `RatchetingCeiling`. The lower ball, `BallR1_LowRoom`, can push this door downward by landing on it. Ceiling compression governs its bounce through the passage. |
-| Right ascent | Checkpoint 2 restores the lower ball below the Bubble shelf. It can bounce around the shelf edge to possess `BubbleU2_RightAscent` and rise through the central opening. |
+| Right ascent | Checkpoint 2 sits on the open ground left of the Bubble shelf and restores the lower ball there. It can bounce around the shelf edge to possess `BubbleU2_RightAscent` and rise through the central opening. |
 | Upper landing choice | Pop on the left to continue as Star, or on the right to possess the offset `BoxD_UpperTunnel` on its small platform. Grow Box to negotiate the gap toward the left landing, then shrink for the narrow tunnel. The Bubble ascent opening stays clear. Landing on the left as Star or Box activates checkpoint 3. |
 | SAVE and upper lift | Star, grounded Box D, or R2 can touch SAVE from below. The nearby thick platform has one centered upward arrow. Box growth raises it; it retains that height when Box shrinks or a ball lands on it. |
 | Ball and optional RUIN | `BallR2_UpperReturn` can continue left without choosing RUIN. Raising the platform enables the deliberate higher approach to the recessed RUIN button. The first upward R2 hit breaks its cover and sends the ball downward; after landing, a later bounce can activate RUIN. The ball can return to SAVE. |
@@ -60,7 +60,7 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 PR #21 (`42e32a4`) integrates four developer-tested changes, included in the published Beta 0.1.2 export:
 
 - Upper platform edges preserve the gap and equal landing height while using small collision bevels to reduce maximum-size Box snagging in either direction. Recheck both directions, stopping at the edge and resizing during movement.
-- The approach to checkpoint 2 is wider. Its placement still requires reaching the authored route rather than moving the checkpoint left into the easy path.
+- The approach to checkpoint 2 was widened in PR #21. Following later playtest feedback, the marker, trigger and Ball respawn were moved 2.4 units left onto open ground, so saving no longer requires entering the small space beneath the Bubble shelf.
 - BouncyBall camera framing near checkpoint 2 suppresses repeated bounce-driven vertical shake while preserving route transitions.
 - Box-to-ball possession after a fall before checkpoint 3 allows recovery instead of leaving the ball trapped under an abandoned Box.
 
@@ -73,7 +73,7 @@ All three markers remain hollow stars: blue before activation, yellow after bein
 | Point / analytics ID | Location | Respawn body | Authored spawn |
 | --- | --- | --- | --- |
 | 1 / `ADV_CP1` | Lower route after the Box drop | `BoxB_DropShaft` / Box | `(25.3, 1.34)` |
-| 2 / `ADV_CP2` | Bottom of the right ascent, below the Bubble shelf | `BallR1_LowRoom` / BouncyBall | `(42.1, 1.32)` |
+| 2 / `ADV_CP2` | Bottom of the right ascent, left of the Bubble shelf | `BallR1_LowRoom` / BouncyBall | `(39.7, 1.32)` |
 | 3 / `ADV_CP3` | Left upper landing after the Bubble ascent | Original Star | `(38.8, 11.69)` |
 
 Checkpoint 3 requires Star or Box to land on the left floor; flying over it as Bubble does not save. Respawn form is fixed by the checkpoint, not copied from the entering form. Automatic last-possessed-ball checkpoints are disabled in this scene.
