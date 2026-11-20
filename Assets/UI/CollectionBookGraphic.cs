@@ -7,6 +7,12 @@ public sealed class CollectionBookGraphic : MaskableGraphic
 {
     [SerializeField] private bool squareCover;
 
+    public void UseSquareCover()
+    {
+        squareCover = true;
+        SetVerticesDirty();
+    }
+
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();

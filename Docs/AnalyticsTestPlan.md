@@ -5,6 +5,23 @@ rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
 
 Last updated: 2026-11-19. Earlier dated release checks below remain historical.
 
+## Level01 polish source acceptance
+
+Scope: `gold-level-1-polish`, commits `1e7199d`–`816bdb9` relative to main. This includes the shared Collection Book presentation outside Navigation. Evidence below comes from the branch's earlier checks and developer playtests; this documentation sync did not rerun Unity, build WebGL, regenerate analytics maps, deploy or collect production rows.
+
+| Scenario | Existing evidence | Next exported-player check |
+| --- | --- | --- |
+| Woodland, title wall and Star entrance | Scene/art inspection, developer iteration; retained water-route check verifies Star crosses the slit without Box A | Confirm title-wall clearance, form/hazard contrast and no READY sign across viewport sizes |
+| Bubble underwater / Ball upper route | Retained Play Mode input verification reaches Box B by both routes; Ball ascent remains submerged initially, takes over 1.5 seconds and shows its reminder | Repeat both routes with keyboard/mouse and real touch; gradual rise, surface steering and dry-deck bounce |
+| Matching renewable Bubbles | Retained checks compare sizes, collider bounds, fill/outline/glow and replacement appearance; early Pop and re-possession exercised | Repeat Pop/recovery for entry and backup; exactly one fresh dormant replacement per consumed host |
+| Ability reminders and pocket recovery | Retained checks cover first-use REMEMBER?, expiry/no replay, no hints during waiting/pacing/bouncing, automatic persistent pocket warning, simulated touch wording and R pause hiding | Confirm fixed nearby cards remain readable and unobstructive; no platform highlights/arrows; pocket warning needs no click or ceiling hit |
+| Checkpoint 2 | Marker, trigger and Ball respawn moved left together; developer reported successful playtest | Reach and retry from open ground without entering the shelf recess; retain fixed Ball recovery |
+| Collection Book | Earlier isolated Editor checks covered non-Navigation scene entries, square appearance, caption removal, open/close/pause and unchanged Navigation; developer accepted | Verify matching Home size, hit areas, discovery/pages, and Navigation exception on Web/mobile |
+| Lower-door Hint | Isolated Play Mode checks passed mouse click, original contact, pause guard, no Box resize/real-door movement during preview, repeat clicks, held-contact guard, room exit persistence and retirement after real door lift; developer accepted | Repeat previews until understood, leave/return, raise the door and confirm sign retirement; verify mouse/touch input |
+| Production map and delivery | Not refreshed or verified for this branch | Export the changed Level01 map for the chosen release version; verify checkpoint placement, catalog association, production rows and dashboard map |
+
+Run the retained checks via `StarFormer → Level01 → Verify Water Routes in Play Mode` and `Verify Water Pocket Recovery`. The door-click/replay and expanded book probes ran in an isolated temporary project, not committed CI coverage. Real-device input and the full exported-player playthrough remain separate acceptance work. See [remaining gameplay feedback](level-1.md#verification-and-remaining-work).
+
 ## Kindergarten polish source acceptance
 
 Scope: `gold-polish-kindergarten`, gameplay commits `ea33d76`–`2cbed98`, based on `9db80ea`. The developer accepted the stages and final adjustments. This documentation sync did not build WebGL, regenerate maps, deploy or collect production rows.
