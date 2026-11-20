@@ -15,6 +15,9 @@ public class IntroSceneExit : MonoBehaviour
     [SerializeField] private Vector2 returnPosition;
     [SerializeField] private float returnBoxSize = 0.5f;
 
+    [Tooltip("Carry the outgoing Box size and camera framing into an IntroBoxArrival scene.")]
+    [SerializeField] private bool preserveBoxOnEntry;
+
     private static string pendingReturnScene;
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
@@ -107,6 +110,8 @@ public class IntroSceneExit : MonoBehaviour
         }
 
         isLoading = true;
+        if (preserveBoxOnEntry && !returnToPreviousExit)
+            IntroBoxArrival.RecordDeparture(controlledBody, nextSceneName);
         if (returnToPreviousExit)
             AnalyticsManager.Instance?.TrackSceneReturn(nextSceneName);
         else

@@ -3,7 +3,27 @@
 For the seven-scene analytics v2 integration, real maps and test/production
 rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
 
-Last updated: 2026-11-06.
+Last updated: 2026-11-19. Earlier dated release checks below remain historical.
+
+## Kindergarten polish source acceptance
+
+Scope: `gold-polish-kindergarten`, gameplay commits `ea33d76`–`2cbed98`, based on `9db80ea`. The developer accepted the stages and final adjustments. This documentation sync did not build WebGL, regenerate maps, deploy or collect production rows.
+
+| Scenario | Existing evidence | Next exported-player check |
+| --- | --- | --- |
+| Box carry/dock/recontact, local retry and leftward backtracking | Retained IntroBox route verification plus developer playtests; [details](IntroBoxCarryPolish.md#verification) | Repeat full route with mouse/keyboard and touch; no moving station hints or false reset after docking |
+| Box-to-Bubble handoff | Editor crossings with small and enlarged Box, matching width/floor framing | Compare the two sizes in browser and after direct-entry/restart |
+| Repeatable Bubble backup | Editor Star jump and two consecutive pop/recovery cycles | Exactly one fresh dormant backup at original spawn after each pop, with water/Pop hints working |
+| Ball shoreline, ceiling and spike lesson | Four real-physics bank/water cases plus route/hint/death playtests | Both banks keep bouncing until support moves over water; repeat low-roof/spike route and earlier hint regions |
+| Woodland, keycaps and square book | Editor inspection and developer acceptance of all three scenes | Small/large viewports, real touch, book open/close and form/hazard contrast; A/D only after ball possession |
+| Graduation wait and Next Level | Real goal, pause, duplicate guard, 15-second hold, text/art and Level01 restoration in Editor | No timed load; button/keyboard/touch advance once with controls/time restored |
+| Graduation Home exit | In-game-coordinate topmost raycast and pointer-click loaded Navigation with normal time; developer accepted | House remains bright/clickable, tooltip Main Menu; ordinary gameplay Home still has its existing pause/confirmation flow |
+| Completion analytics | Code retains one TrackLevelComplete at flag; graduation Home bypasses TrackAbandoned | One completed run for either exit; no abandonment or duplicate completion after waiting/clicking |
+| Map/version and delivery | Not refreshed or verified for this branch | Export final scene maps for the chosen new version; confirm source/catalog association, hosted rows and matching dashboard maps |
+
+Temporary graduation/water probes were removed after use; their reported Editor checks are not permanent CI coverage.
+
+Known Bubble limitations remain: the original pre-tank Bubble can be consumed without local recovery, and Pop can be offered over the right water shaft before reaching dry ground. Test and record these separately from the working renewable underwater backup. Real-device simultaneous input, viewport/rotation behavior, full Web playthrough and production delivery remain unverified for this branch.
 
 ## Beta 0.1.2 acceptance status
 

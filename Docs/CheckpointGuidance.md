@@ -46,13 +46,19 @@ Each of the seven enabled gameplay scenes has the top-right house-and-Star squar
 
 Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Escape from Paused resumes. The menu blocks background interaction, does not stack over the R menu or a route cinematic, and restores its owned pause when disabled. It does not add Hint/Controls actions.
 
+### Kindergarten graduation exception
+
+After IntroBouncyBall completion, gameplay remains paused on the graduation screen. The house stays visible and clickable above its backdrop, with a `Main Menu` tooltip. It loads Navigation directly instead of opening Paused or asking to abandon an already-completed run. Next Level loads Level01. Both routes clear checkpoint sessions and restore normal time; form discoveries still last for the application session. Escape does not bypass graduation into the ordinary Home menu. See [completion feedback](intro-levels.md#completion-feedback).
+
+IntroBox's dropped-cargo retry restores just its carrying lesson, not a checkpoint or scene reload. Backward scene passages also remain separate from checkpoints.
+
 ## R menu and other scenes
 
 - R or a touch Restart action opens `RestartMenuUI`; no hold is required and opening never reloads.
 - Return to Checkpoint appears when a current-scene positional or opted-in ball checkpoint exists. Restart Level clears progress. Cancel, Escape or R closes without restarting; Cancel is initially selected.
 - The R menu also pauses automatic death recovery. Cancelling restores the remaining death-delay time.
 - Home's extra confirmation screens do not replace or change the existing R shortcut.
-- Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
+- Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxC with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
 - Promoted Level02 uses DROP_BOTTOM, SEESAW_ROOM and the five Smiley Face entries documented in [level-2.md](level-2.md#2-scene-wiring-to-preserve). Death/Home retry restore the configured Star, Spider or Box entry and its stage progress; later entries cannot regress. A saved forehead entry also enables the lower-right fall-return zone without a death/reload. The scene uses a short Respawning pause; full restart clears its session records. CP01/CP02 remain legacy objects; CP03 has been removed.
 
 ## Touch input and checkpoint recovery

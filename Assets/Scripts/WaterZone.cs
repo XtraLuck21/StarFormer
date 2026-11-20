@@ -59,14 +59,17 @@ public class WaterZone : MonoBehaviour
             }
 
             Bounds waterBounds = zone.zoneCollider.bounds;
-            bool overlapsHorizontally =
-                bodyBounds.max.x > waterBounds.min.x &&
-                bodyBounds.min.x < waterBounds.max.x;
+            // A ball still supported by a bank must keep bouncing, even when
+            // its side overlaps water. Use the bottom-center support point so
+            // the behavior changes at the visible shoreline in both directions.
+            bool overWater =
+                bodyBounds.center.x > waterBounds.min.x &&
+                bodyBounds.center.x < waterBounds.max.x;
             bool reachesWater =
                 bodyBounds.min.y <= waterBounds.max.y + 0.05f &&
                 bodyBounds.max.y >= waterBounds.min.y;
 
-            if (!overlapsHorizontally || !reachesWater)
+            if (!overWater || !reachesWater)
             {
                 continue;
             }

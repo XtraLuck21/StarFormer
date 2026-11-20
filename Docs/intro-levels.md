@@ -1,10 +1,12 @@
 # Introductory Levels
 
-Beta 0.1.2 was published November 6 at root and `/beta/` via `64b35c6`, with clean source checkout `b93768f`. Navigation, shared Home/Help, IntroFan naming, revised Spider teaching and session discovery are included. Deployment and 14-file hosted comparison passed; see the [release record](Beta-0.1.2.md) for outstanding gameplay/data acceptance.
+**Current source (November 19, 2026):** the three Kindergarten scenes now use the carry/dock lesson, renewable Bubble backup, woodland theme and player-controlled graduation described below. These changes are not a new published build; Level01 art and the Elementary/Level02 layouts are outside this branch.
+
+Historical Beta 0.1.2 was published November 6 at root and `/beta/` via `64b35c6`, with clean source checkout `b93768f`. Navigation, shared Home/Help, IntroFan naming, revised Spider teaching and session discovery are included. Deployment and 14-file hosted comparison passed; see the [release record](Beta-0.1.2.md) for outstanding gameplay/data acceptance.
 
 Touch controls reviewed November 16, 2026.
 
-**Historical published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. The Beta URL now serves 0.1.2. See [the historical release record](publish_instructions.md#beta-011-release-status).
+**Historical published release: Beta 0.1.1 (November 3)** at [the Beta URL](https://xtraluck21.github.io/StarFormer/beta/), source `9451511`, gh-pages `e81097e`. It retains the tutorial sequence described below and adds seven-scene analytics plus the Level01 door hint. The November 4 paged help book, animated form demos and Mainmenu adjustments are integrated into main but not this export. The seven live files matched the recorded export on November 5; detailed 0.1.1 gameplay/data acceptance remains separate. The Beta URL has since served later releases; this paragraph records the 0.1.1/0.1.2 comparison. See [the historical release record](publish_instructions.md#beta-011-release-status).
 
 **Historical published release: Alpha 0.1.2 (October 18, 2026)** at [the Alpha URL](https://xtraluck21.github.io/StarFormer/alpha/). Source release configuration is `5650250`, gameplay/UI changes are `9b35f8e`, and the `gh-pages` publication is `5f62980`. The developer reported successful localhost and post-publication tests. These reports do not enumerate every checkpoint, device or alternate route; Alpha 0.1.2 Google Sheets delivery has not been independently verified. The intro sequence and October 17 polish were integrated through PR #10 (`69f3902`) and PR #11 (`989d2d1`); mobile integration followed in PR #14 (`3714a49`).
 
@@ -22,45 +24,64 @@ Navigation's **Kindergarten** entrance starts IntroBox; **Level 1** starts Level
 
 ## IntroBox
 
-Scene: [IntroBox.unity](../Assets/Scenes/IntroBox.unity).
+Current source on `gold-polish-kindergarten` replaces the former two-box route with a three-box carrying lesson. See [the layout and verification notes](IntroBoxCarryPolish.md) and [English concept map](IntroBox-Carry-Map-English.png). This source change has not been published.
 
-1. Begin as Star and use horizontal movement and a jump to pass the low step.
-2. Touch BoxA to possess it. Move into the growth area and hold Grow to reach the elevated BoxB; contact transfers control upward. The Star cannot bypass this transfer with a direct jump in the tested layout.
-3. Move BoxB over the gap and hold Shrink to drop safely.
-4. Walk through the low tunnel. The flag opens the small exit door only for controlled BoxB. A right-pointing arrow then appears beside the exit; continue right through a separate trigger to load IntroBubble. This scene-to-scene continuation does not show a Level up overlay.
+1. Begin as Star, practice A/D or arrow-key movement and Space over a low step.
+2. A low, tall-sided entry tunnel makes BoxA the first unavoidable possession. The Star cannot jump over A into the later hosts.
+3. Move A right into BoxB. BoxC already rests on B, so the existing possession contact locks prevent an immediate second transfer.
+4. Carry C right to the receiving ledge. A scene-local support helper matches C's horizontal velocity only while it rests on controlled B; normal possession rules stay in charge.
+5. Stop at the ledge and hold K to shrink B. C's forward overhang leaves it supported by the fixed ledge. A visible gap and a short stable-separation check advance the hint.
+6. Hold J to regrow B into C. Control changes to C through ordinary contact possession. Move C right and shrink through the low passage to the flag.
+7. Controlled C opens the exit door. Continue right into IntroBubble; no Level up overlay interrupts the passage. Returning from IntroBubble restores small C near this flag with the gate open.
 
-Boxes cannot jump or exit to Star. Fixed growth/shrink outlines, outward/inward arrows and mode-specific resize prompts appear only while the corresponding Box is controlled and inside its activation region. Leave lateral clearance for growth; a Box pressed against a wall cannot expand through it.
+English lessons are state-driven world-space callouts near the controlled body/docking area; the old top-center IntroFormHintUI is disabled in this scene. Touch mode substitutes graphical joystick, Jump, Grow and Shrink cues. Dropped or prematurely possessed cargo resets the carrying portion to B+C with a nearby explanation, without replaying the opening jump. R and Home keep the existing full restart/menu behavior. Boxes still cannot jump or manually release Star; their ordinary size limits and shared contact-lock rules are unchanged.
 
 ## IntroBubble
 
 Scene: [IntroBubble.unity](../Assets/Scenes/IntroBubble.unity).
 
-1. Start controlling EntryBox in the bottom-left entry room. The opening and floor extension to the left edge visually connect this room to IntroBox; the body is a fresh scene instance.
-2. Hold Grow beneath the waiting Bubble and touch it to take possession.
+1. Enter from the left as EntryBox, inheriting the actual world width of the Box that crossed IntroBox's exit. The entry camera matches the outgoing camera scale and the floor's screen height. The Box begins just inside the left passage with its feet on the floor; holding right continues into the room. Direct entry/restart uses a 0.45-unit Box, matching fully shrunken BoxC. This is a one-shot handoff to a fresh scene host, not persistent scene storage.
+2. Hold Grow beneath the waiting Bubble and touch it to take possession. The camera then smoothly pans and widens to the established full-room view over 1.5 seconds, with movement and physics uninterrupted.
 3. Rise automatically in the left air shaft. Steer right along the solid ceiling and enter the tall left side of the rectangular water tank. Water meets the ceiling without an air gap.
 4. Swim down, pass beneath the hanging central divider, then swim right and up. Solid floors, walls and the tank roof constrain the route to the right-side exit shaft.
-5. Leave the water and rise to the upper ceiling. Move right above the safe landing floor before using Pop; the pop hint only appears in that landing region, not immediately upon surfacing.
+5. Leave the water and rise to the upper ceiling. Move right above the safe landing floor before using Pop. The current Pop hint region also overlaps the right water shaft, so its appearance alone does not guarantee a safe landing; see the known follow-ups below.
 6. Land as Star, pass beneath the hanging barrier, and jump onto the flag platform. Only the living, controlled, grounded Star opens the exit door. Follow the arrow right through the opening into IntroBouncyBall; no Level up overlay interrupts this passage.
 
-`BackupBubble` waits in the right half of the tank at `(1.95, -1.25, 0)`. A Star that falls back into the water can possess it and swim to the exit again. It stays motionless until first possession and is a single spare, not an unlimited respawn source. The pop hint also works while controlling this Bubble.
+`BackupBubble` waits to the left of the underwater divider at `(0.1, -1.35, 0)`, within jumping reach of Star from the tank floor. Every pop immediately creates a fresh dormant Bubble at this same position, without a use limit. The scene-specific `IntroBubbleBackup` prefab preserves the original pale-blue color, outline, size and water physics. Both swimming and pop hints work with replacement instances.
 
-Both intro cameras remain fixed. Old route geometry and unused legacy objects remain inactive; the active replacement terrain uses the `IB`-prefixed floors, walls and ceilings plus Ground, retaining the gray background, dark terrain and blue water.
+IntroBox follows the controlled body. IntroBubble holds its matched entry framing while controlling EntryBox, then keeps the original fixed overview after the possession reveal. Old route geometry and unused legacy objects remain inactive; the active replacement terrain uses the `IB`-prefixed floors, walls and ceilings plus Ground, with shared woodland surface art over the existing solids and blue water. The art adds no collision geometry.
+
+### November 19 polish review
+
+The air lesson now contains only `Bubbles float up automatically in air.` on three lines and the original graphical A/D keys with horizontal arrows. It remains fixed on the dark wall. The A/D keys and arrows sit 0.3 units lower to separate them from the text. The fixed water lesson activates for whichever Bubble is controlled and is positioned above-left of the backup spawn.
+
+Desktop Editor play verified first possession, the simplified air lesson, Star jumping into the backup from the tank floor, and two consecutive backup pop/recovery cycles. One pop happened at the spawn and another after swimming beneath the divider and rising through the exit shaft; both replacements appeared at the original spawn and could be possessed again. The water lesson also appeared on the replacements. Touch-device verification remains pending.
+
+Follow-ups, not fixed in this pass:
+- The intended safe-landing Pop sequence above is not fully enforced by the current hint area. In Editor play, Pop appeared while the Bubble was still over the right water shaft; pressing Q there dropped Star back into the tank. Guide right toward the landing first, then show the local Pop prompt over safe ground.
+- The repeatable backup covers recovery inside the tank. Popping the original Bubble before reaching the water can still require Restart. Feedback mentions accidental pops requiring a restart and slow Bubble movement, but generally does not identify IntroBubble specifically; the explicitly Level 2 report is outside this polish scope.
+
+### Box-to-Bubble continuity verification
+
+Desktop Unity play checked actual IntroBox exit crossings with fully shrunken BoxC and a Box enlarged at the exit. Both retained their apparent and world size on arrival, with the floor at the same screen height. The enlarged incoming Box passed the entrance lintel, reached the first Bubble and possessed it by growing. The camera revealed the full route while the Bubble rose, and the revised text/key spacing remained clear. Direct scene entry also started as the small Box at the left passage. The entrance lintel now clears the full possible incoming Box width (0.45–1.8 units); the floor extends downward to fill the lower entry framing. Browser/mobile verification remains pending.
 
 ### Return to IntroBox
 
-Walking left through IntroBubble's entrance exit loads IntroBox at its endpoint, controlling BoxB at `(7.8, -2.64)` with size `0.5` and the exit door open. This works even when IntroBubble was opened directly. The return setup is consumed once; it is not a complete snapshot of the previous scene. The player can move back into IntroBox or continue forward to IntroBubble again. A full restart still starts the current scene normally.
+Walking left through IntroBubble's entrance exit loads IntroBox at its endpoint, controlling BoxC at `(13.1, -0.78)` with resize multiplier `0.5` (half its authored base scale) and the exit door open. This works even when IntroBubble was opened directly. The return setup is consumed once; it is not a complete snapshot of the previous scene. The player can move back into IntroBox or continue forward to IntroBubble again. A full restart still starts the current scene normally.
 
 ## IntroBouncyBall
 
 Scene: [IntroBouncyBall.unity](../Assets/Scenes/IntroBouncyBall.unity).
 
-1. Enter as Star through the left opening. The left boundary is inset from the camera edge, keeping the entrance readable.
-2. Touch the glowing BouncyBall; it bounces automatically. This scene alone uses bounce height `3.2` and seconds to apex `0.8`.
-3. Cross the water between aligned, equally sized banks. The ball floats instead of bouncing on the surface; returning to land resumes bouncing.
-4. Cross the separated floor spikes and enter the low-ceiling section on the forward route. The continuous floor prevents falling out of the map. The previous four-spike dead end is removed; the compressed-bounce lesson is part of progression.
-5. Reach the final flag as controlled Star or BouncyBall to show `Entering Level 1...` and load Level01.
+1. Enter as Star through the left opening and touch the glowing BouncyBall. The existing graphical movement keys appear near the first lesson only after the assigned ball is possessed (`showForStarInArea = false`); they remain hidden while controlling Star.
+2. Use the automatic high bounce to climb the 2.2-unit ledge. This scene retains bounce height `3.2` and seconds to apex `0.8`; shared ball tuning is unchanged.
+3. Cross a short 2.1-unit water pool with level banks. A canopy brings the ball down to the surface for a brief floating experience. Leaving water restores automatic bouncing without another text lesson. A thin surface edge marks the blue water; floating uses the ball’s bottom-center position, so side overlap alone cannot stop a bounce on the solid bank.
+4. Drop onto the continuous floor and pass through the safe low-ceiling section. There are no spikes inside this section. Local NoFriction terrain colliders prevent wall rubbing from suppressing the introductory climb.
+5. In the open area after the ceiling, observe the single spike, bounce over it and reach the final flag. The goal opens the Kindergarten graduation screen and waits for a player choice; see [completion feedback](#completion-feedback).
 
-`IntroBouncyBallHints` shows short headlines at map-related anchors: `A little more bounce?`, `Born to bounce.`, `On water, we float!`, `Dry land. Bounce time!` and `Small space. Speedy bounces!`. Explanatory subtitles stay hidden; movement keys remain on the map. Spike death displays `Ouch! Spikes aren't for hugs.` during the existing death pause without adding a respawn delay. Low ceilings shorten the bounce cycle through the existing ball physics; this is not a global movement-speed boost.
+`IntroBouncyBallHints` uses fixed map anchors and repeatable horizontal regions, with boundary hysteresis to avoid flicker. Returning to an area shows its lesson again; there are no one-shot timers or forced tutorial pauses. The entry says `Touch the ball. Reach the high ledge!`, then `You bounce high automatically!` after possession. The water lesson says `A little floating break.` with a floating-ball/wave diagram. The low roof says `Lower ceiling. More bounces per second.` with two animated vertical bounces that differ in height and frequency, not horizontal speed. The final area says `Watch the spike! Bounce over it.` with a jump arc. Spike death displays `Ouch! Spikes aren't for hugs.` during the existing death pause without adding a respawn delay. Explanatory subtitles remain hidden. Form colors and graphical controls are retained; the environment uses the woodland theme below. The entry text and arc share the shifted anchor `(-5.35, 3.7)`, clearing the left wall.
+
+Desktop Unity Play Mode validation (November 19, 2026): possession and high-ledge traversal, water floating/land recovery, low-ceiling passage, returning to earlier hint regions, spike-death feedback/restart, and successful flag transition into Level01 were exercised. The shoreline regression also passed four real-physics cases: left/right solid banks still bounce despite side overlap with water, and left/right blue-water positions float without bouncing. Browser/mobile validation of this revision remains pending.
 
 ### Return to IntroBubble
 
@@ -90,11 +111,11 @@ R opens the restart menu; choose Restart Level for a fresh start, Return to Chec
 
 - **Star:** boxed A/D appears in the opening movement region; boxed SPACE and a jump arc appear near the low step. These prompts require control of the assigned Star and disappear after possession.
 - **Box:** `BoxGrowHint` also gives EntryBox a growth reminder beneath the Bubble.
-- **Air:** after possession, `You are a Bubble` and boxed A/D with horizontal arrows appear on the central dark wall beside the ascent. These are plain high-contrast text/icons, without a card background. The separate Rise in Air card was removed.
-- **Water:** boxed WASD, directional arrows and `Move freely underwater` sit inside the left half of the water at `(-0.85, -0.9)`. Activation Area Size `(7, 10)` and Offset `(1.725, 0.65)` preserve coverage while moving the graphic. This hint remains bound to the original BubbleBody.
+- **Air:** after possession, `Bubbles float up automatically in air.` appears on three lines above boxed A/D and horizontal arrows on the central dark wall beside the ascent. There is no additional title, paragraph or floating icon. Touch mode substitutes the horizontal joystick cue. The lesson stays fixed on the wall without a card background or forced pause.
+- **Water:** boxed WASD, directional arrows and `Move freely underwater` sit inside the left half of the water at `(-1.15, 0)`, above-left of the backup. Activation Area Size `(7, 10)` and Offset `(2.025, -0.25)` preserve coverage while moving the graphic. `useControlledBubble` enables the lesson for the original, backup and all replacement Bubbles.
 - **Exit:** the Q key and right mouse button icons appear above `Pop Bubble / Return to Star` at `(4.5, 4.1)`. The hint stays visible across the upper exit chamber while the player controls either Bubble out of water (activation size `(7, 3)`, offset `(1.75, -0.6)`). It hides after popping. The player can also pop outside this area.
 - **Continuation:** IntroBox uses `ContinueRight` with its `IntroFlagGate` reference. The arrow appears once the gate opens, including after return travel from IntroBubble. ContinueRight does not use a body or activation area.
-- **Readability:** retain the warm-gray background, dark terrain, pale-blue Bubble with dark-blue outline, and blue water. World hints stay fixed on the map; they do not follow the camera or body.
+- **Readability:** use the shared woodland background and dark soil while preserving the pale-blue Bubble, dark-blue outline and blue water. World control hints stay fixed on the map; they do not follow the camera or body.
 
 ### Touch lessons by scene
 
@@ -106,11 +127,11 @@ R opens the restart menu; choose Restart Level for a fresh start, Return to Chec
 | IntroSpider | The controls lesson uses the joystick for travel along connected surfaces. Climb and hazard messages remain contextual. |
 | IntroFan | The possession lesson shows the same wind and exit icons as the right-hand buttons, labeled “Wind on/off” and “Leave Fan”. |
 
-These lessons follow the same Show Mode as the controls. The joystick and action buttons are built at runtime inside the screen safe area. Adjust their shared layout in MobileFormControls. IntroBubble uses its fixed camera at `(0.5, 0.75, -10)` with orthographic size 6. IntroBox uses `(-3, 0, -10)` with size 7. [Form bindings and Editor preview](GameplaySpec.md#2-controls)
+These lessons follow the same Show Mode as the controls. The joystick and action buttons are built at runtime inside the screen safe area. Adjust their shared layout in MobileFormControls. IntroBubble reveals its fixed overview at `(0.5, 0.75, -10)` with orthographic size 6 after the incoming Box transfers to a Bubble. Its entry framing inherits the outgoing view (direct-entry fallback size 5.3). IntroBox follows the player at camera Y 0.5 with size 5.3. [Form bindings and Editor preview](GameplaySpec.md#2-controls)
 
 ### Top-center form messages
 
-IntroBubble disables `IntroFormHintUI`, TutorialTitle and TutorialInstructions; it uses the map hints above. The Bubble rows below describe the retained script capability, not visible messages in the rebuilt scene. IntroBox continues using the top-center messages.
+IntroBubble disables `IntroFormHintUI`, TutorialTitle and TutorialInstructions; it uses the map hints above. The Bubble rows below describe the retained script capability, not visible messages in the rebuilt scene. IntroBox now uses original visual keycaps and short local contact-rule hints; its top-center messages are disabled.
 
 `IntroFormHintUI` updates the title/subtitle from the controlled form and Bubble water state. Titles remain visible; subtitles hold for 4 seconds and fade over 0.75 seconds, using scaled game time. A new qualifying state restarts that timer.
 
@@ -130,25 +151,37 @@ Box-to-Box feedback detects a changed body reference in the Box sequence; stayin
 ### Completion feedback
 
 - IntroBox ↔ IntroBubble ↔ IntroBouncyBall: passage-based scene loads without a Level up overlay; return travel uses the destination endpoint setup described above.
-- IntroBouncyBall → Level01: `Level up!` and `Entering Level 1...`.
+- IntroBouncyBall graduation: `LEVEL UP!`, a backpack Star, `Kindergarten Complete!`, and `You've graduated! / Ready for a new challenge?`. A roughly one-second unscaled fade/pop, Star hop and sparkle reveal runs while gameplay is paused, then the page stays still indefinitely. `Next Level` loads Level01; the top-right house stays above the backdrop, reads `Main Menu` on hover/focus and loads Navigation directly. Keyboard up/down navigation connects these two buttons. Collection Book and gameplay remain blocked.
 - Level01 → IntroSpider: `Level up!` and `Entering Level 2 Intro...`; IntroSpider then continues through IntroFan to Level02.
-- The goal validates its destination and starts `LevelTransitionUI` once. The generated screen-space overlay pauses gameplay and disables the player controller for a default 1.5 seconds measured in real time, then clears checkpoints and loads the next scene with normal time scale. It requires no manually placed completion Canvas or TMP labels.
-- The backdrop intercepts pointer input and the old UI selection is cleared during the transition. This is an automatic transition, not a completion screen waiting for input. `Next Level Label` and `Transition Seconds` are configurable on the goal component; `Next Scene Name` remains the actual scene name.
+- Graduation validates its destination and starts `LevelTransitionUI` once. It records completion at the flag, prevents duplicate overlays/loads, clears checkpoint sessions on either chosen exit and restores normal time in the destination. Selecting Main Menu after completion does not report abandonment. `graduateStar` links the imported transparent character sprite; text and buttons are native Unity UI. No manually placed completion Canvas is required.
+- Other timed level transitions retain their existing labels and real-time delays (normally 1.5 seconds). Their backdrop intercepts pointer input and clears old selection. IntroBouncyBall no longer exposes `Next Level Label` or `Transition Seconds`; it uses `Next Scene Name` and `Graduate Star`. Its graduation UI owns the wait, with Home explicitly raised above the backdrop.
+
+## Woodland theme and readability
+
+IntroBox, IntroBubble and IntroBouncyBall reuse [IntroBouncyBallForest assets and provenance](../Assets/Art/IntroBouncyBallForest/manifest.json): muted sage/teal woodland, dark olive soil, narrow grass edges and subdued blue pool depth. The background stays mid-value so the yellow Star and existing form colors remain distinct. No decorative motion arcs are baked into the background; the visible arcs belong to instructional diagrams.
+
+The backdrop is a 2048 × 1152 image; soil is 512 × 512, grass 256 × 64 and pool depth 256 × 256. Imports use bilinear filtering, no mipmaps and full-rect sprites. Terrain overlays/grass are children of existing solids and gates, with no extra colliders. Grass is drawn inside the existing top edge. Water depth follows existing water bounds. Box/Bubble use `WoodlandCameraBackdrop` to fit the existing camera after movement/zoom; it moves the artwork, not the camera. This is SpriteRenderer decoration, not a Tilemap conversion.
+
+IntroBox's enlarged local writing is black on scenery and gold on walls; resize/control diagrams remain graphical. Bubble uses dark ink on scenery and pale gold on dark walls. BouncyBall uses dark/pale-gold lesson ink and contrasting diagram rims. Keycap drawing order keeps A/D visible above the new terrain art. Form colors, spike silhouettes and their gameplay identities are retained.
+
+Each tutorial's Collection Book is an 88 × 88 square at the same reference size as Home. Its illustrated cover, spine and page block identify the book without a caption. `squareCover` is opt-in on the shared graphic; other scenes retain their own saved settings. Level01 has not received this woodland scene pass.
 
 ## Scene wiring and shared behavior
 
 - Keep `PlayerControl.Initial Body` assigned to the configured, active StarPlayer in edit mode. IntroBox leaves `Starting Host` empty; IntroBubble assigns EntryBox. The controller hides the original Star while hosted and restores it when the Bubble pops.
-- Untouched Bubbles remain motionless until first possession. Once activated, they retain their environmental physics after transferring away. Restarting the scene restores fresh dormant Bubbles. Neither IntroBubble BubbleBody nor BackupBubble regenerates during the same run. The old U2 regeneration exception belongs to Level01_Legacy; current Level01 recreates popped Bubbles on scene reload.
+- Untouched Bubbles remain motionless until first possession. Once activated, they retain their environmental physics after transferring away. Restarting the scene restores fresh dormant Bubbles. IntroBubble BubbleBody does not regenerate during the same run; BackupBubble uses BubbleRespawnOnPop to recreate itself at its authored position after every pop, including subsequent replacements. The old U2 regeneration exception belongs to Level01_Legacy; current Level01 recreates popped Bubbles on scene reload.
 - IntroBubble's BubbleBody needs `BodyWaterPhysics`; WaterArea and IBWaterInlet use trigger `BoxCollider2D` / `WaterZone` components to cover the tank and its tall inlet. Waiting no longer depends on a Bubble canopy, while room ceilings still guide an activated Bubble.
-- IntroBox uses `IntroFlagGate` for the flag/door and `IntroSceneExit` for loading IntroBubble. IntroBubble uses `IntroFlagGate` with its Star assigned and `requireGroundedBody = true`, then `IntroSceneExit` targeting IntroBouncyBall. Its forward exit stores the return Star/position; IntroBouncyBall's left exit targets IntroBubble with `returnToPreviousExit = true`. `IntroBouncyBallGoal` targets Level01 with label `Level 1` and a 1.5-second transition. `LevelGoal` advances current Level01 to IntroSpider without a gate prerequisite, accepting any living controlled form; its label is `Level 2 Intro` with the same transition duration. G2 belongs to the Legacy layout.
+- IntroBox uses `IntroFlagGate` for the flag/door and `IntroSceneExit` for loading IntroBubble. IntroBubble uses `IntroFlagGate` with its Star assigned and `requireGroundedBody = true`, then `IntroSceneExit` targeting IntroBouncyBall. Its forward exit stores the return Star/position; IntroBouncyBall's left exit targets IntroBubble with `returnToPreviousExit = true`. `IntroBouncyBallGoal` targets Level01 through the graduation button and references the backpack Star sprite. `LevelGoal` advances current Level01 to IntroSpider without a gate prerequisite, accepting any living controlled form; its label is `Level 2 Intro` with the same transition duration. G2 belongs to the Legacy layout.
 - `GoalFlagVisual.prefab` is visual only. Keep scene-specific goal triggers and controller references separate from the shared flag asset.
 - Hint roots stay separate from moving bodies. `BubbleMovementHint` has Air, Water, ExitBubble, StarMove, StarJump, ContinueRight and BubbleIntroduction modes with optional edit-mode preview; `BoxGrowHint` creates its full visuals at runtime. Moving a body-dependent hint may require adjusting Activation Area Offset to preserve where it activates. ContinueRight only needs Flag Gate; Continue Arrow Width affects that mode alone.
-- On IntroBox's `TutorialCanvas`, disable the legacy `TutorialIntroUI` component and enable `IntroFormHintUI`. Assign local PlayerControl, TutorialTitle and TutorialInstructions references; choose Box for IntroBox. In IntroBox, keep both TMP objects active and clear obsolete saved instructional text; IntroFormHintUI owns their runtime text. IntroBubble instead keeps both form-message scripts disabled and its old title/instruction objects inactive.
+- In IntroBox and IntroBubble, keep legacy `TutorialIntroUI` and `IntroFormHintUI` disabled. IntroBox uses `IntroBoxCarryLesson`, its local hint label, wall sign and visual controls; IntroBubble uses map hints. Do not re-enable the retained top-center title/subtitle objects as the active lesson.
 - Shared Home uses the local player controller and returns to Navigation; retain R as a separate restart-choice shortcut. Do not re-enable legacy standalone buttons over the new Home/Help layout.
 
 For script details, see [ScriptGuide.md](ScriptGuide.md). For all forms, see [GameplaySpec.md](GameplaySpec.md).
 
 ## Verification and remaining work
+
+The developer accepted the November 19 woodland, hint, continuity and graduation changes. Final Editor checks verified goal pause, no automatic advance during a 15-second hold, graduation artwork/text bounds, Next Level, and the Home pointer-hit/Navigation path with time restored. See [Kindergarten acceptance checks](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance). The following dated release checks are historical.
 
 Historical November 2 integration: developer playtests accepted the BouncyBall route, hints, terrain alignment and two-way Bubble passage. After the Fan hint texture fix (`3365e29`), the final package was rebuilt with the synchronized versions/template and published as Beta 0.1.0. The developer confirmed local and hosted tests passed. The historical 0.1.0 Level01 production records are visible in the dashboard; Version 9 subsequently resolved historical map matching. Historical 0.1.1 raw-row/map acceptance remains separate from the current 0.1.2 follow-ups and broader device coverage.
 
@@ -158,7 +191,7 @@ Earlier November 1 Level01-promotion verification (before BouncyBall integration
 
 October 31 source verification: Unity compilation passed for the shared Q pop / J grow / K shrink controls and current hint logic. The developer accepted the rebuilt terrain and contextual hints during iterative Editor checks. The spare-Bubble pop-hint fix compiled; a complete browser/mobile regression was not recorded at that checkpoint. No publication was claimed by the October 31 checks; see the subsequent Beta release evidence above.
 
-Next browser/device regression: test IntroBubble ↔ IntroBouncyBall in both directions, the BouncyBall water/land/low-ceiling lessons and spike-death hint, and its final Level01 transition. Verify both Bubble instances can reach the upper platform and trigger the Q hint, recovery after a premature pop, return travel in both directions, J/K hints in both intros, and R menu behavior. The spare Bubble is consumable; early popping before reaching it or consuming both bubbles can still require Restart. Desktop air/water lessons retain their assigned host. Touch Bubble lessons and the exit lesson can follow the currently controlled Bubble. Gather new-player readability feedback and broaden device/aspect-ratio and simultaneous-touch coverage. Early Bubble popping or a stranded body can still require Restart; automatic soft-lock recovery and a dedicated underwater-hazard lesson are not implemented. On a phone, repeat the route using the joystick, resize buttons and Pop.
+Next browser/device regression: test IntroBubble ↔ IntroBouncyBall in both directions, the BouncyBall water/land/low-ceiling lessons and spike-death hint, and both graduation exits (Next Level and Home). Verify both Bubble instances can reach the upper platform and trigger the Q hint, recovery after a premature pop, return travel in both directions, J/K hints in both intros, and R menu behavior. Repeat the backup pop/recovery loop; each popped backup should leave exactly one dormant replacement at its original spawn. Early popping before reaching the tank can still require Restart. The desktop air lesson retains its assigned host, while the water lesson, touch Bubble lessons and exit lesson can use the currently controlled Bubble. Gather new-player readability feedback and broaden device/aspect-ratio and simultaneous-touch coverage. Recovery outside the tank and a dedicated underwater-hazard lesson remain unimplemented. On a phone, repeat the route using the joystick, resize buttons and Pop.
 
 ### October 17 implementation record
 

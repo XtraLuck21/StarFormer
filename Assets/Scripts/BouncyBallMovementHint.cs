@@ -13,6 +13,8 @@ public class BouncyBallMovementHint : MonoBehaviour
     [SerializeField]
     private bool previewInEditor = true;
 
+    [SerializeField] private bool showForStarInArea;
+
     [Header("Activation Area")]
     [SerializeField]
     private Vector2 activationAreaSize = new Vector2(8f, 5f);
@@ -81,14 +83,16 @@ public class BouncyBallMovementHint : MonoBehaviour
         }
         else
         {
+            PossessableBody current = playerController != null ? playerController.CurrentBody : null;
             visible =
                 playerController != null &&
                 targetBody != null &&
                 targetBody.Form == BodyForm.BouncyBall &&
                 targetBody.isActiveAndEnabled &&
                 !playerController.IsDead &&
-                playerController.CurrentBody == targetBody &&
-                IsInsideArea();
+                current != null &&
+                (current == targetBody || (showForStarInArea && current.Form == BodyForm.Star)) &&
+                IsInsideArea(current);
         }
 
         if (visuals.activeSelf != visible)
@@ -97,15 +101,15 @@ public class BouncyBallMovementHint : MonoBehaviour
         }
     }
 
-    private bool IsInsideArea()
+    private bool IsInsideArea(PossessableBody body)
     {
-        if (targetBody == null || targetBody.BodyCollider == null)
+        if (body == null || body.BodyCollider == null)
         {
             return false;
         }
 
         Vector2 localCenter = transform.InverseTransformPoint(
-            targetBody.BodyCollider.bounds.center
+            body.BodyCollider.bounds.center
         );
 
         Vector2 distance = localCenter - activationAreaOffset;

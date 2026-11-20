@@ -9,11 +9,7 @@ public class IntroBouncyBallGoal : MonoBehaviour
     [SerializeField]
     private string nextSceneName = "Level01";
 
-    [SerializeField]
-    private string nextLevelLabel = "Level 1";
-
-    [SerializeField, Min(0.1f)]
-    private float transitionSeconds = 1.5f;
+    [SerializeField] private Sprite graduateStar;
 
     private bool isLoading;
     private bool reportedMissingScene;
@@ -65,14 +61,12 @@ public class IntroBouncyBallGoal : MonoBehaviour
             return;
         }
 
-        // 只有玩家控制的星星或弹力球可以通关。
         if (body.Form != BodyForm.Star &&
             body.Form != BodyForm.BouncyBall)
         {
             return;
         }
 
-        // 确认进入终点的是当前玩家的碰撞框。
         if (other.attachedRigidbody == null ||
             other.attachedRigidbody != body.Body)
         {
@@ -96,16 +90,9 @@ public class IntroBouncyBallGoal : MonoBehaviour
             return;
         }
 
-        // 防止重复触发。
         isLoading = true;
         AnalyticsManager.Instance?.TrackLevelComplete(body);
 
-        // 复用项目已有的过关提示和场景跳转。
-        LevelTransitionUI.ShowAndLoad(
-            nextSceneName,
-            nextLevelLabel,
-            playerController,
-            transitionSeconds
-        );
+        LevelTransitionUI.ShowKindergartenGraduation(nextSceneName, playerController, graduateStar);
     }
 }

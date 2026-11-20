@@ -297,6 +297,17 @@ public class BoxResizeAbility : MonoBehaviour
         ApplySize(Mathf.Clamp(size, minimumSize, maximumSize), boxCollider.bounds, false);
     }
 
+    // Scene handoffs use world width, since the two hosts can have different baselines.
+    // Keep the feet planted while restoring the incoming size.
+    public void RestoreSceneEntryWidth(float width)
+    {
+        Physics2D.SyncTransforms();
+        Bounds bounds = boxCollider.bounds;
+        if (width <= 0f || bounds.size.x <= 0f) return;
+        float size = currentSize * width / bounds.size.x;
+        ApplySize(Mathf.Clamp(size, minimumSize, maximumSize), bounds, true);
+    }
+
     private void OnValidate()
     {
         minimumSize = Mathf.Clamp(minimumSize, 0.1f, 1f);
