@@ -7,6 +7,10 @@ public class IntroBouncyBallHints : MonoBehaviour
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text subtitleText;
+    [Header("Hint palette")]
+    [SerializeField] private Color diagramColor = Color.white;
+    [SerializeField] private Color roofInkColor = Color.white;
+    [SerializeField] private bool highContrastOutlines;
     [Header("Lesson regions (world X)")]
     [SerializeField] private float entryEndX = -3.4f;
     [SerializeField] private float waterEndX = .6f;
@@ -45,6 +49,8 @@ public class IntroBouncyBallHints : MonoBehaviour
         titleText.raycastTarget = false;
         titleText.enableAutoSizing = false;
         titleText.fontSize = 30f;
+        // TMP creates a private material instance; the shared font asset stays unchanged.
+        if (highContrastOutlines) titleText.outlineWidth = .14f;
         titleText.alignment = TextAlignmentOptions.Center;
         titleText.rectTransform.anchorMin = titleText.rectTransform.anchorMax = new Vector2(.5f, .5f);
         titleText.rectTransform.pivot = new Vector2(.5f, .5f);
@@ -75,7 +81,12 @@ public class IntroBouncyBallHints : MonoBehaviour
             groups[i].SetActive(!playerController.IsDead && i == (int)lesson);
 
         bool onDarkRoof = lesson == Lesson.Water || lesson == Lesson.LowCeiling;
-        titleText.color = onDarkRoof ? Color.white : normalColor;
+        titleText.color = onDarkRoof ? roofInkColor : normalColor;
+        if (highContrastOutlines)
+        {
+            Color outline = onDarkRoof ? normalColor : roofInkColor;
+            if ((Color)titleText.outlineColor != outline) titleText.outlineColor = outline;
+        }
         titleText.alpha = 1f;
         switch (lesson)
         {
@@ -105,6 +116,7 @@ public class IntroBouncyBallHints : MonoBehaviour
             {
                 anchor = spikeAnchor;
                 titleText.color = normalColor;
+                if (highContrastOutlines) titleText.outlineColor = roofInkColor;
                 titleText.text = "Ouch! Spikes\naren't for hugs.";
             }
             else titleText.alpha = 0f;
@@ -243,8 +255,23 @@ public class IntroBouncyBallHints : MonoBehaviour
         part.localScale = new Vector3(delta.magnitude, .035f, 1f);
         SpriteRenderer renderer = part.gameObject.AddComponent<SpriteRenderer>();
         renderer.sprite = strokeSprite;
-        renderer.color = Color.white;
+        // Water and low-ceiling lessons sit over the dark roof; other lessons sit over the background.
+        bool onDarkRoof = parent.IsChildOf(groups[(int)Lesson.Water].transform)
+            || parent.IsChildOf(groups[(int)Lesson.LowCeiling].transform);
+        renderer.color = onDarkRoof ? roofInkColor : diagramColor;
         renderer.sortingOrder = 20;
+        if (highContrastOutlines)
+        {
+            // A thin contrasting rim keeps map diagrams readable across foliage and soil.
+            part.localScale = new Vector3(delta.magnitude, .045f, 1f);
+            Transform rim = new GameObject("Stroke rim").transform;
+            rim.SetParent(part, false);
+            rim.localScale = new Vector3(1f + .035f / Mathf.Max(delta.magnitude, .001f), 2f, 1f);
+            SpriteRenderer border = rim.gameObject.AddComponent<SpriteRenderer>();
+            border.sprite = strokeSprite;
+            border.color = onDarkRoof ? diagramColor : roofInkColor;
+            border.sortingOrder = 19;
+        }
     }
 
     private void OnDisable()

@@ -1,0 +1,107 @@
+{
+  "scene": "Assets/Scenes/IntroBouncyBall.unity",
+  "direction": "A - Woodland adventure",
+  "status": "Implemented sample; pending user art approval",
+  "date": "2026-11-19",
+  "brief": {
+    "scope": "Background, soil platforms, grass edges and pool depth; scene-local sprite overlays only",
+    "style": "Muted sage woodland, simple flat shapes, sparse soil strata and stones",
+    "preserved": "Original form colors, hazards, input, route, camera, transforms and all collision boundaries",
+    "implementation": "Existing SpriteRenderers and BoxCollider2D retained; no Tilemap migration",
+    "layers": "Backdrop order -100; terrain overlays order 0 at z -0.01; grass order 0 at z -0.02; waterline order 2; existing tutorial and gameplay layers retained"
+  },
+  "assets": [
+    {
+      "file": "ForestBackground.png",
+      "size": [
+        2048,
+        1152
+      ],
+      "ppu": 128,
+      "source": "OpenAI image generation",
+      "source_file": "/Users/castro/.codex/generated_images/01a1f5b6-5e26-75b2-bd74-8601464185d1/exec-a63905ce-e56b-4bde-bdb3-7648181cafae.png",
+      "reference": "/Users/castro/.codex/generated_images/01a1f5b6-5e26-75b2-bd74-8601464185d1/exec-9152a289-11a1-4641-a257-0b06b6888435.png",
+      "prompt": "Create a production BACKGROUND ONLY for StarFormer 2D orthographic side-view platformer, based on the approved woodland concept reference. Extract/reimagine ONLY its distant forest scenery into a complete uninterrupted landscape backdrop. Remove ALL foreground earth/rock platforms, walls, hanging rectangular ceiling blocks, grass-topped playable surfaces, pool, water, flag, spike, ball, yellow star, text, UI. The result is NOT a game screenshot and contains NO gameplay objects and NO ground horizon that could look walkable.\nCanvas 16:9 wide landscape, ideally 2048x1152. Mid-value muted sage/teal sky, stylized large rounded forest tree canopies and trunks only along extreme left and right margins, soft distant woodland layers from lower half down to bottom, small desaturated grey-sage clouds confined to top 15%. The upper-left area between x=10%-30%, y=15%-50% is a calm open mid-value sage sky with almost no detail, reserved for dark tutorial writing. The central upper area also spacious. Bottom quarter soft broad silhouettes without crisp foreground leaves. Forest continues to bottom edge without a solid ground ledge.\nMaintain the approved art language: broad flat-color shapes, simple restrained two-tone shading, no photographic texture or grain, no glowing particles, no decorative arcs, no sun disks, no yellow or orange flowers, no purple plants. Mid-value palette with compressed contrast: sage sky around #789B8E, rear trees #6C9589 and #648C81, nearer backdrop trees #53786D. No dark nearly-black foreground tree trunks, no pale white sky. Background details subordinate to bright yellow star and purple ball that will be composited in engine. Crisp illustration, not painterly blur. Opaque background. This image will be behind real separate gameplay terrain, so it must contain ZERO floating platforms or apparent terrain silhouettes.",
+      "processing": "Resized to 2048x1152 RGB",
+      "license": "Generated for this project; no third-party stock asset"
+    },
+    {
+      "file": "SoilTile.png",
+      "size": [
+        512,
+        512
+      ],
+      "ppu": 128,
+      "source": "Project-authored deterministic texture in IntroBouncyBallForestSetup.cs",
+      "license": "Project-authored"
+    },
+    {
+      "file": "GrassEdge.png",
+      "size": [
+        256,
+        64
+      ],
+      "ppu": 256,
+      "source": "Project-authored deterministic texture in IntroBouncyBallForestSetup.cs",
+      "license": "Project-authored"
+    },
+    {
+      "file": "PoolDepth.png",
+      "size": [
+        256,
+        256
+      ],
+      "ppu": 256,
+      "source": "Project-authored deterministic texture in IntroBouncyBallForestSetup.cs",
+      "license": "Project-authored"
+    }
+  ],
+  "import": {
+    "pivot": [
+      0.5,
+      0.5
+    ],
+    "filter": "Bilinear",
+    "mipmaps": false,
+    "compression": "Uncompressed",
+    "mesh": "FullRect",
+    "generatePhysicsShape": false
+  },
+  "qa": {
+    "asset_report": "All four images pass expected sizes; grass transparency passes; soil/grass/water palette limits pass",
+    "horizontal_tile_edges": "Soil and grass opposite edge pixels match exactly",
+    "visual_review": "Contact sheet and Unity 16:9 Play Mode",
+    "play_checked": [
+      "Entry/possession",
+      "High ledge and water traversal",
+      "Low ceiling and regional hints"
+    ],
+    "full_level_completion_tested": false
+  },
+  "ui_readability": {
+    "scope": "IntroBouncyBall only; opt-in serialized settings preserve other scenes",
+    "ink": "#070F0C",
+    "roof_ink_and_keycaps": "#F5DBA3",
+    "diagram_edges": "Contrasting rim, world-fixed",
+    "movement_hint": "Visible for star and possessed ball inside entry area; reappears on return",
+    "book": {
+      "source": "Project-authored vector geometry in Assets/UI/CollectionBookGraphic.cs",
+      "license": "Project-authored",
+      "size_ui_units": [
+        88,
+        88
+      ],
+      "label": false,
+      "square_cover": true,
+      "technical_checks_passed": true
+    },
+    "validated": [
+      "Unity compilation and Play Mode",
+      "Star and possessed ball hint visibility",
+      "Return to entry restores hint",
+      "Wall hint contrast",
+      "Book button opens; close button resumes play",
+      "No world transform or physics changes"
+    ]
+  }
+}

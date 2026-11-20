@@ -5,17 +5,31 @@ using UnityEngine.UI;
 [RequireComponent(typeof(CanvasRenderer))]
 public sealed class CollectionBookGraphic : MaskableGraphic
 {
+    [SerializeField] private bool squareCover;
+
     protected override void OnPopulateMesh(VertexHelper vh)
     {
         vh.Clear();
         var r = GetPixelAdjustedRect();
         Color ink = new Color(.10f, .14f, .18f, 1f);
         Color yellow = new Color(1f, .82f, .15f, 1f);
-        Quad(vh, r, .12f, .05f, .88f, .92f, ink);
-        Quad(vh, r, .17f, .09f, .84f, .22f, new Color(1f, .97f, .85f));
-        Quad(vh, r, .12f, .18f, .88f, .95f, ink);
-        Quad(vh, r, .17f, .23f, .83f, .90f, yellow);
-        Quad(vh, r, .23f, .23f, .26f, .90f, ink);
+        if (squareCover)
+        {
+            // Fill the square HUD bounds, with a spine and visible page block.
+            Quad(vh, r, 0f, 0f, 1f, 1f, ink);
+            Quad(vh, r, .055f, .055f, .945f, .18f, new Color(1f, .94f, .76f));
+            Quad(vh, r, .055f, .23f, .945f, .945f, yellow);
+            Quad(vh, r, .18f, .23f, .215f, .945f, ink);
+            Quad(vh, r, .11f, .105f, .90f, .125f, new Color(.68f, .62f, .43f));
+        }
+        else
+        {
+            Quad(vh, r, .12f, .05f, .88f, .92f, ink);
+            Quad(vh, r, .17f, .09f, .84f, .22f, new Color(1f, .97f, .85f));
+            Quad(vh, r, .12f, .18f, .88f, .95f, ink);
+            Quad(vh, r, .17f, .23f, .83f, .90f, yellow);
+            Quad(vh, r, .23f, .23f, .26f, .90f, ink);
+        }
         // A five-point star on the front cover.
         Vector2 center = new Vector2(r.xMin + r.width * .55f, r.yMin + r.height * .57f);
         int first = vh.currentVertCount;
