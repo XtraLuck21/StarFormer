@@ -19,8 +19,9 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 - Navigation’s Level 1 entrance targets `Level01` through NavigationEntrance; both contact and click paths run the entry feedback before loading.
 - IntroBouncyBall's Star/BouncyBall goal opens graduation; choosing Next Level loads `Level01`; IntroBubble first opens a passage to that tutorial.
 - Level01 is at enabled build index 4, after IntroBouncyBall; IntroSpider, IntroFan and Level02 follow at indices 5, 6 and 7. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
-- The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, label `Level 2 Intro`, and a 1.5-second transition. Any living controlled form can finish.
-- Completion pauses gameplay, shows `Level up! / Entering Level 2 Intro...`, clears checkpoint sessions and loads the next scene with normal time. The final wait-for-menu completion screen belongs to Level02.
+- The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, and the Elementary School admission presentation enabled. Any living controlled form can finish.
+- Completion pauses gameplay and opens a woodland-green/gold acceptance letter: `LEVEL UP!`, `Level 1 Complete!`, `Dear Star,`, `You're accepted!`, and `Welcome to Elementary School`. A yellow Star with a teal notebook and pencil emerges from a cream envelope. Native UI text and buttons remain separate from the transparent character sprite.
+- A roughly one-second unscaled envelope opening and Star hop settles into a still page. There is no automatic advance: `Next Level →` loads IntroSpider; the top-right Home stays clickable above the backdrop from the start of the reveal and returns directly to Navigation. Its tooltip reads `Main Menu`. Both exits clear checkpoint sessions and restore normal time; completion is recorded once at the flag. Keyboard up/down connects the two buttons. The saved timed-transition fields are only a fallback for other LevelGoal instances.
 
 ## Playable route
 
@@ -106,6 +107,8 @@ Restart Level, returning to Navigation, a new menu entry and forward level progr
 `AdvancedCheckpointController` suppresses the legacy E-pop reminder. Level01 has no separate ceiling-triggered Q-pop lessons. [Controls by form](GameplaySpec.md#2-controls)
 
 ## Verification and remaining work
+
+Elementary admission update: isolated Unity Play Mode checks passed the real Level01 flag trigger, a 15-second paused hold, stable post-reveal Star, Next Level → IntroSpider, topmost Home pointer hits during and after reveal → Navigation, restored time on both exits, and the original Kindergarten graduation/Next Level path. Text bounds were checked at 1920 × 1080 and 1280 × 960. Physical touch and exported-player verification remain separate.
 
 The branch’s existing Editor checks and developer playtests cover water traversal, reminders, matching renewable Bubbles, checkpoint placement, book presentation and clickable/replayable door help. See [Level01 polish source acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance) for evidence and remaining browser/device checks. This documentation sync does not rerun gameplay or publish a build.
 

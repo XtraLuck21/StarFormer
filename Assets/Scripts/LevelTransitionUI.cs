@@ -47,6 +47,18 @@ public class LevelTransitionUI : MonoBehaviour
             transition.completionHome.SetCompletionExit(transition.ContinueToScene, graduation.NextLevelButton);
     }
 
+    public static void ShowElementaryAdmission(string sceneName,
+        PlayerPossessionController playerController, Sprite studentStar)
+    {
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        var admission = transition.gameObject.AddComponent<ElementaryAdmissionUI>();
+        admission.Initialize(studentStar, () => transition.ContinueToScene(sceneName));
+        transition.completionHome = Object.FindFirstObjectByType<MainMenuButtonUI>();
+        if (transition.completionHome != null)
+            transition.completionHome.SetCompletionExit(transition.ContinueToScene, admission.NextLevelButton);
+    }
+
     private void ContinueToScene(string sceneName)
     {
         if (isLoadingScene) return;

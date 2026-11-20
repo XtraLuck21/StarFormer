@@ -46,9 +46,11 @@ Each of the seven enabled gameplay scenes has the top-right house-and-Star squar
 
 Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Escape from Paused resumes. The menu blocks background interaction, does not stack over the R menu or a route cinematic, and restores its owned pause when disabled. It does not add Hint/Controls actions.
 
-### Kindergarten graduation exception
+### Completion-screen exceptions
 
 After IntroBouncyBall completion, gameplay remains paused on the graduation screen. The house stays visible and clickable above its backdrop, with a `Main Menu` tooltip. It loads Navigation directly instead of opening Paused or asking to abandon an already-completed run. Next Level loads Level01. Both routes clear checkpoint sessions and restore normal time; form discoveries still last for the application session. Escape does not bypass graduation into the ordinary Home menu. See [completion feedback](intro-levels.md#completion-feedback).
+
+Level01 uses the same direct Home exit on its Elementary School acceptance page. Home stays above the backdrop and is clickable during and after the reveal. Next Level loads IntroSpider; neither the reveal nor waiting advances the level automatically. Both exits restore time and clear checkpoint sessions without reporting abandonment of the completed run.
 
 IntroBox's dropped-cargo retry restores just its carrying lesson, not a checkpoint or scene reload. Backward scene passages also remain separate from checkpoints.
 
