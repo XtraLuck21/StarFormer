@@ -1,7 +1,8 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-// Scene-local help: deliberately walk/bounce into the sign; no extra input binding.
+// Scene-local help: click the visible sign or deliberately walk/bounce into it.
 public sealed class MovableDoorContactHint : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
@@ -131,6 +132,15 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         buttonFace.color = Color.Lerp(hintPulse, hintFace,
             .25f + .15f * Mathf.Sin(attentionSeconds * 2f));
         if (armed && contact.isValid && contact.distance <= .01f) BeginDemo();
+    }
+
+    private void OnHintClicked()
+    {
+        if (!visible || solved || presenting || !CanPlay) return;
+        var body = ControlledBody();
+        if (body == null || !room.Contains(body.Body.position) ||
+            (body.Form != BodyForm.Box && body.Form != BodyForm.BouncyBall)) return;
+        BeginDemo();
     }
 
     private void BeginDemo()
@@ -265,6 +275,24 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         buttonStar = Star("Hint star", buttonVisual);
         buttonStar.localPosition = new Vector3(0f, .08f, -.02f);
         Text("Hint", buttonVisual, new Vector3(0f, -.3f, -.03f), new Vector2(.9f, .3f), 2.2f).color = buttonInk;
+        // A transparent UI hit area shares the sign's bounds. UI raycasting also
+        // prevents the same press from resizing Box through the hint.
+        var clickArea = new GameObject("Hint click area", typeof(RectTransform), typeof(Canvas),
+            typeof(GraphicRaycaster), typeof(Image), typeof(Button));
+        clickArea.layer = LayerMask.NameToLayer("UI");
+        var clickRect = clickArea.GetComponent<RectTransform>();
+        clickRect.SetParent(buttonVisual, false);
+        clickRect.localPosition = new Vector3(0, 0, -.04f);
+        clickRect.sizeDelta = Vector2.one;
+        var clickCanvas = clickArea.GetComponent<Canvas>();
+        clickCanvas.renderMode = RenderMode.WorldSpace;
+        clickCanvas.worldCamera = levelCamera.GetComponent<Camera>();
+        clickCanvas.sortingOrder = 24;
+        clickArea.GetComponent<Image>().color = Color.clear;
+        var clickButton = clickArea.GetComponent<Button>();
+        clickButton.transition = Selectable.Transition.None;
+        clickButton.navigation = new Navigation { mode = Navigation.Mode.None };
+        clickButton.onClick.AddListener(OnHintClicked);
         ghostDoor = Square("Door preview (no collider)", transform, Vector3.zero, Vector2.one, previewColor, 20);
         demoStar = Star("Helpful star", transform);
         caption = Text("Door hint caption", transform, new Vector3(captionPosition.x, captionPosition.y, -.2f), new Vector2(4.9f, 1.2f), 4.4f);
