@@ -87,8 +87,7 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         var body = ControlledBody();
         float bottom = door.CurrentBottom;
         // Actual door progress counts even while the player keeps bouncing in place.
-        if (bottom >= initialBottom + solvedRise ||
-            (body != null && body.Body.position.x >= room.xMax && body.Body.position.y < 11f))
+        if (bottom >= initialBottom + solvedRise)
         {
             solved = true;
             sensor.enabled = false;
@@ -102,17 +101,15 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         if (body == null || !room.Contains(body.Body.position))
         {
             idleSeconds = 0f;
-            SetVisible(false);
+            armed = false;
             return;
         }
         bool eligible = body.Form == BodyForm.Box || body.Form == BodyForm.BouncyBall;
-        if (!eligible) { idleSeconds = 0f; SetVisible(false); return; }
+        if (!eligible) { idleSeconds = 0f; armed = false; return; }
 
-        // Once dismissed or used, the sign stays retired for this scene visit.
-        if (!visible && hasShown) return;
-
+        // Once offered, help remains available until the real door is raised.
         idleSeconds += Time.deltaTime;
-        if (!visible && idleSeconds >= stuckSeconds)
+        if (!visible && (hasShown || idleSeconds >= stuckSeconds))
         {
             hasShown = true;
             SetVisible(true);
@@ -124,7 +121,7 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         if (!visible) return;
         ColliderDistance2D contact = sensor.Distance(body.BodyCollider);
         // Separation in any direction arms the next touch, including Box growth
-        // from underneath. The one-shot lifecycle prevents repeated bounce activation.
+        // from underneath. A held overlap cannot replay the preview on its own.
         if (contact.isValid && contact.distance > .03f) armed = true;
         attentionSeconds += Time.deltaTime;
         float hop = attentionSeconds < 1f ? .2f * Mathf.Abs(Mathf.Sin(attentionSeconds * Mathf.PI * 2f)) : 0f;
@@ -189,6 +186,8 @@ public sealed class MovableDoorContactHint : MonoBehaviour
             player.enabled = playerWasEnabled;
         }
         Time.timeScale = savedTimeScale;
+        armed = false;
+        SetVisible(!solved);
     }
 
     private void SetVisible(bool value)
