@@ -1,0 +1,29 @@
+{
+  "purpose": "Kindergarten graduation popup after IntroBouncyBall; approved preview implemented with native Unity text/button and independent character animation",
+  "source_kind": "OpenAI image generation",
+  "source_file": "/Users/castro/.codex/generated_images/01a1f5b6-5e26-75b2-bd74-8601464185d1/exec-62c1342b-e081-4791-8f42-9d1d937b348b.png",
+  "reference_file": "/Users/castro/.codex/generated_images/01a1f5b6-5e26-75b2-bd74-8601464185d1/exec-729a4000-f153-45fb-8dff-68f139abda73.png",
+  "license": "Generated for StarFormer; existing approved concept used as reference",
+  "asset": "GraduateStar.png",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "alpha": true,
+  "ppu": 100,
+  "filter": "Bilinear",
+  "compression": "Uncompressed",
+  "mipmaps": false,
+  "physics_shape": false,
+  "sprite_pivot": [
+    0.5,
+    0.5
+  ],
+  "palette": "Yellow star, teal backpack, tan straps; dark forest modal and gold UI",
+  "prompt": "Extract only the five-point yellow star wearing the teal school backpack from the approved popup. Transparent background, no text, scenery, sparkles, ground shadow, or motion lines. Keep five points, no face or limbs, simple two-tone shading.",
+  "qa": {
+    "alpha_check_passed": true,
+    "technical_checks_passed": true,
+    "in_engine_review": "Passed in Unity 6000.3.22f1 at 1920x1080: transparent artwork, readable text without overflow, unscaled reveal, 15-second frozen hold, duplicate trigger guard, keyboard submit, and Level01 time/control restoration."
+  }
+}

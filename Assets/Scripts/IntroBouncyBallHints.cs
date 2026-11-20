@@ -17,7 +17,7 @@ public class IntroBouncyBallHints : MonoBehaviour
     [SerializeField] private float lowCeilingEndX = 4.3f;
     [SerializeField, Min(0f)] private float boundaryHysteresis = .18f;
     [Header("Fixed map anchors")]
-    [SerializeField] private Vector2 entryAnchor = new Vector2(-5.9f, 3.7f);
+    [SerializeField] private Vector2 entryAnchor = new Vector2(-5.35f, 3.7f);
     [SerializeField] private Vector2 waterAnchor = new Vector2(-1.85f, 4.5f);
     [SerializeField] private Vector2 quickBounceAnchor = new Vector2(2.5f, 4.5f);
     [SerializeField] private Vector2 spikeAnchor = new Vector2(6.4f, 3.7f);
