@@ -44,6 +44,8 @@ public class spikeWallSpawn : MonoBehaviour
         chase = GetComponent<SpikeWallEnemyChase>();
     }
 
+    public bool HasBegunEmergence => sequenceStarted;
+
     public void BeginEmergence()
     {
         if (sequenceStarted)

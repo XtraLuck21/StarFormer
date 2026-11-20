@@ -14,6 +14,7 @@ public class StarRoomDoor : MonoBehaviour
     [SerializeField, Min(0.01f)] private float fadeDuration = 0.18f;
     [SerializeField, Min(0f)] private float arrivalClearance = 0.2f;
     [SerializeField, Min(0f)] private float arrivalHopSpeed = 3.5f;
+    [SerializeField] private float arrivalHorizontalOffset;
 
     private bool busy;
     private bool used;
@@ -83,7 +84,7 @@ public class StarRoomDoor : MonoBehaviour
         // Query the authored board, not its parent/pivot at the fulcrum below.
         Bounds bounds = arrivalSurface.bounds;
         Vector2 point = arrivalSurface.ClosestPoint(new Vector2(
-            bounds.center.x, bounds.max.y + 2f));
+            bounds.center.x + arrivalHorizontalOffset, bounds.max.y + 2f));
         Vector2 arrivalPosition = point + Vector2.up * (halfHeight + arrivalClearance);
         if (roomSupplies != null)
             arrivalPosition = roomSupplies.ClearArrivalPosition(arrivalPosition, halfHeight, arrivalClearance);

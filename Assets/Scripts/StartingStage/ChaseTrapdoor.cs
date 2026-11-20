@@ -37,29 +37,46 @@ public class ChaseTrapdoor : MonoBehaviour
             }
 
             opened = true;
-            GetComponent<BoxCollider2D>().enabled = false;
-            if (TryGetComponent<SpriteRenderer>(out var visual))
-            {
-                visual.enabled = false;
-            }
-            if (spikeWall != null)
-            {
-                spikeWall.EndChase();
-            }
-            // Override the chase-end focus shot so the fall remains visible.
-            if (levelCamera != null)
-            {
-                levelCamera.BeginTrapdoorDrop();
-            }
-            if (playerBody.Form == BodyForm.Star)
-            {
-                if (darkPassage != null)
-                {
-                    darkPassage.BeginDescent(playerBody);
-                }
-                StartCoroutine(AnimateStarDrop(playerBody));
-            }
+            StartCoroutine(CrackThenDrop(playerBody));
             return;
+        }
+    }
+
+    private IEnumerator CrackThenDrop(PossessableBody playerBody)
+    {
+        var support = GetComponent<BoxCollider2D>();
+        if (TryGetComponent<SpriteRenderer>(out var surface))
+        {
+            var cracks = FloorCrack.CreateAcross(surface, support.bounds);
+            for (float elapsed = 0; elapsed < .5f; elapsed += Time.deltaTime)
+            {
+                FloorCrack.RevealAcross(cracks, elapsed / .33f);
+                yield return null;
+            }
+            foreach (var crack in cracks) crack.Remove();
+        }
+
+        support.enabled = false;
+        if (TryGetComponent<SpriteRenderer>(out var visual))
+        {
+            visual.enabled = false;
+        }
+        if (spikeWall != null)
+        {
+            spikeWall.EndChase();
+        }
+        // Override the chase-end focus shot so the fall remains visible.
+        if (levelCamera != null)
+        {
+            levelCamera.BeginTrapdoorDrop();
+        }
+        if (playerBody.Form == BodyForm.Star)
+        {
+            if (darkPassage != null)
+            {
+                darkPassage.BeginDescent(playerBody);
+            }
+            StartCoroutine(AnimateStarDrop(playerBody));
         }
     }
 

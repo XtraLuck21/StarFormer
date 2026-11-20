@@ -60,6 +60,13 @@ public class BubbleMovementHint : MonoBehaviour
     [Header("IntroSpider Hint Sequence")]
     [SerializeField] private bool useSpiderHintSequence;
     [SerializeField] private Transform spiderClimbSurface;
+    [Tooltip("Optional silk lesson: climb onto this block, then cast to spiderClimbSurface.")]
+    [SerializeField] private Collider2D spiderSilkLaunchBlock;
+    private bool silkLaunchedFromBlock;
+    private bool silkPullStarted;
+    private bool silkLessonCompleted;
+    private SpiderSilkTutorialVisual silkDemo;
+    private Collider2D silkLessonTarget;
     [SerializeField] private Vector2[] spiderWallArrowPositions;
     [SerializeField] private TMP_Text[] spiderWallArrowTexts;
     [SerializeField, Min(0f)] private float spiderArrowSeconds = 8f;
@@ -372,6 +379,7 @@ public class BubbleMovementHint : MonoBehaviour
         if (playerController != null && playerController.IsDead &&
             playerController.LastDeathCause == AnalyticsDeathCause.Spike)
         {
+            ResetSilkLesson();
             if (introductionTitle != null)
             {
                 introductionTitle.text = spikeCake != null && spikeCake.ShowFirstContactMessage
@@ -387,6 +395,7 @@ public class BubbleMovementHint : MonoBehaviour
             playerController != null && !playerController.IsDead;
         if (!visible)
         {
+            ResetSilkLesson();
             introductionBody = null;
             introductionSubtitleAge = 0f;
             SetWallArrowAlpha(0f);
@@ -395,6 +404,7 @@ public class BubbleMovementHint : MonoBehaviour
 
         if (introductionBody != body)
         {
+            ResetSilkLesson();
             introductionBody = body;
             introductionSubtitleAge = 0f;
         }
@@ -429,6 +439,10 @@ public class BubbleMovementHint : MonoBehaviour
                 Mathf.Clamp01((hasClimbedObstacle ? climbMessageAge : introductionSubtitleAge) / fadeIn));
         }
 
+        // Keep the original introduction copy; the silk lesson replaces only the input demonstration.
+        if (spiderSilkLaunchBlock != null && spiderClimbSurface != null)
+            return UpdateSpiderSilkLesson(body);
+
         // Start at possession: the authored nearby arrow leads the later wall arrows.
         int arrowIndex = 0;
         if (spiderWallArrowTexts != null)
@@ -446,6 +460,51 @@ public class BubbleMovementHint : MonoBehaviour
             float age = introductionSubtitleAge - arrowIndex++ * 0.45f;
             SetArrowAlpha(wallArrows[i], WallArrowPulse(age, fadeOut));
         }
+        return true;
+    }
+
+    private void ResetSilkLesson()
+    {
+        silkLaunchedFromBlock = silkPullStarted = silkLessonCompleted = false;
+        silkDemo?.Hide();
+    }
+
+    private bool UpdateSpiderSilkLesson(PossessableBody body)
+    {
+        if (!body.TryGetComponent(out HexagonSurfaceMovement movement) ||
+            !body.TryGetComponent(out SpiderSilkAbility silk) || body.BodyCollider == null) return false;
+
+        Bounds block = spiderSilkLaunchBlock.bounds;
+        Bounds spider = body.BodyCollider.bounds;
+        bool onTop = movement.IsAttached && movement.AttachedSurface == spiderSilkLaunchBlock &&
+            movement.SurfaceTangent.x > 0.7f && spider.min.y >= block.max.y - 0.12f &&
+            spider.center.x >= block.min.x && spider.center.x <= block.max.x;
+        if (onTop && silk.IsFiring) silkLaunchedFromBlock = true;
+        if (silkLaunchedFromBlock && silk.IsPulling) silkPullStarted = true;
+        Transform attached = movement.AttachedSurface != null ? movement.AttachedSurface.transform : null;
+        if (silkPullStarted && movement.IsAttached && attached != null &&
+            (attached == spiderClimbSurface || attached.IsChildOf(spiderClimbSurface)))
+            silkLessonCompleted = true;
+        if (!silk.IsFiring)
+        {
+            silkLaunchedFromBlock = false;
+            silkPullStarted = false;
+        }
+
+        SetWallArrowAlpha(0f);
+        bool showDemo = Time.timeScale > 0f && onTop && !silkLessonCompleted && !silk.IsAiming && !silk.IsFiring &&
+            (mobileControls == null || !mobileControls.MobileMode);
+        if (showDemo)
+        {
+            if (silkLessonTarget == null)
+                silkLessonTarget = spiderClimbSurface.GetComponentInChildren<Collider2D>();
+            if (silkLessonTarget != null)
+            {
+                silkDemo ??= new SpiderSilkTutorialVisual(visuals.transform, strokeSprite, sortingOrder + 3);
+                silkDemo.Draw(spider.center, silkLessonTarget.ClosestPoint(spider.center), Time.deltaTime);
+            }
+        }
+        else silkDemo?.Hide();
         return true;
     }
 
@@ -841,6 +900,9 @@ public class BubbleMovementHint : MonoBehaviour
 
     private void ReleaseVisuals()
     {
+        silkDemo?.Dispose();
+        silkDemo = null;
+        silkLessonTarget = null;
         foreach (KeyValuePair<TMP_Text, float> entry in wallArrowTextAlphas)
         {
             if (entry.Key == null) continue;
@@ -857,6 +919,7 @@ public class BubbleMovementHint : MonoBehaviour
         introductionTitle = null;
         introductionSubtitle = null;
         introductionBody = null;
+        ResetSilkLesson();
         introductionSubtitleAge = 0f;
         introductionSurfaceBody = null;
         hasReachedIntroductionSurface = false;

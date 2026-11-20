@@ -47,6 +47,7 @@ public class SpikeWallEnemyChase : MonoBehaviour
     private float rearOffset;
     private float frontOffset;
     public bool HasStarted { get; private set; }
+    public bool IsChasing => movementStarted && !chaseEnded && !deathRequested;
     public float RearEdgeX => body.position.x + rearOffset;
     public float FrontEdgeX => body.position.x + frontOffset;
 

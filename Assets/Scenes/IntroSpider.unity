@@ -6547,8 +6547,8 @@ MonoBehaviour:
   spiderSubtitleFadeSeconds: 0.75
   useSpiderHintSequence: 1
   spiderClimbSurface: {fileID: 428735799}
-  spiderWallArrowPositions:
-  - {x: 3.48, y: -1}
+  spiderSilkLaunchBlock: {fileID: 1351930707}
+  spiderWallArrowPositions: []
   spiderWallArrowTexts:
   - {fileID: 354802530}
   spiderArrowSeconds: 8

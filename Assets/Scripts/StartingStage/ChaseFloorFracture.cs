@@ -11,12 +11,11 @@ public class ChaseFloorFracture : MonoBehaviour
     private BoxCollider2D floorCollider;
     private EdgeCollider2D walkSurface;
     private SpriteRenderer visual;
-    private bool wallReached;
+    private float clearedTime;
     private bool cracking;
     private float timer;
     private Color intactColor;
-    private readonly SpriteRenderer[] cracks = new SpriteRenderer[3];
-    private readonly Vector3[] crackScales = new Vector3[3];
+    private FloorCrack[] cracks;
 
     private void Awake()
     {
@@ -48,20 +47,13 @@ public class ChaseFloorFracture : MonoBehaviour
         }
 
         Bounds bounds = visual.bounds;
-        if (!wallReached && spikeWall.FrontEdgeX >= bounds.min.x &&
-            spikeWall.RearEdgeX <= bounds.max.x)
-        {
-            wallReached = true;
-        }
-
-        // The entire wall must clear the entire slab before support is removed.
-        if (!wallReached || spikeWall.RearEdgeX < bounds.max.x + clearance)
+        if (spikeWall.FrontEdgeX < bounds.min.x || spikeWall.RearEdgeX > bounds.max.x)
         {
             return;
         }
 
         cracking = true;
-        ShowCracks(bounds);
+        cracks = FloorCrack.CreateAcross(visual, bounds);
     }
 
     private void Update()
@@ -72,42 +64,18 @@ public class ChaseFloorFracture : MonoBehaviour
         }
 
         timer += Time.deltaTime;
-        float progress = Mathf.Clamp01(timer / Mathf.Max(0.01f, fractureDelay));
-        for (int i = 0; i < cracks.Length; i++)
-        {
-            float reveal = Mathf.SmoothStep(0f, 1f,
-                Mathf.Clamp01(progress * 1.7f - i * 0.18f));
-            cracks[i].color = new Color(1f, 0.65f, 0.25f, reveal);
-            Vector3 scale = crackScales[i];
-            scale.y *= Mathf.Lerp(0.15f, 1f, reveal);
-            cracks[i].transform.localScale = scale;
-        }
+        FloorCrack.RevealAcross(cracks, timer / .42f);
         visual.color = Color.Lerp(intactColor,
-            new Color(0.55f, 0.4f, 0.23f, intactColor.a), progress * 0.35f);
+            new Color(0.55f, 0.4f, 0.23f, intactColor.a), Mathf.Clamp01(timer / .42f) * .35f);
 
-        if (timer >= fractureDelay)
+        // Leave the split visible behind the clock before taking away support.
+        if (spikeWall.RearEdgeX >= visual.bounds.max.x + clearance)
         {
-            Fracture(visual.bounds);
-        }
-    }
-
-    private void ShowCracks(Bounds bounds)
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            var crack = new GameObject("Fresh crack");
-            crack.transform.position = new Vector3(
-                bounds.min.x + bounds.size.x * (i + 1) / 4f,
-                bounds.center.y, transform.position.z);
-            crack.transform.rotation = Quaternion.Euler(0f, 0f, i % 2 == 0 ? 25f : -30f);
-            crack.transform.localScale = new Vector3(0.065f, bounds.size.y * 1.15f, 1f);
-            crack.transform.SetParent(transform, true);
-            SpriteRenderer line = crack.AddComponent<SpriteRenderer>();
-            CopyVisual(line);
-            line.color = new Color(1f, 0.65f, 0.25f, 0f);
-            line.sortingOrder = visual.sortingOrder + 1;
-            cracks[i] = line;
-            crackScales[i] = crack.transform.localScale;
+            clearedTime += Time.deltaTime;
+            if (clearedTime >= fractureDelay)
+            {
+                Fracture(visual.bounds);
+            }
         }
     }
 
@@ -145,4 +113,63 @@ public class ChaseFloorFracture : MonoBehaviour
         target.sortingLayerID = visual.sortingLayerID;
         target.sortingOrder = visual.sortingOrder;
     }
+}
+
+// A bright, jagged splinter grows from the top edge down through the timber.
+internal sealed class FloorCrack
+{
+    private readonly LineRenderer line;
+    private readonly Vector3[] corners;
+
+    private FloorCrack(SpriteRenderer surface, Bounds bounds, int index)
+    {
+        line = new GameObject("Fresh crack").AddComponent<LineRenderer>();
+        line.transform.SetParent(surface.transform, false);
+        line.useWorldSpace = true;
+        line.sharedMaterial = surface.sharedMaterial;
+        line.sortingLayerID = surface.sortingLayerID;
+        line.sortingOrder = surface.sortingOrder + 10;
+        line.startColor = new Color32(255, 241, 186, 255);
+        line.endColor = new Color32(255, 180, 94, 255);
+        line.startWidth = .115f;
+        line.endWidth = .055f;
+        line.numCornerVertices = 2;
+        float x = Mathf.Lerp(bounds.min.x, bounds.max.x, (index + .5f) / 3f);
+        float h = bounds.size.y;
+        float bend = (index == 1 ? -1f : 1f) * h;
+        float z = surface.transform.position.z;
+        corners = new[] {
+            new Vector3(x, bounds.max.y, z),
+            new Vector3(x + .42f * bend, bounds.max.y - .42f * h, z),
+            new Vector3(x + .14f * bend, bounds.max.y - .55f * h, z),
+            new Vector3(x + .55f * bend, bounds.min.y, z)
+        };
+        line.enabled = false;
+    }
+
+    public static FloorCrack[] CreateAcross(SpriteRenderer surface, Bounds bounds)
+    {
+        var result = new FloorCrack[3];
+        for (int i = 0; i < result.Length; i++)
+            result[i] = new FloorCrack(surface, bounds, i);
+        return result;
+    }
+
+    public static void RevealAcross(FloorCrack[] cracks, float progress)
+    {
+        for (int i = 0; i < cracks.Length; i++)
+        {
+            var crack = cracks[i];
+            float t = Mathf.Clamp01(progress * 1.4f - i * .2f) * 3f;
+            if (t <= 0) continue;
+            int segment = Mathf.Min(2, Mathf.FloorToInt(t));
+            crack.line.enabled = true;
+            crack.line.positionCount = segment + 2;
+            for (int j = 0; j <= segment; j++)
+                crack.line.SetPosition(j, crack.corners[j]);
+            crack.line.SetPosition(segment + 1, Vector3.Lerp(crack.corners[segment], crack.corners[segment + 1], t - segment));
+        }
+    }
+
+    public void Remove() => Object.Destroy(line.gameObject);
 }

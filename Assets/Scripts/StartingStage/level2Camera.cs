@@ -49,6 +49,8 @@ public class level2Camera : MonoBehaviour
     [Header("Chase Framing")]
     // Assign the SpikeAnchor at the leading edge of the spike wall.
     [SerializeField] private Transform spikeWallEnemy;
+    [Tooltip("Optional destination to bring into view on the final approach.")]
+    [SerializeField] private Transform chaseDestination;
 
     [SerializeField] private float chaseStartX = -64f;
 
@@ -130,8 +132,12 @@ public class level2Camera : MonoBehaviour
     [SerializeField] private Vector2 bottomCameraXRange = new Vector2(-22f, -9f);
     [SerializeField] private float bottomCameraY = -21.1f;
     [SerializeField, Min(0.01f)] private float bottomFollowSize = 4f;
+    [SerializeField, Min(0f)] private float bottomArrivalHalfWidth;
     [SerializeField] private float bottomLookAhead = 2f;
     private bool bottomPassageStarted;
+    private bool schoolBusCameraActive;
+    private Vector3 busCameraStart, busPassengerStart, busDestination, busCameraPosition;
+    private float busCameraStartSize, busCameraSize;
 
     [Header("Seesaw Room")]
     [SerializeField, Min(0.01f)] private float seesawMinimumSize = 8f;
@@ -312,6 +318,28 @@ public class level2Camera : MonoBehaviour
         droppingStarted = true;
     }
 
+    public void BeginSchoolBusTrip(Vector3 passenger, Vector3 destination)
+    {
+        BeginTrapdoorDrop();
+        schoolBusCameraActive = true;
+        busCameraStart = busCameraPosition = transform.position;
+        busPassengerStart = passenger;
+        busDestination = destination;
+        busCameraStartSize = busCameraSize = cam.orthographicSize;
+    }
+
+    public void FrameSchoolBusTrip(Vector3 passenger, float descent)
+    {
+        Vector3 follow = busCameraStart + passenger - busPassengerStart;
+        Vector3 arrival = new Vector3(Mathf.Clamp(busDestination.x + bottomLookAhead,
+            bottomCameraXRange.x, bottomCameraXRange.y), bottomCameraY, cameraZ);
+        float landingBlend = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.55f, 1f, descent));
+        busCameraPosition = Vector3.Lerp(follow, arrival, landingBlend);
+        busCameraPosition.z = cameraZ;
+        busCameraSize = Mathf.Lerp(busCameraStartSize, BottomSizeFor(busDestination.x),
+            Mathf.SmoothStep(0f, 1f, descent));
+    }
+
     public void BeginDarkPassage()
     {
         if (!followBottomPassage)
@@ -319,6 +347,7 @@ public class level2Camera : MonoBehaviour
             return;
         }
         bottomPassageStarted = true;
+        schoolBusCameraActive = false;
         playingCutscene = false;
         focusStarted = false;
         chaseCameraStarted = false;
@@ -331,7 +360,14 @@ public class level2Camera : MonoBehaviour
         TakeCamera();
         Vector3 position = player.CurrentBody.transform.position;
         SetCamera(new Vector3(Mathf.Clamp(position.x + bottomLookAhead,
-            bottomCameraXRange.x, bottomCameraXRange.y), bottomCameraY, cameraZ), bottomFollowSize);
+            bottomCameraXRange.x, bottomCameraXRange.y), bottomCameraY, cameraZ), BottomSizeFor(position.x));
+    }
+
+    private float BottomSizeFor(float playerX)
+    {
+        float arrivalSize = Mathf.Max(bottomFollowSize, bottomArrivalHalfWidth / cam.aspect);
+        float approach = Mathf.InverseLerp(bottomCameraXRange.x - arrivalSize, bottomCameraXRange.x, playerX);
+        return Mathf.Lerp(arrivalSize, bottomFollowSize, approach);
     }
 
     public void BeginSeesawRoom(Collider2D surface)
@@ -530,6 +566,13 @@ public class level2Camera : MonoBehaviour
 
         Vector3 position = currentBody.transform.position;
 
+        if (schoolBusCameraActive)
+        {
+            TakeCamera();
+            SetCamera(busCameraPosition, busCameraSize);
+            return;
+        }
+
         if (seesawRoomStarted && seesawSurface != null)
         {
             Bounds bounds = seesawSurface.bounds;
@@ -552,7 +595,7 @@ public class level2Camera : MonoBehaviour
                 bottomCameraXRange.x, bottomCameraXRange.y), bottomCameraY, cameraZ);
             SetCamera(Vector3.Lerp(transform.position, target,
                 1f - Mathf.Exp(-8f * Time.deltaTime)),
-                Mathf.MoveTowards(cam.orthographicSize, bottomFollowSize,
+                Mathf.MoveTowards(cam.orthographicSize, BottomSizeFor(position.x),
                     3f * Time.deltaTime));
             return;
         }
@@ -760,6 +803,8 @@ public class level2Camera : MonoBehaviour
         float left = spikeWallEnemy.position.x - horizontalMargin - chaseRearMargin;
         float right = playerPosition.x + horizontalMargin;
 
+        FrameDestination(playerPosition.x, ref left, ref right);
+
         float centerX = (left + right) * 0.5f;
         float width = Mathf.Abs(right - left);
 
@@ -790,6 +835,19 @@ public class level2Camera : MonoBehaviour
         );
     }
 
+    private void FrameDestination(float playerX, ref float left, ref float right)
+    {
+        if (chaseDestination != null)
+        {
+            float destinationX = chaseDestination.position.x;
+            float halfWidth = minimumChaseSize * cam.aspect;
+            float approach = Mathf.SmoothStep(0f, 1f,
+                Mathf.InverseLerp(destinationX - 14f, destinationX - 3f, playerX));
+            left = Mathf.Lerp(left, destinationX - halfWidth, approach);
+            right = Mathf.Lerp(right, destinationX + halfWidth, approach);
+        }
+    }
+
     private void FollowCollapsingFloorChase(Vector3 playerPosition)
     {
         // Keep the latest broken slabs inside the view after the wall passes them.
@@ -797,6 +855,8 @@ public class level2Camera : MonoBehaviour
             playerPosition.x - horizontalMargin);
         float right = Mathf.Max(chaseWall.FrontEdgeX + horizontalMargin,
             playerPosition.x + horizontalMargin);
+
+        FrameDestination(playerPosition.x, ref left, ref right);
 
         // Frame actual floor height rather than centering above it. Include the
         // falling debris as well as the player's full jump and the spike wall.

@@ -15,6 +15,7 @@ public class DarkStarPassage : MonoBehaviour
     [SerializeField] private SpriteRenderer doorGlow;
     [SerializeField] private PassageLightPickup[] lightPickups = new PassageLightPickup[0];
     [SerializeField, Min(0.01f)] private float fadeDuration = 0.8f;
+    [SerializeField, Range(0f, 1f)] private float maximumDarkness = 1f;
     [Header("Light Recovery")]
     [SerializeField, Min(0.1f)] private float initialLightRadius = 3.2f;
     [SerializeField, Min(0.1f)] private float faintLightRadius = 1.1f;
@@ -46,7 +47,7 @@ public class DarkStarPassage : MonoBehaviour
     private static readonly int LightStrengthId = Shader.PropertyToID("_LightStrength");
 
     public int CollectedCount => collectedLights.Count;
-    public float RecoveryProgress => availableLights.Count == 0 ? 0f : (float)collectedLights.Count / availableLights.Count;
+    public float RecoveryProgress => availableLights.Count == 0 ? 1f : (float)collectedLights.Count / availableLights.Count;
     public float CurrentLightRadius => lightRadius;
     public bool HasLanded => landed;
     public bool IsComplete => completed;
@@ -208,7 +209,7 @@ public class DarkStarPassage : MonoBehaviour
         {
             Color faintColor = new Color(originalStarColor.r * 0.55f,
                 originalStarColor.g * 0.55f, originalStarColor.b * 0.55f, originalStarColor.a);
-            starRenderer.color = Color.Lerp(faintColor, originalStarColor, recoveryBrightness);
+            starRenderer.color = Color.Lerp(originalStarColor, faintColor, maximumDarkness * (1f - recoveryBrightness));
         }
         if (passageCamera != null && darknessVeil != null)
         {
@@ -219,7 +220,7 @@ public class DarkStarPassage : MonoBehaviour
             darknessVeil.transform.localScale = new Vector3(
                 passageCamera.orthographicSize * passageCamera.aspect * 2f + 2f,
                 passageCamera.orthographicSize * 2f + 2f, 1f);
-            darknessVeil.color = new Color(0.006f, 0.008f, 0.014f, darkness);
+            darknessVeil.color = new Color(0.006f, 0.008f, 0.014f, darkness * maximumDarkness);
             float strengthBeforeRecovery = Mathf.Lerp(0.9f, faintLightStrength, descentProgress);
             darknessVeil.GetPropertyBlock(veilProperties);
             veilProperties.SetVector(LightCenterId, current.transform.position);
