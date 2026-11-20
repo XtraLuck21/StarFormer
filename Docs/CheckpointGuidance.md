@@ -9,7 +9,7 @@ Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deploym
 | Index / ID | Position in route | Restored form |
 | --- | --- | --- |
 | 1 / `ADV_CP1` | Lower room after the Box drop | Box, using `BoxB_DropShaft` |
-| 2 / `ADV_CP2` | Right ascent below the Bubble shelf | BouncyBall, using `BallR1_LowRoom`; bounce up to reach the Bubble |
+| 2 / `ADV_CP2` | Open ground at the right ascent, left of the Bubble shelf | BouncyBall, using `BallR1_LowRoom`; bounce up to reach the Bubble |
 | 3 / `ADV_CP3` | Upper-left landing after the right ascent | Star, even if Box activated it |
 
 Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble passing overhead does not activate it. Markers stay hollow: blue before reaching them, yellow afterward, with a temporary `CHECKPOINT SAVED` label. Old reached markers remain yellow. The latest point determines respawn.
@@ -29,7 +29,7 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | Loose bodies, sizes and consumed Bubbles | Recreated at authored scene state, then place checkpoint host | Authored initial state |
 | SAFE moving-board phase | Predictable fresh cycle | Hidden in NORMAL |
 | HARD falling spike | Restored to its ceiling and rearmed when HARD is active | Hidden in NORMAL |
-| READY interaction and local timed Bubble hints | Fresh scene-local state | Fresh scene-local state |
+| Water ability reminders and replayable lower-door Hint | Fresh scene-local state; door Hint must reach its offer delay again | Fresh scene-local state |
 
 The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
 
@@ -63,13 +63,15 @@ IntroBox's dropped-cargo retry restores just its carrying lesson, not a checkpoi
 
 ## Touch input and checkpoint recovery
 
-In Level01, the first tank’s ceiling-contact lesson shows the R restart reminder on desktop. On touch screens, tap the house and choose Return to Checkpoint after a save, or Restart Level to start over. Bubble’s Pop button returns to Star at either exit.
+In Level01, a BouncyBall entering the narrow right-hand water pocket automatically sees `No ground to bounce. / Press R to restart.`; no ceiling contact, idle wait or Hint click is required. Touch mode substitutes Home > Restart Level. On touch screens, tap the house and choose Return to Checkpoint after a save, or Restart Level to start over. Bubble’s Pop button returns to Star at either exit.
 
 The gameplay joystick clears on death and when the controls are hidden. When the HUD returns after a checkpoint reload, a thumb held inside its movement area can establish a fresh neutral center. To test recovery, keep one thumb down through respawn, drag again, then lift and start a new drag in the opposite direction.
 
 Shape discovery is separate from checkpoint state. A menu return/full level restart clears the applicable checkpoint session but retains discovered forms for this application launch. Death and checkpoint retry also retain discoveries. Only a new game/Editor Play launch clears them; completion no longer grants form groups. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## Verification
+
+Checkpoint 2’s marker, trigger and respawn were moved left together in the polish branch; the developer reported the new placement works. Its fixed Ball form and ordered checkpoint rules are unchanged. See [authored positions](level-1.md#checkpoints-and-restart) and [branch acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance).
 
 Developer playtests passed for checkpoint implementation and formal Level01 promotion. Isolated Unity regression checks passed for all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
 

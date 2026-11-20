@@ -1,5 +1,7 @@
 # Level 1
 
+**Current source:** `gold-level-1-polish` extends the Kindergarten woodland theme to Level01, adds two entrance-water routes, updates reminders and checkpoint 2, and makes the lower-door hint replayable. These changes are not part of the recorded Gold 0.1.0 export.
+
 The November 6 Beta 0.1.2 release was published at root and `/beta/` via `64b35c6`; source checkout at publication: `b93768f`. Deployment and hosted file checks passed; browser gameplay acceptance remains separate. [Release record](Beta-0.1.2.md).
 
 Touch controls reviewed November 16, 2026. Promotion baseline: `8834a4d`; recorded published Beta 0.1.1 source: `9451511` (gh-pages `e81097e`, November 3).
@@ -15,7 +17,7 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 ```
 
 - Navigation’s Level 1 entrance targets `Level01` through NavigationEntrance; both contact and click paths run the entry feedback before loading.
-- IntroBouncyBall's Star/BouncyBall goal also loads `Level01`; IntroBubble first opens a passage to that tutorial.
+- IntroBouncyBall's Star/BouncyBall goal opens graduation; choosing Next Level loads `Level01`; IntroBubble first opens a passage to that tutorial.
 - Level01 is at enabled build index 4, after IntroBouncyBall; IntroSpider, IntroFan and Level02 follow at indices 5, 6 and 7. Its GUID is the former Advanced GUID. The old Level01 GUID belongs to the disabled Legacy backup.
 - The endpoint flag uses `LevelGoal`, with no required gate, destination `IntroSpider`, label `Level 2 Intro`, and a 1.5-second transition. Any living controlled form can finish.
 - Completion pauses gameplay, shows `Level up! / Entering Level 2 Intro...`, clears checkpoint sessions and loads the next scene with normal time. The final wait-for-menu completion screen belongs to Level02.
@@ -25,7 +27,7 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 | Section | Current behavior |
 | --- | --- |
 | Entrance | Start as Star without a forced Box transfer or READY button. The gold `LEVEL 1` title and cream subtitle sit on a solid woodland wall ending below the subtitle. The entrance slit has 1.30 units of clear height for the 0.80-high Star. |
-| Water tank | Walk directly into water as Star. Jump into the entry Bubble for the underwater route, or continue to the submerged BouncyBall. The choice card sits inside the pool and retires after selecting either form. First possession of each form briefly explains its ability: REMEMBER / Balls float!, or Bubbles swim in water and float in air. Ball rises gradually during its reminder. Horizontal steering resumes at the surface; move right onto the dry grassy deck, then bounce through the upper opening. Bubble swims beneath the deck and right wall, then rises in the exit shaft. Entry and pool-floor backup Bubbles use the same blue fill, outline, glow, scale and collider, including replacements after Pop. |
+| Water tank | Walk directly into water as Star. Jump into the entry Bubble for the underwater route, or continue to the submerged BouncyBall. There is no choice card or automatic route solution. First possession of each form briefly explains its ability: REMEMBER? / Bouncy balls float!, or REMEMBER? / Bubbles swim in water and float in air. Ball rises gradually during its reminder. Horizontal steering resumes at the surface; move right onto the dry grassy deck, then bounce through the upper opening. Bubble swims beneath the deck and right wall, then rises in the exit shaft. Entry and pool-floor backup Bubbles use the same blue fill, outline, glow, scale and collider, including replacements after Pop. |
 | Water exit and Box drop | Both routes rejoin at `BoxB_DropShaft`: Bubble rises and pops above the exit; Ball clears the upper dividers and drops onto Box B. The first checkpoint is on the lower route beyond the drop. |
 | Lower lift and ball passage | Growing Box lifts the lower `RatchetingCeiling`. The lower ball, `BallR1_LowRoom`, can push this door downward by landing on it. Ceiling compression governs its bounce through the passage. |
 | Right ascent | Checkpoint 2 sits on the open ground left of the Bubble shelf and restores the lower ball there. It can bounce around the shelf edge to possess `BubbleU2_RightAscent` and rise through the central opening. |
@@ -35,6 +37,12 @@ Navigation → IntroBox → IntroBubble → IntroBouncyBall → Level01 → Intr
 | Upper return and endpoint | Travel left through the selected NORMAL, SAFE or HARD route to the flag. All forms use the same completion trigger. |
 
 Box, Bubble and BouncyBall use glow to identify possessable hosts. Box has a black outline; Bubble has a pale-blue fill and darker-blue outline. A centered Star marks the controlled host. These visuals do not change the collision size.
+
+## Woodland presentation
+
+Level01 reuses the [Kindergarten woodland assets and provenance](../Assets/Art/IntroBouncyBallForest/manifest.json): sage/teal forest, dark olive soil, narrow grass edges and subdued blue water depth. The backdrop fits the camera; water artwork renders behind terrain and forms. Moving lifts retain a lighter timber tint. World labels use dark ink on scenery and cream on walls; the title is warm gold. The solid title wall has a quiet, untextured face and ends below the subtitle, leaving the entrance movement space open.
+
+The lower-door Hint uses a dark green face, cream label and yellow Star so the icon does not disappear into a yellow background. Its lift preview uses a translucent cream silhouette. Form colors, outlines and hazard identities remain recognizable. The shared Collection Book icon matches Home in size; see [controls and book presentation](GameplaySpec.md#2-controls).
 
 ## Route selection and camera presentation
 
@@ -60,13 +68,15 @@ The enum state is `Safe`; its button is labeled `SAVE MY LIFE`.
 PR #21 (`42e32a4`) integrates four developer-tested changes, included in the published Beta 0.1.2 export:
 
 - Upper platform edges preserve the gap and equal landing height while using small collision bevels to reduce maximum-size Box snagging in either direction. Recheck both directions, stopping at the edge and resizing during movement.
-- The approach to checkpoint 2 was widened in PR #21. Following later playtest feedback, the marker, trigger and Ball respawn were moved 2.4 units left onto open ground, so saving no longer requires entering the small space beneath the Bubble shelf.
+- The approach to checkpoint 2 was widened in PR #21. The later polish branch also moves the checkpoint left, as described below.
 - BouncyBall camera framing near checkpoint 2 suppresses repeated bounce-driven vertical shake while preserving route transitions.
 - Box-to-ball possession after a fall before checkpoint 3 allows recovery instead of leaving the ball trapped under an abandoned Box.
 
 These fixes do not change the fixed checkpoint respawn forms or convert checkpoint state into a persistent save.
 
 ## Checkpoints and restart
+
+The polish branch moves checkpoint 2’s marker, trigger and Ball respawn 2.4 units left onto open ground, so saving no longer requires entering the small space beneath the Bubble shelf.
 
 All three markers remain hollow stars: blue before activation, yellow after being reached. `CHECKPOINT SAVED` appears briefly above the marker. Progress only advances 1 → 2 → 3; returning through an earlier point does not overwrite a later save.
 
@@ -86,33 +96,25 @@ Restart Level, returning to Navigation, a new menu entry and forward level progr
 
 | Hint / control | Trigger and behavior |
 | --- | --- |
-| Movable-door hint (Beta 0.1.1) | After 20 seconds without lower-door movement, an optional star sign appears above the route. Clicking the visible sign, deliberate Box growth or Ball contact triggers a short paused lift preview with “A little lift?”. Mouse clicks on the sign do not resize Box. The sign returns after every preview and can be replayed without limit until the real door rises by 0.8 units. Leaving the room does not retire it. Spawn overlap and continued contact after a preview do not automatically activate it. |
+| Movable-door hint | After 20 seconds without lower-door movement, an optional star sign appears above the route. Clicking the visible sign, deliberate Box growth or Ball contact triggers a short paused lift preview with “A little lift?”. Mouse clicks on the sign do not resize Box. The sign returns after every preview and can be replayed without limit until the real door rises by 0.8 units. Leaving the room does not retire it. Spawn overlap and continued contact after a preview do not automatically activate it. |
 | Water-route ability reminders | No choice card, optional Hint button, platform highlight, route arrow or idle/pacing hint is created in this water section. First possession of each form per scene visit automatically shows REMEMBER? with Bouncy balls float! or Bubbles swim in water and float in air. The brief reminder lasts 5 seconds (or through Ball ascent) at a fixed nearby scene anchor, and does not replay on repeat possession. Only a Ball trapped in the right-hand water pocket receives a persistent automatic No ground to bounce. / Press R to restart. notice without a REMEMBER? heading (touch: Home > Restart Level). Pauses and cinematics hide the card and pause its timer. |
 | Bubble exits | The water exit and upper landing use the same Bubble controls as the rest of Level01. Tap Pop on mobile, or press Q or right-click on desktop. |
 | Home | Top-right square house outline with a small Star; tooltip `Home · Restart`. Opens a paused menu with Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled before a save; full restart and Main Menu require confirmation. |
-| Help | Paged form help is now configured in this scene; possession discovers gameplay pages for the current application session. |
+| Collection Book | Caption-free square book icon matching Home, using the shared non-Navigation presentation. Opens paged form help; possession discovers pages for the current application session. |
 | R | Retains the existing restart-choice menu, independent of Home. Opening or cancelling changes no checkpoint state. |
 
 `AdvancedCheckpointController` suppresses the legacy E-pop reminder. Level01 has no separate ceiling-triggered Q-pop lessons. [Controls by form](GameplaySpec.md#2-controls)
 
 ## Verification and remaining work
 
-Ability-reminders-only update: Unity Play Mode input checks passed first-contact REMEMBER? text for Bubble and Bouncy Ball, gradual Ball flotation, reminder expiry and no replay on repeat Bubble possession, both routes to Box B, and no optional UI while waiting, pacing or bouncing. The pocket automatically displays its persistent restart notice, adapts to simulated touch controls, and hides when R opens the restart menu. Ball, Bubble and pocket reminder captures were reviewed. The resource checker reported zero errors (six existing class-name warnings). Physical touch-device testing remains separate.
+The branch’s existing Editor checks and developer playtests cover water traversal, reminders, matching renewable Bubbles, checkpoint placement, book presentation and clickable/replayable door help. See [Level01 polish source acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance) for evidence and remaining browser/device checks. This documentation sync does not rerun gameplay or publish a build.
 
-Earlier visual-hint iteration (removed in favor of ability reminders only): Unity Play Mode input verification passed both water routes, matching renewable Bubbles, early-Pop recovery, hints while pacing, the platform highlight, underwater arrows, and the automatic desktop/simulated-touch pocket warning. A focused bouncing test verified that arrow mesh positions remain unchanged across multiple bounces, no solution text card appears, opacity fades before the 8-second expiry, and the cue disappears. Rendered platform/exit/underwater cues were reviewed. Physical touch-device testing remains separate.
+Retained Editor tools: `StarFormer → Level01 → Verify Water Routes in Play Mode` and `Verify Water Pocket Recovery`. These exercise the final ability-reminders-only design. Earlier experiments with choice cards, optional water hints, platform highlights and route arrows were removed and are not current behavior.
 
-Earlier nearby-text-card iteration (superseded by fixed scene cues): Unity Play Mode verification passed a continuously swimming Bubble receiving a Hint after repeated left/right traversals, clicked Star/Bubble hint cards positioned near (and not over the center of) the player, both routes to Box B, and the nearby automatic pocket warning in desktop/simulated touch modes. Rendered Star and Bubble cards were reviewed. Familiar-form switches no longer reset the idle clock; first-time form discovery and new-area exploration still do.
-
-Automatic pocket-recovery exception: targeted Unity Play Mode verification passed immediate notice on entering the right-hand pocket, continued visibility beyond the normal Hint delay with no star button or close button, desktop/touch wording, and hiding during the R restart menu. `StarFormer → Level01 → Verify Water Pocket Recovery` runs this focused check.
-
-Optional-hint update, before the automatic pocket-recovery exception: Unity Play Mode input tests passed the in-pool choice card disappearing on selection and staying gone after Pop, first-use-only Ball/Bubble capability reminders, no unsolicited solution or restart text, delayed Hint offers, mouse-click opening and closing, form-specific Star/Bubble/Ball help, touch-mode recovery wording, pause hiding, and both water routes to Box B. The choice and Bubble-reminder captures were visually reviewed. Physical touch-device testing remains separate.
-
-Earlier November 19 feedback iteration (automatic route cards have since been replaced by optional hints): the final Unity Play Mode run passed gradual flotation (submerged possession stays below the surface, ascent lasts more than 1.5 seconds, and the REMEMBER lesson appears), matching Bubble visuals/colliders before and after Pop, both routes to Box B, and the deliberately missed upper route into the right-hand pocket. Pocket guidance was checked in desktop and simulated touch modes; R opened the restart menu and hid the lesson. Rendered captures were reviewed for the rise lesson and pocket recovery card. Physical touch-device testing remains separate.
-
-Initial November 19 water-route verification (automatic recovery prompts have since been replaced by optional hints): Unity Play Mode input verification in an isolated batch-mode copy passed Star entry through the slit, ball flotation and dry-deck bouncing through the upper opening to Box B, early Bubble Pop and replacement, re-possession, the underwater passage and exit to Box B, and the idle R reminder without ceiling contact. The final run includes the adjusted entry-Bubble clearance. Editor-rendered captures of Star entry, ball flotation, the upper exit and recovery hints were also reviewed. This verifies the revised entrance segment; exported Web and touch-device gameplay acceptance remain separate. Run `StarFormer → Level01 → Verify Water Routes in Play Mode` to repeat the checks.
+Remaining playtest follow-ups: SAVE/RUIN meaning and the two-hit RUIN cover still need clearer new-player validation; reported Ball corner and upper Box-tunnel sticking need reproduction; upper-route recovery after early Bubble Pop or misplaced Box needs a targeted sweep. Form limits and blocked Box growth remain feedback/readability questions, not fixes delivered by this branch.
 
 The main merge (`5c2496d`) and scene promotion (`8834a4d`) passed developer-reported Unity playtests. Automated checks in an isolated Unity copy verified compilation, enabled-scene references, both Level01 entry paths, flag completion in Star/Box/Bubble/BouncyBall forms, the IntroSpider → FanTutorial → Level02 continuation, all three checkpoint forms, mechanism retention/reset, and Home/R menu behavior. The original backup and its meta matched the previous scene byte for byte; promotion changed only the Advanced endpoint component within the scene.
 
 Historical Beta 0.1.1 was published at the Beta URL before 0.1.2. The 0.1.1 export included the contact-activated movable-door hint but predated paged Help; Beta 0.1.2 includes the later Help and Navigation work. All seven deployed files matched the recorded 0.1.1 export on November 5. This package check does not replace gameplay testing.
 
-For beta-0.1.2, repeat these checks in the exported Web player alongside shared Home/Help, the four PR #21 fixes, and all three checkpoint recoveries. Re-export analytics maps and verify version-specific production rows/maps. See [the release checklist](Beta-0.1.2.md) and [AnalyticsTestPlan.md](AnalyticsTestPlan.md#beta-012-acceptance-status). Historical Beta 0.1.0/0.1.1 evidence does not certify this new export.
+For the next export, repeat the current branch checks alongside shared Home/Collection Book and all three checkpoint recoveries. Re-export analytics maps and verify version-specific production rows/maps. See [publishing instructions](publish_instructions.md) and [branch acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance). Historical release evidence does not certify a new export.

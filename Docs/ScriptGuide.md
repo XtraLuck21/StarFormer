@@ -2,7 +2,7 @@
 
 Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
-**Current source:** the script table below reflects the Kindergarten polish changes after the published Gold export.
+**Current source:** the script table below reflects the Kindergarten and Level01 polish changes after the published Gold export.
 
 ## 1. Scenes and build configuration
 
@@ -34,7 +34,7 @@ The former Advanced scene and GUID now belong to Level01. The previous Level01 s
 | [PlayerPossessionController.cs](../Assets/Scripts/PlayerPossessionController.cs) | One local controller per scene. Assign the configured Star scene instance as Initial Body; Starting Host is optional. Owns contact transfers, input, original-Star restoration, death/reload, checkpoints and analytics. AdvancedCheckpointController takes priority for current Level01 recovery. |
 | [PossessableBody.cs](../Assets/Scripts/PossessableBody.cs) | Form identity, readiness, Rigidbody2D/collider access, controlled state, grounding and host lifecycle. Keep serialized BodyForm values stable. |
 | [BoxResizeAbility.cs](../Assets/Scripts/BoxResizeAbility.cs) | J/K size changes with bottom anchoring while supported and center anchoring otherwise; checks all growth obstacles before moving permitted lifts. RestoreSceneEntryWidth preserves incoming world width with feet anchored during scene handoff. Requires an upright unparented positive-scale Box with zero collider edge radius. |
-| [BouncyBallAbility.cs](../Assets/Scripts/BouncyBallAbility.cs) | Dormant ball activation, automatic bounce, overhead-clearance compression and water float. Read scene overrides before changing shared prefab defaults. |
+| [BouncyBallAbility.cs](../Assets/Scripts/BouncyBallAbility.cs) | Dormant ball activation, automatic bounce, overhead-clearance compression and water float. Optional waterRiseSpeed enables physical gradual ascent; IsRisingInWater keeps the first-use reminder visible during ascent. Zero retains instant flotation. Read scene overrides before changing shared prefab defaults. |
 | [WaterZone.cs](../Assets/Scripts/WaterZone.cs) / [BodyWaterPhysics.cs](../Assets/Scripts/BodyWaterPhysics.cs) | Water membership, cached air physics, damping and form-specific water behavior; WaterZone requires a trigger collider. Ball surface lookup uses the bottom-center support position, so side overlap while on a bank does not suppress bouncing. |
 | [RatchetingCeiling.cs](../Assets/Scripts/FanSet/RatchetingCeiling.cs) | Box lift/ball lowering with clearance protection. Lower Level01 door allows ball lowering. Upper lift uses `boxOnlyLift = true`, `ballPushesDown = false`, retaining its height after Box shrinks. |
 | [HexagonSurfaceMovement.cs](../Assets/Scripts/spiderFolder/HexagonSurfaceMovement.cs) | Steers Spider along connected surfaces. Contact or an authored handoff changes form. |
@@ -62,12 +62,15 @@ The controller retains the merged Box movement/growth rules, contact separation 
 | [AdvancedLevelCamera2D.cs](../Assets/Scripts/AdvancedLevelCamera2D.cs) | Current Level01 regional framing, local position/zoom limits and stabilized BouncyBall framing near checkpoint 2. Route presentations temporarily override it. RegionalCameraFollow2D is the old map's camera, not this scene's active system. |
 | [AdvancedCheckpoint.cs](../Assets/Scripts/AdvancedCheckpoint.cs) | World trigger, index, fixed respawn host/position, blue/yellow hollow-star marker and saved label. CP3 also requires grounded Star/Box at the upper floor. |
 | [AdvancedCheckpointController.cs](../Assets/Scripts/AdvancedCheckpointController.cs) | On PlayerControl; ordered CP1/2/3, scene-path-scoped session, live completed route/lift/cover/cinematic progress and restoration. Calls SetCheckpoint with ADV_CP1/2/3 and suppresses duplicate generic marker feedback. |
-| [StarStartGreeting.cs](../Assets/Scripts/StarStartGreeting.cs) | Optional READY? → LET'S GO! sign, Star-only upward contact, reusable bounce/sparkles on separate contacts. No route dependency. |
-| [MovableDoorContactHint.cs](../Assets/Scripts/MovableDoorContactHint.cs) | Published in Beta 0.1.1: lower-door idle timer, deliberate contact activation, paused lift preview and once-per-scene-load hint. |
-| [BubbleCeilingRestartHint.cs](../Assets/Scripts/BubbleCeilingRestartHint.cs) | Shows the Level01 first-tank R reminder after 1.5 seconds of qualifying ceiling contact on desktop. Touch mode hides it. |
+| [StarStartGreeting.cs](../Assets/Scripts/StarStartGreeting.cs) | Retained greeting helper; the READY sign and its component were removed from active Level01. |
+| [MovableDoorContactHint.cs](../Assets/Scripts/MovableDoorContactHint.cs) | Lower-door idle timer, world-space clickable sign and deliberate Box/Ball contact, paused lift preview, and replay until actual door progress. Held overlap cannot auto-replay; exiting the room does not retire the sign. Scene-local state resets on reload. |
+| [BubbleCeilingRestartHint.cs](../Assets/Scripts/BubbleCeilingRestartHint.cs) | Retained ceiling-contact restart helper; no longer present in active Level01. Level01WaterRouteHints owns the automatic water-pocket warning. |
+| [Level01WaterRouteHints.cs](../Assets/Scripts/Level01WaterRouteHints.cs) | First possession of Bubble/Ball in the entrance region shows REMEMBER? abilities once per scene visit; fixed scene anchors, safe-area clamping and pause-aware timers. Ball pocket warning overrides reminders automatically. No optional water solution hints. |
 | [BubbleCeilingPopHint.cs](../Assets/Scripts/BubbleCeilingPopHint.cs) | Retained ceiling-contact pop lesson. The active Level01 scene has no instances. |
 
 Formal Level01 sets `enableBouncyBallCheckpoints = false`. CP1 restores Box B, CP2 restores R1, CP3 restores Star. Restore completed progress without replaying cinematics; reset loose bodies/lower door, SAFE phase and the falling trap. Full restart clears everything. See [level-1.md](level-1.md) and [CheckpointGuidance.md](CheckpointGuidance.md).
+
+Level01 authoring tools: [Level01WoodlandSetup.cs](../Assets/Editor/Level01WoodlandSetup.cs) applies the shared woodland surfaces, backdrop and world-label/Hint palette. [Level01WaterRoutesSetup.cs](../Assets/Editor/Level01WaterRoutesSetup.cs) rebuilds entrance-water geometry and bodies, sets local ball tuning/camera framing, and normalizes renewable Bubbles through [Level01WaterBubble.prefab](../Assets/Form/Level01WaterBubble.prefab). These menu commands save scene changes; use them deliberately, not as read-only validation. [Level01WaterRoutesVerification.cs](../Assets/Editor/Level01WaterRoutesVerification.cs) provides the two Play Mode route/recovery checks listed in [Level01 acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance).
 
 ### Introductory scenes and retained legacy helpers
 
@@ -135,7 +138,7 @@ Navigation entrance targets are IntroBox, Level01, IntroSpider and Level02. Intr
 | [NavigationStarController.cs](../Assets/Scripts/NavigationStarController.cs) | A/D and Space movement, contact/click entrance selection, bounce/flash animation, Entering overlay and destination load |
 | [NavigationEntrance.cs](../Assets/Scripts/NavigationEntrance.cs) | Scene destination and upper/lower interaction rules; Coming Soon has no scene |
 | [NavigationHelpBook.cs](../Assets/Scripts/NavigationHelpBook.cs) | Align book control with its world anchor, block Star input while open and disable entry-time interaction |
-| [CollectionBookGraphic.cs](../Assets/UI/CollectionBookGraphic.cs) | Procedural book icon with opt-in squareCover. The three Kindergarten scenes use 88 × 88 cover art and hide their caption; shared book content/discovery stays unchanged |
+| [CollectionBookGraphic.cs](../Assets/UI/CollectionBookGraphic.cs) | Procedural book icon; UseSquareCover enables the square cover at runtime. SceneCollectionBookUI applies the caption-free Home-sized entry to every configured non-Navigation scene, including old text Help entries; shared book content/discovery stays unchanged |
 | [HelpBookUnlocks.cs](../Assets/UI/HelpBookUnlocks.cs) | Sole in-memory form discovery record; RecordPossession after successful ownership, Changed event for both views, reset on application/Play launch. No PlayerPrefs access. |
 | [ShapeClosetSlot.cs](../Assets/UI/ShapeClosetSlot.cs) | Event-driven per-form visual; all five slot roots remain active, only locked artwork/unlocked icons toggle |
 | [IntroSpiderCake.cs](../Assets/Scripts/IntroSpiderCake.cs) / [BubbleMovementHint.cs](../Assets/Scripts/BubbleMovementHint.cs) | Cake/spike reveal, contextual climbing prompts, directional arrows and center death feedback |
@@ -164,7 +167,7 @@ Use [publish_instructions.md](publish_instructions.md) for future releases. Pres
 
 ## 5. Verification and remaining work
 
-For this branch, see [Kindergarten verification and remaining acceptance](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance). No new release or analytics backend deployment was performed. The dated evidence below applies to earlier integration work.
+For this branch, see [Level01 verification and remaining acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance) and the preceding [Kindergarten checks](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance). No new release or analytics backend deployment was performed. The dated evidence below applies to earlier integration work.
 
 The developer confirmed the merge and scene-promotion playtests. Isolated Unity checks passed compilation, scene/reference validation, Mainmenu/IntroBubble entries, all four Level01 completion forms, the two new intermediate destinations, checkpoint forms/state retention, full-reset behavior and Home/R menu behavior. The original Level01 scene/meta were preserved unchanged as Legacy; other production scene files were unchanged by promotion.
 
