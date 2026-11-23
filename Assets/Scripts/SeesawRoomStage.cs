@@ -1,9 +1,10 @@
 using UnityEngine;
 
-/// <summary>Fixed room view, player-only gate and the blue/green completion reveal.</summary>
+/// <summary>Room-local camera framing, player-only gates and the blue/green route reveal.</summary>
 [DefaultExecutionOrder(-50)]
 public sealed class SeesawRoomStage : MonoBehaviour
 {
+    [SerializeField] private SeesawMachineRoom machine;
     [SerializeField] private BoxCollider2D gate;
     [SerializeField] private GameObject gateVisual;
     [SerializeField] private BoxCollider2D leftGate;
@@ -141,8 +142,12 @@ public sealed class SeesawRoomStage : MonoBehaviour
         yellowButton.gameObject.SetActive(true);
         yellowSensor.enabled = purpleSensor.enabled = false;
         rightPlatform.SetRevealProgress(t);
-        rightGateShatter.SetProgress(t);
-        leftGateShatter.SetProgress(t);
+        if (machine != null) machine.OpenClimbRoute(t);
+        else
+        {
+            rightGateShatter.SetProgress(t);
+            leftGateShatter.SetProgress(t);
+        }
     }
 
     private void FinishReveal()
@@ -242,6 +247,7 @@ public sealed class SeesawRoomStage : MonoBehaviour
 
     public void GetCameraFrame(Camera camera, float z, out Vector3 position, out float size)
     {
+        if (machine != null && machine.TryGetCameraFrame(camera, fullView, z, out position, out size)) return;
         // Preserve the vertical view of the underpass when browser toolbars make the canvas wide.
         float aspect = Mathf.Clamp(camera.aspect, .1f, 16f / 9f);
         position = new Vector3(fullView.center.x, fullView.center.y, z);
