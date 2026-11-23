@@ -36,6 +36,11 @@ public class CameraFocusIntro : MonoBehaviour
     [Tooltip("World-space offset from the focus target to the label anchor.")]
     [SerializeField] private Vector3 labelWorldOffset = new Vector3(0f, 2f, 0f);
     [SerializeField, Min(1f)] private float labelFontSize = 22f;
+    [SerializeField] private Color hintColor = Color.white;
+
+    [Header("Hint Card")]
+    [SerializeField] private bool showHintCard;
+    [SerializeField] private Color hintCardColor = new Color32(25, 43, 62, 245);
 
     [Header("Seesaw Preview")]
     [SerializeField] private Transform seesawFocusTarget;
@@ -57,6 +62,7 @@ public class CameraFocusIntro : MonoBehaviour
     private GameObject labelRoot;
     private TMP_Text labelText;
     private RectTransform labelRect;
+    private FanHintCard hintCard;
 
     private void Awake()
     {
@@ -179,6 +185,7 @@ public class CameraFocusIntro : MonoBehaviour
         labelRect.anchorMin = labelRect.anchorMax = labelRect.pivot = new Vector2(0.5f, 1f);
         labelRect.anchoredPosition = new Vector2(0f, -80f);
         labelRoot.SetActive(true);
+        if (hintCard != null) hintCard.Refresh();
     }
 
     private IEnumerator MoveCamera(Vector3 destination, float orthographicSize, float seconds)
@@ -232,9 +239,9 @@ public class CameraFocusIntro : MonoBehaviour
         labelText.text = hintText;
         labelText.fontSize = labelFontSize;
         labelText.alignment = TextAlignmentOptions.Center;
-        labelText.color = Color.white;
+        labelText.color = hintColor;
         labelText.outlineColor = new Color32(0, 0, 0, 255);
-        labelText.outlineWidth = 0.2f;
+        labelText.outlineWidth = showHintCard ? 0f : 0.2f;
         labelText.raycastTarget = false;
         // Fixed size: auto-sizing would clamp the text back into the rect
         // and ignore the inspector value.
@@ -245,6 +252,7 @@ public class CameraFocusIntro : MonoBehaviour
             new Vector2(0.5f, 0.5f);
         // Tall enough for the largest allowed line; alignment keeps it centered.
         labelRect.sizeDelta = new Vector2(1400f, labelFontSize * 2.5f);
+        if (showHintCard) hintCard = FanHintCard.Add(labelRect, hintCardColor, true);
     }
 
     private void UpdateLabelPosition()
@@ -261,6 +269,7 @@ public class CameraFocusIntro : MonoBehaviour
         labelText.enabled = visible;
         if (!visible)
         {
+            if (hintCard != null) hintCard.Refresh();
             return;
         }
 
@@ -271,6 +280,7 @@ public class CameraFocusIntro : MonoBehaviour
             out Vector2 local
         );
         labelRect.anchoredPosition = local;
+        if (hintCard != null) hintCard.Refresh();
     }
 
     private void DestroyLabel()
@@ -281,6 +291,7 @@ public class CameraFocusIntro : MonoBehaviour
             labelRoot = null;
             labelText = null;
             labelRect = null;
+            hintCard = null;
         }
     }
 

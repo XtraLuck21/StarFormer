@@ -32,7 +32,7 @@ internal static class MouseButtonHintIcon
     }
 
     public static void DrawOnCanvas(RectTransform parent, Vector2 centerFromTop, float unit,
-        bool rightButton, Color ink)
+        bool rightButton, Color ink, Color? buttonFill = null)
     {
         var icon = new GameObject(rightButton ? "Right mouse button" : "Left mouse button", typeof(RectTransform));
         var root = (RectTransform)icon.transform;
@@ -54,11 +54,11 @@ internal static class MouseButtonHintIcon
             image.raycastTarget = false;
         }
 
-        DrawShape(rightButton, ink, Rectangle);
+        DrawShape(rightButton, ink, Rectangle, buttonFill);
     }
 
     private static void DrawShape(bool rightButton, Color ink,
-        Action<string, Vector2, Vector2, float, Color> rectangle)
+        Action<string, Vector2, Vector2, float, Color> rectangle, Color? buttonFill = null)
     {
 
         void Stroke(Vector2 from, Vector2 to)
@@ -81,6 +81,6 @@ internal static class MouseButtonHintIcon
         Stroke(Vector2.zero, Vector2.up * 0.33f);
         Stroke(Vector2.left * 0.25f, Vector2.right * 0.25f);
         rectangle("Button fill", new Vector2(rightButton ? 0.125f : -0.125f, 0.14f),
-            new Vector2(0.18f, 0.22f), 0f, Color.white);
+            new Vector2(0.18f, 0.22f), 0f, buttonFill ?? Color.white);
     }
 }

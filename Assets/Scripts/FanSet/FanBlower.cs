@@ -12,6 +12,7 @@ public class FanBlower : MonoBehaviour
     [SerializeField] private bool startBlowing = false;
 
     public bool IsBlowing => isBlowing;
+    public event System.Action<bool> BlowingChanged;
     public float MaxRange => maxRange;
     public float AirflowWidth => airflowWidth;
     public int Facing => facing;
@@ -128,6 +129,7 @@ public class FanBlower : MonoBehaviour
         if (isBlowing == blowing) return;
         isBlowing = blowing;
         if (blowing) LastBlowActivation = ++latestBlowActivation;
+        BlowingChanged?.Invoke(blowing);
     }
 
     public void SetFacing(int direction)

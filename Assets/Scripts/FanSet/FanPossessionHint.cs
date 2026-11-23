@@ -43,6 +43,13 @@ public class FanPossessionHint : MonoBehaviour
     [SerializeField, Min(1f)] private float columnWidth = 200f;
     [SerializeField, Min(0.1f)] private float keySpacing = 36f;
 
+    [Header("Text Color")]
+    [SerializeField] private Color textColor = Color.white;
+
+    [Header("Hint Card")]
+    [SerializeField] private bool showHintCard;
+    [SerializeField] private Color hintCardColor = new Color32(25, 43, 62, 245);
+
     [Header("Border")]
     [Tooltip("Outline color of the keycap ring.")]
     [SerializeField] private Color borderColor = Color.white;
@@ -61,6 +68,9 @@ public class FanPossessionHint : MonoBehaviour
     private GameObject labelRoot;
     private RectTransform labelRect;
     private Sprite borderSprite;
+    private FanHintCard hintCard;
+
+    private float CaptionHeight => showHintCard ? Mathf.Max(40f, captionFontSize * 2.6f) : 40f;
 
     private void Awake()
     {
@@ -143,7 +153,7 @@ public class FanPossessionHint : MonoBehaviour
         labelRect.anchorMin = labelRect.anchorMax = new Vector2(0.5f, 0.5f);
         labelRect.pivot = new Vector2(0.5f, 0.5f);
 
-        float columnHeight = keySize + captionGap + 40f;
+        float columnHeight = keySize + captionGap + CaptionHeight;
         float totalWidth = hints.Length * columnWidth + (hints.Length - 1) * keySpacing;
         labelRect.sizeDelta = new Vector2(totalWidth, columnHeight);
 
@@ -184,7 +194,7 @@ public class FanPossessionHint : MonoBehaviour
             letter.text = hints[i].key;
             letter.fontSize = keyFontSize;
             letter.alignment = TextAlignmentOptions.Center;
-            letter.color = Color.white;
+            letter.color = textColor;
             letter.raycastTarget = false;
 
             if (hasMouse)
@@ -199,14 +209,16 @@ public class FanPossessionHint : MonoBehaviour
                 text.text = "or";
                 text.fontSize = keyFontSize * 0.75f;
                 text.alignment = TextAlignmentOptions.Center;
+                text.color = textColor;
                 text.raycastTarget = false;
 
                 MouseButtonHintIcon.DrawOnCanvas(colRect, new Vector2(0.85f, -0.5f) * keySize,
-                    keySize * 1.3f, hints[i].mouseButton == MouseBinding.Right, borderColor);
+                    keySize * 1.3f, hints[i].mouseButton == MouseBinding.Right, borderColor, textColor);
             }
 
             AddCaption(colRect, hints[i].caption);
         }
+        if (showHintCard) hintCard = FanHintCard.Add(labelRect, hintCardColor, false);
     }
 
     private RectTransform CreateRow(string name)
@@ -248,13 +260,13 @@ public class FanPossessionHint : MonoBehaviour
         captionRect.anchorMin = captionRect.anchorMax = new Vector2(0.5f, 1f);
         captionRect.pivot = new Vector2(0.5f, 1f);
         captionRect.anchoredPosition = new Vector2(0f, -(keySize + captionGap));
-        captionRect.sizeDelta = new Vector2(columnWidth, 40f);
+        captionRect.sizeDelta = new Vector2(columnWidth, CaptionHeight);
 
         TextMeshProUGUI caption = captionObject.GetComponent<TextMeshProUGUI>();
         caption.text = text;
         caption.fontSize = captionFontSize;
         caption.alignment = TextAlignmentOptions.Center;
-        caption.color = Color.white;
+        caption.color = textColor;
         caption.enableAutoSizing = false;
         caption.raycastTarget = false;
     }
@@ -285,6 +297,7 @@ public class FanPossessionHint : MonoBehaviour
             out Vector2 local
         );
         labelRect.anchoredPosition = local;
+        if (hintCard != null) hintCard.Refresh();
     }
 
     /// <summary>
