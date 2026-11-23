@@ -58,7 +58,11 @@ public sealed class SchoolDayJourney : MonoBehaviour
     {
         scenery = owner;
         var room = new SchoolSceneDrawing();
-        room.Rect(-73f,14.6f,32.4f,8.3f,new Color32(239,220,197,255));
+        // Match the Intro walls at their current 94% background brightness.
+        Color bedroomWall = (Color)new Color32(204, 216, 191, 255) * .94f;
+        bedroomWall.a = 1f;
+        if (QualitySettings.activeColorSpace == ColorSpace.Linear) bedroomWall = bedroomWall.linear;
+        room.Rect(-73f,14.6f,32.4f,8.3f,bedroomWall);
 
         // One window at the breakfast table gives the interior a sense of morning.
         room.Rect(-66.5f,13.6f,2.5f,1.85f,Cream);

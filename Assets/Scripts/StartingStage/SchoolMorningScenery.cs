@@ -168,6 +168,8 @@ public sealed class SchoolMorningScenery : MonoBehaviour
     {
         var a=new SchoolSceneDrawing();
         a.Rect(-59,0,122,120,new Color32(218,234,227,255));
+        Draw(a, "Morning sky", -45);
+        a = new SchoolSceneDrawing();
         Color facade = new Color32(195,214,208,255);
         Color roof = new Color32(182,204,198,255);
         Color window = new Color32(211,226,218,255);
@@ -182,6 +184,7 @@ public sealed class SchoolMorningScenery : MonoBehaviour
             a.Rect(x + 1.1f, eaves - 1.1f, .7f, .85f, window);
         }
         Draw(a, "Morning neighborhood", -40);
+        BuildStreetTrees();
         a = new SchoolSceneDrawing();
         Color timber = new Color32(166,149,123,255);
         for (float x = -75; x < -27; x += 10.5f)
@@ -190,6 +193,42 @@ public sealed class SchoolMorningScenery : MonoBehaviour
             a.Line(new Vector2(x, 9.05f), new Vector2(x + .95f, 10f), .13f, timber);
         }
         Draw(a, "Footbridge supports", -10);
+    }
+
+    private void BuildStreetTrees()
+    {
+        // Layer soft silhouettes behind the houses, with two nearer trees between them.
+        var distant = new SchoolSceneDrawing();
+        Color farLeaves = new Color32(178, 201, 180, 255);
+        Color farLight = new Color32(191, 210, 188, 255);
+        Color farTrunk = new Color32(181, 174, 151, 255);
+        StreetTree(distant, -53.2f, 4.3f, farLeaves, farLight, farTrunk);
+        StreetTree(distant, -42f, 3.7f, farLeaves, farLight, farTrunk);
+        StreetTree(distant, -30f, 4.8f, farLeaves, farLight, farTrunk);
+        Draw(distant, "Distant roadside trees", -42);
+
+        var nearby = new SchoolSceneDrawing();
+        Color leaves = new Color32(145, 177, 149, 255);
+        Color light = new Color32(165, 191, 160, 255);
+        Color trunk = new Color32(166, 149, 123, 255);
+        StreetTree(nearby, -48.6f, 5.6f, leaves, light, trunk);
+        StreetTree(nearby, -36.8f, 5f, leaves, light, trunk);
+        Draw(nearby, "Near roadside trees", -38);
+    }
+
+    private static void StreetTree(SchoolSceneDrawing art, float x, float height,
+        Color leaves, Color light, Color trunk)
+    {
+        const float ground = 10.1f;
+        art.Rect(x, ground + height * .3f, height * .043f, height * .6f, trunk);
+        art.Line(new Vector2(x, ground + height * .36f),
+            new Vector2(x - height * .18f, ground + height * .64f), height * .018f, trunk);
+        art.Line(new Vector2(x, ground + height * .45f),
+            new Vector2(x + height * .19f, ground + height * .67f), height * .016f, trunk);
+        art.Circle(new Vector2(x - height * .2f, ground + height * .61f), height * .23f, leaves);
+        art.Circle(new Vector2(x + height * .22f, ground + height * .6f), height * .22f, leaves);
+        art.Circle(new Vector2(x, ground + height * .73f), height * .28f, leaves);
+        art.Circle(new Vector2(x - height * .055f, ground + height * .79f), height * .20f, light);
     }
 
     private void BuildBackLane()

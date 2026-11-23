@@ -2288,6 +2288,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7788203956102451002, guid: c27d9699c1e2fde47a541a394fce6918, type: 3}
+      propertyPath: hitMask.m_Bits
+      value: 1139
+      objectReference: {fileID: 0}
     - target: {fileID: 8487251107228437932, guid: c27d9699c1e2fde47a541a394fce6918, type: 3}
       propertyPath: m_Name
       value: SpiderFanRoom
@@ -7107,7 +7111,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.5019608, g: 0.7176471, b: 0.98823535, a: 0.7989981}
+  m_Color: {r: 0.5019608, g: 0.7176471, b: 0.98823535, a: 0.13804963}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7716,7 +7720,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.7989981}
+  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.13804963}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -8379,6 +8383,7 @@ MonoBehaviour:
   respawnPoint: {fileID: 1125206876}
   checkpointId: CP02
   showTextFeedback: 1
+  hideWorldMarker: 0
   onCheckpointReached:
     m_PersistentCalls:
       m_Calls:
@@ -9983,7 +9988,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.20050618}
+  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.699999}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -15050,7 +15055,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.20050618}
+  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.699999}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -16629,7 +16634,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.9333334, g: 0.64705884, b: 0.24705884, a: 0.7989981}
+  m_Color: {r: 0.9333334, g: 0.64705884, b: 0.24705884, a: 0.13804963}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -16718,7 +16723,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.832031307, y: 1}
+  m_Size: {x: 0.8320313, y: 1}
   m_EdgeRadius: 0
 --- !u!212 &2110414733
 SpriteRenderer:
