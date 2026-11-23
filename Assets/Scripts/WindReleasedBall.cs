@@ -11,7 +11,9 @@ public class WindReleasedBall : MonoBehaviour
     private RigidbodyConstraints2D fallingConstraints;
     private ulong armedAfterActivation;
     private bool hasTriggeredSeesaw;
-    private SeesawOverloadSequence gust;
+    private Transform capturedSocket;
+    private Vector2 capturedPosition;
+    public bool IsCaptured { get; private set; }
     [SerializeField, Min(.1f)] private float releaseShakeSeconds = .6f;
     [SerializeField, Min(0f)] private float releaseShakeDistance = .16f;
     private float shakeElapsed;
@@ -41,24 +43,29 @@ public class WindReleasedBall : MonoBehaviour
         armedAfterActivation = FanBlower.LatestBlowActivation;
     }
 
-    public void ReleaseForGust(SeesawOverloadSequence sequence)
+    public void CaptureInSocket(Transform socket,float depth)
     {
-        gust = sequence;
-        if (IsShaking) body.position = shakeOrigin;
-        IsShaking = false;
-        HasBeenReleased = true;
-        body.constraints = fallingConstraints;
-        body.bodyType = RigidbodyType2D.Dynamic;
-        body.gravityScale = fallingGravity;
-        body.linearVelocity = new Vector2(-2.5f, 0f);
-        body.WakeUp();
+        IsCaptured=true;
+        HasBeenReleased=true;
+        IsShaking=false;
+        float radius=ballCollider.radius*Mathf.Max(Mathf.Abs(transform.lossyScale.x),Mathf.Abs(transform.lossyScale.y));
+        capturedSocket=socket;
+        capturedPosition=new Vector2(0f,-depth+radius+.06f);
+        body.linearVelocity=Vector2.zero;
+        body.angularVelocity=0f;
+        body.gravityScale=0f;
+        body.bodyType=RigidbodyType2D.Kinematic;
+        body.constraints=RigidbodyConstraints2D.FreezeAll;
+        ballCollider.isTrigger=false;
+        transform.SetParent(socket,true);
+        body.position=socket.TransformPoint(capturedPosition);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) => ReportLoad(collision);
     private void OnCollisionStay2D(Collision2D collision) => ReportLoad(collision);
     private void ReportLoad(Collision2D collision)
     {
-        if (gust != null && collision.collider == gust.BoardSurface) gust.RegisterLoad(this);
+        if (IsCaptured) return;
         if (HasBeenReleased && !ballCollider.isTrigger && collision.collider.TryGetComponent<SeesawGearBarrier>(out _))
         {
             float outside = collision.collider.bounds.max.x + ballCollider.bounds.extents.x;
@@ -79,7 +86,7 @@ public class WindReleasedBall : MonoBehaviour
 
     public bool TryDespawnOnFall(SeesawRoomSupplies owner)
     {
-        if (!gameObject.activeInHierarchy || !HasBeenReleased || supply == null || supply != owner) return false;
+        if (IsCaptured || !gameObject.activeInHierarchy || !HasBeenReleased || supply == null || supply != owner) return false;
         gameObject.SetActive(false);
         Destroy(gameObject);
         return true;
@@ -87,6 +94,11 @@ public class WindReleasedBall : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (IsCaptured)
+        {
+            if(capturedSocket!=null)body.position=capturedSocket.TransformPoint(capturedPosition);
+            return;
+        }
         if (supply == null || !supply.CanRunEffects) return;
         if (!HasBeenReleased && !IsShaking && !supply.FanSupplyStopped && supply.HasFanBlowCommandAfter(armedAfterActivation))
         {
@@ -114,9 +126,6 @@ public class WindReleasedBall : MonoBehaviour
         // bridge lip would otherwise catch them above the collection trigger.
         if (HasBeenReleased && !ballCollider.isTrigger && supply.IsOverCliff(ballCollider.bounds))
             BeginCliffDrop();
-        if (!ballCollider.isTrigger && gust != null && gust.IsWindActive)
-            body.linearVelocity = new Vector2(Mathf.MoveTowards(body.linearVelocity.x, -4f,
-                12f * Time.fixedDeltaTime), body.linearVelocity.y);
         if (HasBeenReleased && supply.HasBallLeftBoard(body.position)) Destroy(gameObject);
     }
 

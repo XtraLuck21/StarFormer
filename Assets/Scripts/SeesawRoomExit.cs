@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-/// <summary>All four gears reveal an elevator to the lower-left Smile Face entrance.</summary>
+/// <summary>A complete elevator waits for four powered drives before carrying the player onward.</summary>
 [DefaultExecutionOrder(150)]
 public sealed class SeesawRoomExit : MonoBehaviour
 {
@@ -16,11 +16,10 @@ public sealed class SeesawRoomExit : MonoBehaviour
     [SerializeField] private LineRenderer entryCheckpointOutline;
     [SerializeField] private BoxCollider2D roomCeiling;
     [SerializeField] private float arrivalX = 28.03f;
-    [SerializeField] private Vector2 platformLocalPosition = new Vector2(.21f, 2.8f);
+    [SerializeField] private Vector2 platformLocalPosition = new Vector2(.21f, 8.22f);
     [SerializeField] private Vector2 platformSize = new Vector2(2.8f, .35f);
     [SerializeField, Min(.1f)] private float shakeSeconds = 2f;
     [SerializeField, Min(0f)] private float shakeStrength = .13f;
-    [SerializeField, Min(.1f)] private float revealSeconds = .9f;
     [SerializeField, Min(.1f)] private float rideSeconds = 7f;
     [SerializeField, Min(.1f)] private float boardingSeconds = .35f;
     public bool CompletionStarted { get; private set; }
@@ -35,7 +34,6 @@ public sealed class SeesawRoomExit : MonoBehaviour
     private Rigidbody2D platformBody;
     private GameObject portalCues;
     private Vector2 platformRest;
-    private Vector2 assemblyBay;
     private float completionAge;
     private bool fractureFelt;
     private PossessableBody travellingBody;
@@ -44,7 +42,9 @@ public sealed class SeesawRoomExit : MonoBehaviour
     private float travellingHalfHeight;
     private float roomExitHeight;
     private SeesawBallShellExit shellEffect;
-    private SeesawLiftAssembly assembly;
+    private SeesawLiftAssembly carriage;
+    public Vector3 LoadingPosition => transform.TransformPoint(platformLocalPosition);
+    public Vector2 PlatformSize => platformSize;
 
     private void Awake()
     {
@@ -56,18 +56,16 @@ public sealed class SeesawRoomExit : MonoBehaviour
         platformBody.gravityScale = 0f;
         Surface = platform.AddComponent<BoxCollider2D>();
         Surface.size = platformSize;
-        Surface.enabled = false;
-        assemblyBay = platformRest + Vector2.up * 2.35f;
-        platform.transform.position = assemblyBay;
-        platformBody.position = assemblyBay;
-        assembly = new SeesawLiftAssembly(platform.transform, gears, platformSize, sourceVisual.sortingLayerID);
+        Surface.enabled = true;
+        platform.transform.position = platformRest;
+        platformBody.position = platformRest;
+        carriage = new SeesawLiftAssembly(platform.transform, gears, platformSize, sourceVisual.sortingLayerID);
         BuildLiftCues();
     }
 
     private void Start()
     {
         RefreshEntryCheckpoint();
-        assembly.RestoreDecks();
         if (!player.IsCurrentCheckpoint(SmileCheckpointId) && !SmileFaceFinalRoute.IsRouteCheckpoint(player)) return;
         HasTransferred = true;
         roomCamera.BeginRemainingFollow();
@@ -100,23 +98,14 @@ public sealed class SeesawRoomExit : MonoBehaviour
                 fractureFelt = true;
                 roomCamera.ShakeSeesawRoom(.55f, shakeStrength * .75f);
             }
-            if (!assembly.Advance(Time.deltaTime, finale) ||
-                !AllGearsRunning()) return;
+            if (!AllGearsRunning() || !finale.IsLeftBridgeReady) return;
             CompletionStarted = true;
             roomCamera.ShakeSeesawRoom(shakeSeconds, shakeStrength);
         }
         completionAge += Time.deltaTime;
         if (IsReady) return;
-        if (completionAge < shakeSeconds)
-        {
-            float align = Mathf.SmoothStep(0f, 1f, completionAge / shakeSeconds);
-            platformBody.position = Vector2.Lerp(assemblyBay, platformRest + Vector2.down * 1.2f, align);
-            return;
-        }
-        RevealProgress = Mathf.Clamp01((completionAge - shakeSeconds) / Mathf.Max(.1f, revealSeconds));
-        platformBody.position = platformRest + Vector2.down *
-            Mathf.Lerp(1.2f, 0f, Mathf.SmoothStep(0f, 1f, RevealProgress));
-        if (RevealProgress < 1f || !finale.IsLeftBridgeReady) return;
+        RevealProgress = Mathf.Clamp01(completionAge / Mathf.Max(.1f,shakeSeconds));
+        if (RevealProgress < 1f) return;
         IsReady = true;
         Surface.enabled = true;
         portalCues.SetActive(true);
@@ -317,5 +306,5 @@ public sealed class SeesawRoomExit : MonoBehaviour
         RestoreControl();
     }
 
-    private void OnDestroy() => assembly?.Dispose();
+    private void OnDestroy() => carriage?.Dispose();
 }

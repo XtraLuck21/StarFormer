@@ -45,7 +45,6 @@ public class SeesawRoomSupplies : MonoBehaviour
     public bool FanSupplyStopped { get; private set; }
     public bool CanRunEffects => IsRoomActive && player != null && !player.IsDead &&
         !player.IsRestarting && Time.timeScale > 0f;
-    private bool gustBatchStarted;
     public bool ReferencesReady => player != null && boardSurface != null && roomVolume != null &&
         fanPrefab != null && fanPrefab.Form == BodyForm.Fan && fanSpawnPoint != null &&
         ballPrefab != null && ballSpawnPoint != null;
@@ -101,8 +100,8 @@ public class SeesawRoomSupplies : MonoBehaviour
         ballSpawnPoint.gameObject.AddComponent<SeesawBallSpawnMarker>().Initialize(this, ballPrefab.GetComponent<SpriteRenderer>());
         RefreshPopulation();
         if (!FanSupplyStopped && FanCount == 0) SpawnFan();
-        if (FanSupplyStopped && !gustBatchStarted) EnsureWaitingBall();
-        else if (OrdinaryBallCount == 0) SpawnBall();
+        // The first teaching ball appears immediately, rather than waiting for an Update tick.
+        if (!FanSupplyStopped && OrdinaryBallCount == 0) SpawnBall();
         nextPopulationCheck = Time.time + populationCheckInterval;
     }
 
@@ -115,7 +114,6 @@ public class SeesawRoomSupplies : MonoBehaviour
         if (Time.time < nextPopulationCheck) return;
         nextPopulationCheck = Time.time + populationCheckInterval;
         RefreshPopulation();
-        if (FanSupplyStopped) ClearUncontrolledFans();
         if (wasControllingRoomFan && (player.CurrentBody == null || !player.CurrentBody.isActiveAndEnabled) && FanCount > 0)
             player.TryRecoverMissingHost(roomFans[0]);
         if (FanCount > 0) fanMissingSince = -1f;
@@ -124,13 +122,10 @@ public class SeesawRoomSupplies : MonoBehaviour
             if (fanMissingSince < 0f) fanMissingSince = Time.time;
             if (Time.time - fanMissingSince >= respawnDelay) SpawnFan();
         }
-        if (FanSupplyStopped && !gustBatchStarted)
-        {
-            EnsureWaitingBall();
-            return;
-        }
+        // Filled socket balls remain visible but do not block replenishing the free ball.
+        if (FanSupplyStopped) return;
         if (OrdinaryBallCount > 0) ballMissingSince = -1f;
-        else if (!gustBatchStarted)
+        else
         {
             if (ballMissingSince < 0f) ballMissingSince = Time.time;
             if (Time.time - ballMissingSince >= respawnDelay) SpawnBall();
@@ -140,7 +135,7 @@ public class SeesawRoomSupplies : MonoBehaviour
     private void SupplyBallOnDirectionChange()
     {
         PossessableBody fan = player.CurrentBody;
-        if (FanSupplyStopped || gustBatchStarted || fan == null || !fan.isActiveAndEnabled ||
+        if (FanSupplyStopped || fan == null || !fan.isActiveAndEnabled ||
             fan.Form != BodyForm.Fan || !fan.IsControlled || !IsInsideRoom(fan.transform.position))
         {
             directionFan = null;
@@ -198,6 +193,7 @@ public class SeesawRoomSupplies : MonoBehaviour
         if (body == null || !body.gameObject.activeInHierarchy || body.gameObject.scene != gameObject.scene ||
             body.GetComponent<PossessableBody>() != null ||
             (!countBallsAcrossScene && !IsInsideRoom(body.position))) return;
+        if(body.TryGetComponent(out WindReleasedBall stored) && stored.IsCaptured)return;
         ordinaryBodies.Add(body);
     }
 
@@ -222,20 +218,12 @@ public class SeesawRoomSupplies : MonoBehaviour
         FanSupplyStopped = true;
         fanSpawnPoint.gameObject.SetActive(false);
         RefreshPopulation();
-        // Hand off before the reveal locks controls, so it freezes the surviving
-        // Star rather than a Fan that is about to be removed.
-        if (player != null && !player.IsDead && !player.IsRestarting &&
-            player.CurrentBody != null && player.CurrentBody.Form == BodyForm.Fan &&
-            roomFans.Contains(player.CurrentBody))
-        {
-            player.RestoreStarAfterFanPuzzle((Vector2)boardSurface.bounds.center + Vector2.up);
-            player.ClearInputForRestartMenu();
-        }
+        // Stop replenishment, not the body. The player leaves with the normal Fan
+        // controls; completed drives keep running independently of possession.
+        foreach (PossessableBody fan in roomFans)
+            if (fan.TryGetComponent(out FanBlower blower)) blower.StopBlowing();
         wasControllingRoomFan = false;
-        ClearUncontrolledFans();
-        ClearLooseBalls();
-        if (IsRoomActive && player != null && !player.IsDead && !player.IsRestarting)
-            EnsureWaitingBall();
+        ClearLooseBalls(false);
     }
 
     private bool IsWaitingBall(WindReleasedBall ball)
@@ -248,14 +236,15 @@ public class SeesawRoomSupplies : MonoBehaviour
         if (!IsWaitingBall(SpawnedBall)) SpawnBall();
     }
 
-    private void ClearLooseBalls()
+    private void ClearLooseBalls(bool keepWaitingBall = true)
     {
-        WindReleasedBall waiting = IsWaitingBall(SpawnedBall) ? SpawnedBall : null;
+        WindReleasedBall waiting = keepWaitingBall && IsWaitingBall(SpawnedBall) ? SpawnedBall : null;
         foreach (Rigidbody2D body in ordinaryBodies)
         {
             if (body == null) continue;
             var ball = body.GetComponent<WindReleasedBall>();
-            if (waiting == null && IsWaitingBall(ball)) waiting = ball;
+            if(ball!=null && ball.IsCaptured)continue;
+            if (keepWaitingBall && waiting == null && IsWaitingBall(ball)) waiting = ball;
             if (ball == waiting && waiting != null) continue;
             // Reclaim this supply's balls even outside the room, and any ordinary
             // authored ball inside it. Leave unrelated balls in other rooms alone.
@@ -282,13 +271,13 @@ public class SeesawRoomSupplies : MonoBehaviour
         FanCount = roomFans.Count;
     }
 
-    public void BeginGustBatch() => gustBatchStarted = true;
-
-    public WindReleasedBall TakeGustBall(bool reuseWaitingBall)
+    public WindReleasedBall RestoreCapturedBall(Transform socket,float depth)
     {
-        if (!reuseWaitingBall || SpawnedBall == null || !SpawnedBall.gameObject.activeInHierarchy || SpawnedBall.HasBeenReleased)
-            SpawnBall();
-        return SpawnedBall;
+        WindReleasedBall ball=Instantiate(ballPrefab,socket.position,Quaternion.identity,socket);
+        ball.name="Stored socket ball";
+        ball.Bind(this);
+        ball.CaptureInSocket(socket,depth);
+        return ball;
     }
 
     public bool TryBreakFanOnSpikes(PossessableBody fan)
@@ -325,7 +314,7 @@ public class SeesawRoomSupplies : MonoBehaviour
             Destroy(fan.gameObject);
         }
         foreach (WindReleasedBall ball in FindObjectsByType<WindReleasedBall>(FindObjectsSortMode.None))
-            if (ball.IsOwnedBy(this))
+            if (ball.IsOwnedBy(this) && !ball.IsCaptured)
             {
                 ball.gameObject.SetActive(false);
                 Destroy(ball.gameObject);
