@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 118099725}
   - component: {fileID: 118099724}
   - component: {fileID: 118099723}
+  - component: {fileID: 118099726}
   m_Layer: 0
   m_Name: fanblock
   m_TagString: Untagged
@@ -389,12 +390,27 @@ Transform:
   m_GameObject: {fileID: 118099722}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0.7071066, w: 0.70710707}
-  m_LocalPosition: {x: 12.5744, y: -3.0564, z: 0}
+  m_LocalPosition: {x: 12.5744, y: -3.085, z: 0}
   m_LocalScale: {x: 0.27203172, y: 0.114609696, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -90}
+--- !u!114 &118099726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 118099722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a73e3c3feb774a41a4809f468f80c61f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FanBlockLift
+  seesaw: {fileID: 5716082915831633850}
+  targetWorldY: -2.78
+  liftDuration: 0.2
 --- !u!1 &454859565
 GameObject:
   m_ObjectHideFlags: 0
@@ -2149,7 +2165,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.54901963, g: 0.7803922, b: 0.9490197, a: 0.07749935}
+  m_Color: {r: 0.54901963, g: 0.7803922, b: 0.9490197, a: 0.76653117}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
