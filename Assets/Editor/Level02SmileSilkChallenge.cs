@@ -151,6 +151,21 @@ public static class Level02SmileSilkChallenge
         if (gateBlocker != null) gateBlocker.enabled = blockerWasEnabled;
         Physics2D.SyncTransforms();
 
+        // The gate's blocker is disabled in the saved scene (it switches on when Spider is possessed),
+        // so edit-mode raycasts cannot see it. Pin its shaft-side face from the box geometry instead.
+        if (gate != null && gatePins.childCount == 0 && gate.TryGetComponent(out BoxCollider2D blockerBox))
+        {
+            Vector2 boxCenter = gate.transform.TransformPoint(blockerBox.offset);
+            Vector2 half = Vector2.Scale(blockerBox.size, gate.transform.lossyScale) * 0.5f;
+            half = new Vector2(Mathf.Abs(half.x), Mathf.Abs(half.y));
+            for (float y = PinBottom + PinSize * 0.5f; y < PinTop; y += PinSize)
+            {
+                if (y < boxCenter.y - half.y || y > boxCenter.y + half.y) continue;
+                PlacePin(prefab, gatePins, new Vector2(boxCenter.x + half.x, y), Vector2.right, player, pinCount);
+                pinCount++;
+            }
+        }
+
         if (gate != null && gatePins.childCount == 0)
             Debug.LogWarning("No pins were placed on the Spider return gate. If Spider can climb that gate, " +
                              "it can skip the board; check the gate's collider and layer.");
@@ -212,11 +227,14 @@ public static class Level02SmileSilkChallenge
     }
 
     private static void PlacePin(GameObject prefab, Transform parent, RaycastHit2D face,
+        PlayerPossessionController player, int index) => PlacePin(prefab, parent, face.point, face.normal, player, index);
+
+    private static void PlacePin(GameObject prefab, Transform parent, Vector2 point, Vector2 normal,
         PlayerPossessionController player, int index)
     {
         var pin = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
         pin.name = index == 0 ? "Silk Climb Pin" : $"Silk Climb Pin ({index})";
-        pin.transform.SetPositionAndRotation(face.point, Quaternion.FromToRotation(Vector3.up, face.normal));
+        pin.transform.SetPositionAndRotation(point, Quaternion.FromToRotation(Vector3.up, normal));
         // Keep the prefab's proportions; make the visible height along the pin's axis PinSize.
         Vector3 scale = prefab.transform.localScale;
         var sprite = pin.GetComponent<SpriteRenderer>();
@@ -232,10 +250,10 @@ public static class Level02SmileSilkChallenge
             for (int i = 0; i < 4; i++)
             {
                 Vector2 corner = new Vector2(i % 2 == 0 ? b.min.x : b.max.x, i < 2 ? b.min.y : b.max.y);
-                deepest = Mathf.Min(deepest, Vector2.Dot(corner - face.point, face.normal));
+                deepest = Mathf.Min(deepest, Vector2.Dot(corner - point, normal));
             }
             // Bounds are axis-aligned, which is exact for the horizontal normals this scan produces.
-            pin.transform.position += (Vector3)(face.normal * -deepest);
+            pin.transform.position += (Vector3)(normal * -deepest);
         }
         var serialized = new SerializedObject(pin.GetComponent<SpikeHazard>());
         serialized.FindProperty("playerController").objectReferenceValue = player;
