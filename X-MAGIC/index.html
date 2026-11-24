@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#101820">
+  <title>StarFormer | X-MAGIC</title>
+  <link rel="stylesheet" href="TemplateData/alpha.css?v=f057f6158c8368e3835cee5c7e925c3b.wasm.unityweb">
+</head>
+<body>
+  <main id="player" aria-label="StarFormer game">
+    <div id="viewport">
+      <div id="game-frame">
+        <canvas id="unity-canvas" width="1920" height="1080" tabindex="-1" aria-label="Game"></canvas>
+        <button id="fullscreen" type="button" title="Enter Fullscreen" aria-label="Enter Fullscreen" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square" stroke-linejoin="miter">
+            <path d="M14 4h6v6m0-6-7 7M10 20H4v-6m0 6 7-7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <section id="launch" aria-labelledby="game-title">
+      <div class="launch-card">
+        <p class="eyebrow">X-MAGIC</p>
+        <h1 id="game-title">StarFormer</h1>
+        <p id="load-status" role="status">Loading your next adventure…</p>
+        <progress id="progress" max="1" value="0" aria-label="Loading game"></progress>
+        <div class="launch-actions">
+          <button id="play-fullscreen" type="button" disabled>Play Fullscreen</button>
+          <button id="play-windowed" class="secondary" type="button" disabled>Play in Window</button>
+        </div>
+        <p class="hint">Desktop: press Esc to exit fullscreen.<br>On mobile, turn your phone sideways.</p>
+      </div>
+    </section>
+    <p id="rotate-hint" hidden>Turn your phone sideways for a bigger view.</p>
+    <p id="notice" role="status" hidden></p>
+    <noscript>Enable JavaScript to play StarFormer.</noscript>
+  </main>
+  <script>
+    window.starFormerBuild = {
+      loaderUrl: "Build/4384c2dc0c405a9abb66c83ff9b6a38b.loader.js",
+      config: {
+        arguments: [],
+        dataUrl: "Build/302a25b80676893c35f99b72b687f175.data.unityweb",
+        frameworkUrl: "Build/8afb6e76b18d1ad78118bb0347e13658.framework.js.unityweb",
+        codeUrl: "Build/f057f6158c8368e3835cee5c7e925c3b.wasm.unityweb",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "DefaultCompany",
+        productName: "StarFormer",
+        productVersion: "X-MAGIC",
+        matchWebGLToCanvasSize: false
+      }
+    };
+  </script>
+  <script src="TemplateData/alpha.js?v=f057f6158c8368e3835cee5c7e925c3b.wasm.unityweb"></script>
+</body>
+</html>
