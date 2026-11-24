@@ -13,6 +13,8 @@ public sealed class SchoolDayJourney : MonoBehaviour
     [SerializeField] private StarRoomDoor schoolEntrance;
 
     private const float Ground = 10.51f, BusX = -26.55f;
+    private const float BoardingStepHeight = .24f;
+    private const float BoardingStepTopX = -.72f;
     private static readonly Vector2 Stop = new Vector2(-23f, -22.70f);
     private static readonly float[] Stations = { -72f, -66.5f, -61f };
     private static readonly Color Ink = new Color32(49,66,73,255), Honey = new Color32(244,181,69,255),
@@ -182,6 +184,18 @@ public sealed class SchoolDayJourney : MonoBehaviour
         panel.Rect(.5f,.84f,1f,1.68f,Teal);panel.Rect(.5f,1.16f,.78f,.75f,Glass);
         busDoor=Place(panel,"School bus folding door",-.5f,.61f,112,this.bus);
         busDoor.localScale=new Vector3(.08f,1,1);
+
+        // The ramp starts flush with the approach and drops away with the trapdoor.
+        Vector2[] stepOutline = {
+            P(-1.55f, -.02f), P(BoardingStepTopX, BoardingStepHeight),
+            P(-.35f, BoardingStepHeight), P(-.35f, -.04f)
+        };
+        var stepArt = new SchoolSceneDrawing();
+        stepArt.Line(stepOutline[0], stepOutline[1], .09f, Timber);
+        stepArt.Line(stepOutline[1], stepOutline[2], .09f, Timber);
+        Transform step = Place(stepArt, "Bus boarding ramp", BusX, Ground, 107);
+        step.gameObject.AddComponent<PolygonCollider2D>().points = stepOutline;
+        step.SetParent(busPlatform.transform, true);
     }
 
     private void Update()
@@ -208,7 +222,7 @@ public sealed class SchoolDayJourney : MonoBehaviour
             levelCamera.BeginDoorChase();
         }
         if (stage != Stage.Chase) return;
-        if(pos.x>=BusX-.55f && pos.y>11.36f)
+        if(pos.x>=BusX+BoardingStepTopX && pos.y>Ground+BoardingStepHeight)
         {
             stage=Stage.Boarding;timer=0;rider=star;boardFrom=star.transform.position;
             savedInput=player.enabled;savedSimulation=rider.Body.simulated;

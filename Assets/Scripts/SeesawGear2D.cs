@@ -8,11 +8,14 @@ public sealed class SeesawGear2D : MonoBehaviour
     [SerializeField] private float degreesPerSecond = 60f;
     public bool IsRunning { get; private set; }
     private float runningAge;
+    private bool finalSpin;
+    private float finalSpinBlend;
     public bool WaitingForAssemblyTurn { get; set; }
     private Texture2D texture;
     private Sprite sprite;
 
     public void StartTurning() => IsRunning = true;
+    public void SetFinalSpin(bool active) => finalSpin = active;
 
     private void OnEnable()
     {
@@ -50,6 +53,8 @@ public sealed class SeesawGear2D : MonoBehaviour
         if (!Application.isPlaying || !IsRunning) return;
         runningAge += Time.deltaTime;
         float speed = Mathf.SmoothStep(0f, 1f, (runningAge - .2f) / .85f);
+        finalSpinBlend = Mathf.MoveTowards(finalSpinBlend, finalSpin ? 1f : 0f, Time.deltaTime / .38f);
+        speed *= Mathf.Lerp(1f, 6f, finalSpinBlend);
         transform.Rotate(0f, 0f, degreesPerSecond * speed * Time.deltaTime);
     }
 

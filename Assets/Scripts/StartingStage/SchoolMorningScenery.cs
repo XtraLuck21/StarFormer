@@ -12,10 +12,23 @@ public sealed class SchoolMorningScenery : MonoBehaviour
     [SerializeField] private Transform schoolDoor;
     [SerializeField] private Transform deskRuler;
     [SerializeField] private Transform smileRoom;
+    [SerializeField] private SeesawRoomStage seesawStage;
+    [SerializeField] private BoxCollider2D seesawFloor;
+    [SerializeField] private SeesawRoomExit seesawExit;
+    [SerializeField] private BoxCollider2D seesawLeftWall;
+    [SerializeField] private BoxCollider2D seesawRightWall;
     [SerializeField] private bool showRulerMarkings = true;
     private readonly List<GameObject> drawings = new List<GameObject>();
     private readonly List<Mesh> meshes = new List<Mesh>();
     private Material material;
+    private SchoolPlaygroundRain rain;
+    private SchoolRainStreaks smileRain;
+    private SmileFaceCompletion smileCompletion;
+    private MeshRenderer smileStorm;
+    private MeshRenderer smileSun;
+    private MaterialPropertyBlock weatherTint;
+    private static readonly int TintColor = Shader.PropertyToID("_Color");
+    private float smileSunRadius;
     private bool rebuild;
     private static readonly Color Ink = new Color32(39,59,65,255);
     private static readonly Color Wood = new Color32(126,85,55,255);
@@ -25,10 +38,34 @@ public sealed class SchoolMorningScenery : MonoBehaviour
     private void Update()
     {
         if(rebuild) { rebuild=false; Build(); }
+        rain?.Update(Time.deltaTime);
+    }
+
+    private void LateUpdate()
+    {
+        if (smileCompletion == null) return;
+        float overcast = 1f - smileCompletion.ClearSky;
+        smileRain.Update(Time.deltaTime, overcast);
+        SetWeatherOpacity(smileStorm, overcast);
+        float sun = smileCompletion.SunAmount;
+        SetWeatherOpacity(smileSun, sun);
+        if (smileSun.enabled)
+            smileSun.transform.localScale = Vector3.one * (smileSunRadius * Mathf.Lerp(.96f, 1f, sun));
+    }
+
+    private void SetWeatherOpacity(MeshRenderer renderer, float opacity)
+    {
+        renderer.enabled = opacity > 0f;
+        if (!renderer.enabled) return;
+        weatherTint.SetColor(TintColor, new Color(1f, 1f, 1f, opacity));
+        renderer.SetPropertyBlock(weatherTint);
     }
     internal GameObject Draw(SchoolSceneDrawing art,string name,int order,Transform parent=null)
+        => Draw(art, name, order, out _, parent);
+
+    internal GameObject Draw(SchoolSceneDrawing art, string name, int order, out Mesh mesh, Transform parent = null)
     {
-        var obj=art.Build(name,parent!=null?parent:transform,material,order,out var mesh);
+        var obj=art.Build(name,parent!=null?parent:transform,material,order,out mesh);
         drawings.Add(obj);meshes.Add(mesh);return obj;
     }
     private void Build()
@@ -53,39 +90,37 @@ public sealed class SchoolMorningScenery : MonoBehaviour
     {
         if (deskRuler == null) return;
         var yard = new SchoolSceneDrawing();
-        yard.ShadedRect(-2f, -44f, 58f, 4f, new Color32(243, 234, 209, 255), new Color32(179, 216, 225, 255));
-        Color roof = new Color32(172, 157, 140, 255);
-        Color windows = new Color32(164, 191, 192, 255);
-        yard.Rect(19f, -16.2f, 11.6f, 3.8f, new Color32(229, 213, 181, 255));
-        yard.Rect(19f, -14.3f, 12f, .22f, roof);
-        for (int column = 0; column < 8; column++)
+        yard.ShadedRect(-2f, -44f, 58f, 4f, YardColor(151, 165, 151), YardColor(93, 128, 130));
+        Color roof = YardColor(110, 132, 124);
+        Color windows = YardColor(110, 137, 133);
+        yard.Rect(18f, -16.75f, 10.4f, 2.7f, YardColor(138, 154, 143));
+        yard.Rect(18f, -15.4f, 10.8f, .19f, roof);
+        for (int column = 0; column < 4; column++)
         {
-            float x = 14.3f + column * 1.35f;
-            yard.Rect(x, -15.2f, .85f, .68f, windows);
-            yard.Rect(x, -16.65f, .85f, .68f, windows);
+            float x = 14.45f + column * 2.35f;
+            yard.Rect(x, -16.6f, 1.65f, .68f, windows);
         }
-        Color leaves = new Color32(160, 190, 164, 255);
-        foreach (float x in new[] { 10.8f, 26.5f, 36.7f, 44f })
+        Color leaves = YardColor(107, 135, 121);
+        foreach (float x in new[] { 10.8f, 44f })
         {
             yard.Rect(x, -17.45f, .22f, 1.5f, roof);
             yard.Circle(new Vector2(x, -16.25f), 1.08f, leaves);
             yard.Circle(new Vector2(x + .66f, -16.55f), .74f, leaves);
         }
-        yard.Rect(28f, -31f, 60f, 26f, new Color32(179, 202, 173, 255));
-        yard.ShadedRect(-2f, -44f, 58f, -20.2f, new Color32(190, 152, 133, 255), new Color32(215, 179, 159, 255));
-        Color chalk = new Color32(234, 213, 191, 255);
-        for (int lane = 1; lane <= 4; lane++)
-        {
-            float y = -20.2f - lane * lane * .24f;
-            yard.Rect(28f, y, 60f, .045f, chalk);
-        }
-        Color post = new Color32(151, 167, 164, 255);
-        yard.Rect(40.1f, -17.45f, .16f, 3.45f, post);
-        yard.Rect(40.1f, -15.8f, 1.8f, 1.12f, new Color32(233, 228, 207, 255));
+        yard.Rect(28f, -31f, 60f, 26f, YardColor(123, 144, 130));
+        yard.ShadedRect(-2f, -44f, 58f, -20.2f, YardColor(108, 101, 94), YardColor(143, 130, 118));
+        Color chalk = YardColor(154, 141, 128);
+        yard.Rect(28f, -21.8f, 60f, .035f, chalk);
+        yard.Rect(28f, -23.5f, 60f, .035f, chalk);
+        yard.Rect(40.1f, -17.45f, .16f, 3.45f, roof);
+        yard.Rect(40.1f, -15.8f, 1.8f, 1.12f, YardColor(140, 154, 143));
         yard.Rect(40.1f, -16.05f, .68f, .09f, roof);
-        yard.Line(new Vector2(39.8f, -16.1f), new Vector2(39.96f, -16.48f), .045f, chalk);
-        yard.Line(new Vector2(40.4f, -16.1f), new Vector2(40.24f, -16.48f), .045f, chalk);
         Draw(yard, "Elementary school playground", -39);
+        if (Application.IsPlaying(gameObject) && seesawExit != null && seesawExit.Ceiling != null &&
+            seesawLeftWall != null && seesawRightWall != null)
+            rain = new SchoolPlaygroundRain(this, seesawExit, seesawLeftWall, seesawRightWall);
+        if (seesawStage != null && seesawFloor != null)
+            seesawStage.BuildPlaygroundDetails(this, seesawFloor.bounds.max.y);
 
         var mechanism = new SchoolSceneDrawing();
         mechanism.Rect(12.55f,-13.55f,1.2f,.5f,Wood);
@@ -108,34 +143,61 @@ public sealed class SchoolMorningScenery : MonoBehaviour
             ruler.Rect(-.49f + i * .98f / 60f, .49f - length / 2f, .0017f, length, Ink);
         }
         Draw(ruler, "Tilting wooden ruler", 1, deskRuler);
+
+        static Color YardColor(byte r, byte g, byte b)
+        {
+            Color color = new Color32(r, g, b, 255);
+            return QualitySettings.activeColorSpace == ColorSpace.Linear ? color.linear : color;
+        }
     }
 
     private void BuildSmileCourtyard()
     {
         if (smileRoom == null) return;
-        var yard = new SchoolSceneDrawing();
-        Color peach = new Color32(243, 172, 141, 255);
-        yard.ShadedRect(-12, -74, 104, -32, new Color32(255, 216, 161, 255), peach);
-        yard.ShadedRect(-12, -32, 104, -5, peach, new Color32(134, 129, 166, 255));
+        if (!Application.IsPlaying(gameObject) || !smileRoom.TryGetComponent(out smileCompletion))
+        {
+            Draw(BuildSmileCourtyardArt(false), "Smile face school courtyard in rain", -120, smileRoom);
+            smileCompletion = null;
+            return;
+        }
 
-        Vector2 sunset = new Vector2(61.3f, -27.5f);
-        yard.Circle(sunset, 2.55f, new Color32(255, 206, 155, 90));
-        yard.Circle(sunset, 1.95f, new Color32(255, 225, 169, 255));
-        // Draw the ridge over the lower rim of the sun.
+        Draw(BuildSmileCourtyardArt(true), "Smile face school courtyard in sunshine", -120, smileRoom);
+        smileStorm = Draw(BuildSmileCourtyardArt(false), "Smile face school courtyard in rain", -119, smileRoom)
+            .GetComponent<MeshRenderer>();
+        weatherTint ??= new MaterialPropertyBlock();
+        Bounds face = smileCompletion.FaceBounds;
+        Rect rainArea = Rect.MinMaxRect(face.min.x - 10f, face.min.y - 8f, face.max.x + 10f, face.max.y + 9f);
+        int faceOrder = smileCompletion.FaceSortingOrder;
+        smileRain = new SchoolRainStreaks(this, "Smile face rain", faceOrder + 3, rainArea, 245, 921);
+        smileSun = Draw(BuildSmileSunRays(), "Smile face sun rays", faceOrder - 1, smileRoom)
+            .GetComponent<MeshRenderer>();
+        smileSun.transform.position = face.center;
+        smileSunRadius = face.extents.y * .89f;
+        smileSun.enabled = false;
+    }
+
+    private static SchoolSceneDrawing BuildSmileCourtyardArt(bool sunny)
+    {
+        var yard = new SchoolSceneDrawing();
+        Color horizon = sunny ? new Color32(199, 221, 211, 255) : new Color32(111, 137, 150, 255);
+        Color sky = sunny ? new Color32(106, 177, 218, 255) : new Color32(73, 97, 119, 255);
+        yard.ShadedRect(-12, -74, 104, -32,
+            sunny ? new Color32(251, 220, 170, 255) : new Color32(169, 176, 176, 255), horizon);
+        yard.ShadedRect(-12, -32, 104, -5, horizon, sky);
         Vector2[] ridge = {
             new Vector2(-12, -36), new Vector2(8, -32), new Vector2(22, -35),
             new Vector2(39, -39), new Vector2(54, -33), new Vector2(63, -27.6f),
             new Vector2(74, -31), new Vector2(87, -28), new Vector2(104, -34)
         };
-        Color hills = new Color32(183, 150, 157, 255);
+        Color hills = sunny ? new Color32(157, 171, 141, 255) : new Color32(110, 133, 139, 255);
         for (int i = 1; i < ridge.Length; i++)
             yard.Polygon(hills, new Vector2(ridge[i - 1].x, -49), ridge[i - 1],
                 ridge[i], new Vector2(ridge[i].x, -49));
 
         // Frame the face with two distant school wings. Keep the forehead against open sky.
-        Color plaster = new Color32(187, 154, 151, 255);
-        Color trim = new Color32(149, 127, 138, 255);
-        Color glass = new Color32(235, 188, 151, 255);
+        Color plaster = sunny ? new Color32(210, 186, 164, 255) : new Color32(141, 150, 155, 255);
+        Color trim = sunny ? new Color32(162, 146, 129, 255) : new Color32(109, 122, 131, 255);
+        Color glass = sunny ? new Color32(232, 209, 167, 255) : new Color32(157, 174, 182, 255);
         foreach (float x in new[] { 14f, 75f })
         {
             yard.Rect(x, -44, 17, 9, plaster);
@@ -147,7 +209,7 @@ public sealed class SchoolMorningScenery : MonoBehaviour
                 yard.Rect(windowX, -44.6f, 1.4f, 1.7f, glass);
             }
         }
-        Color canopy = new Color32(138, 146, 146, 255);
+        Color canopy = sunny ? new Color32(137, 161, 122, 255) : new Color32(107, 128, 128, 255);
         foreach (float x in new[] { 9f, 21f, 27f, 64f, 72f, 81f })
         {
             yard.Rect(x, -46.8f, .5f, 4.6f, trim);
@@ -155,13 +217,60 @@ public sealed class SchoolMorningScenery : MonoBehaviour
             yard.Circle(new Vector2(x + 1.6f, -44.6f), 1.8f, canopy);
         }
         yard.ShadedRect(-12, -74, 104, -48.7f,
-            new Color32(150, 149, 148, 255), new Color32(191, 177, 153, 255));
+            sunny ? new Color32(157, 158, 145, 255) : new Color32(118, 130, 134, 255),
+            sunny ? new Color32(193, 187, 159, 255) : new Color32(145, 151, 150, 255));
         yard.ShadedRect(-12, -58, 104, -52.5f,
-            new Color32(174, 137, 139, 255), new Color32(206, 161, 145, 255));
-        Color lane = new Color32(229, 194, 166, 255);
+            sunny ? new Color32(174, 137, 139, 255) : new Color32(127, 131, 140, 255),
+            sunny ? new Color32(206, 161, 145, 255) : new Color32(148, 153, 157, 255));
+        Color lane = sunny ? new Color32(229, 194, 166, 255) : new Color32(169, 182, 183, 255);
         yard.Rect(46, -53.6f, 116, .07f, lane);
         yard.Rect(46, -55.4f, 116, .09f, lane);
-        Draw(yard, "Smile face school courtyard", -120, smileRoom);
+        return yard;
+    }
+
+    private static SchoolSceneDrawing BuildSmileSunRays()
+    {
+        var sun = new SchoolSceneDrawing();
+        Color gold = GlowColor(255, 192, 68, 106);
+        Color bright = GlowColor(255, 220, 93, 236);
+        Color inner = GlowColor(255, 244, 165, 255);
+        Color clear = GlowColor(255, 193, 79, 0);
+        const int rayCount = 14;
+        for (int i = 0; i < rayCount; i++)
+        {
+            float angle = i * 2f * Mathf.PI / rayCount;
+            Vector2 outward = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+            Vector2 tangent = new Vector2(-outward.y, outward.x);
+            float reach = i % 3 == 0 ? 1.55f : 1.43f;
+            sun.ShadedQuad(outward - tangent * .045f, outward * reach - tangent * .13f,
+                outward * reach + tangent * .13f, outward + tangent * .045f, gold, clear);
+        }
+
+        // The bright band follows the head, then feathers into the tips of the rays.
+        const int segments = rayCount * 8;
+        for (int i = 0; i < segments; i++)
+        {
+            float start = i * 2f * Mathf.PI / segments;
+            float end = (i + 1) * 2f * Mathf.PI / segments;
+            Vector2 a = new Vector2(Mathf.Cos(start), Mathf.Sin(start));
+            Vector2 b = new Vector2(Mathf.Cos(end), Mathf.Sin(end));
+            float crestA = .5f + .5f * Mathf.Cos(start * rayCount);
+            float crestB = .5f + .5f * Mathf.Cos(end * rayCount);
+            crestA *= crestA;
+            crestB *= crestB;
+            Vector2 brightA = a * (1.015f + .10f * crestA);
+            Vector2 brightB = b * (1.015f + .10f * crestB);
+            sun.ShadedQuad(a * .90f, brightA, brightB, b * .90f, inner, bright);
+            sun.ShadedQuad(brightA, a * (1.16f + .23f * crestA), b * (1.16f + .23f * crestB),
+                brightB, bright, clear);
+        }
+        return sun;
+
+        static Color GlowColor(byte r, byte g, byte b, byte alpha)
+        {
+            Color color = new Color32(r, g, b, alpha);
+            return QualitySettings.activeColorSpace == ColorSpace.Linear ? color.linear : color;
+        }
     }
 
     private void BuildStreet()
@@ -350,6 +459,9 @@ public sealed class SchoolMorningScenery : MonoBehaviour
     private void OnDestroy()=>Clear();
     private void Clear()
     {
+        rain = null;
+        smileCompletion = null;
+        smileRain = null;
         foreach(var obj in drawings)if(obj!=null){obj.SetActive(false);SchoolSceneDrawing.Release(obj);}
         foreach(var mesh in meshes)SchoolSceneDrawing.Release(mesh);
         drawings.Clear();meshes.Clear();SchoolSceneDrawing.Release(material);material=null;

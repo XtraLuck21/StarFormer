@@ -30,6 +30,9 @@ public sealed class SeesawRoomExit : MonoBehaviour
     public float RevealProgress { get; private set; }
     public float RideProgress { get; private set; }
     public BoxCollider2D Surface { get; private set; }
+    internal BoxCollider2D Ceiling => roomCeiling;
+    internal BoxCollider2D LeftCeiling { get; private set; }
+    internal BoxCollider2D RightCeiling { get; private set; }
 
     private GameObject platform;
     private Rigidbody2D platformBody;
@@ -37,7 +40,8 @@ public sealed class SeesawRoomExit : MonoBehaviour
     private Vector2 platformRest;
     private Vector2 assemblyBay;
     private float completionAge;
-    private bool fractureFelt;
+    private bool quakeStarted;
+    private const float GearSpinLeadIn = .45f;
     private PossessableBody travellingBody;
     private BouncyBallAbility travellingAbility;
     private bool controllerWasEnabled, abilityWasEnabled, bodyWasSimulated;
@@ -92,28 +96,31 @@ public sealed class SeesawRoomExit : MonoBehaviour
     private void Update()
     {
         RefreshEntryCheckpoint();
-        if (HasTransferred || player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
+        if (HasTransferred || IsReady || player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
         if (!CompletionStarted)
         {
-            if (finale.HasLifted && !fractureFelt)
-            {
-                fractureFelt = true;
-                roomCamera.ShakeSeesawRoom(.55f, shakeStrength * .75f);
-            }
             if (!assembly.Advance(Time.deltaTime, finale) ||
                 !AllGearsRunning()) return;
             CompletionStarted = true;
+            foreach (SeesawGear2D gear in gears) gear.SetFinalSpin(true);
+        }
+
+        completionAge += Time.deltaTime;
+        float quakeAge = completionAge - GearSpinLeadIn;
+        if (quakeAge < 0f) return;
+        if (!quakeStarted)
+        {
+            quakeStarted = true;
             roomCamera.ShakeSeesawRoom(shakeSeconds, shakeStrength);
         }
-        completionAge += Time.deltaTime;
-        if (IsReady) return;
-        if (completionAge < shakeSeconds)
+        if (quakeAge < shakeSeconds)
         {
-            float align = Mathf.SmoothStep(0f, 1f, completionAge / shakeSeconds);
+            float align = Mathf.SmoothStep(0f, 1f, quakeAge / shakeSeconds);
             platformBody.position = Vector2.Lerp(assemblyBay, platformRest + Vector2.down * 1.2f, align);
             return;
         }
-        RevealProgress = Mathf.Clamp01((completionAge - shakeSeconds) / Mathf.Max(.1f, revealSeconds));
+        OpenElevatorShaft();
+        RevealProgress = Mathf.Clamp01((quakeAge - shakeSeconds) / Mathf.Max(.1f, revealSeconds));
         platformBody.position = platformRest + Vector2.down *
             Mathf.Lerp(1.2f, 0f, Mathf.SmoothStep(0f, 1f, RevealProgress));
         if (RevealProgress < 1f || !finale.IsLeftBridgeReady) return;
@@ -158,7 +165,7 @@ public sealed class SeesawRoomExit : MonoBehaviour
         body.Body.simulated = false;
         Surface.enabled = false;
         portalCues.SetActive(false);
-        OpenElevatorShaft();
+        foreach (SeesawGear2D gear in gears) gear.SetFinalSpin(false);
         roomCamera.BeginElevatorRide(body.transform);
 
         Vector2 riderStart = body.Body.position;
@@ -238,21 +245,22 @@ public sealed class SeesawRoomExit : MonoBehaviour
 
     private void OpenElevatorShaft()
     {
+        if (!roomCeiling.enabled) return;
         Bounds ceiling = roomCeiling.bounds;
         roomExitHeight = ceiling.max.y;
         var renderer = roomCeiling.GetComponent<SpriteRenderer>();
         float halfShaft = platformSize.x * .5f + .25f;
         float shaftLeft = platformRest.x - halfShaft;
         float shaftRight = platformRest.x + halfShaft;
-        CreateCeilingSide("Ceiling Left of Elevator", ceiling.min.x, shaftLeft, ceiling, renderer);
-        CreateCeilingSide("Ceiling Right of Elevator", shaftRight, ceiling.max.x, ceiling, renderer);
+        LeftCeiling = CreateCeilingSide("Ceiling Left of Elevator", ceiling.min.x, shaftLeft, ceiling, renderer);
+        RightCeiling = CreateCeilingSide("Ceiling Right of Elevator", shaftRight, ceiling.max.x, ceiling, renderer);
         roomCeiling.enabled = false;
         renderer.enabled = false;
     }
 
-    private void CreateCeilingSide(string name, float minX, float maxX, Bounds ceiling, SpriteRenderer original)
+    private BoxCollider2D CreateCeilingSide(string name, float minX, float maxX, Bounds ceiling, SpriteRenderer original)
     {
-        if (maxX <= minX) return;
+        if (maxX <= minX) return null;
         var side = new GameObject(name);
         side.transform.SetParent(transform, false);
         side.transform.position = new Vector3((minX + maxX) * .5f, ceiling.center.y, original.transform.position.z);
@@ -266,6 +274,8 @@ public sealed class SeesawRoomExit : MonoBehaviour
         visual.sortingOrder = original.sortingOrder;
         var collider = side.AddComponent<BoxCollider2D>();
         collider.size = original.sprite.bounds.size;
+        if (original.TryGetComponent(out SchoolSurfaceSkin skin)) skin.ApplyTo(side);
+        return collider;
     }
 
     private void RestoreControl()
@@ -303,6 +313,7 @@ public sealed class SeesawRoomExit : MonoBehaviour
             line.positionCount = 3;
             line.widthMultiplier = .10f;
             line.startColor = line.endColor = new Color32(91, 41, 141, 255);
+            line.sortingLayerID = sourceVisual.sortingLayerID;
             line.sortingOrder = 8;
             float y = .34f + i * .34f;
             line.SetPositions(new[] { new Vector3(-.34f, y, 0f), new Vector3(0f, y + .20f, 0f), new Vector3(.34f, y, 0f) });

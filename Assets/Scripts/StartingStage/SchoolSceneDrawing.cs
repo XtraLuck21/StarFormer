@@ -22,16 +22,32 @@ internal sealed class SchoolSceneDrawing
     }
     public void ShadedRect(float left, float bottom, float right, float top, Color lower, Color upper)
     {
-        Polygon(lower, new Vector2(left,bottom), new Vector2(left,top),
-            new Vector2(right,top), new Vector2(right,bottom));
-        colors[colors.Count - 3] = upper;
-        colors[colors.Count - 2] = upper;
+        ShadedQuad(new Vector2(left,bottom), new Vector2(left,top),
+            new Vector2(right,top), new Vector2(right,bottom), lower, upper);
+    }
+
+    public void ShadedQuad(Vector2 nearA, Vector2 farA, Vector2 farB, Vector2 nearB, Color nearColor, Color farColor)
+    {
+        Polygon(nearColor, nearA, farA, farB, nearB);
+        colors[colors.Count - 3] = farColor;
+        colors[colors.Count - 2] = farColor;
     }
 
     public void Line(Vector2 from, Vector2 to, float width, Color color)
     {
         Vector2 d = to-from, n = new Vector2(-d.y,d.x).normalized * width/2;
-        Polygon(color, from-n, from+n, to+n, to-n);
+        int start = vertices.Count;
+        vertices.Add(from - n);
+        vertices.Add(from + n);
+        vertices.Add(to + n);
+        vertices.Add(to - n);
+        for (int i = 0; i < 4; i++) colors.Add(color);
+        triangles.Add(start);
+        triangles.Add(start + 1);
+        triangles.Add(start + 2);
+        triangles.Add(start);
+        triangles.Add(start + 2);
+        triangles.Add(start + 3);
     }
     public void Circle(Vector2 center, float radius, Color color)
     {
@@ -65,11 +81,26 @@ internal sealed class SchoolSceneDrawing
         var root = new GameObject(name,typeof(MeshFilter),typeof(MeshRenderer)) { hideFlags=HideFlags.HideAndDontSave };
         root.transform.SetParent(parent,false);
         mesh=new Mesh { name=name, hideFlags=HideFlags.HideAndDontSave };
-        mesh.SetVertices(vertices); mesh.SetColors(colors); mesh.SetTriangles(triangles,0);
+        Upload(mesh);
         mesh.uv=new Vector2[vertices.Count]; mesh.RecalculateBounds();
         root.GetComponent<MeshFilter>().sharedMesh=mesh;
         var renderer=root.GetComponent<MeshRenderer>(); renderer.sharedMaterial=material; renderer.sortingOrder=order;
         return root;
+    }
+
+    public void Upload(Mesh mesh)
+    {
+        if (mesh.vertexCount != vertices.Count) mesh.Clear(keepVertexLayout: false);
+        mesh.SetVertices(vertices);
+        mesh.SetColors(colors);
+        mesh.SetTriangles(triangles, 0);
+    }
+
+    public void Clear()
+    {
+        vertices.Clear();
+        colors.Clear();
+        triangles.Clear();
     }
     public static void Release(Object item)
     {

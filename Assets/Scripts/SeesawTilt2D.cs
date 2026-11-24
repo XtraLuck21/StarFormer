@@ -20,6 +20,7 @@ public class SeesawTilt2D : MonoBehaviour
     public float TargetAngle { get; private set; }
     public float CurrentAngle => pivot != null ? pivot.rotation : transform.eulerAngles.z;
     public bool ReferencesReady => supplies != null && boardSurface != null && fulcrum != null;
+    internal TriangleFulcrumVisual Fulcrum => fulcrum;
     private Rigidbody2D pivot;
     private float fromAngle;
     private float elapsed;

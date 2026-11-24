@@ -11,44 +11,52 @@ using UnityEngine;
 [RequireComponent(typeof(SpriteRenderer))]
 public sealed class SchoolSurfaceSkin : MonoBehaviour
 {
-    public enum Style { PlaygroundGround, ConcretePipe, SchoolBrick, BannerBeam, RoofEaves }
+    public enum Style { PlaygroundGround, EarthenTunnel, SchoolBrick, BannerBeam, RoofEaves, WoodenBeam }
 
     [SerializeField] private Style style;
     [Tooltip("World height of the running-track surface for PlaygroundGround.")]
     [SerializeField] private float surfaceTop = -23.25f;
-    [Tooltip("Optional dark pipe interior drawn behind gameplay (world rect). Zero size = none.")]
+    [Tooltip("Optional earthen tunnel interior drawn behind gameplay (world rect). Zero size = none.")]
     [SerializeField] private Rect backdrop;
     [SerializeField] private int backdropOrder = -1;
+    [SerializeField] private Vector2 spritePadding;
 
-    private static readonly Color Track = new Color32(196, 108, 90, 255);
-    private static readonly Color TrackEdge = new Color32(228, 150, 124, 255);
+    private static readonly Color Track = new Color32(162, 73, 61, 255);
+    private static readonly Color TrackShade = new Color32(135, 56, 48, 255);
     private static readonly Color Chalk = new Color32(246, 236, 214, 255);
-    private static readonly Color SoilTop = new Color32(150, 108, 78, 255);
-    private static readonly Color SoilDeep = new Color32(96, 68, 52, 255);
-    private static readonly Color Strata = new Color32(118, 84, 62, 255);
-    private static readonly Color PebbleLight = new Color32(186, 166, 144, 255);
-    private static readonly Color PebbleDark = new Color32(132, 116, 102, 255);
-    private static readonly Color Concrete = new Color32(184, 182, 172, 255);
-    private static readonly Color ConcreteShade = new Color32(150, 150, 142, 255);
-    private static readonly Color ConcreteJoint = new Color32(120, 122, 118, 255);
-    private static readonly Color PipeInside = new Color32(70, 84, 92, 255);
-    private static readonly Color PipeInsideLight = new Color32(98, 112, 118, 255);
-    private static readonly Color Brick = new Color32(178, 98, 80, 255);
-    private static readonly Color BrickLight = new Color32(196, 118, 96, 255);
-    private static readonly Color Mortar = new Color32(222, 198, 174, 255);
-    private static readonly Color Teal = new Color32(87, 151, 149, 255);
+    private static readonly Color Earth = new Color32(161, 117, 77, 255);
+    private static readonly Color EarthShade = new Color32(113, 77, 54, 255);
+    private static readonly Color EarthEdge = new Color32(181, 140, 93, 255);
+    private static readonly Color TunnelDeep = new Color32(72, 49, 39, 255);
+    private static readonly Color TunnelSoil = new Color32(111, 80, 57, 255);
+    private static readonly Color Brick = new Color32(150, 71, 58, 255);
+    private static readonly Color BrickLight = new Color32(165, 82, 65, 255);
+    private static readonly Color Mortar = new Color32(184, 130, 109, 255);
+    private static readonly Color Teal = new Color32(55, 104, 102, 255);
     private static readonly Color Cream = new Color32(255, 234, 190, 255);
-    private static readonly Color Honey = new Color32(244, 181, 69, 255);
     private static readonly Color Slate = new Color32(92, 108, 116, 255);
     private static readonly Color SlateDark = new Color32(70, 84, 92, 255);
+    private const float TrackLeft = 16.7f;
+    private const float LaneWidth = 22.25f / 7f;
+    private static readonly Vector2[][] LaneDigits =
+    {
+        new[] { new Vector2(-.16f, .19f), new Vector2(0f, .33f), new Vector2(0f, -.33f), new Vector2(-.19f, -.33f), new Vector2(.20f, -.33f) },
+        new[] { new Vector2(-.21f, .22f), new Vector2(-.13f, .33f), new Vector2(.13f, .33f), new Vector2(.22f, .21f), new Vector2(.19f, .08f), new Vector2(-.21f, -.33f), new Vector2(.23f, -.33f) },
+        new[] { new Vector2(-.21f, .25f), new Vector2(-.1f, .33f), new Vector2(.14f, .33f), new Vector2(.23f, .2f), new Vector2(.16f, .073f), new Vector2(0f, .02f), new Vector2(.17f, -.04f), new Vector2(.24f, -.18f), new Vector2(.13f, -.33f), new Vector2(-.13f, -.33f), new Vector2(-.22f, -.24f) },
+        new[] { new Vector2(.10f, .33f), new Vector2(-.23f, -.10f), new Vector2(.26f, -.10f), new Vector2(.13f, -.10f), new Vector2(.13f, .18f), new Vector2(.13f, -.33f) },
+        new[] { new Vector2(.22f, .33f), new Vector2(-.17f, .33f), new Vector2(-.21f, .02f), new Vector2(.13f, .02f), new Vector2(.23f, -.1f), new Vector2(.22f, -.22f), new Vector2(.10f, -.33f), new Vector2(-.13f, -.33f), new Vector2(-.22f, -.26f) },
+        new[] { new Vector2(.17f, .32f), new Vector2(-.02f, .32f), new Vector2(-.16f, .22f), new Vector2(-.22f, .07f), new Vector2(-.22f, -.21f), new Vector2(-.11f, -.33f), new Vector2(.12f, -.33f), new Vector2(.22f, -.20f), new Vector2(.20f, -.05f), new Vector2(.09f, .02f), new Vector2(-.22f, .02f) },
+        new[] { new Vector2(-.23f, .33f), new Vector2(.23f, .33f), new Vector2(-.08f, -.33f) },
+    };
 
     /// <summary>The flat color a blank source block should use (also tints shatter fragments).</summary>
     public static Color BaseColor(Style style) => style switch
     {
-        Style.PlaygroundGround => (Color)new Color32(124, 88, 64, 255),
-        Style.ConcretePipe => Concrete,
+        Style.PlaygroundGround => Track,
+        Style.EarthenTunnel => Earth,
         Style.SchoolBrick => Brick,
         Style.BannerBeam => Teal,
+        Style.WoodenBeam => new Color32(147, 90, 51, 255),
         _ => Slate,
     };
 
@@ -68,6 +76,15 @@ public sealed class SchoolSurfaceSkin : MonoBehaviour
     {
         rebuild = true;
         LateUpdate();
+    }
+
+    internal void ApplyTo(GameObject surface)
+    {
+        var skin = surface.AddComponent<SchoolSurfaceSkin>();
+        skin.style = style;
+        skin.surfaceTop = surfaceTop;
+        skin.spritePadding = spritePadding;
+        skin.Refresh();
     }
 
     private void LateUpdate()
@@ -93,6 +110,7 @@ public sealed class SchoolSurfaceSkin : MonoBehaviour
         if (source.sprite == null) return;
 
         Bounds sb = source.sprite.bounds;
+        sb.Expand((Vector3)(-2f * spritePadding / source.sprite.pixelsPerUnit));
         Vector3 scale = transform.lossyScale;
         float w = Mathf.Abs(sb.size.x * scale.x), h = Mathf.Abs(sb.size.y * scale.y);
         if (w < 0.01f || h < 0.01f) return;
@@ -103,9 +121,10 @@ public sealed class SchoolSurfaceSkin : MonoBehaviour
         switch (style)
         {
             case Style.PlaygroundGround: Ground(art, w, h, center, upright); break;
-            case Style.ConcretePipe: Pipe(art, w, h); break;
+            case Style.EarthenTunnel: EarthSurface(art, w, h); break;
             case Style.SchoolBrick: Bricks(art, w, h, center, upright); break;
             case Style.BannerBeam: Banner(art, w, h); break;
+            case Style.WoodenBeam: Wood(art, w, h); break;
             default: Eaves(art, w, h); break;
         }
 
@@ -121,9 +140,9 @@ public sealed class SchoolSurfaceSkin : MonoBehaviour
         if (backdrop.width > 0.01f && backdrop.height > 0.01f)
         {
             var inside = new SchoolSceneDrawing();
-            PipeInterior(inside, backdrop);
-            backMaterial = NewMaterial("School pipe interior");
-            back = inside.Build("Drain pipe interior", null, backMaterial, backdropOrder, out backMesh);
+            EarthInterior(inside, backdrop);
+            backMaterial = NewMaterial("School earthen tunnel interior");
+            back = inside.Build("Earthen tunnel interior", null, backMaterial, backdropOrder, out backMesh);
             back.GetComponent<MeshRenderer>().sortingLayerID = source.sortingLayerID;
             FixColors(backMesh);
         }
@@ -158,111 +177,102 @@ public sealed class SchoolSurfaceSkin : MonoBehaviour
 
     private void Ground(SchoolSceneDrawing a, float w, float h, Vector2 center, bool upright)
     {
-        float l = -w / 2, r = w / 2, b = -h / 2, t = h / 2;
-        float worldBottom = center.y + b, worldTop = center.y + t;
-        // Soil darkens with depth below the track, continuous across neighboring blocks.
-        Color SoilAt(float worldY) => Color.Lerp(SoilDeep, SoilTop, Mathf.InverseLerp(surfaceTop - 4f, surfaceTop - .3f, worldY));
-        a.ShadedRect(l, b, r, t, SoilAt(worldBottom), SoilAt(worldTop));
+        float left = -w * .5f, right = w * .5f, bottom = -h * .5f, top = h * .5f;
+        Color TrackAt(float worldY) => Color.Lerp(TrackShade, Track, Mathf.InverseLerp(surfaceTop - 4.2f, surfaceTop, worldY));
+        a.ShadedRect(left, bottom, right, top, TrackAt(center.y + bottom), TrackAt(center.y + top));
         if (!upright) return;
 
-        // Wavy strata at fixed world depths.
-        foreach (float depth in new[] { 1.05f, 2.05f, 3.15f })
+        Rect face = Rect.MinMaxRect(left, bottom, right, top);
+        TrackGrain(a, face, center);
+        // Align lanes in world space so the covers and floor sections read as one track.
+        const float halfStripe = .042f;
+        for (int i = 0; i < LaneDigits.Length; i++)
         {
-            float y = surfaceTop - depth - center.y;
-            if (y < b + .08f || y > t - .08f) continue;
-            const float step = .5f;
-            for (float x = l; x < r - .01f; x += step)
-            {
-                float x2 = Mathf.Min(r, x + step);
-                float ya = y + Mathf.Sin((center.x + x) * 1.3f + depth) * .06f;
-                float yb = y + Mathf.Sin((center.x + x2) * 1.3f + depth) * .06f;
-                a.Line(new Vector2(x, ya), new Vector2(x2, yb), .05f, Strata);
-            }
-        }
+            float boundary = TrackLeft + (i + 1) * LaneWidth - center.x;
+            float stripeLeft = Mathf.Max(left, boundary - halfStripe), stripeRight = Mathf.Min(right, boundary + halfStripe);
+            if (stripeRight > stripeLeft)
+                a.Rect((stripeLeft + stripeRight) * .5f, 0f, stripeRight - stripeLeft, h, Chalk);
 
-        // Pebbles on a world grid, so they never jump when a block is resized.
-        const float cell = .85f;
-        int x0 = Mathf.FloorToInt((center.x + l) / cell), x1 = Mathf.CeilToInt((center.x + r) / cell);
-        int y0 = Mathf.FloorToInt((center.y + b) / cell), y1 = Mathf.CeilToInt((center.y + t) / cell);
-        for (int ix = x0; ix <= x1; ix++)
-        for (int iy = y0; iy <= y1; iy++)
-        {
-            uint hash = Hash(ix, iy);
-            if (hash % 3 == 0) continue;
-            float jx = (hash & 255) / 255f, jy = ((hash >> 8) & 255) / 255f;
-            float radius = .07f + ((hash >> 16) & 7) * .014f;
-            Vector2 p = new Vector2((ix + jx) * cell - center.x, (iy + jy) * cell - center.y);
-            if (p.x - radius < l + .04f || p.x + radius > r - .04f || p.y - radius < b + .04f || p.y + radius > t - .04f)
+            var number = new Vector2(boundary - LaneWidth * .5f, surfaceTop - 3.38f - center.y);
+            // Covers and their backing blocks may overlap, so skip marks that straddle an edge.
+            if (!face.Contains(number - new Vector2(.56f, .43f)) || !face.Contains(number + new Vector2(.56f, .65f)))
                 continue;
-            if (center.y + p.y + radius > surfaceTop - .34f) continue;
-            Ellipse(a, p, radius * 1.35f, radius, (hash & 1) == 0 ? PebbleLight : PebbleDark);
-        }
-
-        // Running track along the room floor, with a white lane line.
-        float trackTop = surfaceTop - center.y, trackBottom = trackTop - .26f;
-        float bandTop = Mathf.Min(t, trackTop), bandBottom = Mathf.Max(b, trackBottom);
-        if (bandTop > bandBottom + .005f)
-        {
-            a.ShadedRect(l, bandBottom, r, bandTop, Track, Track);
-            float edge = Mathf.Max(bandBottom, trackTop - .045f);
-            if (bandTop > edge) a.ShadedRect(l, edge, r, bandTop, TrackEdge, TrackEdge);
-            float lane = trackTop - .14f;
-            if (lane > b + .02f && lane < t - .02f) a.Rect(0f, lane, w, .035f, Chalk);
-            // A darker lip where the track meets the soil.
-            float lip = trackBottom;
-            if (lip > b && lip < t) a.Rect(0f, lip + .015f, w, .03f, new Color32(150, 82, 68, 255));
-        }
-    }
-
-    private static void Pipe(SchoolSceneDrawing a, float w, float h)
-    {
-        bool alongX = w >= h;
-        float length = alongX ? w : h, thick = alongX ? h : w;
-        a.ShadedRect(-w / 2, -h / 2, w / 2, h / 2, alongX ? ConcreteShade : Concrete, Concrete);
-        // A lighter top face and ring joints across the long axis.
-        if (alongX) a.Rect(0f, h / 2 - Mathf.Min(.06f, h * .2f), w, Mathf.Min(.06f, h * .2f) * 2f, new Color32(206, 204, 196, 255));
-        else a.Rect(-w / 2 + Mathf.Min(.05f, w * .2f), 0f, Mathf.Min(.05f, w * .2f) * 2f, h, new Color32(206, 204, 196, 255));
-        int joints = Mathf.Max(1, Mathf.RoundToInt(length / 1.1f));
-        for (int i = 1; i < joints; i++)
-        {
-            float s = -length / 2 + length * i / joints;
-            if (alongX) a.Rect(s, 0f, .05f, h, ConcreteJoint);
-            else a.Rect(0f, s, w, .05f, ConcreteJoint);
-        }
-        // Small bolts at each joint make it read as a built pipe, not a rock.
-        float boltOffset = thick * .25f;
-        for (int i = 1; i < joints; i++)
-        {
-            float s = -length / 2 + length * i / joints;
-            Vector2 p = alongX ? new Vector2(s + .1f, boltOffset) : new Vector2(boltOffset, s + .1f);
-            if (thick > .3f) Ellipse(a, p, .035f, .035f, ConcreteJoint);
-        }
-    }
-
-    private static void PipeInterior(SchoolSceneDrawing a, Rect r)
-    {
-        a.ShadedRect(r.xMin, r.yMin, r.xMax, r.yMax, PipeInside, PipeInsideLight);
-        // Curved rings suggest the inside of a round drain pipe.
-        for (float x = r.xMin + .8f; x < r.xMax - .3f; x += 1.6f)
-        {
-            const int steps = 8;
-            for (int i = 0; i < steps; i++)
+            a.Rect(number.x, number.y + .60f, 1.10f, .046f, Chalk);
+            Vector2[] stroke = LaneDigits[i];
+            for (int j = 1; j < stroke.Length; j++)
             {
-                float t0 = i / (float)steps, t1 = (i + 1) / (float)steps;
-                float y0 = Mathf.Lerp(r.yMin, r.yMax, t0), y1 = Mathf.Lerp(r.yMin, r.yMax, t1);
-                float bulge0 = Mathf.Sin(t0 * Mathf.PI) * .22f, bulge1 = Mathf.Sin(t1 * Mathf.PI) * .22f;
-                a.Line(new Vector2(x + bulge0, y0), new Vector2(x + bulge1, y1), .07f, PipeInsideLight);
+                a.Line(number + stroke[j - 1], number + stroke[j], .10f, Chalk);
+                a.Circle(number + stroke[j], .05f, Chalk);
             }
         }
-        // A thin trickle of water along the bottom.
-        a.Rect(r.center.x, r.yMin + .05f, r.width, .08f, new Color32(126, 168, 182, 255));
+    }
+
+    private static void TrackGrain(SchoolSceneDrawing a, Rect face, Vector2 center)
+    {
+        const float cell = .18f;
+        int firstX = Mathf.FloorToInt((face.xMin + center.x) / cell);
+        int lastX = Mathf.FloorToInt((face.xMax + center.x) / cell);
+        int firstY = Mathf.FloorToInt((face.yMin + center.y) / cell);
+        int lastY = Mathf.FloorToInt((face.yMax + center.y) / cell);
+        Color bright = new Color32(181, 95, 80, 255);
+        Color dark = new Color32(115, 48, 43, 255);
+        for (int y = firstY; y <= lastY; y++)
+        for (int x = firstX; x <= lastX; x++)
+        {
+            uint hash = Hash(x, y);
+            if ((hash & 7) >= 5) continue;
+            var point = new Vector2((x + ((hash >> 8) & 255) / 256f) * cell,
+                (y + ((hash >> 16) & 255) / 256f) * cell) - center;
+            float size = .018f + ((hash >> 24) & 7) * .005f;
+            Vector2 radius = new Vector2(size * .5f, size * .38f);
+            if (!face.Contains(point - radius) || !face.Contains(point + radius)) continue;
+            a.Rect(point.x, point.y, radius.x * 2f, radius.y * 2f, (hash & 8) == 0 ? bright : dark);
+        }
+    }
+
+    private static void EarthSurface(SchoolSceneDrawing a, float w, float h)
+    {
+        float left = -w * .5f, right = w * .5f, top = h * .5f;
+        a.ShadedRect(left, -top, right, top, EarthShade, Earth);
+        if (w < h) return;
+
+        float rim = Mathf.Min(.105f, h * .25f);
+        a.Rect(0f, top - rim * .5f, w, rim, EarthEdge);
+        for (float x = left + .24f; x < right - .15f; x += .56f)
+        {
+            uint speck = Hash(Mathf.RoundToInt(x * 12f), 7);
+            float y = Mathf.Lerp(-top + .07f, top - rim - .05f, (speck & 255) / 255f);
+            Ellipse(a, new Vector2(x, y), .065f, .030f, (speck & 256) == 0 ? EarthShade : EarthEdge);
+        }
+    }
+
+    private static void EarthInterior(SchoolSceneDrawing a, Rect area)
+    {
+        a.ShadedRect(area.xMin, area.yMin, area.xMax, area.yMax, TunnelDeep, TunnelSoil);
+        Color stratum = new Color32(92, 63, 49, 255);
+        for (int band = 1; band <= 3; band++)
+        {
+            float y = area.yMin + area.height * band * .24f;
+            for (float x = area.xMin; x < area.xMax; x += .36f)
+            {
+                float next = Mathf.Min(x + .36f, area.xMax);
+                a.Line(new Vector2(x, y + .074f * Mathf.Sin(x * 1.25f + band)),
+                    new Vector2(next, y + .074f * Mathf.Sin(next * 1.25f + band)), .042f, stratum);
+            }
+        }
+        for (float x = area.xMin + .38f; x < area.xMax - .16f; x += .87f)
+        {
+            uint fleck = Hash(Mathf.RoundToInt(x * 12f), 16);
+            float y = Mathf.Lerp(area.yMin + .13f, area.yMax - .13f, (fleck & 255) / 255f);
+            Ellipse(a, new Vector2(x, y), .095f, .048f, new Color32(123, 91, 68, 255));
+        }
     }
 
     private static void Bricks(SchoolSceneDrawing a, float w, float h, Vector2 center, bool upright)
     {
         float l = -w / 2, r = w / 2, b = -h / 2, t = h / 2;
         a.ShadedRect(l, b, r, t, Mortar, Mortar);
-        const float row = .3f, length = .62f, gap = .045f;
+        const float row = .39f, length = .78f, gap = .027f;
         int first = Mathf.FloorToInt((center.y + b) / row), last = Mathf.CeilToInt((center.y + t) / row);
         for (int iy = first; iy <= last; iy++)
         {
@@ -283,15 +293,30 @@ public sealed class SchoolSurfaceSkin : MonoBehaviour
         a.Rect(0f, t - .07f, w, .14f, Cream);
     }
 
+    private static void Wood(SchoolSceneDrawing a, float w, float h)
+    {
+        float left = -w * .5f, right = w * .5f, top = h * .5f;
+        a.ShadedRect(left, -top, right, top, new Color32(117, 67, 42, 255), new Color32(181, 123, 75, 255));
+        a.Rect(0f, top - .055f, w, .11f, new Color32(205, 151, 98, 255));
+        a.Rect(0f, -top + .065f, w, .13f, new Color32(101, 59, 39, 255));
+        Color grain = new Color32(140, 87, 54, 255);
+        for (int row = 0; row < 3; row++)
+        {
+            float y = (row - 1f) * h * .19f;
+            for (float x = left; x < right; x += .65f)
+            {
+                float next = Mathf.Min(x + .65f, right);
+                a.Line(new Vector2(x, y + .045f * Mathf.Sin(x * .8f + row)),
+                    new Vector2(next, y + .045f * Mathf.Sin(next * .8f + row)), .027f, grain);
+            }
+        }
+    }
+
     private static void Banner(SchoolSceneDrawing a, float w, float h)
     {
         a.ShadedRect(-w / 2, -h / 2, w / 2, h / 2, Teal, Teal);
         float trim = Mathf.Min(.07f, h * .15f);
-        a.Rect(0f, h / 2 - trim, w, trim, Cream);
-        a.Rect(0f, -h / 2 + trim, w, trim, Cream);
-        int stars = Mathf.Max(1, Mathf.FloorToInt(w / 2.2f));
-        for (int i = 0; i < stars; i++)
-            a.Star(new Vector2(-w / 2 + w * (i + .5f) / stars, 0f), h * .28f, Honey);
+        a.Rect(0f, h / 2 - trim, w, trim, new Color32(112, 146, 137, 255));
     }
 
     private static void Eaves(SchoolSceneDrawing a, float w, float h)

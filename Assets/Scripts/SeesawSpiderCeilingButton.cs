@@ -7,6 +7,8 @@ public sealed class SeesawSpiderCeilingButton : MonoBehaviour
     [SerializeField] private PossessableBody targetSpider;
     [SerializeField] private BoxCollider2D ceiling;
     [SerializeField] private UnityEvent onPressed = new UnityEvent();
+    public PossessableBody TargetSpider => targetSpider;
+    public BoxCollider2D Ceiling => ceiling;
     public bool IsActivated { get; private set; }
     private BoxCollider2D sensor;
 

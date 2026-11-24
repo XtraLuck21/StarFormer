@@ -32,7 +32,6 @@ internal sealed class SeesawLiftAssembly
         this.layer = layer;
         material = new Material(Shader.Find("Sprites/Default")) { mainTexture = Texture2D.whiteTexture };
         Vector2 quarter = new Vector2(size.x * .5f, .94f);
-        var track = new SchoolSceneDrawing();
         string[] names = { "Blue lower frame", "Green lower frame", "Yellow upper frame", "Purple upper frame" };
         for (int i = 0; i < parts.Length; i++)
         {
@@ -60,11 +59,6 @@ internal sealed class SeesawLiftAssembly
             SetTint(renderers[i], Background);
             parts[i].gameObject.SetActive(false);
         }
-        for (int side = -1; side <= 1; side += 2)
-            track.Rect(side * (size.x * .5f + .12f), .4f, .07f, 2.1f, Metal);
-        Transform guides = Build(track, "Desk lift guide rails", platform, -10);
-        SetTint(guides.GetComponent<MeshRenderer>(), new Color(.85f, .85f, .85f, .32f));
-        guides.SetParent(platform.parent, true);
         latch = platform.gameObject.AddComponent<AudioSource>();
         latch.playOnAwake = false;
         click = MakeLatchClick();
@@ -93,7 +87,7 @@ internal sealed class SeesawLiftAssembly
         float center = -side * quarter.x * .5f;
         float bottom = -quarter.y * .5f;
         float top = quarter.y * .5f;
-        Color chalk = Color.Lerp(Ink, paint, .42f);
+        Color chalk = Color.Lerp(new Color32(175, 187, 184, 255), paint, .28f);
         void Rail(Vector2 a, Vector2 b)
         {
             art.Line(a, b, .09f, Ink);

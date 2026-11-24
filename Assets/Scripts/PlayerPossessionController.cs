@@ -180,6 +180,7 @@ public class PlayerPossessionController : MonoBehaviour
         BouncyBallCheckpointSession.ClearCurrent();
         AdvancedCheckpointController.ClearSession();
         SmileFaceFinalRoute.ClearSession();
+        SeesawRoomSupplies.ClearDemonstrationSession();
     }
 
     public void SetCheckpoint(string id, Vector3 position, bool showFeedback = true)

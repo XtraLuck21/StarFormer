@@ -1,16 +1,17 @@
 using UnityEngine;
 
-/// <summary>The three-tooth reveal: a connected grin, opening eyes and a full-room view.</summary>
+/// <summary>The three-tooth reveal: the child smiles, sunlight gathers, and the rain clears.</summary>
 [DefaultExecutionOrder(140)]
 public sealed class SmileFaceCompletion : MonoBehaviour
 {
+    private const float DefaultTransitionSeconds = 2.6f;
     [SerializeField] private TeethTriggeredDoor toothDoor;
     [SerializeField] private SpriteRenderer face;
     [SerializeField] private PlayerPossessionController player;
     [SerializeField] private level2Camera roomCamera;
     [SerializeField] private Shader eyeShader;
     [SerializeField] private Renderer levelTitle;
-    [SerializeField, Min(.1f)] private float transitionSeconds = 2.6f;
+    [SerializeField, Min(.1f)] private float transitionSeconds = DefaultTransitionSeconds;
     [SerializeField] private Vector2 teethCameraLocalCenter = new Vector2(43.5f, -44.8f);
     [SerializeField] private Vector2 teethCameraSize = new Vector2(24.8f, 14.5f);
     [SerializeField] private Vector2 foreheadCameraLocalCenter = new Vector2(46.4f, -34.3f);
@@ -23,12 +24,30 @@ public sealed class SmileFaceCompletion : MonoBehaviour
     public Bounds ForeheadBounds { get; private set; }
     public Vector2 LeftLook { get; private set; }
     public Vector2 RightLook { get; private set; }
+    internal Bounds FaceBounds => face.bounds;
+    internal int FaceSortingOrder => face.sortingOrder;
+    internal float ClearSky => toothDoor.IsOpen ? Ease(SunEnd, CompletionSeconds, age) : 0f;
+    internal float SunAmount
+    {
+        get
+        {
+            if (!HasStarted || !isActiveAndEnabled || age <= transitionSeconds || age >= SunEnd) return 0f;
+            float brighten = Ease(transitionSeconds, transitionSeconds + .26f, age);
+            float fade = 1f - Ease(SunEnd - .35f, SunEnd, age);
+            float shimmer = .94f + .06f * Mathf.Sin((age - transitionSeconds) * Mathf.PI * 3f);
+            return brighten * fade * shimmer;
+        }
+    }
+
+    private float SunEnd => transitionSeconds + 2f;
+    private float CompletionSeconds => SunEnd + .75f;
 
     private Material originalFaceMaterial, eyeMaterial, mouthMaterial;
     private Mesh mouthMesh;
     private Transform mouth;
     private SpriteRenderer[] toothVisuals;
     private Color[] toothColors;
+    private Color faceColor;
     private float age;
     private bool titleWasVisible;
     private bool showCompletionReveal;
@@ -39,7 +58,7 @@ public sealed class SmileFaceCompletion : MonoBehaviour
 
     public void RestoreCompletedPose()
     {
-        age = transitionSeconds;
+        age = CompletionSeconds;
         showCompletionReveal = false;
     }
 
@@ -66,6 +85,7 @@ public sealed class SmileFaceCompletion : MonoBehaviour
             toothColors[i] = toothVisuals[i].color;
         }
         titleWasVisible = levelTitle != null && levelTitle.enabled;
+        faceColor = face.color;
         originalFaceMaterial = face.sharedMaterial;
         eyeMaterial = new Material(eyeShader);
         face.sharedMaterial = eyeMaterial;
@@ -195,7 +215,7 @@ public sealed class SmileFaceCompletion : MonoBehaviour
         player.CheckpointFeedback.SetTextSuppressed(RoomBounds.Contains(playerPosition));
         if (!HasStarted) {
             if (!toothDoor.IsOpen) { UpdateForeheadCamera(); return; }
-            showCompletionReveal = age < transitionSeconds;
+            showCompletionReveal = age < CompletionSeconds;
             HasStarted = true;
             mouth.gameObject.SetActive(true);
             foreach (SpriteRenderer tooth in toothVisuals)
@@ -206,13 +226,17 @@ public sealed class SmileFaceCompletion : MonoBehaviour
             }
         }
         age += Time.deltaTime;
-        Progress = Mathf.Clamp01(age / transitionSeconds);
-        float fill = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.2f, 1.6f, age));
+        Progress = Mathf.Clamp01(age / CompletionSeconds);
+        float sun = SunAmount;
+        float expressionAge = age * DefaultTransitionSeconds / transitionSeconds;
+        float fill = Ease(.2f, 1.6f, expressionAge);
         // Hold the painted closed eyes for a beat, then visibly lift the lids.
-        float eyeReveal = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.55f, .9f, age));
-        float opening = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.95f, 2.45f, age));
+        float eyeReveal = Ease(.55f, .9f, expressionAge);
+        float opening = Ease(.95f, 2.45f, expressionAge);
+        Color warmedFace = new Color(faceColor.r, faceColor.g * .88f, faceColor.b * .74f, faceColor.a);
+        face.color = Color.Lerp(faceColor, warmedFace, sun);
         mouth.localScale = new Vector3(Mathf.Lerp(.72f, 1f, fill), Mathf.Lerp(.65f, 1f, fill), 1f);
-        mouthMaterial.color = new Color(1f, .995f, .995f, fill);
+        mouthMaterial.color = new Color(1f, Mathf.Lerp(.995f, .97f, sun), Mathf.Lerp(.995f, .89f, sun), fill);
         for (int i = 0; i < toothVisuals.Length; i++) {
             Color color = toothColors[i];
             color.a *= 1f - fill;
@@ -227,10 +251,14 @@ public sealed class SmileFaceCompletion : MonoBehaviour
         UpdateForeheadCamera();
     }
 
+    private static float Ease(float from, float to, float time)
+        => Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(from, to, time));
+
     public void EnterForeheadOverview()
     {
         if (player.CurrentBody == null || !IsInsideForehead() ||
             player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
+        if (showCompletionReveal && age < CompletionSeconds) return;
         showCompletionReveal = false;
         ShowCameraFrame(SmileCameraFrame.Forehead);
         if (levelTitle != null) levelTitle.enabled = false;
@@ -258,13 +286,16 @@ public sealed class SmileFaceCompletion : MonoBehaviour
         Bounds teethArea = TeethRoomBounds;
         teethArea.Expand(new Vector3(1.5f, 2f, 20f));
         SmileCameraFrame next = SmileCameraFrame.Follow;
-        if (IsInsideForehead())
+        bool showCompletion = showCompletionReveal && age < CompletionSeconds + completedSmileHoldSeconds &&
+            player.CurrentBody.Form != BodyForm.Box && exitBounds.Contains(position);
+        if (showCompletion && age < CompletionSeconds)
+            next = SmileCameraFrame.Completion;
+        else if (IsInsideForehead())
         {
             showCompletionReveal = false;
             next = SmileCameraFrame.Forehead;
         }
-        else if (showCompletionReveal && age < transitionSeconds + completedSmileHoldSeconds &&
-            player.CurrentBody.Form != BodyForm.Box && exitBounds.Contains(position))
+        else if (showCompletion)
             next = SmileCameraFrame.Completion;
         else if (!toothDoor.IsOpen && player.CurrentBody.Form == BodyForm.BouncyBall && teethArea.Contains(position))
             next = SmileCameraFrame.TeethRoom;
@@ -301,7 +332,7 @@ public sealed class SmileFaceCompletion : MonoBehaviour
             bool teeth = next == SmileCameraFrame.TeethRoom;
             bool forehead = next == SmileCameraFrame.Forehead;
             roomCamera.BeginSmileOverview(teeth ? TeethRoomBounds : forehead ? ForeheadBounds : RoomBounds,
-                next == SmileCameraFrame.Completion ? 1.8f : 1f, padding: teeth ? .35f : forehead ? .6f : 1.5f);
+                next == SmileCameraFrame.Completion ? 1.2f : 1f, padding: teeth ? .35f : forehead ? .6f : 1.5f);
         }
         cameraFrame = next;
     }
@@ -315,7 +346,11 @@ public sealed class SmileFaceCompletion : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (face != null) face.sharedMaterial = originalFaceMaterial;
+        if (face != null)
+        {
+            face.sharedMaterial = originalFaceMaterial;
+            face.color = faceColor;
+        }
         if (eyeMaterial != null) Destroy(eyeMaterial);
         if (mouthMaterial != null) Destroy(mouthMaterial);
         if (mouthMesh != null) Destroy(mouthMesh);
