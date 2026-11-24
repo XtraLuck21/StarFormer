@@ -12,6 +12,7 @@ public class IntroStarGoal : MonoBehaviour
     [SerializeField] private bool requireGroundedStar = true;
 
     [SerializeField] private bool showTransitionOverlay = true;
+    [SerializeField] private Sprite elementaryCompletionStar;
 
     private bool isLoading;
     private bool reportedMissingScene;
@@ -57,7 +58,11 @@ public class IntroStarGoal : MonoBehaviour
 
         isLoading = true;
         AnalyticsManager.Instance?.TrackLevelComplete(playerBody);
-        if (showTransitionOverlay)
+        if (elementaryCompletionStar != null)
+        {
+            LevelTransitionUI.ShowElementaryCompletion(nextSceneName, playerController, elementaryCompletionStar);
+        }
+        else if (showTransitionOverlay)
         {
             LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
         }

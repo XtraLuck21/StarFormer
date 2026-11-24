@@ -76,9 +76,9 @@ public sealed class IntroSpiderBedroomScenery : MonoBehaviour
         wall.ShadedRect(backgroundMin.x, backgroundMin.y, backgroundMax.x, backgroundMax.y,
             WallColor, WallColor);
         Draw(wall, "Bedroom - pale green walls", -165);
-        DrawWallPanels(-13.1f, -4.9f, 3.98f, -1.4f, "Bedroom - green lower wall panels");
-        DrawWallPanels(4.47f, -.3f, 12.47f, 1.2f, "Study - green lower wall panels");
-        DrawWallPanels(4.1f, -4.9f, 12.98f, -3.3f, "Play nook - green lower wall panels");
+        DrawWallPanels(-13.1f, -4.9f, 3.72f, -1.4f, "Bedroom - green lower wall panels");
+        DrawWallPanels(3.72f, -.3f, 12.47f, 1.2f, "Study - green lower wall panels");
+        DrawWallPanels(3.72f, -4.9f, 12.98f, -3.3f, "Play nook - green lower wall panels");
 
         var panels = new SchoolSceneDrawing();
         panels.Rect(-4.6f, -4.79f, 16.8f, .15f, PaleWood);

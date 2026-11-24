@@ -59,9 +59,7 @@ public class LevelTransitionUI : MonoBehaviour
         if (transition == null) return;
         var graduation = transition.gameObject.AddComponent<KindergartenGraduationUI>();
         graduation.Initialize(graduateStar, () => transition.ContinueToScene(sceneName));
-        transition.completionHome = Object.FindFirstObjectByType<MainMenuButtonUI>();
-        if (transition.completionHome != null)
-            transition.completionHome.SetCompletionExit(transition.ContinueToScene, graduation.NextLevelButton);
+        transition.BindCompletionHome(graduation.NextLevelButton);
     }
 
     public static void ShowElementaryAdmission(string sceneName,
@@ -71,9 +69,38 @@ public class LevelTransitionUI : MonoBehaviour
         if (transition == null) return;
         var admission = transition.gameObject.AddComponent<ElementaryAdmissionUI>();
         admission.Initialize(studentStar, () => transition.ContinueToScene(sceneName));
-        transition.completionHome = Object.FindFirstObjectByType<MainMenuButtonUI>();
-        if (transition.completionHome != null)
-            transition.completionHome.SetCompletionExit(transition.ContinueToScene, admission.NextLevelButton);
+        transition.BindCompletionHome(admission.NextLevelButton);
+    }
+
+    public static void ShowElementaryCompletion(string sceneName,
+        PlayerPossessionController playerController, Sprite cleverStar)
+    {
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        var completion = transition.gameObject.AddComponent<ElementaryCompletionUI>();
+        completion.Initialize(cleverStar, () => transition.ContinueToScene(sceneName));
+        transition.BindCompletionHome(completion.NextLevelButton);
+    }
+
+    public static void ShowLevel2Completion(string menuSceneName, PlayerPossessionController playerController, Sprite starWithExam)
+    {
+        if (starWithExam == null)
+        {
+            ShowFinalResult(menuSceneName, playerController, "Level2Complete/StarStudying",
+                "Level Complete!", "You made it to class on time. You are a super star now!");
+            return;
+        }
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        var completion = transition.gameObject.AddComponent<Level2CompletionUI>();
+        completion.Initialize(starWithExam, () => transition.ContinueToScene(menuSceneName));
+    }
+
+    private void BindCompletionHome(Button nextLevel)
+    {
+        completionHome = Object.FindFirstObjectByType<MainMenuButtonUI>();
+        if (completionHome != null)
+            completionHome.SetCompletionExit(ContinueToScene, nextLevel);
     }
 
     private void ContinueToScene(string sceneName)

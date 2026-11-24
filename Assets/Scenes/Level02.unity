@@ -1233,6 +1233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SmileGoalFlag
   player: {fileID: 1153900829}
   flagVisual: {fileID: 7968638351049793515}
+  starWithExam: {fileID: 21300000, guid: 4ea8141ff5fa434f9b19e97aee09dfaa, type: 3}
   raiseSeconds: 1.25
 --- !u!61 &197758792
 BoxCollider2D:

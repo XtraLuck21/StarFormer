@@ -5,6 +5,7 @@ public sealed class SmileGoalFlag : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
     [SerializeField] private Transform flagVisual;
+    [SerializeField] private Sprite starWithExam;
     [SerializeField] private float raiseSeconds=1.25f;
     private Vector3 flagRest;
     private BoxCollider2D sensor;
@@ -30,7 +31,6 @@ public sealed class SmileGoalFlag : MonoBehaviour
         HasWon = true;
         player.ClearInputForRestartMenu();
         AnalyticsManager.Instance?.TrackLevelComplete(player.CurrentBody);
-        LevelTransitionUI.ShowFinalResult("Navigation", player, "Level2Complete/StarStudying",
-            "Level Complete!", "You made it to class on time. You are a super star now!");
+        LevelTransitionUI.ShowLevel2Completion("Navigation", player, starWithExam);
     }
 }
