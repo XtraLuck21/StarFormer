@@ -1,33 +1,37 @@
 using UnityEngine;
 
-/// <summary>Reveal the entire underpass when Yellow is pressed, before the Spider enters it.</summary>
+/// <summary>Fades the floor-colored cover when the controlled Spider enters the underpass.</summary>
 public sealed class SeesawUnderpassCover : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
     [SerializeField] private SeesawOverloadSequence passage;
     [SerializeField] private SpriteRenderer upperCover;
     [SerializeField] private SpriteRenderer lowerCover;
-    [SerializeField,Min(.05f)] private float fadeSeconds=.45f;
+    [SerializeField] private Rect revealArea = new Rect(24f, -26.6f, 11.8f, 2.8f);
+    [SerializeField, Min(.05f)] private float fadeSeconds = .45f;
     public bool HasRevealed { get; private set; }
-    public float Opacity { get; private set; }=1f;
+    public float Opacity { get; private set; } = 1f;
+
     private void Awake() => ApplyOpacity();
+
     private void LateUpdate()
     {
-        if(player!=null && !player.IsDead && !player.IsRestarting && Time.timeScale>0f)
+        if (player != null && !player.IsDead && !player.IsRestarting && Time.timeScale > 0f)
         {
-            if(passage!=null && (passage.HasStarted || passage.IsPassageOpen))HasRevealed=true;
-            if(HasRevealed)Opacity=Mathf.MoveTowards(Opacity,0f,Time.deltaTime/fadeSeconds);
+            if (!HasRevealed && passage.IsPassageOpen && player.CurrentBody != null &&
+                player.CurrentBody.Form == BodyForm.Spider && player.CurrentBody.IsControlled &&
+                revealArea.Contains(player.CurrentBody.Body.position))
+                HasRevealed = true;
+            if (HasRevealed) Opacity = Mathf.MoveTowards(Opacity, 0f, Time.deltaTime / fadeSeconds);
         }
         ApplyOpacity();
     }
+
     private void ApplyOpacity()
     {
-        ApplyCover(upperCover);ApplyCover(lowerCover);
-    }
-    private void ApplyCover(SpriteRenderer cover)
-    {
-        if(cover==null)return;
-        Color color=cover.color;color.a=Opacity;cover.color=color;
-        cover.enabled=Opacity>.001f;
+        Color ground = upperCover.color;
+        ground.a = Opacity;
+        upperCover.color = ground;
+        lowerCover.color = ground;
     }
 }

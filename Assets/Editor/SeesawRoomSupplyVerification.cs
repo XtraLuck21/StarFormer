@@ -99,14 +99,7 @@ public static class SeesawRoomSupplyVerification
                     Next(1);
                     break;
                 case 1:
-                    if (!door.HasTeleported || !player.enabled) break;
-                    if (player.CurrentBody.Form == BodyForm.Star && supply.SpawnedFan != null)
-                    {
-                        Move(supply.SpawnedFan.transform.position.x > player.CurrentBody.transform.position.x ? Key.D : Key.A);
-                        break;
-                    }
-                    if (player.CurrentBody.Form != BodyForm.Fan) break;
-                    Move();
+                    if (!door.HasTeleported || !player.enabled || player.CurrentBody.Form != BodyForm.Fan) break;
                     fan = supply.SpawnedFan;
                     ball = supply.SpawnedBall;
                     Require(player.CurrentBody == fan && fan.IsControlled, "Star touches and possesses the Fan after teleport.");
@@ -124,10 +117,6 @@ public static class SeesawRoomSupplyVerification
                     Require(!ball.HasBeenReleased && ball.GetComponent<Rigidbody2D>().bodyType == RigidbodyType2D.Kinematic &&
                         Mathf.Abs(ball.transform.position.y - waitingY) < 0.001f, "Ball hovers; an outside-room Fan cannot release it.");
                     Debug.Log("ROOM SUPPLY HOVER PASS: door handoff, one controlled Fan, ordinary-only population and outside-room wind filtering.");
-                    // Current room has latched side gates; start the movement probe centrally.
-                    fan.Body.position = new Vector2(27.4f, fan.Body.position.y);
-                    fan.transform.position = new Vector3(27.4f,fan.transform.position.y,fan.transform.position.z);
-                    Physics2D.SyncTransforms();
                     moveStartX = fan.transform.position.x;
                     Move(Key.D);
                     Next(21);
@@ -182,11 +171,11 @@ public static class SeesawRoomSupplyVerification
                     Next(7);
                     break;
                 case 7:
-                    if (ball != null && !ball.IsCaptured) break;
+                    if (ball != null) break;
                     Next(8);
                     break;
                 case 8:
-                    if (supply.SpawnedBall == null || supply.SpawnedBall.IsCaptured) break;
+                    if (supply.SpawnedBall == null) break;
                     ball = supply.SpawnedBall;
                     waitingY = ball.transform.position.y;
                     Next(25);
@@ -232,7 +221,7 @@ public static class SeesawRoomSupplyVerification
                     Next(10);
                     break;
                 case 10:
-                    if (supply.SpawnedBall == null || supply.SpawnedBall.IsCaptured) break;
+                    if (supply.SpawnedBall == null) break;
                     ball = supply.SpawnedBall;
                     Require(!ball.HasBeenReleased && supply.OrdinaryBallCount == 1, "Only the last ball's disappearance permits replenishment.");
                     Debug.Log("ROOM SUPPLY POPULATION PASS: all ordinary balls must disappear; Bouncy Ball is excluded.");
@@ -266,7 +255,7 @@ public static class SeesawRoomSupplyVerification
                         break;
                     }
                     Move();
-                    if (supply.SpawnedBall == null || supply.SpawnedBall.IsCaptured) break;
+                    if (supply.SpawnedBall == null) break;
                     ball = supply.SpawnedBall;
                     waitingY = ball.transform.position.y;
                     Next(28);
