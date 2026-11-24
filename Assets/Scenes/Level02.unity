@@ -314,7 +314,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d67ef4581711642cb9ad008ee6d0bc2a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawBallSocket
   seesaw: {fileID: 316392736}
   supplies: {fileID: 1667835217}
@@ -576,6 +576,67 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &31741591
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 31741592}
+  - component: {fileID: 31741593}
+  m_Layer: 0
+  m_Name: Smile Silk Hint Board
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &31741592
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31741591}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 61.434883, y: 11.7375, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1621290239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &31741593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 31741591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85704ca83b72b7848beded28faa90e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IntroSpiderSilkHint
+  playerController: {fileID: 1153900829}
+  launchPoint: {x: 0.6343231, y: -0.8375006}
+  anchorPoint: {x: -0.63432693, y: 0.8375006}
+  promptOffset: {x: -1.4, y: -0.4}
+  message: Pins! Shoot silk at the board
+  mobileMessage: Pins! Hold the web button, drag to aim
+  successMessage: Nice web!
+  showControls: 1
+  activationAreaSize: {x: 4.7373047, y: 2.1999998}
+  activationAreaOffset: {x: -1.2343292, y: -1.3375006}
+  silkColor: {r: 0.55, g: 0.92, b: 1, a: 1}
+  textColor: {r: 0.13725491, g: 0.27450982, b: 0.3647059, a: 1}
+  successColor: {r: 0.22, g: 0.66, b: 0.3, a: 1}
+  dashLength: 0.22
+  strandWidth: 0.06
+  sortingOrder: 6
+  previewInEditor: 1
 --- !u!4 &81299020 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 220000101, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
@@ -719,6 +780,84 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &120078023
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (34)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.95029
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.895409
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &120078024 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 120078023}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &131937547
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,6 +996,84 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &141242747
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.987675
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.664589
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &141242748 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 141242747}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &144286651
 GameObject:
   m_ObjectHideFlags: 0
@@ -1525,6 +1742,84 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &240217480
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.05059
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.655411
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &240217481 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 240217480}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &241654131
 GameObject:
   m_ObjectHideFlags: 0
@@ -3269,6 +3564,84 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 431870807}
   m_CullTransparentMesh: 1
+--- !u!1001 &435197733
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (17)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.46269
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.93541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &435197734 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 435197733}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &438754699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4714,6 +5087,240 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &535849489
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (11)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.299999
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &535849490 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 535849489}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &536638959
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (21)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.44836
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.255409
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &536638960 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 536638959}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &538277929
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (23)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.259998
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &538277930 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 538277929}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &543898838
 GameObject:
   m_ObjectHideFlags: 0
@@ -4896,7 +5503,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: daf282c0521184373a851c4f8887994e, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawMachineRoom
   player: {fileID: 1153900829}
   stage: {fileID: 2257900004}
@@ -5618,6 +6225,162 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &626850015
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.491344
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.29541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &626850016 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 626850015}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &632359162
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (19)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.939999
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &632359163 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 632359162}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &633499137
 GameObject:
   m_ObjectHideFlags: 0
@@ -5986,6 +6749,84 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &651829705
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (30)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.4197
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.895409
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &651829706 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 651829705}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &656116954
 GameObject:
   m_ObjectHideFlags: 0
@@ -6276,6 +7117,84 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &683879426
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (24)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.97895
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.255409
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &683879427 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 683879426}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &696772585
 GameObject:
   m_ObjectHideFlags: 0
@@ -7047,10 +7966,166 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
+--- !u!1001 &779020590
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (20)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.99328
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.93541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &779020591 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 779020590}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &780283349 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 220000101, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
   m_PrefabInstance: {fileID: 1223522479}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &781437591
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &781437592 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 781437591}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &784332524
 GameObject:
@@ -7826,7 +8901,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.5019608, g: 0.7176471, b: 0.98823535, a: 0.13804963}
+  m_Color: {r: 0.5019608, g: 0.7176471, b: 0.98823535, a: 0.661503}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7910,6 +8985,84 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 833198540}
   m_CullTransparentMesh: 1
+--- !u!1001 &839011345
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.78651
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &839011346 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 839011345}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &840255681
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8247,6 +9400,99 @@ Transform:
   - {fileID: 11516370}
   m_Father: {fileID: 316392734}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &868969331
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 868969332}
+  - component: {fileID: 868969334}
+  - component: {fileID: 868969333}
+  m_Layer: 0
+  m_Name: Smile Silk Timetable Board
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &868969332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868969331}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 60.200554, y: 12.85, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1621290239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &868969333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868969331}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2309e6a86d37cc94a9f82db1562edef0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SmileSilkAnchorBoard
+  ropeHeight: 2.2
+  sortingOrder: 4
+--- !u!61 &868969334
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 868969331}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1.7, y: 0.55}
+  m_EdgeRadius: 0
 --- !u!4 &870904594 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 220000101, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
@@ -8550,7 +9796,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.13804963}
+  m_Color: {r: 0.9921569, g: 0.6666667, b: 0.21568629, a: 0.661503}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -9070,6 +10316,84 @@ MeshRenderer:
   m_SortingOrder: 5
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &925364028
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (27)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.579998
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &925364029 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 925364028}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &954233065
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9824,6 +11148,84 @@ Transform:
   - {fileID: 1167786438}
   m_Father: {fileID: 241654132}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &996762787
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.959015
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.304588
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &996762788 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 996762787}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1008512435
 GameObject:
   m_ObjectHideFlags: 0
@@ -10260,6 +11662,228 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1048472645
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1048472646}
+  m_Layer: 0
+  m_Name: Silk Climb Pins
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1048472646
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1048472645}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1696260345}
+  - {fileID: 141242748}
+  - {fileID: 781437592}
+  - {fileID: 240217481}
+  - {fileID: 1064983747}
+  - {fileID: 1884995727}
+  - {fileID: 839011346}
+  - {fileID: 1111385226}
+  - {fileID: 1577201083}
+  - {fileID: 626850016}
+  - {fileID: 996762788}
+  - {fileID: 535849490}
+  - {fileID: 1510220859}
+  - {fileID: 1810806946}
+  - {fileID: 1983533309}
+  - {fileID: 1842678944}
+  - {fileID: 1083058861}
+  - {fileID: 435197734}
+  - {fileID: 1700779373}
+  - {fileID: 632359163}
+  - {fileID: 779020591}
+  - {fileID: 536638960}
+  - {fileID: 1112559576}
+  - {fileID: 538277930}
+  - {fileID: 683879427}
+  - {fileID: 1068256178}
+  - {fileID: 1082410105}
+  - {fileID: 925364029}
+  - {fileID: 1077602399}
+  - {fileID: 1201080346}
+  - {fileID: 651829706}
+  - {fileID: 1623389457}
+  - {fileID: 1291418232}
+  - {fileID: 1671446939}
+  - {fileID: 120078024}
+  m_Father: {fileID: 1621290239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1064983746
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.505672
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.97541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1064983747 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1064983746}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1068256177
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (25)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.43403
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.575409
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1068256178 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1068256177}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1070893923
 GameObject:
   m_ObjectHideFlags: 0
@@ -10501,6 +12125,162 @@ MeshRenderer:
   m_SortingOrder: 5
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1001 &1077602398
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (28)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 55.174675
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.473025
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.47756556
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.8785961
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1077602399 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1077602398}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1082410104
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (26)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.901703
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.584587
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1082410105 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1082410104}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1082465635
 GameObject:
   m_ObjectHideFlags: 0
@@ -10579,6 +12359,84 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 38, y: 28}
   m_EdgeRadius: 0
+--- !u!1001 &1083058860
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.007607
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.61541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1083058861 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1083058860}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1087307932
 GameObject:
   m_ObjectHideFlags: 0
@@ -10736,6 +12594,162 @@ Transform:
   - {fileID: 923877410}
   m_Father: {fileID: 719791895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1111385225
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.98
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1111385226 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1111385225}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1112559575
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (22)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.91603
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.264587
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1112559576 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1112559575}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1123961568
 GameObject:
   m_ObjectHideFlags: 0
@@ -10818,7 +12832,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.699999}
+  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.26478913}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11010,6 +13024,52 @@ Transform:
   - {fileID: 2240000001}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1148826856
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1148826857}
+  - component: {fileID: 1148826858}
+  m_Layer: 0
+  m_Name: Silk Climb Pins On Return Wall
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1148826857
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148826856}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1621290239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1148826858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148826856}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5665de04e577e1b47b2edb8bb6f709a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FollowTargetVisibility
+  target: {fileID: 2259220001}
+  targetRestPosition: {x: 55.6822, y: 10.809998, z: 0}
 --- !u!1 &1153900828
 GameObject:
   m_ObjectHideFlags: 0
@@ -11206,6 +13266,84 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4240325369198079652, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
   m_PrefabInstance: {fileID: 1199517467}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1201080345
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (29)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.96462
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.575409
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1201080346 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1201080345}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1207742212
 GameObject:
@@ -11677,7 +13815,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e1d4b7c2a9f84e6d8b3a5c7e0f2d4a61, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TeethArrivalTriggerZone
   targetTooth: {fileID: 1923991315}
   once: 1
@@ -11693,7 +13831,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
   onToothLeft:
@@ -11842,6 +13980,7 @@ GameObject:
   - component: {fileID: 1264234957}
   - component: {fileID: 1264234959}
   - component: {fileID: 1264234958}
+  - component: {fileID: 1264234960}
   m_Layer: 0
   m_Name: Underpass Left Support (1)
   m_TagString: Untagged
@@ -11960,7 +14099,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11969,6 +14108,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1264234960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1264234956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &1271525071
 GameObject:
   m_ObjectHideFlags: 0
@@ -12180,6 +14340,84 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
   m_PrefabInstance: {fileID: 1289413993}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1291418231
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (32)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.899998
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1291418232 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1291418231}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1320774210
 GameObject:
@@ -12596,6 +14834,67 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1347769615
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1347769616}
+  - component: {fileID: 1347769617}
+  m_Layer: 0
+  m_Name: Smile Silk Hint Up
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1347769616
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347769615}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 61.70988, y: 14.012501, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1621290239}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1347769617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347769615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85704ca83b72b7848beded28faa90e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IntroSpiderSilkHint
+  playerController: {fileID: 1153900829}
+  launchPoint: {x: -0.8593254, y: -0.3874998}
+  anchorPoint: {x: 0.8593254, y: 0.3874998}
+  promptOffset: {x: -1.6, y: 0.6}
+  message: Swing past the pins
+  mobileMessage: Swing past the pins
+  successMessage: Nice web!
+  showControls: 0
+  activationAreaSize: {x: 2.1000023, y: 1.1000004}
+  activationAreaOffset: {x: -1.5093269, y: -0.4375}
+  silkColor: {r: 0.55, g: 0.92, b: 1, a: 1}
+  textColor: {r: 0.13725491, g: 0.27450982, b: 0.3647059, a: 1}
+  successColor: {r: 0.22, g: 0.66, b: 0.3, a: 1}
+  dashLength: 0.22
+  strandWidth: 0.06
+  sortingOrder: 6
+  previewInEditor: 1
 --- !u!1 &1352678834
 GameObject:
   m_ObjectHideFlags: 0
@@ -14064,6 +16363,7 @@ GameObject:
   - component: {fileID: 1480379174}
   - component: {fileID: 1480379176}
   - component: {fileID: 1480379175}
+  - component: {fileID: 1480379177}
   m_Layer: 0
   m_Name: Underpass Left Support (2)
   m_TagString: Untagged
@@ -14182,7 +16482,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -14191,6 +16491,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1480379177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1480379173}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &1482390232
 GameObject:
   m_ObjectHideFlags: 0
@@ -14234,7 +16555,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a1b2c3d4e5f60718293a4b5c6d7e8f08, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ShowTextOnceTrigger
   textObject: {fileID: 0}
 --- !u!61 &1482390235
@@ -14643,6 +16964,84 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.79999995, y: 0.12}
   m_EdgeRadius: 0
+--- !u!1001 &1510220858
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.02194
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.29541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1510220859 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1510220858}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1534560520
 GameObject:
   m_ObjectHideFlags: 0
@@ -14920,7 +17319,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9c0d0c16436448969b7f718021b57de9, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RatchetingCeiling
   maximumRise: 0.64
   ballLiftStep: 0.16
@@ -15048,6 +17447,84 @@ RectTransform:
   m_AnchoredPosition: {x: -30, y: -108}
   m_SizeDelta: {x: 220, y: 64}
   m_Pivot: {x: 1, y: 1}
+--- !u!1001 &1577201082
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.036266
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.97541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.6911104
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227493
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1577201083 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1577201082}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1584230877
 GameObject:
   m_ObjectHideFlags: 0
@@ -15284,6 +17761,120 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1621290238
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1621290239}
+  m_Layer: 0
+  m_Name: Smile Silk Challenge
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1621290239
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621290238}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1048472646}
+  - {fileID: 1148826857}
+  - {fileID: 868969332}
+  - {fileID: 31741592}
+  - {fileID: 1347769616}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1623389456
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (31)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.88737
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.904587
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1623389457 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1623389456}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1632732989
 GameObject:
   m_ObjectHideFlags: 0
@@ -15659,6 +18250,84 @@ Transform:
   - {fileID: 1082465636}
   m_Father: {fileID: 4670582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1671446938
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (33)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 55.38206
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 13.793025
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.47756556
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.8785961
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1671446939 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1671446938}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1685887438
 GameObject:
   m_ObjectHideFlags: 0
@@ -15691,6 +18360,84 @@ Transform:
   - {fileID: 10115991}
   m_Father: {fileID: 557123912}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1696260344
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.520004
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.655411
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1696260345 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1696260344}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1700743415
 GameObject:
   m_ObjectHideFlags: 0
@@ -15782,6 +18529,84 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &1700779372
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (18)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.93036
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.944588
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1700779373 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1700779372}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1724105516
 GameObject:
   m_ObjectHideFlags: 0
@@ -16400,6 +19225,7 @@ GameObject:
   - component: {fileID: 1797278548}
   - component: {fileID: 1797278550}
   - component: {fileID: 1797278549}
+  - component: {fileID: 1797278551}
   m_Layer: 0
   m_Name: Chase Tunnel Ceiling
   m_TagString: Untagged
@@ -16518,7 +19344,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.36078432, g: 0.42352942, b: 0.45490196, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -16527,6 +19353,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1797278551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1797278547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 4
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1001 &1802195968
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16620,6 +19467,162 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
+--- !u!1001 &1810806945
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (13)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 62.477013
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.61541
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1810806946 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1810806945}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1842678943
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (15)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 56.099575
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.619999
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1842678944 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1842678943}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1844825545
 GameObject:
   m_ObjectHideFlags: 0
@@ -16738,7 +19741,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.699999}
+  m_Color: {r: 0.6039216, g: 0.47058824, b: 0.8627451, a: 0.26478913}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -16857,6 +19860,84 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 697142527}
   m_SourcePrefab: {fileID: 100100000, guid: 8abe954db1f0b4c53986e261b7337575, type: 3}
+--- !u!1001 &1884995726
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.973347
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 11.984589
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1884995727 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1884995726}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1893506491 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 220000101, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
@@ -17685,6 +20766,84 @@ RectTransform:
   m_AnchoredPosition: {x: -85, y: -60}
   m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 1, y: 1}
+--- !u!1001 &1983533308
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1048472646}
+    m_Modifications:
+    - target: {fileID: 977770218948184245, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: playerController
+      value: 
+      objectReference: {fileID: 1153900829}
+    - target: {fileID: 6681047379175569755, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_Name
+      value: Silk Climb Pin (14)
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.22857143
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.45714286
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 57.94469
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 12.624588
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7227492
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.69111043
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+--- !u!4 &1983533309 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9107045266107046226, guid: bcdc98200d5b0494db8837e54ea763c8, type: 3}
+  m_PrefabInstance: {fileID: 1983533308}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1991034654 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 220000101, guid: b1c2d3e4f5a60718293a4b5c6d7e8f03, type: 3}
@@ -18475,7 +21634,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 0}
-  m_Color: {r: 0.9333334, g: 0.64705884, b: 0.24705884, a: 0.13804963}
+  m_Color: {r: 0.9333334, g: 0.64705884, b: 0.24705884, a: 0.661503}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -24907,6 +28066,7 @@ GameObject:
   - component: {fileID: 2240000021}
   - component: {fileID: 2240000023}
   - component: {fileID: 2240000022}
+  - component: {fileID: 2240000024}
   m_Layer: 0
   m_Name: Seesaw Room Floor
   m_TagString: Untagged
@@ -25025,7 +28185,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -25034,6 +28194,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2240000024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2240000020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2240000030
 GameObject:
   m_ObjectHideFlags: 0
@@ -26281,6 +29462,7 @@ GameObject:
   - component: {fileID: 2257200021}
   - component: {fileID: 2257200023}
   - component: {fileID: 2257200022}
+  - component: {fileID: 2257200024}
   m_Layer: 0
   m_Name: Seesaw Room Ceiling
   m_TagString: Untagged
@@ -26399,7 +29581,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.43, g: 0.29, b: 0.17, a: 1}
+  m_Color: {r: 0.34117648, g: 0.5921569, b: 0.58431375, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -26408,6 +29590,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2257200024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257200020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 3
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!114 &2257200030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27688,6 +30891,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2258000011}
   - component: {fileID: 2258000013}
+  - component: {fileID: 2258000014}
   m_Layer: 0
   m_Name: Extending Floor Visual
   m_TagString: Untagged
@@ -27760,7 +30964,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -27769,6 +30973,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258000014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258000010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258100000
 GameObject:
   m_ObjectHideFlags: 0
@@ -28434,6 +31659,7 @@ GameObject:
   - component: {fileID: 2258310001}
   - component: {fileID: 2258310003}
   - component: {fileID: 2258310002}
+  - component: {fileID: 2258310004}
   m_Layer: 0
   m_Name: Underpass Left Support
   m_TagString: Untagged
@@ -28552,7 +31778,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -28561,6 +31787,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258310004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258310010
 GameObject:
   m_ObjectHideFlags: 0
@@ -28572,6 +31819,7 @@ GameObject:
   - component: {fileID: 2258310011}
   - component: {fileID: 2258310013}
   - component: {fileID: 2258310012}
+  - component: {fileID: 2258310014}
   m_Layer: 0
   m_Name: Underpass Central Support
   m_TagString: Untagged
@@ -28690,7 +31938,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -28699,6 +31947,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258310014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258310020
 GameObject:
   m_ObjectHideFlags: 0
@@ -28711,6 +31980,7 @@ GameObject:
   - component: {fileID: 2258310023}
   - component: {fileID: 2258310022}
   - component: {fileID: 2258310024}
+  - component: {fileID: 2258310025}
   m_Layer: 0
   m_Name: Spider Cracked Entrance
   m_TagString: Untagged
@@ -28829,7 +32099,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -28851,6 +32121,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawGateShatter
   visual: {fileID: 2258310023}
+--- !u!114 &2258310025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258310030
 GameObject:
   m_ObjectHideFlags: 0
@@ -28863,6 +32154,7 @@ GameObject:
   - component: {fileID: 2258310033}
   - component: {fileID: 2258310032}
   - component: {fileID: 2258310034}
+  - component: {fileID: 2258310035}
   m_Layer: 0
   m_Name: Bouncy Area Passage Exit
   m_TagString: Untagged
@@ -28981,7 +32273,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29003,6 +32295,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawGateShatter
   visual: {fileID: 2258310033}
+--- !u!114 &2258310035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258310040
 GameObject:
   m_ObjectHideFlags: 0
@@ -29014,6 +32327,7 @@ GameObject:
   - component: {fileID: 2258310041}
   - component: {fileID: 2258310043}
   - component: {fileID: 2258310042}
+  - component: {fileID: 2258310044}
   m_Layer: 0
   m_Name: Underpass Floor
   m_TagString: Untagged
@@ -29132,7 +32446,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29141,6 +32455,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258310044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 1
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 25.7
+    y: -26.5
+    width: 9.5
+    height: 1.7077808
+  backdropOrder: -1
 --- !u!1 &2258310050
 GameObject:
   m_ObjectHideFlags: 0
@@ -29152,6 +32487,7 @@ GameObject:
   - component: {fileID: 2258310051}
   - component: {fileID: 2258310053}
   - component: {fileID: 2258310052}
+  - component: {fileID: 2258310054}
   m_Layer: 0
   m_Name: Underpass Left End Wall
   m_TagString: Untagged
@@ -29270,7 +32606,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29279,6 +32615,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258310054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 1
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258310060
 GameObject:
   m_ObjectHideFlags: 0
@@ -29290,6 +32647,7 @@ GameObject:
   - component: {fileID: 2258310061}
   - component: {fileID: 2258310063}
   - component: {fileID: 2258310062}
+  - component: {fileID: 2258310064}
   m_Layer: 0
   m_Name: Underpass Right End Wall
   m_TagString: Untagged
@@ -29408,7 +32766,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29417,6 +32775,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258310064
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 1
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258310070
 GameObject:
   m_ObjectHideFlags: 0
@@ -29428,6 +32807,7 @@ GameObject:
   - component: {fileID: 2258310071}
   - component: {fileID: 2258310073}
   - component: {fileID: 2258310072}
+  - component: {fileID: 2258310074}
   m_Layer: 0
   m_Name: Underpass Bouncy Exit Ramp
   m_TagString: Untagged
@@ -29546,7 +32926,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29555,6 +32935,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258310074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258310070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 1
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!114 &2258400004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29794,6 +33195,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2258420001}
   - component: {fileID: 2258420003}
+  - component: {fileID: 2258420004}
   m_Layer: 0
   m_Name: Upper Tunnel Cover
   m_TagString: Untagged
@@ -29866,7 +33268,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29875,6 +33277,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258420004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258420000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!1 &2258420010
 GameObject:
   m_ObjectHideFlags: 0
@@ -29885,6 +33308,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2258420011}
   - component: {fileID: 2258420013}
+  - component: {fileID: 2258420014}
   m_Layer: 0
   m_Name: Lower Tunnel Cover
   m_TagString: Untagged
@@ -29957,7 +33381,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29966,6 +33390,27 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2258420014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2258420010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 0
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
 --- !u!114 &2258500004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -34687,3 +38132,4 @@ SceneRoots:
   - {fileID: 2101285335}
   - {fileID: 531235089}
   - {fileID: 719791895}
+  - {fileID: 1621290239}

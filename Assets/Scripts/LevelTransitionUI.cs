@@ -30,7 +30,24 @@ public class LevelTransitionUI : MonoBehaviour
         LevelTransitionUI transition = Begin(playerController);
         if (transition == null) return;
         transition.BuildOverlay(null, true);
-        transition.AddMenuButton(menuSceneName);
+        transition.AddMenuButton(menuSceneName, -180f);
+    }
+
+    /// <summary>Final result with an illustration loaded from Resources, popped in above the message.</summary>
+    public static void ShowFinalResult(string menuSceneName, PlayerPossessionController playerController,
+        string illustrationResource, string title, string message)
+    {
+        Texture2D picture = Resources.Load<Texture2D>(illustrationResource);
+        if (picture == null)
+        {
+            Debug.LogWarning($"Completion illustration '{illustrationResource}' is missing; showing the plain result.");
+            ShowFinalResult(menuSceneName, playerController);
+            return;
+        }
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        transition.BuildIllustratedOverlay(picture, title, message);
+        transition.AddMenuButton(menuSceneName, -435f);
     }
 
     private static LevelTransitionUI Begin(PlayerPossessionController playerController)
@@ -56,7 +73,7 @@ public class LevelTransitionUI : MonoBehaviour
         return transition;
     }
 
-    private void BuildOverlay(string levelLabel, bool finalResult = false)
+    private void BuildOverlay(string levelLabel, bool finalResult = false, bool addTexts = true)
     {
         Canvas canvas = gameObject.AddComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -75,11 +92,59 @@ public class LevelTransitionUI : MonoBehaviour
         rect.offsetMin = rect.offsetMax = Vector2.zero;
         background.GetComponent<Image>().color = new Color(0.04f, 0.07f, 0.1f, 0.88f);
 
+        if (!addTexts) return;
         AddText("Title", finalResult ? "Level Complete" : "Level up!", 64f, 50f);
         AddText("Destination", finalResult ? "You are a super star now!" : "Entering " + levelLabel + "...", 36f, -45f);
     }
 
+    private void BuildIllustratedOverlay(Texture2D picture, string title, string message)
+    {
+        BuildOverlay(null, true, false);
+
+        var card = new GameObject("CompletionCard", typeof(RectTransform), typeof(Image));
+        card.transform.SetParent(transform, false);
+        RectTransform cardRect = card.GetComponent<RectTransform>();
+        cardRect.anchorMin = cardRect.anchorMax = cardRect.pivot = new Vector2(0.5f, 0.5f);
+        cardRect.anchoredPosition = new Vector2(0f, 70f);
+        cardRect.sizeDelta = new Vector2(1020f, 700f);
+        Image frame = card.GetComponent<Image>();
+        frame.color = new Color32(255, 234, 190, 255);
+        frame.raycastTarget = false;
+
+        var art = new GameObject("StarStudying", typeof(RectTransform), typeof(RawImage));
+        art.transform.SetParent(card.transform, false);
+        RectTransform artRect = art.GetComponent<RectTransform>();
+        artRect.anchorMin = artRect.anchorMax = artRect.pivot = new Vector2(0.5f, 0.5f);
+        float aspect = picture.height > 0 ? (float)picture.width / picture.height : 1.5f;
+        artRect.sizeDelta = new Vector2(960f, 960f / aspect);
+        artRect.anchoredPosition = Vector2.zero;
+        RawImage raw = art.GetComponent<RawImage>();
+        raw.texture = picture;
+        raw.raycastTarget = false;
+
+        AddText("Title", title, 64f, 470f, new Color32(255, 211, 77, 255));
+        AddText("Destination", message, 36f, -330f);
+        StartCoroutine(PopIn(cardRect));
+    }
+
+    private static IEnumerator PopIn(RectTransform target)
+    {
+        const float seconds = 0.45f;
+        for (float age = 0f; age < seconds; age += Time.unscaledDeltaTime)
+        {
+            float t = age / seconds;
+            // Ease out with a small overshoot so the picture "pops" into view.
+            float scale = 1f + 1.7f * Mathf.Pow(t - 1f, 3f) + 0.7f * Mathf.Pow(t - 1f, 2f);
+            target.localScale = Vector3.one * Mathf.Max(0.01f, scale);
+            yield return null;
+        }
+        target.localScale = Vector3.one;
+    }
+
     private void AddText(string objectName, string message, float fontSize, float y)
+        => AddText(objectName, message, fontSize, y, Color.white);
+
+    private void AddText(string objectName, string message, float fontSize, float y, Color color)
     {
         var label = new GameObject(objectName, typeof(RectTransform), typeof(TextMeshProUGUI));
         label.transform.SetParent(transform, false);
@@ -91,18 +156,18 @@ public class LevelTransitionUI : MonoBehaviour
         text.text = message;
         text.fontSize = fontSize;
         text.alignment = TextAlignmentOptions.Center;
-        text.color = Color.white;
+        text.color = color;
         text.raycastTarget = false;
     }
 
-    private void AddMenuButton(string menuSceneName)
+    private void AddMenuButton(string menuSceneName, float y)
     {
         var buttonObject = new GameObject("ReturnToMainMenu", typeof(RectTransform),
             typeof(Image), typeof(Button));
         buttonObject.transform.SetParent(transform, false);
         RectTransform rect = buttonObject.GetComponent<RectTransform>();
         rect.anchorMin = rect.anchorMax = rect.pivot = new Vector2(0.5f, 0.5f);
-        rect.anchoredPosition = new Vector2(0f, -180f);
+        rect.anchoredPosition = new Vector2(0f, y);
         rect.sizeDelta = new Vector2(520f, 90f);
         Image background = buttonObject.GetComponent<Image>();
         background.color = new Color(0.16f, 0.36f, 0.46f, 1f);

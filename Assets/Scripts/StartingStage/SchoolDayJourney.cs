@@ -284,8 +284,9 @@ public sealed class SchoolDayJourney : MonoBehaviour
     {
         if(!rider)return;
         if (passenger) passenger.sortingOrder=savedOrder;
-        rider.Body.simulated=savedSimulation;
-        player.enabled=savedInput;
+        if (rider.Body) rider.Body.simulated=savedSimulation;
+        // On scene unload the player may already be destroyed before this OnDisable runs.
+        if (player) player.enabled=savedInput;
         rider=null;
     }
     private void ArriveWithClass()
@@ -386,7 +387,7 @@ public sealed class SchoolDayJourney : MonoBehaviour
     {
         if(!greetingOwnsInput)return;
         greetingOwnsInput=false;
-        player.enabled=true;
+        if (player) player.enabled=true;
     }
     private void HideCompany()
     {

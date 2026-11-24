@@ -30,6 +30,7 @@ public sealed class SmileGoalFlag : MonoBehaviour
         HasWon = true;
         player.ClearInputForRestartMenu();
         AnalyticsManager.Instance?.TrackLevelComplete(player.CurrentBody);
-        LevelTransitionUI.ShowFinalResult("Navigation", player);
+        LevelTransitionUI.ShowFinalResult("Navigation", player, "Level2Complete/StarStudying",
+            "Level Complete!", "You made it to class on time. You are a super star now!");
     }
 }
