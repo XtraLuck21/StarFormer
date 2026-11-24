@@ -270,6 +270,7 @@ GameObject:
   - component: {fileID: 21602856}
   - component: {fileID: 21602858}
   - component: {fileID: 21602857}
+  - component: {fileID: 21602859}
   m_Layer: 0
   m_Name: wall (44)
   m_TagString: Untagged
@@ -388,7 +389,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16862746, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -397,6 +398,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &21602859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21602855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &44887319
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -647,6 +662,7 @@ GameObject:
   - component: {fileID: 112228531}
   - component: {fileID: 112228533}
   - component: {fileID: 112228532}
+  - component: {fileID: 112228534}
   m_Layer: 0
   m_Name: wall (45)
   m_TagString: Untagged
@@ -765,7 +781,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16862746, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -774,6 +790,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &112228534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 112228530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &131937547
 GameObject:
   m_ObjectHideFlags: 0
@@ -785,6 +815,7 @@ GameObject:
   - component: {fileID: 131937548}
   - component: {fileID: 131937550}
   - component: {fileID: 131937549}
+  - component: {fileID: 131937551}
   m_Layer: 0
   m_Name: wall (40)
   m_TagString: Untagged
@@ -903,7 +934,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18039216, b: 0.16078432, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -912,6 +943,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &131937551
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131937547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &144286651
 GameObject:
   m_ObjectHideFlags: 0
@@ -1967,6 +2012,7 @@ GameObject:
   - component: {fileID: 265435823}
   - component: {fileID: 265435825}
   - component: {fileID: 265435824}
+  - component: {fileID: 265435826}
   m_Layer: 0
   m_Name: wall (46)
   m_TagString: Untagged
@@ -2085,7 +2131,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16862746, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -2094,6 +2140,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &265435826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265435822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &265520443
 GameObject:
   m_ObjectHideFlags: 0
@@ -3267,6 +3327,7 @@ GameObject:
   - component: {fileID: 430330828}
   - component: {fileID: 430330830}
   - component: {fileID: 430330829}
+  - component: {fileID: 430330831}
   m_Layer: 0
   m_Name: wall (28)
   m_TagString: Untagged
@@ -3385,7 +3446,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3394,6 +3455,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &430330831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430330827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 7
+  poolTileSpan: {x: 31.266636, y: 37.56375}
 --- !u!1 &431870807
 GameObject:
   m_ObjectHideFlags: 0
@@ -5179,6 +5254,7 @@ GameObject:
   - component: {fileID: 592603044}
   - component: {fileID: 592603046}
   - component: {fileID: 592603045}
+  - component: {fileID: 592603047}
   m_Layer: 0
   m_Name: wall (29)
   m_TagString: Untagged
@@ -5297,7 +5373,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.9647059, g: 0.9254902, b: 0.8392157, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5306,6 +5382,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &592603047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 592603043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 2
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &596525379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8008,6 +8098,7 @@ GameObject:
   - component: {fileID: 827900555}
   - component: {fileID: 827900554}
   - component: {fileID: 827900553}
+  - component: {fileID: 827900557}
   m_Layer: 0
   m_Name: MovableTeeth (1)
   m_TagString: Untagged
@@ -8128,7 +8219,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.77647066, g: 0.7725491, b: 0.77647066, a: 1}
+  m_Color: {r: 1, g: 0.972549, b: 0.8784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -8153,6 +8244,20 @@ Transform:
   - {fileID: 2111875637}
   m_Father: {fileID: 719791895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &827900557
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 827900552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 3
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &831352462
 GameObject:
   m_ObjectHideFlags: 0
@@ -9825,6 +9930,7 @@ GameObject:
   - component: {fileID: 2259210000}
   - component: {fileID: 965705642}
   - component: {fileID: 965705641}
+  - component: {fileID: 1637197687}
   m_Layer: 0
   m_Name: wall (36)
   m_TagString: Untagged
@@ -9943,7 +10049,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -10377,6 +10483,7 @@ GameObject:
   - component: {fileID: 1019666310}
   - component: {fileID: 1019666312}
   - component: {fileID: 1019666311}
+  - component: {fileID: 1019666313}
   m_Layer: 0
   m_Name: wall (33)
   m_TagString: Untagged
@@ -10495,7 +10602,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -10504,6 +10611,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1019666313
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019666309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &1032352330
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11180,6 +11301,7 @@ GameObject:
   - component: {fileID: 1087307935}
   - component: {fileID: 1087307934}
   - component: {fileID: 1087307933}
+  - component: {fileID: 1087307937}
   m_Layer: 0
   m_Name: MovableTeeth2 (1)
   m_TagString: Untagged
@@ -11300,7 +11422,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.77647066, g: 0.7725491, b: 0.77647066, a: 1}
+  m_Color: {r: 1, g: 0.972549, b: 0.8784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -11325,6 +11447,20 @@ Transform:
   - {fileID: 923877410}
   m_Father: {fileID: 719791895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1087307937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087307932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 3
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1123961568
 GameObject:
   m_ObjectHideFlags: 0
@@ -12782,6 +12918,7 @@ GameObject:
   - component: {fileID: 1271525072}
   - component: {fileID: 1271525074}
   - component: {fileID: 1271525073}
+  - component: {fileID: 1271525075}
   m_Layer: 0
   m_Name: wall (41)
   m_TagString: Untagged
@@ -12900,7 +13037,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16078432, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -12909,6 +13046,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1271525075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1271525071}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &1289413993
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12994,6 +13145,7 @@ GameObject:
   - component: {fileID: 1320774211}
   - component: {fileID: 1320774213}
   - component: {fileID: 1320774212}
+  - component: {fileID: 1320774214}
   m_Layer: 0
   m_Name: wall (42)
   m_TagString: Untagged
@@ -13112,7 +13264,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16862746, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13121,6 +13273,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1320774214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1320774210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1327041783
 GameObject:
   m_ObjectHideFlags: 0
@@ -13132,6 +13298,7 @@ GameObject:
   - component: {fileID: 1327041784}
   - component: {fileID: 1327041786}
   - component: {fileID: 1327041785}
+  - component: {fileID: 1327041787}
   m_Layer: 0
   m_Name: wall (48)
   m_TagString: Untagged
@@ -13250,7 +13417,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.17254902, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13259,6 +13426,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1327041787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1327041783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &1334170691
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13487,6 +13668,7 @@ GameObject:
   - component: {fileID: 1352678835}
   - component: {fileID: 1352678837}
   - component: {fileID: 1352678836}
+  - component: {fileID: 1352678838}
   m_Layer: 0
   m_Name: wall (43)
   m_TagString: Untagged
@@ -13605,7 +13787,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16862746, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13614,6 +13796,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1352678838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1352678834}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &1361656426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13841,6 +14037,7 @@ GameObject:
   - component: {fileID: 1379733101}
   - component: {fileID: 1379733103}
   - component: {fileID: 1379733102}
+  - component: {fileID: 1379733104}
   m_Layer: 0
   m_Name: wall (31)
   m_TagString: Untagged
@@ -13959,7 +14156,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13968,6 +14165,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1379733104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379733100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1388347163
 GameObject:
   m_ObjectHideFlags: 0
@@ -13979,6 +14190,7 @@ GameObject:
   - component: {fileID: 1388347164}
   - component: {fileID: 1388347166}
   - component: {fileID: 1388347165}
+  - component: {fileID: 1388347167}
   m_Layer: 0
   m_Name: wall (47)
   m_TagString: Untagged
@@ -14097,7 +14309,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.16862746, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -14106,6 +14318,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1388347167
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1388347163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1395500091
 GameObject:
   m_ObjectHideFlags: 0
@@ -14153,6 +14379,7 @@ GameObject:
   - component: {fileID: 2259210002}
   - component: {fileID: 1404001826}
   - component: {fileID: 1404001825}
+  - component: {fileID: 2259210005}
   m_Layer: 0
   m_Name: wall (38)
   m_TagString: Untagged
@@ -14271,7 +14498,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -14485,6 +14712,7 @@ GameObject:
   - component: {fileID: 2259210003}
   - component: {fileID: 1447151090}
   - component: {fileID: 1447151089}
+  - component: {fileID: 2259210004}
   m_Layer: 0
   m_Name: wall (39)
   m_TagString: Untagged
@@ -14603,7 +14831,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -14858,6 +15086,7 @@ GameObject:
   - component: {fileID: 2259210001}
   - component: {fileID: 1469349174}
   - component: {fileID: 1469349173}
+  - component: {fileID: 2259210006}
   m_Layer: 0
   m_Name: wall (37)
   m_TagString: Untagged
@@ -14976,7 +15205,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5764706, g: 0.3529412, b: 0.2, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -16025,6 +16254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1632732990}
   - component: {fileID: 1632732991}
+  - component: {fileID: 1632732992}
   m_Layer: 0
   m_Name: Smile Route Button Cap
   m_TagString: Untagged
@@ -16106,6 +16336,34 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1632732992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1632732989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 6
+  poolTileSpan: {x: 0, y: 0}
+--- !u!114 &1637197687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965705639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1642690509
 GameObject:
   m_ObjectHideFlags: 0
@@ -17136,6 +17394,7 @@ GameObject:
   - component: {fileID: 1778574860}
   - component: {fileID: 1778574862}
   - component: {fileID: 1778574861}
+  - component: {fileID: 1778574863}
   m_Layer: 0
   m_Name: Door (1)
   m_TagString: Untagged
@@ -17254,7 +17513,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.17134719, g: 0.9245283, b: 0.02180491, a: 1}
+  m_Color: {r: 0.21568628, g: 0.40784314, b: 0.4, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -17263,6 +17522,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1778574863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1778574859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 4
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1793442395
 GameObject:
   m_ObjectHideFlags: 0
@@ -17991,28 +18264,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1900833166
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1900833163}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
-  style: 5
-  surfaceTop: -23.247782
-  backdrop:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  backdropOrder: -1
-  spritePadding: {x: 9, y: 12}
 --- !u!4 &1900833164
 Transform:
   m_ObjectHideFlags: 0
@@ -18087,6 +18338,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &1900833166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900833163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 5
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
+  spritePadding: {x: 9, y: 12}
 --- !u!1 &1916692709
 GameObject:
   m_ObjectHideFlags: 0
@@ -18355,6 +18628,7 @@ GameObject:
   - component: {fileID: 1923991317}
   - component: {fileID: 1923991316}
   - component: {fileID: 1923991315}
+  - component: {fileID: 1923991319}
   m_Layer: 0
   m_Name: MovableTeeth1 (1)
   m_TagString: Untagged
@@ -18475,7 +18749,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.77647066, g: 0.7725491, b: 0.77647066, a: 1}
+  m_Color: {r: 1, g: 0.972549, b: 0.8784314, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -18500,6 +18774,20 @@ Transform:
   - {fileID: 1076533450}
   m_Father: {fileID: 719791895}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1923991319
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1923991314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 3
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1927252704
 GameObject:
   m_ObjectHideFlags: 0
@@ -20190,6 +20478,7 @@ GameObject:
   - component: {fileID: 2121727486}
   - component: {fileID: 2121727488}
   - component: {fileID: 2121727487}
+  - component: {fileID: 2121727489}
   m_Layer: 0
   m_Name: wall (32)
   m_TagString: Untagged
@@ -20308,7 +20597,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18823531, g: 0.18431373, b: 0.1764706, a: 1}
+  m_Color: {r: 0.5882353, g: 0.2784314, b: 0.22745098, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -20317,6 +20606,20 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2121727489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121727485}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 0
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1001 &2138728769
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -27300,28 +27603,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2257200004
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2257200000}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
-  style: 2
-  surfaceTop: -23.247782
-  backdrop:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  backdropOrder: -1
-  spritePadding: {x: 0, y: 0}
 --- !u!4 &2257200001
 Transform:
   m_ObjectHideFlags: 0
@@ -27442,6 +27723,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2257200004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257200000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 2
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
+  spritePadding: {x: 0, y: 0}
 --- !u!1 &2257200010
 GameObject:
   m_ObjectHideFlags: 0
@@ -27461,28 +27764,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2257200014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2257200010}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
-  style: 2
-  surfaceTop: -23.247782
-  backdrop:
-    serializedVersion: 2
-    x: 0
-    y: 0
-    width: 0
-    height: 0
-  backdropOrder: -1
-  spritePadding: {x: 0, y: 0}
 --- !u!4 &2257200011
 Transform:
   m_ObjectHideFlags: 0
@@ -27603,6 +27884,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2257200014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257200010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 2
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
+  spritePadding: {x: 0, y: 0}
 --- !u!1 &2257200020
 GameObject:
   m_ObjectHideFlags: 0
@@ -32633,6 +32936,48 @@ PlatformEffector2D:
   m_UseSideFriction: 0
   m_UseSideBounce: 0
   m_SideArc: 1
+--- !u!114 &2259210004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1447151087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
+--- !u!114 &2259210005
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1404001823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
+--- !u!114 &2259210006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1469349171}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 1
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &2259220000
 GameObject:
   m_ObjectHideFlags: 0
@@ -32644,6 +32989,7 @@ GameObject:
   - component: {fileID: 2259220001}
   - component: {fileID: 2259220002}
   - component: {fileID: 2259220003}
+  - component: {fileID: 2259220004}
   m_Layer: 0
   m_Name: Smile Spider Return Wall
   m_TagString: Untagged
@@ -32716,7 +33062,7 @@ SpriteRenderer:
   m_SortingOrder: -1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.2, g: 0.2, b: 0.18, a: 1}
+  m_Color: {r: 0.21568628, g: 0.40784314, b: 0.4, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -32771,6 +33117,20 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2259220004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2259220000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 4
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &2259240004
 GameObject:
   m_ObjectHideFlags: 0
@@ -35526,7 +35886,7 @@ SpriteRenderer:
   m_SortingOrder: 5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.09019608, g: 0.30980393, b: 0.19607843, a: 1}
+  m_Color: {r: 0.54509807, g: 0.61960787, b: 0.61960787, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -35778,6 +36138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2596418204140490795}
   - component: {fileID: 6491203067411115131}
+  - component: {fileID: 7997164252152461238}
   m_Layer: 0
   m_Name: Pole
   m_TagString: Untagged
@@ -35785,6 +36146,20 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7997164252152461238
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7997164252152461237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe3e0bf6081241378401d036c557ded9, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
+  finish: 5
+  poolTileSpan: {x: 0, y: 0}
 --- !u!1 &8428857698907472581
 GameObject:
   m_ObjectHideFlags: 0
