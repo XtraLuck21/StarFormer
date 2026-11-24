@@ -15,10 +15,13 @@ internal sealed class SchoolRainStreaks
     private readonly MeshRenderer renderer;
     private readonly Drop[] drops;
     private readonly Rect area;
+    private readonly float streakWidth;
 
-    public SchoolRainStreaks(SchoolMorningScenery scenery, string name, int order, Rect area, int count, int seed)
+    public SchoolRainStreaks(SchoolMorningScenery scenery, string name, int order, Rect area, int count, int seed,
+        float streakWidth = .034f, float lengthScale = 1f, float opacityScale = 1f)
     {
         this.area = area;
+        this.streakWidth = streakWidth;
         drops = new Drop[count];
         renderer = scenery.Draw(art, name, order, out mesh).GetComponent<MeshRenderer>();
         mesh.MarkDynamic();
@@ -29,8 +32,8 @@ internal sealed class SchoolRainStreaks
             drop.Start = new Vector2(Range(random, area.xMin, area.xMax), area.yMax);
             drop.Velocity = Fall(random) * Range(random, .72f, 1.15f);
             drop.Age = Range(random, 0f, area.height / -drop.Velocity.y);
-            drop.Length = Range(random, .25f, .55f);
-            drop.Opacity = Range(random, .24f, .48f);
+            drop.Length = Range(random, .25f, .55f) * lengthScale;
+            drop.Opacity = Mathf.Clamp01(Range(random, .24f, .48f) * opacityScale);
         }
     }
 
@@ -47,7 +50,7 @@ internal sealed class SchoolRainStreaks
             tip.x = area.xMin + Mathf.Repeat(tip.x - area.xMin, area.width);
             float edgeX = Mathf.Min(tip.x - area.xMin, area.xMax - tip.x);
             float edgeY = Mathf.Min(tip.y - area.yMin, area.yMax - tip.y);
-            art.Line(tip, tip - drop.Velocity.normalized * drop.Length, .034f,
+            art.Line(tip, tip - drop.Velocity.normalized * drop.Length, streakWidth,
                 Tint(opacity * drop.Opacity * Mathf.Clamp01(Mathf.Min(edgeX, edgeY) / 2f)));
         }
         art.Upload(mesh);

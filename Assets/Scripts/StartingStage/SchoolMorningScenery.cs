@@ -168,7 +168,8 @@ public sealed class SchoolMorningScenery : MonoBehaviour
         Bounds face = smileCompletion.FaceBounds;
         Rect rainArea = Rect.MinMaxRect(face.min.x - 10f, face.min.y - 8f, face.max.x + 10f, face.max.y + 9f);
         int faceOrder = smileCompletion.FaceSortingOrder;
-        smileRain = new SchoolRainStreaks(this, "Smile face rain", faceOrder + 3, rainArea, 245, 921);
+        smileRain = new SchoolRainStreaks(this, "Smile face rain", faceOrder + 3, rainArea, 360, 921,
+            streakWidth: .075f, lengthScale: 1.8f, opacityScale: 1.65f);
         smileSun = Draw(BuildSmileSunRays(), "Smile face sun rays", faceOrder - 1, smileRoom)
             .GetComponent<MeshRenderer>();
         smileSun.transform.position = face.center;
