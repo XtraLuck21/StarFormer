@@ -13,6 +13,8 @@ public sealed class SmileRoomSurfaceSkin : MonoBehaviour
     public enum Finish { Brick, Timber, PoolTile, IvoryTooth, PaintedMetal, FlagPole, Button, PoolFloor }
 
     [SerializeField] private Finish finish;
+    [Tooltip("Slope of the painted smile at this tooth, from left to right.")]
+    [SerializeField] private float toothSlope;
     [Tooltip("World X range of the water above a PoolFloor. Only this part receives ceramic tiles.")]
     [SerializeField] private Vector2 poolTileSpan;
 
@@ -30,6 +32,7 @@ public sealed class SmileRoomSurfaceSkin : MonoBehaviour
     private Quaternion builtRotation;
     private Sprite builtSprite;
     private bool rebuild;
+    private bool hidToothSprite;
 
     public static Color BaseColor(Finish value) => value switch
     {
@@ -103,7 +106,7 @@ public sealed class SmileRoomSurfaceSkin : MonoBehaviour
                 if (right > left) Masonry(drawing, Rect.MinMaxRect(left, face.yMin, right, face.yMax), center, true);
                 break;
             case Finish.IvoryTooth:
-                Tooth(drawing, face);
+                Tooth(drawing, face, toothSlope);
                 break;
             case Finish.Button:
                 Bevel(drawing, face, new Color(.66f, .7f, .64f), Color.white);
@@ -133,6 +136,11 @@ public sealed class SmileRoomSurfaceSkin : MonoBehaviour
             mesh.colors = colors;
         }
         art.transform.localPosition = new Vector3(0f, 0f, -.012f / Mathf.Max(.0001f, Mathf.Abs(builtScale.z)));
+        if (finish == Finish.IvoryTooth && !source.forceRenderingOff)
+        {
+            source.forceRenderingOff = true;
+            hidToothSprite = true;
+        }
     }
 
     private void Masonry(SchoolSceneDrawing a, Rect face, Vector2 center, bool tile)
@@ -216,14 +224,29 @@ public sealed class SmileRoomSurfaceSkin : MonoBehaviour
         a.Circle(new Vector2(r.xMax - margin, r.center.y), nail, new Color32(92, 77, 64, 255));
     }
 
-    private static void Tooth(SchoolSceneDrawing a, Rect r)
+    private static void Tooth(SchoolSceneDrawing a, Rect r, float slope)
     {
-        a.ShadedRect(r.xMin, r.yMin, r.xMax, r.yMax,
-            new Color32(228, 219, 194, 255), new Color32(255, 250, 231, 255));
-        float edge = Mathf.Min(.085f, r.width * .06f);
-        a.Rect(r.xMin + edge / 2f, r.center.y, edge, r.height, new Color32(255, 253, 241, 255));
-        a.Rect(r.xMax - edge / 2f, r.center.y, edge, r.height, new Color32(208, 199, 175, 255));
-        a.Rect(r.center.x, r.yMin + edge / 2f, r.width, edge, new Color32(202, 193, 169, 255));
+        // The painted teeth share a flat upper edge and follow the grin along the bottom.
+        const int segments = 32;
+        float radius = Mathf.Min(r.width * .08f, r.height * .05f);
+        Vector2 previousBottom = default, previousTop = default;
+        for (int i = 0; i <= segments; i++)
+        {
+            float u = (float)i / segments;
+            float x = Mathf.Lerp(r.xMin, r.xMax, u);
+            float edgeDistance = Mathf.Min(u, 1f - u) * r.width;
+            float inset = Mathf.Max(0f, radius - edgeDistance);
+            float corner = radius - Mathf.Sqrt(Mathf.Max(0f, radius * radius - inset * inset));
+            float offset = u - .5f;
+            float rise = r.width * (Mathf.Abs(slope) * .5f + slope * offset + .16f * offset * offset);
+            Vector2 bottom = new Vector2(x, r.yMin + rise + corner);
+            Vector2 top = new Vector2(x, r.yMax - corner);
+            if (i > 0)
+                a.ShadedQuad(previousBottom, previousTop, top, bottom,
+                    new Color32(197, 195, 195, 255), new Color32(202, 200, 200, 255));
+            previousBottom = bottom;
+            previousTop = top;
+        }
     }
 
     private static void Metal(SchoolSceneDrawing a, Rect r, bool pole)
@@ -253,6 +276,8 @@ public sealed class SmileRoomSurfaceSkin : MonoBehaviour
 
     private void Clear()
     {
+        if (hidToothSprite && source != null) source.forceRenderingOff = false;
+        hidToothSprite = false;
         SchoolSceneDrawing.Release(art);
         SchoolSceneDrawing.Release(mesh);
         SchoolSceneDrawing.Release(material);

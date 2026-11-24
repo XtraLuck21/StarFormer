@@ -8257,6 +8257,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
   finish: 3
+  toothSlope: -0.45
   poolTileSpan: {x: 0, y: 0}
 --- !u!1 &831352462
 GameObject:
@@ -11460,6 +11461,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
   finish: 3
+  toothSlope: 0
   poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1123961568
 GameObject:
@@ -18787,6 +18789,7 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::SmileRoomSurfaceSkin
   finish: 3
+  toothSlope: 0.44
   poolTileSpan: {x: 0, y: 0}
 --- !u!1 &1927252704
 GameObject:
