@@ -35,6 +35,8 @@ On desktop, use the lower-right fullscreen button during windowed play. The firs
 
 ## Development
 
+Current source includes Kindergarten and Level01 polish beyond the published Gold export: shared woodland art, two entrance-water routes, reminders behind player forms, replayable door help and cleaned-up square book icons. Level01 also has a manual Next Level acceptance-letter screen, shorter SAVE presentations, contact-based SAVE rearming and direct RUIN activation without a cover. See [Level01 details](Docs/level-1.md) and [source acceptance](Docs/AnalyticsTestPlan.md#level01-polish-source-acceptance); the hosted release links above still refer to Gold 0.1.0.
+
 Use Unity **6000.3.22f1** with Web Build Support. The enabled scenes follow this order.
 
 ```text

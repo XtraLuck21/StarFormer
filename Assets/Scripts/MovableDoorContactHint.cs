@@ -1,7 +1,8 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-// Scene-local help: deliberately walk/bounce into the sign; no extra input binding.
+// Scene-local help: click the visible sign or deliberately walk/bounce into it.
 public sealed class MovableDoorContactHint : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
@@ -14,6 +15,13 @@ public sealed class MovableDoorContactHint : MonoBehaviour
     [SerializeField, Min(1f)] private float stuckSeconds = 20f;
     [SerializeField, Min(.1f)] private float solvedRise = .8f;
     [SerializeField, Min(.5f)] private float demonstrationSeconds = 2.8f;
+
+    [Header("Hint palette")]
+    [SerializeField] private Color hintInk = new Color(.08f, .18f, .22f);
+    [SerializeField] private Color buttonInk = new Color(.08f, .18f, .22f);
+    [SerializeField] private Color hintFace = Color.white;
+    [SerializeField] private Color hintPulse = new Color(.85f, .95f, 1f);
+    [SerializeField] private Color previewColor = new Color(.5f, .83f, 1f, .32f);
 
     private const float ButtonScale = 1.3f;
 
@@ -79,8 +87,7 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         var body = ControlledBody();
         float bottom = door.CurrentBottom;
         // Actual door progress counts even while the player keeps bouncing in place.
-        if (bottom >= initialBottom + solvedRise ||
-            (body != null && body.Body.position.x >= room.xMax && body.Body.position.y < 11f))
+        if (bottom >= initialBottom + solvedRise)
         {
             solved = true;
             sensor.enabled = false;
@@ -94,17 +101,15 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         if (body == null || !room.Contains(body.Body.position))
         {
             idleSeconds = 0f;
-            SetVisible(false);
+            armed = false;
             return;
         }
         bool eligible = body.Form == BodyForm.Box || body.Form == BodyForm.BouncyBall;
-        if (!eligible) { idleSeconds = 0f; SetVisible(false); return; }
+        if (!eligible) { idleSeconds = 0f; armed = false; return; }
 
-        // Once dismissed or used, the sign stays retired for this scene visit.
-        if (!visible && hasShown) return;
-
+        // Once offered, help remains available until the real door is raised.
         idleSeconds += Time.deltaTime;
-        if (!visible && idleSeconds >= stuckSeconds)
+        if (!visible && (hasShown || idleSeconds >= stuckSeconds))
         {
             hasShown = true;
             SetVisible(true);
@@ -116,14 +121,23 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         if (!visible) return;
         ColliderDistance2D contact = sensor.Distance(body.BodyCollider);
         // Separation in any direction arms the next touch, including Box growth
-        // from underneath. The one-shot lifecycle prevents repeated bounce activation.
+        // from underneath. A held overlap cannot replay the preview on its own.
         if (contact.isValid && contact.distance > .03f) armed = true;
         attentionSeconds += Time.deltaTime;
         float hop = attentionSeconds < 1f ? .2f * Mathf.Abs(Mathf.Sin(attentionSeconds * Mathf.PI * 2f)) : 0f;
         buttonStar.localPosition = new Vector3(0f, .08f + hop, -.02f);
-        buttonFace.color = Color.Lerp(new Color(.85f, .95f, 1f), Color.white,
+        buttonFace.color = Color.Lerp(hintPulse, hintFace,
             .25f + .15f * Mathf.Sin(attentionSeconds * 2f));
         if (armed && contact.isValid && contact.distance <= .01f) BeginDemo();
+    }
+
+    private void OnHintClicked()
+    {
+        if (!visible || solved || presenting || !CanPlay) return;
+        var body = ControlledBody();
+        if (body == null || !room.Contains(body.Body.position) ||
+            (body.Form != BodyForm.Box && body.Form != BodyForm.BouncyBall)) return;
+        BeginDemo();
     }
 
     private void BeginDemo()
@@ -172,6 +186,8 @@ public sealed class MovableDoorContactHint : MonoBehaviour
             player.enabled = playerWasEnabled;
         }
         Time.timeScale = savedTimeScale;
+        armed = false;
+        SetVisible(!solved);
     }
 
     private void SetVisible(bool value)
@@ -210,7 +226,7 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         text.rectTransform.sizeDelta = size;
         text.fontSize = fontSize;
         text.alignment = TextAlignmentOptions.Center;
-        text.color = new Color(.08f, .18f, .22f);
+        text.color = hintInk;
         text.GetComponent<MeshRenderer>().sortingOrder = 24;
         text.text = name;
         return text;
@@ -250,15 +266,33 @@ public sealed class MovableDoorContactHint : MonoBehaviour
         buttonVisual.SetParent(transform, false);
         buttonVisual.position = new Vector3(buttonPosition.x, buttonPosition.y, -.1f);
         buttonVisual.localScale = Vector3.one * ButtonScale;
-        Square("Border", buttonVisual, Vector3.zero, Vector2.one, new Color(.08f, .18f, .22f), 20);
-        buttonFace = Square("Face", buttonVisual, new Vector3(0, 0, -.01f), Vector2.one * .88f, Color.white, 21);
+        Square("Border", buttonVisual, Vector3.zero, Vector2.one, buttonInk, 20);
+        buttonFace = Square("Face", buttonVisual, new Vector3(0, 0, -.01f), Vector2.one * .88f, hintFace, 21);
         sensor = buttonVisual.gameObject.AddComponent<BoxCollider2D>();
         sensor.size = Vector2.one;
         sensor.isTrigger = true;
         buttonStar = Star("Hint star", buttonVisual);
         buttonStar.localPosition = new Vector3(0f, .08f, -.02f);
-        Text("Hint", buttonVisual, new Vector3(0f, -.3f, -.03f), new Vector2(.9f, .3f), 2.2f);
-        ghostDoor = Square("Door preview (no collider)", transform, Vector3.zero, Vector2.one, new Color(.5f, .83f, 1f, .32f), 20);
+        Text("Hint", buttonVisual, new Vector3(0f, -.3f, -.03f), new Vector2(.9f, .3f), 2.2f).color = buttonInk;
+        // A transparent UI hit area shares the sign's bounds. UI raycasting also
+        // prevents the same press from resizing Box through the hint.
+        var clickArea = new GameObject("Hint click area", typeof(RectTransform), typeof(Canvas),
+            typeof(GraphicRaycaster), typeof(Image), typeof(Button));
+        clickArea.layer = LayerMask.NameToLayer("UI");
+        var clickRect = clickArea.GetComponent<RectTransform>();
+        clickRect.SetParent(buttonVisual, false);
+        clickRect.localPosition = new Vector3(0, 0, -.04f);
+        clickRect.sizeDelta = Vector2.one;
+        var clickCanvas = clickArea.GetComponent<Canvas>();
+        clickCanvas.renderMode = RenderMode.WorldSpace;
+        clickCanvas.worldCamera = levelCamera.GetComponent<Camera>();
+        clickCanvas.sortingOrder = 24;
+        clickArea.GetComponent<Image>().color = Color.clear;
+        var clickButton = clickArea.GetComponent<Button>();
+        clickButton.transition = Selectable.Transition.None;
+        clickButton.navigation = new Navigation { mode = Navigation.Mode.None };
+        clickButton.onClick.AddListener(OnHintClicked);
+        ghostDoor = Square("Door preview (no collider)", transform, Vector3.zero, Vector2.one, previewColor, 20);
         demoStar = Star("Helpful star", transform);
         caption = Text("Door hint caption", transform, new Vector3(captionPosition.x, captionPosition.y, -.2f), new Vector2(4.9f, 1.2f), 4.4f);
     }

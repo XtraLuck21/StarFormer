@@ -15,6 +15,8 @@ public class BubbleMovementHint : MonoBehaviour
     private TextMeshPro spikeWarningText;
     [SerializeField] private PlayerPossessionController playerController;
     [SerializeField] private PossessableBody targetBody;
+    [Tooltip("Allow this area to teach any controlled Bubble, including respawned backups.")]
+    [SerializeField] private bool useControlledBubble;
     [SerializeField] private bool previewInEditor = true;
     [Tooltip("Only used by Continue Right: show the arrow after this flag opens its gate.")]
     [SerializeField] private IntroFlagGate flagGate;
@@ -82,6 +84,8 @@ public class BubbleMovementHint : MonoBehaviour
     [Header("Appearance")]
     [Tooltip("Show the form label above the movement keys. Disable when a Canvas provides the title.")]
     [SerializeField] private bool showIntroductionText = true;
+    [Tooltip("Optional replacement for the Bubble introduction title. Leave empty for the standard form label.")]
+    [SerializeField, TextArea] private string bubbleRiseDescription = "";
     [SerializeField] private string waterDescription = "";
     [SerializeField] private string popDescription = "";
     [SerializeField] private Color popDescriptionColor = Color.white;
@@ -206,7 +210,7 @@ public class BubbleMovementHint : MonoBehaviour
             {
                 bool starMode = mode == HintMode.StarMove || mode == HintMode.StarJump;
                 // The spare Bubble can use the same swimming and exit lessons.
-                bool useCurrentBubble = mode == HintMode.ExitBubble || (mobileLesson && !starMode);
+                bool useCurrentBubble = mode == HintMode.ExitBubble || (!starMode && (mobileLesson || useControlledBubble));
                 PossessableBody body = useCurrentBubble && playerController != null
                     ? playerController.CurrentBody : targetBody;
                 visible = playerController != null && body != null &&
@@ -721,20 +725,23 @@ public class BubbleMovementHint : MonoBehaviour
     private void BuildBubbleIntroduction()
     {
         bool spiderIntroduction = mode == HintMode.SpiderIntroduction;
+        bool showRiseLesson = !spiderIntroduction && !string.IsNullOrWhiteSpace(bubbleRiseDescription);
         if (mobileLesson && !spiderIntroduction)
             AddStickDiagram(false);
         else if (!spiderIntroduction)
         {
-            AddKey('A', new Vector2(-0.5f, 0));
-            AddKey('D', new Vector2(0.5f, 0));
-            Arrow(new Vector2(-0.85f, 0), new Vector2(-1.25f, 0));
-            Arrow(new Vector2(0.85f, 0), new Vector2(1.25f, 0));
+            float keyY = showRiseLesson ? -0.3f : 0f;
+            AddKey('A', new Vector2(-0.5f, keyY));
+            AddKey('D', new Vector2(0.5f, keyY));
+            Arrow(new Vector2(-0.85f, keyY), new Vector2(-1.25f, keyY));
+            Arrow(new Vector2(0.85f, keyY), new Vector2(1.25f, keyY));
         }
         if (showIntroductionText)
         {
-            TextMeshPro title = AddHintText("FormIntroductionText", spiderIntroduction ? "You are a spider." : "You are a\nBubble",
+            TextMeshPro title = AddHintText("FormIntroductionText", spiderIntroduction ? "You are a spider." :
+                showRiseLesson ? bubbleRiseDescription : "You are a\nBubble",
                 new Vector2(0, spiderIntroduction ? 0f : 0.8f),
-                spiderIntroduction ? new Vector2(4.4f, 0.6f) : new Vector2(2.7f, 0.8f),
+                spiderIntroduction ? new Vector2(4.4f, 0.6f) : new Vector2(2.9f, 1f),
                 spiderIntroduction ? spiderTextColor : (Color?)null);
             if (spiderIntroduction) introductionTitle = title;
             if (spiderIntroduction && !string.IsNullOrWhiteSpace(spiderSubtitle))

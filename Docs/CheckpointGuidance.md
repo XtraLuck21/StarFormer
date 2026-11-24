@@ -9,7 +9,7 @@ Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deploym
 | Index / ID | Position in route | Restored form |
 | --- | --- | --- |
 | 1 / `ADV_CP1` | Lower room after the Box drop | Box, using `BoxB_DropShaft` |
-| 2 / `ADV_CP2` | Right ascent below the Bubble shelf | BouncyBall, using `BallR1_LowRoom`; bounce up to reach the Bubble |
+| 2 / `ADV_CP2` | Open ground at the right ascent, left of the Bubble shelf | BouncyBall, using `BallR1_LowRoom`; bounce up to reach the Bubble |
 | 3 / `ADV_CP3` | Upper-left landing after the right ascent | Star, even if Box activated it |
 
 Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble passing overhead does not activate it. Markers stay hollow: blue before reaching them, yellow afterward, with a temporary `CHECKPOINT SAVED` label. Old reached markers remain yellow. The latest point determines respawn.
@@ -23,15 +23,14 @@ Checkpoint 3 requires a grounded Star or Box near the authored floor. Bubble pas
 | Active checkpoint and reached markers | Retained; restore its fixed host and safe position | Cleared; start as Star at entrance |
 | Latest completed NORMAL/SAFE/HARD mode | Retained, without replaying its cinematic | NORMAL |
 | Upper one-way platform | Highest completed lift retained | Authored low height |
-| RUIN cover | Broken state retained | Intact |
 | Viewed SAVE warning and route presentations | Retained | Cleared |
 | Lower reversible lift/door | Authored initial state | Authored initial state |
 | Loose bodies, sizes and consumed Bubbles | Recreated at authored scene state, then place checkpoint host | Authored initial state |
 | SAFE moving-board phase | Predictable fresh cycle | Hidden in NORMAL |
 | HARD falling spike | Restored to its ceiling and rearmed when HARD is active | Hidden in NORMAL |
-| READY interaction and local timed Bubble hints | Fresh scene-local state | Fresh scene-local state |
+| Water ability reminders and replayable lower-door Hint | Fresh scene-local state; door Hint must reach its offer delay again | Fresh scene-local state |
 
-The controller captures completed progress after checkpoint activation, including later route/lift/cover changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
+The controller captures completed progress after checkpoint activation, including later route/lift changes. It does not save a partial hazard animation. Without a checkpoint, death recovers at the scene entrance. Navigation entry, leaving through Home's Main Menu action, and forward progression clear all checkpoint sessions. Nothing here is persistent storage across browser/application launches.
 
 ## Shared Home menu
 
@@ -46,18 +45,26 @@ Each of the seven enabled gameplay scenes has the top-right house-and-Star squar
 
 Confirmation defaults to Cancel. Cancelling a confirmation returns to Paused; Escape from Paused resumes. The menu blocks background interaction, does not stack over the R menu or a route cinematic, and restores its owned pause when disabled. It does not add Hint/Controls actions.
 
+### Completion-screen exceptions
+
+After IntroBouncyBall completion, gameplay remains paused on the graduation screen. The house stays visible and clickable above its backdrop, with a `Main Menu` tooltip. It loads Navigation directly instead of opening Paused or asking to abandon an already-completed run. Next Level loads Level01. Both routes clear checkpoint sessions and restore normal time; form discoveries still last for the application session. Escape does not bypass graduation into the ordinary Home menu. See [completion feedback](intro-levels.md#completion-feedback).
+
+Level01 uses the same direct Home exit on its Elementary School acceptance page. Home stays above the backdrop and is clickable during and after the reveal. Next Level loads IntroSpider; neither the reveal nor waiting advances the level automatically. Both exits restore time and clear checkpoint sessions without reporting abandonment of the completed run.
+
+IntroBox's dropped-cargo retry restores just its carrying lesson, not a checkpoint or scene reload. Backward scene passages also remain separate from checkpoints.
+
 ## R menu and other scenes
 
 - R or a touch Restart action opens `RestartMenuUI`; no hold is required and opening never reloads.
 - Return to Checkpoint appears when a current-scene positional or opted-in ball checkpoint exists. Restart Level clears progress. Cancel, Escape or R closes without restarting; Cancel is initially selected.
 - The R menu also pauses automatic death recovery. Cancelling restores the remaining death-delay time.
 - Home's extra confirmation screens do not replace or change the existing R shortcut.
-- Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxB with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
+- Old standalone menu/restart controls are disabled in favor of Home; R remains available. IntroBubble’s left exit returns to IntroBox's endpoint as BoxC with the door open. IntroBouncyBall also returns through its left passage to IntroBubble as Star near the flag with the door open. Both are one-shot scene-travel setups, not checkpoint recovery; restarting IntroBubble later restores its EntryBox start.
 - Promoted Level02 uses DROP_BOTTOM, SEESAW_ROOM and the five Smiley Face entries documented in [level-2.md](level-2.md#2-scene-wiring-to-preserve). Death/Home retry restore the configured Star, Spider or Box entry and its stage progress; later entries cannot regress. A saved forehead entry also enables the lower-right fall-return zone without a death/reload. The scene uses a short Respawning pause; full restart clears its session records. CP01/CP02 remain legacy objects; CP03 has been removed.
 
 ## Touch input and checkpoint recovery
 
-In Level01, the first tank’s ceiling-contact lesson shows the R restart reminder on desktop. On touch screens, tap the house and choose Return to Checkpoint after a save, or Restart Level to start over. Bubble’s Pop button returns to Star at either exit.
+In Level01, a BouncyBall entering the narrow right-hand water pocket automatically sees `No ground to bounce. / Press R to restart.`; no ceiling contact, idle wait or Hint click is required. Touch mode substitutes Home > Restart Level. On touch screens, tap the house and choose Return to Checkpoint after a save, or Restart Level to start over. Bubble’s Pop button returns to Star at either exit.
 
 The gameplay joystick clears on death and when the controls are hidden. When the HUD returns after a checkpoint reload, a thumb held inside its movement area can establish a fresh neutral center. To test recovery, keep one thumb down through respawn, drag again, then lift and start a new drag in the opposite direction.
 
@@ -65,6 +72,10 @@ Shape discovery is separate from checkpoint state. A menu return/full level rest
 
 ## Verification
 
-Developer playtests passed for checkpoint implementation and formal Level01 promotion. Isolated Unity regression checks passed for all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
+Checkpoint 2’s marker, trigger and respawn were moved left together in the polish branch; the developer reported the new placement works. Its fixed Ball form and ordered checkpoint rules are unchanged. See [authored positions](level-1.md#checkpoints-and-restart) and [branch acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance).
+
+Historical checkpoint implementation and formal-Level01 promotion passed developer playtests. The isolated Unity checks at that time covered all three respawn forms, non-regressing checkpoint order, death/manual recovery, route/lift/cover retention, full-reset behavior, Home confirmation/cancellation, R menu opening/cancellation, and scene entry/exit clearing.
+
+After RUIN cover removal (`c57d2aa`), isolated Unity checks passed checkpoint capture, HARD retention on Return to Checkpoint and NORMAL restoration on full restart, with no cover recreated. The removed cover state is no longer part of checkpoint recovery.
 
 The developer reported final Beta local and hosted playtests passed. The Level01 analytics screenshot confirms records, not a checkpoint-by-checkpoint metric audit. Continue targeted browser regression, including input/focus loss, narrow windows, real touch devices where controls exist, and pause during the death delay. Editor checks do not establish hosted-build or Google Sheets delivery results. See [AnalyticsTestPlan.md](AnalyticsTestPlan.md) for gameplay checkpoint IDs versus analytics Run/Attempt lifecycle.

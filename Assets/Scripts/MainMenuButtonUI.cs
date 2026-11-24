@@ -18,6 +18,7 @@ public sealed class MainMenuButtonUI : MonoBehaviour
     private GameObject previousSelection;
     private float previousTimeScale;
     private bool ownsPause;
+    private System.Action<string> completionExit;
     private enum Confirmation { None, RestartLevel, MainMenu }
     private Confirmation confirmation;
     public bool IsOpen => ownsPause;
@@ -68,8 +69,25 @@ public sealed class MainMenuButtonUI : MonoBehaviour
         tooltip.gameObject.SetActive(false);
     }
 
+    // A completed level offers a direct menu exit, without reopening gameplay or reporting abandonment.
+    public void SetCompletionExit(System.Action<string> exit, Button nextLevel = null)
+    {
+        completionExit = exit;
+        if (hud == null) return;
+        hud.GetComponent<Canvas>().sortingOrder = exit != null ? 32001 : 31010;
+        icon.Tooltip.GetComponentInChildren<TMP_Text>(true).text = exit != null ? "Main Menu" : "Home · Restart";
+        home.navigation = nextLevel != null
+            ? new Navigation { mode = Navigation.Mode.Explicit, selectOnDown = nextLevel, selectOnUp = nextLevel }
+            : new Navigation { mode = Navigation.Mode.None };
+        if (nextLevel != null)
+            nextLevel.navigation = new Navigation { mode = Navigation.Mode.Explicit, selectOnUp = home, selectOnDown = home };
+        home.interactable = !IsOpen && CanOpen();
+        icon.SetAvailable(home.interactable);
+    }
+
     private bool CanOpen()
     {
+        if (completionExit != null) return true;
         if (player == null || !player.isActiveAndEnabled || player.IsDead || player.IsRestarting || Time.timeScale <= 0) return false;
         var restart = player.GetComponent<RestartMenuUI>();
         return restart == null || !restart.IsOpen;
@@ -85,6 +103,7 @@ public sealed class MainMenuButtonUI : MonoBehaviour
     // reaches the Home menu, even when closing a dialog has just resumed gameplay.
     private void LateUpdate()
     {
+        if (completionExit != null) return;
 #if UNITY_WEBGL && !UNITY_EDITOR
         if (IsOpen && confirmation == Confirmation.None && HomeFullscreenEntryCount() != fullscreenEntriesAtOpen)
         {
@@ -100,6 +119,7 @@ public sealed class MainMenuButtonUI : MonoBehaviour
 
     public void Show()
     {
+        if (completionExit != null) { completionExit(menuSceneName); return; }
         if (IsOpen || !CanOpen()) return;
         previousSelection = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
         previousTimeScale = Time.timeScale;

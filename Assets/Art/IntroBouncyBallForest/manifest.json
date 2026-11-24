@@ -1,0 +1,157 @@
+{
+  "scene": "Assets/Scenes/IntroBouncyBall.unity",
+  "direction": "A - Woodland adventure",
+  "status": "Implemented in all three Kindergarten scenes; accepted in developer playtests on 2026-11-19; not a new published build",
+  "date": "2026-11-19",
+  "brief": {
+    "scope": "Background, soil platforms, grass edges and pool depth; scene-local sprite overlays only",
+    "style": "Muted sage woodland, simple flat shapes, sparse soil strata and stones",
+    "preserved": "Original form colors, hazards, input, route, camera, transforms and all collision boundaries",
+    "implementation": "Existing SpriteRenderers and BoxCollider2D retained; no Tilemap migration",
+    "layers": "Backdrop order -100; terrain overlays order 0 at z -0.01; grass order 0 at z -0.02; waterline order 2; existing tutorial and gameplay layers retained"
+  },
+  "assets": [
+    {
+      "file": "ForestBackground.png",
+      "size": [
+        2048,
+        1152
+      ],
+      "ppu": 128,
+      "source": "OpenAI image generation",
+      "source_file": "/Users/castro/.codex/generated_images/01a1f5b6-5e26-75b2-bd74-8601464185d1/exec-a63905ce-e56b-4bde-bdb3-7648181cafae.png",
+      "reference": "/Users/castro/.codex/generated_images/01a1f5b6-5e26-75b2-bd74-8601464185d1/exec-9152a289-11a1-4641-a257-0b06b6888435.png",
+      "prompt": "Create a production BACKGROUND ONLY for StarFormer 2D orthographic side-view platformer, based on the approved woodland concept reference. Extract/reimagine ONLY its distant forest scenery into a complete uninterrupted landscape backdrop. Remove ALL foreground earth/rock platforms, walls, hanging rectangular ceiling blocks, grass-topped playable surfaces, pool, water, flag, spike, ball, yellow star, text, UI. The result is NOT a game screenshot and contains NO gameplay objects and NO ground horizon that could look walkable.\nCanvas 16:9 wide landscape, ideally 2048x1152. Mid-value muted sage/teal sky, stylized large rounded forest tree canopies and trunks only along extreme left and right margins, soft distant woodland layers from lower half down to bottom, small desaturated grey-sage clouds confined to top 15%. The upper-left area between x=10%-30%, y=15%-50% is a calm open mid-value sage sky with almost no detail, reserved for dark tutorial writing. The central upper area also spacious. Bottom quarter soft broad silhouettes without crisp foreground leaves. Forest continues to bottom edge without a solid ground ledge.\nMaintain the approved art language: broad flat-color shapes, simple restrained two-tone shading, no photographic texture or grain, no glowing particles, no decorative arcs, no sun disks, no yellow or orange flowers, no purple plants. Mid-value palette with compressed contrast: sage sky around #789B8E, rear trees #6C9589 and #648C81, nearer backdrop trees #53786D. No dark nearly-black foreground tree trunks, no pale white sky. Background details subordinate to bright yellow star and purple ball that will be composited in engine. Crisp illustration, not painterly blur. Opaque background. This image will be behind real separate gameplay terrain, so it must contain ZERO floating platforms or apparent terrain silhouettes.",
+      "processing": "Resized to 2048x1152 RGB",
+      "license": "Generated for this project; no third-party stock asset",
+      "technical_checks_passed": true
+    },
+    {
+      "file": "SoilTile.png",
+      "size": [
+        512,
+        512
+      ],
+      "ppu": 128,
+      "source": "Project-authored deterministic texture in IntroBouncyBallForestSetup.cs",
+      "license": "Project-authored",
+      "technical_checks_passed": true
+    },
+    {
+      "file": "GrassEdge.png",
+      "size": [
+        256,
+        64
+      ],
+      "ppu": 256,
+      "source": "Project-authored deterministic texture in IntroBouncyBallForestSetup.cs",
+      "license": "Project-authored",
+      "technical_checks_passed": true
+    },
+    {
+      "file": "PoolDepth.png",
+      "size": [
+        256,
+        256
+      ],
+      "ppu": 256,
+      "source": "Project-authored deterministic texture in IntroBouncyBallForestSetup.cs",
+      "license": "Project-authored",
+      "technical_checks_passed": true
+    }
+  ],
+  "import": {
+    "pivot": [
+      0.5,
+      0.5
+    ],
+    "filter": "Bilinear",
+    "mipmaps": false,
+    "compression": "Uncompressed",
+    "mesh": "FullRect",
+    "generatePhysicsShape": false
+  },
+  "qa": {
+    "asset_report": "All four images pass expected sizes; grass transparency passes; soil/grass/water palette limits pass",
+    "horizontal_tile_edges": "Soil and grass opposite edge pixels match exactly",
+    "visual_review": "Contact sheet and Unity 16:9 Play Mode",
+    "play_checked": [
+      "Entry/possession",
+      "High ledge and water traversal",
+      "Low ceiling and regional hints"
+    ],
+    "full_level_completion_tested": true,
+    "completion_evidence": "Developer reported successful stage and final playtests; graduation goal and both exits also exercised in Unity. No WebGL/mobile certification."
+  },
+  "ui_readability": {
+    "scope": "IntroBouncyBall only; opt-in serialized settings preserve other scenes",
+    "ink": "#070F0C",
+    "roof_ink_and_keycaps": "#F5DBA3",
+    "diagram_edges": "Contrasting rim, world-fixed",
+    "movement_hint": "IntroBouncyBall: visible only for the controlled assigned ball inside the entry area; hidden as Star; reappears on return while still possessing that ball",
+    "book": {
+      "source": "Project-authored vector geometry in Assets/UI/CollectionBookGraphic.cs",
+      "license": "Project-authored",
+      "size_ui_units": [
+        88,
+        88
+      ],
+      "label": false,
+      "square_cover": true,
+      "technical_checks_passed": true
+    },
+    "validated": [
+      "Unity compilation and Play Mode",
+      "Hint hidden for Star and visible for possessed ball (final scene setting)",
+      "Return to entry restores hint",
+      "Wall hint contrast",
+      "Book button opens; close button resumes play",
+      "No world transform or physics changes"
+    ]
+  },
+  "reused_in_scenes": [
+    "Assets/Scenes/IntroBox.unity",
+    "Assets/Scenes/IntroBubble.unity",
+    "Assets/Scenes/Level01.unity"
+  ],
+  "woodland_extension": {
+    "date": "2026-11-19",
+    "assets": "Reuses the approved woodland raster assets without texture or importer changes",
+    "camera": "Backdrop alone follows and fits the existing camera after tutorial pan/zoom; camera parameters unchanged",
+    "terrain": "Soil and inward grass edges are children of original solid objects, including the exit gate; no new colliders",
+    "water": "Depth artwork uses existing water bounds and sorting order",
+    "ui": "Square caption-free book in all three scenes. IntroBox: larger black scenery text and gold wall text; Bubble: dark scenery ink and pale-gold wall ink. Original graphical controls retained.",
+    "qa": "Original world transforms, physics and gameplay components compared against pre-edit scenes; no changes. IntroBox entry, possession and camera reveal visually checked in Unity."
+  },
+  "level01_extension": {
+    "date": "2026-11-19",
+    "direction": "Reuse approved Kindergarten woodland palette and unchanged textures",
+    "scope": "Level01 decorative terrain, grass, water, camera-following backdrop, world text and contact-door hint palette",
+    "palette": {
+      "scenery": "#789B8E",
+      "soil": "#44473B",
+      "ink": "#070F0C",
+      "cream": "#F5DBA3",
+      "moving_mechanisms": "#8B8862"
+    },
+    "preserved": "Original transforms, colliders, rigidbodies, camera framing, gameplay, player and hazard colors; Kindergarten scenes unchanged",
+    "validation": {
+      "asset_checks_passed": true,
+      "project_reference_errors": 0,
+      "project_reference_existing_warnings": 6,
+      "editor_compilation_and_play_entry": true,
+      "visual_review": "1920x1080 Game view at 0.88 preview scale: entry, backdrop, terrain, water and title",
+      "full_playthrough": false,
+      "door_hint_trigger_visual_review": false
+    },
+    "approval_status": "Implemented; user in-game review pending",
+    "door_hint_contrast": {
+      "button_face": "#070F0C",
+      "pulse": "#203A30",
+      "border_and_label": "#F5DBA3",
+      "star": "Original yellow retained",
+      "caption": "Dark scenery ink retained independently",
+      "note": "Pulse blends between two dark greens rather than toward white; in-game recheck pending"
+    }
+  }
+}

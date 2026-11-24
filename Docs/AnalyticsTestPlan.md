@@ -3,7 +3,48 @@
 For the seven-scene analytics v2 integration, real maps and test/production
 rollout, see [AnalyticsAllLevels.md](AnalyticsAllLevels.md).
 
-Last updated: 2026-11-06.
+Last updated: 2026-11-20. Earlier dated release checks below remain historical.
+
+## Level01 polish source acceptance
+
+Scope: `gold-level-1-polish`, including the initial polish merged in PR #31 (`b4957d6`) and subsequent gameplay commits `e484d9d`–`c57d2aa`. This covers the admission screen, SAVE timing/contact, RUIN cover removal, water-card layering and saved Collection Book cleanup outside Navigation. Evidence below comes from the branch's earlier checks and developer playtests; this documentation sync did not rerun Unity, build WebGL, regenerate analytics maps, deploy or collect production rows.
+
+| Scenario | Existing evidence | Next exported-player check |
+| --- | --- | --- |
+| Woodland, title wall and Star entrance | Scene/art inspection, developer iteration; retained water-route check verifies Star crosses the slit without Box A | Confirm title-wall clearance, form/hazard contrast and no READY sign across viewport sizes |
+| Bubble underwater / Ball upper route | Retained Play Mode input verification reaches Box B by both routes; Ball ascent remains submerged initially, takes over 1.5 seconds and shows its reminder | Repeat both routes with keyboard/mouse and real touch; gradual rise, surface steering and dry-deck bounce |
+| Matching renewable Bubbles | Retained checks compare sizes, collider bounds, fill/outline/glow and replacement appearance; early Pop and re-possession exercised | Repeat Pop/recovery for entry and backup; exactly one fresh dormant replacement per consumed host |
+| Ability reminders and pocket recovery | Retained checks cover first-use REMEMBER?, expiry/no replay, no hints during waiting/pacing/bouncing, automatic persistent pocket warning, simulated touch wording and R pause hiding | Confirm fixed nearby cards remain readable and unobstructive; no platform highlights/arrows; pocket warning needs no click or ceiling hit |
+| Checkpoint 2 | Marker, trigger and Ball respawn moved left together; developer reported successful playtest | Reach and retry from open ground without entering the shelf recess; retain fixed Ball recovery |
+| Collection Book | Isolated checks covered all ten configured non-Navigation scene entries, including saved caption/background cleanup, square appearance, open/close/pause and unchanged Navigation; developer accepted | Verify matching Home size, hit areas, discovery/pages, and Navigation exception on Web/mobile |
+| Lower-door Hint | Isolated Play Mode checks passed mouse click, original contact, pause guard, no Box resize/real-door movement during preview, repeat clicks, held-contact guard, room exit persistence and retirement after real door lift; developer accepted | Repeat previews until understood, leave/return, raise the door and confirm sign retirement; verify mouse/touch input |
+| Water-card layering | Isolated camera-render pixel checks confirmed Bubble fill and controlled Star remain visible over the card; pause/resume and automatic pocket warning passed; developer accepted | Move forms through the card at different viewport sizes; keep the card above water and below forms |
+| Elementary admission | Real flag trigger, 15-second paused hold, static post-reveal Star, Next Level → IntroSpider, Home clicks during/after reveal → Navigation and restored time passed in isolated Unity; text bounds checked at 1920 × 1080 and 1280 × 960; developer accepted | Wait without automatic advance, test both exits and focus/touch input, and confirm one completion event with no abandonment |
+| SAVE timing and contact | Isolated checks measured the complete 5.80-second SAFE reveal/hold/return, normal board motion after resume, interruption cleanup, vertical/horizontal separation and no repeat on held contact; developer accepted | Show full spike retraction and board emergence, hold 2 seconds, then return control; repeat vertical separation/recontact |
+| Direct RUIN contact | Isolated Unity checks passed first underside R2 contact without landing, held-contact guard, deliberate return to NORMAL, SAVE → HARD, checkpoint retention and full restart after cover removal | Repeat from below; no cover, forced descent or second-hit prerequisite; RUIN still rearms after horizontal departure |
+| Production map and delivery | Not refreshed or verified for this branch | Export the changed Level01 map for the chosen release version; verify checkpoint placement, catalog association, production rows and dashboard map |
+
+Run the retained checks via `StarFormer → Level01 → Verify Water Routes in Play Mode` and `Verify Water Pocket Recovery`. The door-click/replay, expanded book, admission, SAVE, RUIN and pixel-layering probes ran in an isolated temporary project, not committed CI coverage. Real-device input and the full exported-player playthrough remain separate acceptance work. See [remaining gameplay feedback](level-1.md#verification-and-remaining-work).
+
+## Kindergarten polish source acceptance
+
+Scope: `gold-polish-kindergarten`, gameplay commits `ea33d76`–`2cbed98`, based on `9db80ea`. The developer accepted the stages and final adjustments. This documentation sync did not build WebGL, regenerate maps, deploy or collect production rows.
+
+| Scenario | Existing evidence | Next exported-player check |
+| --- | --- | --- |
+| Box carry/dock/recontact, local retry and leftward backtracking | Retained IntroBox route verification plus developer playtests; [details](IntroBoxCarryPolish.md#verification) | Repeat full route with mouse/keyboard and touch; no moving station hints or false reset after docking |
+| Box-to-Bubble handoff | Editor crossings with small and enlarged Box, matching width/floor framing | Compare the two sizes in browser and after direct-entry/restart |
+| Repeatable Bubble backup | Editor Star jump and two consecutive pop/recovery cycles | Exactly one fresh dormant backup at original spawn after each pop, with water/Pop hints working |
+| Ball shoreline, ceiling and spike lesson | Four real-physics bank/water cases plus route/hint/death playtests | Both banks keep bouncing until support moves over water; repeat low-roof/spike route and earlier hint regions |
+| Woodland, keycaps and square book | Editor inspection and developer acceptance of all three scenes | Small/large viewports, real touch, book open/close and form/hazard contrast; A/D only after ball possession |
+| Graduation wait and Next Level | Real goal, pause, duplicate guard, 15-second hold, text/art and Level01 restoration in Editor | No timed load; button/keyboard/touch advance once with controls/time restored |
+| Graduation Home exit | In-game-coordinate topmost raycast and pointer-click loaded Navigation with normal time; developer accepted | House remains bright/clickable, tooltip Main Menu; ordinary gameplay Home still has its existing pause/confirmation flow |
+| Completion analytics | Code retains one TrackLevelComplete at flag; graduation Home bypasses TrackAbandoned | One completed run for either exit; no abandonment or duplicate completion after waiting/clicking |
+| Map/version and delivery | Not refreshed or verified for this branch | Export final scene maps for the chosen new version; confirm source/catalog association, hosted rows and matching dashboard maps |
+
+Temporary graduation/water probes were removed after use; their reported Editor checks are not permanent CI coverage.
+
+Known Bubble limitations remain: the original pre-tank Bubble can be consumed without local recovery, and Pop can be offered over the right water shaft before reaching dry ground. Test and record these separately from the working renewable underwater backup. Real-device simultaneous input, viewport/rotation behavior, full Web playthrough and production delivery remain unverified for this branch.
 
 ## Beta 0.1.2 acceptance status
 
@@ -122,12 +163,12 @@ Sheets transport.
 - Reach each hollow-star marker in order. Expect one `checkpoint_reached` with `ADV_CP1`, `ADV_CP2`, then `ADV_CP3`, and a new `attempt_start` at each accepted save. Possessing R1/R2 alone and revisiting old markers must not create additional checkpoints/attempts.
 - Die after each checkpoint. Expect one `death`, the same Run ID across automatic reload, a new Attempt ID and the configured Box / BouncyBall / Star respawn respectively. At CP3, arriving as Box still restores Star; Bubble flying overhead does not save.
 - In NORMAL or HARD, die on an ordinary spike. Expect `death_cause = Spike` and the controlled form's coordinates. Trigger the HARD falling spike and test contact during descent and after landing; each death must emit once. Retry rearms the trap.
-- Select SAFE/HARD and raise the upper lift/break the RUIN cover, then die or use Return to Checkpoint. Confirm the completed route/lift/cover progress survives while loose bodies, lower door and motion/trap cycles reset. Earlier markers cannot replace a later save.
-- Pop Bubble with Q. Expect Bubble `form_duration` and Star `form_change`, not `death`. Check both three-second Q lessons and the first-tank R lesson; no old generic E reminder should appear. Bubble-only hazard behavior is a separate shared/legacy fixture, not a current Level01 terrain prerequisite.
+- Confirm R2 triggers RUIN on its first contact from below, without a cover or prior landing. Select SAFE/HARD and raise the upper lift, then die or use Return to Checkpoint. Confirm the completed route/lift progress survives while loose bodies, lower door and motion/trap cycles reset. Earlier markers cannot replace a later save.
+- Pop Bubble with Q. Expect Bubble `form_duration` and Star `form_change`, not `death`. Check the first-use Bubble/Ball ability reminders and automatic Ball pocket restart warning; no old ceiling-triggered Q lessons or generic E reminder should appear. Bubble-only hazard behavior is a separate shared/legacy fixture, not a current Level01 terrain prerequisite.
 - Open/cancel R and Home during normal play; test R during the death pause. Opening/cancelling must not emit restart `level_end` or create a new Run. Confirm full restart: expect `result = restart`, a new Run and cleared gameplay checkpoints/route progress. Confirm Return to Checkpoint: expect the same restart event category and a new Run, but retained gameplay progress. Manual retry is not a death.
 - Home's checkpoint action is disabled before a save. Cancel both full-restart and menu confirmations without changing gameplay/analytics state. Confirm Main Menu from an unfinished run: expect abandonment and cleared checkpoint state.
-- During SAVE previews, hazard transitions and paused menus, active timers must not advance. SAFE's full alternating-board demonstration should not add form time.
-- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete` before IntroSpider. In the new source, IntroSpider → IntroFan is also tracked; Level02 later starts a different Run in the same Session. Returning to Navigation after completion must not append abandonment to the completed Level01 Run.
+- During SAVE previews, hazard transitions and paused menus, active timers must not advance. The complete SAFE reveal and two-second static hold must not add form time; board motion begins when gameplay resumes.
+- Complete as Star, Box, Bubble and BouncyBall in separate runs. Each accepted flag touch emits exactly one `level_complete`, then pauses on the acceptance letter. Waiting does not load a scene or add active time; Next Level loads IntroSpider, while Home returns to Navigation. In the new source, IntroSpider → IntroFan is also tracked; Level02 later starts a different Run in the same Session. Returning to Navigation after completion must not append abandonment to the completed Level01 Run.
 
 ## 3. Level 2 scenarios
 

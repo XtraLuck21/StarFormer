@@ -14,6 +14,8 @@ public class LevelTransitionUI : MonoBehaviour
     private float previousTimeScale;
     private GameObject previousSelection;
     private bool ownsPause;
+    private bool isLoadingScene;
+    private MainMenuButtonUI completionHome;
 
     public static void ShowAndLoad(string sceneName, string levelLabel,
         PlayerPossessionController playerController, float duration)
@@ -48,6 +50,45 @@ public class LevelTransitionUI : MonoBehaviour
         if (transition == null) return;
         transition.BuildIllustratedOverlay(picture, title, message);
         transition.AddMenuButton(menuSceneName, -435f);
+    }
+
+    public static void ShowKindergartenGraduation(string sceneName,
+        PlayerPossessionController playerController, Sprite graduateStar)
+    {
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        var graduation = transition.gameObject.AddComponent<KindergartenGraduationUI>();
+        graduation.Initialize(graduateStar, () => transition.ContinueToScene(sceneName));
+        transition.completionHome = Object.FindFirstObjectByType<MainMenuButtonUI>();
+        if (transition.completionHome != null)
+            transition.completionHome.SetCompletionExit(transition.ContinueToScene, graduation.NextLevelButton);
+    }
+
+    public static void ShowElementaryAdmission(string sceneName,
+        PlayerPossessionController playerController, Sprite studentStar)
+    {
+        LevelTransitionUI transition = Begin(playerController);
+        if (transition == null) return;
+        var admission = transition.gameObject.AddComponent<ElementaryAdmissionUI>();
+        admission.Initialize(studentStar, () => transition.ContinueToScene(sceneName));
+        transition.completionHome = Object.FindFirstObjectByType<MainMenuButtonUI>();
+        if (transition.completionHome != null)
+            transition.completionHome.SetCompletionExit(transition.ContinueToScene, admission.NextLevelButton);
+    }
+
+    private void ContinueToScene(string sceneName)
+    {
+        if (isLoadingScene) return;
+        if (!Application.CanStreamedLevelBeLoaded(sceneName))
+        {
+            Debug.LogError($"Add and enable scene '{sceneName}' in the Build Profile.", this);
+            return;
+        }
+        isLoadingScene = true;
+        PlayerPossessionController.ResetCheckpointSession();
+        RestoreState();
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
 
     private static LevelTransitionUI Begin(PlayerPossessionController playerController)
@@ -219,6 +260,7 @@ public class LevelTransitionUI : MonoBehaviour
     {
         if (!ownsPause) return;
         ownsPause = false;
+        if (completionHome != null) completionHome.SetCompletionExit(null);
         Time.timeScale = previousTimeScale;
         if (controller != null) controller.enabled = controllerWasEnabled;
         if (EventSystem.current != null && previousSelection != null && previousSelection.activeInHierarchy)

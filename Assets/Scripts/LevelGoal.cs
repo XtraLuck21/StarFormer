@@ -13,6 +13,9 @@ public class LevelGoal : MonoBehaviour
     [SerializeField] private string nextLevelLabel = "Level 2";
     [SerializeField, Min(0.1f)] private float transitionSeconds = 1.5f;
 
+    [SerializeField] private bool showElementaryAdmission;
+    [SerializeField] private Sprite studentStar;
+
     private bool isCompleted;
     private bool reportedMissingScene;
 
@@ -63,6 +66,9 @@ public class LevelGoal : MonoBehaviour
 
         isCompleted = true;
         AnalyticsManager.Instance?.TrackLevelComplete(playerBody);
-        LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
+        if (showElementaryAdmission)
+            LevelTransitionUI.ShowElementaryAdmission(nextSceneName, playerController, studentStar);
+        else
+            LevelTransitionUI.ShowAndLoad(nextSceneName, nextLevelLabel, playerController, transitionSeconds);
     }
 }

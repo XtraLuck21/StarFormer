@@ -2,6 +2,8 @@
 
 Gold 0.1.0 was published November 17, 2026 to the main site and `gold/`. Deployment succeeded and all 14 hosted runtime files matched the verified export. [Gold release record](Gold-0.1.0.md)
 
+**Current source:** Kindergarten polish updates the opening tutorials and graduation flow; `gold-level-1-polish` extends the woodland theme to Level01, adds water-route choices and revises reminders, checkpoint placement and shared Collection Book icons after the recorded Gold export. Later polish adds the acceptance-letter completion page, shorter SAVE presentations, SAVE rearming after any contact separation, direct RUIN activation and reminder rendering behind player forms. The sections below describe that source state; historical publication evidence remains separate.
+
 ## 1. Scenes and progression
 
 ```text
@@ -12,10 +14,10 @@ Navigation uses A/D to move and Space to jump. Navigation offers Kindergarten �
 
 | Scene | Purpose |
 | --- | --- |
-| IntroBox | Star movement/jump, automatic contact possession, Box growth/shrink and flag-opened exit |
+| IntroBox | Star movement/jump, contact possession, carrying/docking and separation/recontact through three Boxes, then a flag-opened exit |
 | IntroBubble | EntryBox, dormant Bubble, air/water control, Q pop and a grounded-Star flag opening the BouncyBall passage; optional return to IntroBox endpoint |
-| IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, final flag to Level01 |
-| Level01 | Former Advanced layout: two lifts, right-side Star/Box landing choice, SAVE/NORMAL/RUIN upper routes, three fixed-form checkpoints and Home menu |
+| IntroBouncyBall | Automatic bounce, water float, low-ceiling rhythm and spike feedback; return passage to Bubble, graduation with Next Level or Main Menu choices |
+| Level01 | Woodland entrance with Star entry and Bubble/BouncyBall water routes, followed by two lifts, right-side Star/Box landing choice, SAVE/NORMAL/RUIN upper routes, three fixed-form checkpoints and Home menu |
 | IntroSpider / IntroFan | Existing teaching sequence before Level02; Spider exits through authored handoffs, Q leaves Fan and F toggles Fan wind |
 | Level02 | Star chase, dark descent, four-gear seesaw, rising shell-release exit, Smiley Face teeth/forehead puzzles and final Box resizing |
 | Level01_Legacy | Previous formal Level01, preserved as a disabled backup; not the current map |
@@ -40,15 +42,15 @@ In gameplay scenes, left/right arrow keys also steer every form. Navigation uses
 
 **Display mode.** All eight build scenes use the `Mobile Form Controls` component. Its saved `Show Mode` is `Auto Detect`, which selects touch on a mobile platform or when Unity detects a touchscreen without a mouse. To preview in Play Mode, select the component on the player controller (on Navigation, the navigation star) and set `Always Show`. Drag or click with the mouse to preview the joystick, action icons and map hints. `Never Show` previews desktop controls. Use two actual touches to test steering and an action together.
 
-The seven gameplay scenes show a form controls card on desktop and replace it with the touch controls on mobile. Navigation teaches Move and Jump beside the star and has no corner card in either mode. All seven gameplay scenes have paged Collection Books. The six form pages use shared keyboard and mouse descriptions on all devices. The possessable SpikeWall in legacy/test content uses Space to fire and has no touch layout in the active route.
+The seven gameplay scenes show a form controls card on desktop and replace it with the touch controls on mobile. Navigation teaches Move and Jump beside the star and has no corner card in either mode. All seven gameplay scenes have paged Collection Books. In non-Navigation scenes using `SceneCollectionBookUI`, the entry is a caption-free 88 × 88 square book, matching Home, at the top right beside it. All ten existing non-Navigation entries now save this appearance directly in their scenes: obsolete caption objects, button background Images and unused root CanvasRenderers are removed, while button and shared-book references remain intact. The runtime appearance pass remains as a fallback. Navigation retains its own book presentation. The six form pages use shared keyboard and mouse descriptions on all devices. The possessable SpikeWall in legacy/test content uses Space to fire and has no touch layout in the active route.
 
-**Pause and restart.** Tap the house in any gameplay scene to continue, return to a saved checkpoint, restart the level or return to Navigation. Desktop also supports Esc for Home and R for restart choices. In desktop WebGL, the lower-right fullscreen button resumes ordinary Home pause after fullscreen entry succeeds. The first Esc exits fullscreen. In windowed play, Esc closes the current menu layer or opens Home.
+**Pause and restart.** During gameplay, tap the house to continue, return to a saved checkpoint, restart the level or return to Navigation. On the Kindergarten graduation screen, the house stays accessible and returns directly to Navigation. Desktop also supports Esc for Home and R for restart choices. In desktop WebGL, the lower-right fullscreen button resumes ordinary Home pause after fullscreen entry succeeds. The first Esc exits fullscreen. In windowed play, Esc closes the current menu layer or opens Home.
 
 ## 3. Possession and body behavior
 
 - Contact with an eligible existing host requests possession; there is no possession key or duplicate body spawned at the old location.
 - The original Star becomes inactive while hosted. The controlled host displays a centered Star. Q release restores the original Star for Bubble or Fan; Spider handoffs are scene-driven.
-- Contacts are validated before transfer. Nearby previous hosts must separate before reacquisition; Box growth cannot continuously flip between touching hosts. An abandoned Box stops receiving horizontal drive.
+- Contacts are validated before transfer. Nearby hosts are locked at a handoff and must remain physically separated for the configured consecutive physics frames before reacquisition. Box-to-Box separation uses actual collider clearance; this is contact rearming, not an elapsed-time possession cooldown. Fan retains its separate release/repossess cooldown. Box growth cannot continuously flip between touching hosts. An abandoned Box stops receiving horizontal drive.
 - Box-to-Bubble handoff temporarily ignores that body's old Box collider until separation, allowing escape without disabling unrelated collisions. PR #21 also handles Box-to-BouncyBall recovery so the abandoned Box does not trap the controlled ball.
 - Untouched Bubbles wait motionless until first possession. Activated Bubbles retain environmental physics after transfer; abandoned BouncyBalls stop and wait.
 - `Starting Host` is optional: IntroBubble starts in EntryBox while retaining StarPlayer as its Initial Body. Scene return setup is distinct from checkpoints.
@@ -72,15 +74,16 @@ Water membership uses the body's root position inside registered water regions, 
 - Water: automatic rise is disabled; WASD supports diagonals with a capped total speed, acceleration and braking. Unpossessed activated Bubbles retain water damping.
 - Q pops the controlled Bubble and returns Star at its position. Horizontal/downward velocity is retained; upward velocity is removed. Pop requests are processed before pending possession transfers.
 - By default, a popped Bubble stays inactive until scene reload. ReturnToSpawnOnLeave and BubbleRespawnOnPop are explicit opt-ins, not universal behavior. The old Bubble_U2 regeneration rule belongs to the Legacy map, not the promoted Level01.
-- IntroBubble provides one spare Bubble, not unlimited regeneration. Premature pops can still require restarting.
+- Level01’s entry and pool-floor backup Bubbles both regenerate after every Pop using the same `Level01WaterBubble` prefab, preserving appearance and collider size. This does not enable regeneration for its upper-ascent Bubble. See [the water routes](level-1.md#playable-route).
+- IntroBubble provides a renewable backup beside the underwater divider. Each backup pop creates a fresh dormant instance at its original spawn, including when a replacement is popped again. The original Bubble does not regenerate; popping it before reaching the tank can still require restarting. See [the recovery route](intro-levels.md#introbubble).
 
 ### BouncyBall
 
 A controlled ball automatically bounces on supporting ground. A/D steering uses acceleration/braking. It checks overhead clearance before launch; a low roof compresses the bounce and accelerates its rhythm. Open space permits the configured full bounce again. Scene-specific heights and timing override prefab defaults; the lower and upper Level01 balls must not be retuned from old Legacy-map values.
 
-IntroBouncyBall overrides bounce height to 3.2 and seconds to apex to 0.8 locally; it does not retune the Level01/Level02 balls. Its aligned water banks and continuous floor lead across separated spikes into a low-ceiling section on the forward route. Contextual headlines teach each behavior without explanatory subtitles; a spike death displays a short warning during the existing death pause.
+IntroBouncyBall overrides bounce height to 3.2 and seconds to apex to 0.8 locally; it does not retune the Level01/Level02 balls. Its route demonstrates a high ledge, a short water float, a safe low ceiling, then one spike in an open area before the flag. Fixed diagrams and short hints repeat when their horizontal region is revisited, without forced pauses. The low-ceiling lesson explicitly describes more bounces per second and compares vertical bounce animations. Local NoFriction terrain colliders keep wall contact from suppressing the initial climb; shared bounce tuning is unchanged; the water-support lookup correction below is shared. A spike death displays a short warning during the existing death pause.
 
-The ball floats on the highest overlapping water surface, loses vertical motion there and uses reduced horizontal speed. On land, bouncing resumes. Environmental spikes remain lethal. Possessing a ball is not a checkpoint in current Level01.
+The ball floats on the highest eligible water surface when its bottom-center lies horizontally inside the water bounds and its collider reaches the surface. Side overlap alone does not suppress bouncing on the bank. Floating removes vertical motion and uses reduced horizontal speed. The Level01 submerged entrance ball opts into gradual ascent (`waterRiseSpeed = 2` units/second): physical upward velocity accelerates and eases toward the surface, holding horizontal movement during ascent and restoring steering afterward. The shared default is zero, retaining immediate flotation elsewhere. On land, bouncing resumes. Environmental spikes remain lethal. Possessing a ball is not a checkpoint in current Level01.
 
 ### Spider, Fan and projectiles
 
@@ -92,7 +95,7 @@ Spider traverses connected surfaces through HexagonSurfaceMovement. Fan retains 
 
 ## 5. Level01 route and presentation
 
-See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn positions. PR #21 adds bidirectional upper-gap clearance, a wider checkpoint-2 approach and steadier BouncyBall camera framing.
+See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn positions. PR #21 adds bidirectional upper-gap clearance, a wider checkpoint-2 approach and steadier BouncyBall camera framing; the polish branch additionally moves checkpoint 2 left onto open ground.
 
 | Mode | Geometry and interaction |
 | --- | --- |
@@ -100,13 +103,15 @@ See [level-1.md](level-1.md) for the authored walkthrough, objects and spawn pos
 | SAFE | No spikes; three black fixed-length boards form an S-shaped timing route. Rightmost board is stationary; the other two translate vertically in opposite phase. The left board permits low-position jumping and high-position passage below. Anti-crush checks pause the pair together. |
 | HARD | Default and additional floor spikes plus aligned ceiling spikes. One ceiling spike drops when the controlled body approaches its upper-corridor trigger band; it remains lethal on the floor until reset. |
 
-SAVE accepts Star, grounded Box D or R2 from below. RUIN is R2-only and protected by a breakable cover: the first upward hit breaks it and forces a descent; a later bounce after landing can press the button. Raising the optional upper platform gives access to the button. R2 can return to SAVE.
+SAVE accepts Star, grounded Box D or R2 from below. RUIN is R2-only and activates on the first contact from below, without a cover or a prior landing. Raising the optional upper platform gives access to the button. R2 can return to SAVE.
 
-The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. After horizontally leaving its band and returning, touching it restores NORMAL. Continuous vertical bouncing and edge shrinking cannot retrigger it. Route switching retains upper-platform height and cover progress.
+The buttons are mutually exclusive. The selected one reads BACK TO NORMAL. SAVE can toggle again after contact ends in any direction and the body touches it again, including vertical bounce or shrink/grow cycles. Held contact does not repeat. RUIN retains its horizontal leave-and-return requirement. Route switching retains upper-platform height.
 
-The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE sinks hazards, reveals boards and demonstrates a complete alternating cycle before returning the camera. HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
+The first Box/Star arrival below SAVE previews the left hazards. Selecting a mode pauses control for the route animation. SAFE fully animates sinking hazards and emerging boards, holds the completed layout for 2 seconds, then returns the camera and control without waiting for a movement cycle; camera transitions remain quick; see [presentation timing](level-1.md#route-selection-and-camera-presentation). HARD exposes extra spikes; NORMAL restores default geometry. Ordinary framing uses AdvancedLevelCamera2D with region-specific bounds/zoom.
 
-The optional entrance READY? sign changes to LET'S GO! and replays bounce/sparkles on each separate upward Star contact. The level title/subtitle, glowing forms and timed map hints are implemented. The first tank ceiling gives a desktop R reminder after 1.5 seconds of qualifying contact. Touch mode hides this prompt. Bubble’s Pop button is available throughout possession. Beta 0.1.1 adds an optional star hint above the lower movable-door path after 20 seconds without door movement. Deliberate Box growth or Ball contact activates a brief paused door-lift preview with “A little lift?”; it is shown once per scene load and avoids activation from spawn overlap. Current source also includes paged form Help in Level01.
+The entrance starts as Star with no READY button or forced Box. Gold title and cream subtitle sit on a solid woodland wall. Bubble and BouncyBall offer underwater and upper-deck routes. First possession shows a brief nearby REMEMBER? ability reminder at a fixed scene anchor; no route arrows, platform highlights or optional water hint buttons remain. A Ball entering the right-hand water pocket automatically receives No ground to bounce. / Press R to restart. (touch: Home > Restart Level), without a REMEMBER? heading or ceiling-contact requirement.
+
+The lower-door Hint appears after an idle delay and accepts mouse clicks as well as deliberate Box/Ball contact. Its paused lift animation can be replayed without limit until the real door is raised; continued overlap does not cause automatic replays. Clicking the sign does not resize Box. See [hint timing and lifecycle](level-1.md#hints-and-home-menu).
 
 ## 6. Death, checkpoints and menus
 
@@ -114,7 +119,7 @@ SpikeHazard kills the controlled body; unpossessed bodies do not themselves caus
 
 Current Level01 uses ADV_CP1 → ADV_CP2 → ADV_CP3, restoring Box → BouncyBall → Star. Hollow markers turn blue to yellow and briefly show CHECKPOINT SAVED. Only grounded Star/Box activates the upper landing checkpoint; earlier checkpoints cannot replace later ones.
 
-Retry/death retains the latest completed mode, raised upper platform, broken RUIN cover and viewed camera presentations. Loose bodies and the lower door reset; SAFE motion restarts predictably and the falling trap rearms. Full restart, menu departure/entry and forward progression clear the session. Checkpoint state is not stored across application launches.
+Retry/death retains the latest completed mode, raised upper platform and viewed camera presentations. Loose bodies and the lower door reset; SAFE motion restarts predictably and the falling trap rearms. Full restart, menu departure/entry and forward progression clear the session. Checkpoint state is not stored across application launches.
 
 The Level01 Home square shows a house outline with a small Star. Its Home · Restart tooltip leads to Paused: Continue Playing, Return to Checkpoint, Restart Level and Main Menu. Checkpoint is disabled without a save; full restart and Main Menu require confirmation. R retains its own restart-choice menu. Opening/cancelling menus changes no progress, and the R menu pauses the death countdown.
 
@@ -122,16 +127,18 @@ The promoted Level02 uses dedicated drop/seesaw recovery and five ordered Smiley
 
 ## 7. Completion and navigation
 
-- IntroBox's controlled-Box flag opens the gate; its separate exit loads IntroBubble directly. IntroBubble can also return to IntroBox's endpoint using one-shot BoxB setup.
+- IntroBox's controlled BoxC opens the gate; its separate exit loads IntroBubble directly, preserving the outgoing Box width and floor/camera framing. IntroBubble can also return to IntroBox's endpoint using one-shot BoxC setup.
 - IntroBubble requires grounded Star to open its exit door; walking right loads IntroBouncyBall directly, without a Level up overlay. The ball tutorial left exit returns to Bubble as Star at its flag with the door open. This one-shot return setup is not a full scene snapshot.
-- IntroBouncyBall accepts controlled Star or BouncyBall at its flag, then shows Entering Level 1 before loading Level01.
-- Level01 accepts any controlled living form at its flag, with no gate prerequisite. It shows Entering Level 2 Intro and loads IntroSpider. IntroSpider continues to IntroFan, then Level02.
-- Timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
+- IntroBouncyBall accepts controlled Star or BouncyBall at its flag, records completion and opens the animated Kindergarten graduation screen. Gameplay stays paused until Next Level loads Level01 or the accessible house loads Navigation. There is no automatic transition; see [completion feedback](intro-levels.md#completion-feedback).
+- Level01 accepts any controlled living form at its flag, with no gate prerequisite. It opens the Elementary School acceptance letter and waits for Next Level to load IntroSpider; Home returns directly to Navigation and stays above the completion backdrop. A brief envelope/Star reveal finishes before the page rests; there is no automatic load. IntroSpider continues to IntroFan, then Level02.
+- Other timed transitions disable player control, pause gameplay, clear stale UI selection and clear checkpoint sessions before loading. The default delay is 1.5 seconds in real time.
 - In Level02 the assigned final Box presses the roof button. Touching the raised flag with the controlled body records completion and opens the result screen. Tap Return to Main Menu to load Navigation.
 - Navigation replaces the old playable Mainmenu as startup and return destination. It uses authored entrance interactions, not the legacy UI-platform landing behavior. Coming Soon has no destination.
 - Collection Book uses reusable UI assets and blocks Navigation movement while open. Navigation’s book, configured gameplay books and Shape Closet all read session-only `HelpBookUnlocks`. Successful possession reveals only the controlled form; an assigned starting/recovery host also counts. Star help is always available. Completion adds no form groups. Scene changes, death and level restart retain discoveries; refreshing/reopening the game or starting a new Editor Play session clears them. Old persistent completion saves are ignored. See [session-only discovery](Beta-0.1.2.md#session-only-shape-discovery).
 
 ## 8. Validation and remaining work
+
+Level01 branch evidence and remaining checks are recorded in [Level01 polish source acceptance](AnalyticsTestPlan.md#level01-polish-source-acceptance). Current Kindergarten source was accepted in developer playtests, including graduation and its two exits. See [Kindergarten evidence and remaining acceptance](AnalyticsTestPlan.md#kindergarten-polish-source-acceptance); prior release evidence below does not certify this branch on WebGL/mobile.
 
 Unity compilation and isolated checks passed for scene entry/continuation, completion in all four Level01 forms, checkpoint recovery, pause/restart menus, lift behavior and merged possession/input behavior. The developer confirmed the merge and formal-Level01 promotion playtests passed. The developer also accepted the BouncyBall tutorial/passage iterations and confirmed a successful Web build after fix `3365e29`. The final Beta package was subsequently rebuilt after version/template synchronization and published on November 2; the developer confirmed local and hosted playtests passed. That November 2 evidence confirms Beta 0.1.0 Level01 records. Dashboard Version 9 subsequently resolved historical release-map matching; it does not certify 0.1.1 event delivery or its refreshed map deployment.
 

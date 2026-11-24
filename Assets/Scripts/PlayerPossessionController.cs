@@ -1472,6 +1472,27 @@ public class PlayerPossessionController : MonoBehaviour
         AnalyticsManager.Instance?.BeginLevel(currentBody, activeCheckpoint);
     }
 
+    // IntroBox's short carrying retry restores existing scene bodies after a
+    // dropped cargo. It must re-lock contacts exactly like an ordinary handoff.
+    public bool TryRestoreLessonBody(PossessableBody body)
+    {
+        if (gameObject.scene.name != "IntroBox" || !isActiveAndEnabled || isDead || restartRequested ||
+            body == null || body.Form != BodyForm.Box || !body.IsReady || !body.isActiveAndEnabled ||
+            body.gameObject.scene != gameObject.scene) return false;
+        var previous = currentBody;
+        if (previous != null) previous.SetOwner(null);
+        RestoreBoxHandoffCollisions();
+        ClearPossessionContacts();
+        ClearInputForRestartMenu();
+        bubblePopRequested = false;
+        currentBody = body;
+        currentBody.SetOwner(this);
+        if (initialBody != null && initialBody != body) initialBody.gameObject.SetActive(false);
+        BlockCurrentContacts();
+        PossessionTransferred?.Invoke(previous, currentBody);
+        return true;
+    }
+
     private bool CanCompletePossession(
         PossessableBody source,
         PossessableBody target)

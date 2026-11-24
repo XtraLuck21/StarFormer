@@ -17,6 +17,10 @@ public class BouncyBallAbility : MonoBehaviour
     [SerializeField, Min(0f)] private float ceilingStrikeDistance = 0.15f;
 
     [SerializeField, Min(0f)] private float waterLinearDamping = 3f;
+    [Tooltip("Zero keeps instant flotation. Positive values teach flotation with a gradual rise.")]
+    [SerializeField, Min(0f)] private float waterRiseSpeed;
+    public bool IsRisingInWater { get; private set; }
+    private float riseVelocity;
 
     private const float MinimumBounceHeight = 0.25f;
 
@@ -79,6 +83,8 @@ public class BouncyBallAbility : MonoBehaviour
             return;
         }
 
+        IsRisingInWater = false;
+        riseVelocity = 0f;
         ApplyBounceGravity(activeBounceHeight);
         body.linearDamping = landLinearDamping;
 
@@ -206,17 +212,32 @@ public class BouncyBallAbility : MonoBehaviour
         body.gravityScale = 0f;
         body.linearDamping = waterLinearDamping;
 
-        Vector2 position = body.position;
-        position.y = surfaceY + bodyCollider.bounds.extents.y;
-        body.position = position;
-
+        float targetY = surfaceY + bodyCollider.bounds.extents.y;
+        float remaining = targetY - body.position.y;
+        IsRisingInWater = waterRiseSpeed > 0f && remaining > .025f;
         Vector2 velocity = body.linearVelocity;
-        velocity.y = 0f;
+        if (IsRisingInWater)
+        {
+            // Move the physical body, with collision response, rather than teleporting its art.
+            // Hold horizontal motion during the short demonstration, then restore steering.
+            float desired = Mathf.Min(waterRiseSpeed, remaining * 5f);
+            riseVelocity = Mathf.MoveTowards(riseVelocity, desired, waterRiseSpeed * 3f * Time.fixedDeltaTime);
+            velocity.x = 0f;
+            velocity.y = Mathf.Min(riseVelocity, remaining / Time.fixedDeltaTime);
+        }
+        else
+        {
+            body.position = new Vector2(body.position.x, targetY);
+            riseVelocity = 0f;
+            velocity.y = 0f;
+        }
         body.linearVelocity = velocity;
     }
 
     private void SetWaitingState()
     {
+        IsRisingInWater = false;
+        riseVelocity = 0f;
         body.linearVelocity = Vector2.zero;
         body.angularVelocity = 0f;
         activeBounceHeight = defaultBounceHeight;
@@ -229,6 +250,8 @@ public class BouncyBallAbility : MonoBehaviour
 
     private void OnDisable()
     {
+        IsRisingInWater = false;
+        riseVelocity = 0f;
         if (body == null)
         {
             return;

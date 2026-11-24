@@ -8,7 +8,6 @@ public sealed class AdvancedCheckpointController : MonoBehaviour
     [SerializeField] private AdvancedCheckpoint[] checkpoints;
     [SerializeField] private AdvancedRouteSwitch route;
     [SerializeField] private RatchetingCeiling upperLift;
-    [SerializeField] private RuinButtonGuard ruinGuard;
 
     private sealed class Progress
     {
@@ -17,7 +16,6 @@ public sealed class AdvancedCheckpointController : MonoBehaviour
         public int reachedMask;
         public AdvancedRouteSwitch.RouteState route;
         public float liftBottom;
-        public bool guardBroken;
         public bool seenPreview;
         public bool seenSafe;
         public bool seenHard;
@@ -66,7 +64,6 @@ public sealed class AdvancedCheckpointController : MonoBehaviour
             progress.seenHard = route.HasShownHard;
         }
         progress.liftBottom = Mathf.Max(progress.liftBottom, upperLift.CurrentBottom);
-        progress.guardBroken |= ruinGuard.IsBroken;
     }
 
     public bool TryRestore(out PossessableBody body)
@@ -84,7 +81,6 @@ public sealed class AdvancedCheckpointController : MonoBehaviour
 
         restoring = true;
         upperLift.LiftForBox(progress.liftBottom);
-        if (progress.guardBroken) ruinGuard.RestoreBrokenState();
         route.RestoreCheckpointRoute(progress.route, progress.seenPreview,
             progress.seenSafe, progress.seenHard);
         body = checkpoint.RespawnBody;
