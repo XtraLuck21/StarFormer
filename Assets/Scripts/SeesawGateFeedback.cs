@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 
 /// <summary>Energy-wall edges, moving streaks and feedback for a blocked Star or Fan.</summary>
@@ -11,7 +10,8 @@ public sealed class SeesawGateFeedback : MonoBehaviour
     private GameObject cues;
     private LineRenderer border;
     private readonly LineRenderer[] streaks = new LineRenderer[7];
-    private TextMeshPro hint;
+    private GameObject hint;
+    private Mesh hintMesh;
     private Vector2 center, size;
     private float age, flashRemaining, hintRemaining;
     private PossessableBody blockedBody;
@@ -20,10 +20,10 @@ public sealed class SeesawGateFeedback : MonoBehaviour
     private Color edgeTint, flashFill, flashEdge;
     private float FlashSeconds => collisionReveal ? .9f : .35f;
     public bool IsFlashing => flashRemaining > 0f;
-    public bool IsHintVisible => hint != null && hint.enabled;
+    public bool IsHintVisible => hint != null && hint.activeInHierarchy;
 
     public void Initialize(SeesawRoomStage owner, PlayerPossessionController controller, SpriteRenderer renderer,
-        bool permanent = false, string hintText = "ONLY BALLS\nCAN PASS", Vector2? hintOffset = null,
+        bool permanent = false,
         bool collisionReveal = false, Color? energyColor = null)
     {
         this.permanent = permanent;
@@ -53,27 +53,61 @@ public sealed class SeesawGateFeedback : MonoBehaviour
         for (int i = 0; i < streaks.Length; i++)
             streaks[i] = MakeLine("Moving Energy Streak", .025f, 3);
 
-        if (string.IsNullOrEmpty(hintText)) return;
-        var label = new GameObject("First Barrier Contact Hint");
-        label.transform.SetParent(cues.transform, false);
-        // Put the caption toward the middle of the initial player enclosure.
-        float inward = owner.transform.InverseTransformPoint(transform.position).x < 0f ? 1f : -1f;
-        Vector2 offset = hintOffset ?? new Vector2(inward * 2.1f, 1.6f);
-        label.transform.localPosition = new Vector3(center.x + offset.x, center.y + offset.y, 0f);
-        hint = label.AddComponent<TextMeshPro>();
-        hint.text = hintText;
-        hint.fontSize = permanent ? 2.8f : 3.2f;
-        hint.fontStyle = FontStyles.Bold;
-        hint.alignment = TextAlignmentOptions.Center;
-        hint.color = new Color(1f, .85f, .85f);
-        hint.outlineColor = new Color32(30, 10, 15, 255);
-        hint.outlineWidth = .18f;
-        hint.rectTransform.sizeDelta = new Vector2(permanent ? 4.6f : 3.5f, 1.4f);
-        hint.raycastTarget = false;
-        var textRenderer = hint.GetComponent<MeshRenderer>();
-        textRenderer.sortingLayerID = visual.sortingLayerID;
-        textRenderer.sortingOrder = visual.sortingOrder + 4;
-        hint.enabled = false;
+        // The gear guard blocks both bodies. Only the two red walls need this hint.
+        if (!permanent) BuildHint();
+    }
+
+    private void BuildHint()
+    {
+        var art = new SchoolSceneDrawing();
+        float inward = stage.transform.InverseTransformPoint(transform.position).x < 0f ? 1f : -1f;
+        Color ink = new Color32(35, 54, 62, 255);
+        Color paper = new Color32(255, 251, 237, 255);
+        Vector3[] puffs = {
+            new Vector3(-1.25f, .05f, .43f), new Vector3(-.98f, .38f, .43f),
+            new Vector3(-.41f, .47f, .45f), new Vector3(.22f, .44f, .43f),
+            new Vector3(.81f, .35f, .46f), new Vector3(1.21f, .06f, .43f),
+            new Vector3(1.08f, -.31f, .43f), new Vector3(.53f, -.42f, .42f),
+            new Vector3(-.08f, -.45f, .39f), new Vector3(-.66f, -.40f, .42f),
+            new Vector3(-1.16f, -.30f, .42f)
+        };
+        DrawCloud(ink, 0f);
+        DrawCloud(paper, .055f);
+        for (int i = 0; i < 3; i++)
+        {
+            var puff = new Vector2(-inward * (1.11f + .22f * i), -.93f - .16f * i);
+            float radius = .14f - .036f * i;
+            art.Circle(puff, radius, ink);
+            art.Circle(puff, radius - .034f, paper);
+        }
+
+        art.Circle(new Vector2(-.97f, 0f), .30f, ink);
+        art.Circle(new Vector2(-.97f, 0f), .257f, new Color32(216, 53, 48, 255));
+        art.Star(new Vector2(.43f, 0f), .37f, ink);
+        art.Star(new Vector2(.43f, 0f), .30f, new Color32(244, 171, 26, 255));
+
+        Color green = new Color32(33, 112, 60, 255);
+        art.Line(new Vector2(-.56f, -.025f), new Vector2(-.43f, -.16f), .084f, green);
+        art.Line(new Vector2(-.46f, -.17f), new Vector2(-.21f, .16f), .084f, green);
+
+        Color red = new Color32(158, 48, 53, 255);
+        art.Line(new Vector2(.86f, .145f), new Vector2(1.15f, -.145f), .084f, red);
+        art.Line(new Vector2(.86f, -.145f), new Vector2(1.15f, .145f), .084f, red);
+
+        hint = art.Build("Barrier Hint Icons", cues.transform, visual.sharedMaterial, visual.sortingOrder + 4, out hintMesh);
+        hint.GetComponent<MeshRenderer>().sortingLayerID = visual.sortingLayerID;
+        // Keep the icons toward the middle of the initial player enclosure.
+        var hintTransform = hint.transform;
+        Vector3 scale = hintTransform.lossyScale;
+        hintTransform.localScale = new Vector3(1f / Mathf.Abs(scale.x), 1f / Mathf.Abs(scale.y), 1f);
+        hintTransform.position = transform.TransformPoint(center) + new Vector3(inward * 2.1f, 1.6f, 0f);
+        hint.SetActive(false);
+
+        void DrawCloud(Color color, float inset)
+        {
+            art.Rect(0f, 0f, 2.65f - inset * 2f, 1.15f - inset * 2f, color);
+            foreach (Vector3 puff in puffs) art.Circle(puff, puff.z - inset, color);
+        }
     }
 
     private LineRenderer MakeLine(string name, float width, int count)
@@ -126,7 +160,8 @@ public sealed class SeesawGateFeedback : MonoBehaviour
                 new Vector3(center.x + size.x * .28f, y - .06f, 0f)
             });
         }
-        if (hint != null) hint.enabled = hintRemaining > 0f;
+        if (hint != null && hint.activeSelf != (hintRemaining > 0f))
+            hint.SetActive(hintRemaining > 0f);
     }
 
     private void OnCollisionEnter2D(Collision2D collision) => CheckCollision(collision);
@@ -146,7 +181,7 @@ public sealed class SeesawGateFeedback : MonoBehaviour
             !body.IsControlled || player.CurrentBody != body || body == blockedBody) return;
         blockedBody = body;
         flashRemaining = FlashSeconds;
-        if (permanent || stage.TryClaimGateHint()) ShowHint(2.8f);
+        if (!permanent && stage.TryClaimGateHint()) ShowHint(2.8f);
     }
 
     public void ShowHint(float seconds)
@@ -154,4 +189,6 @@ public sealed class SeesawGateFeedback : MonoBehaviour
         if (hint == null) return;
         hintRemaining = Mathf.Max(hintRemaining, seconds);
     }
+
+    private void OnDestroy() => SchoolSceneDrawing.Release(hintMesh);
 }

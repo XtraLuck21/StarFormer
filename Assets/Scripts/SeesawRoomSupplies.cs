@@ -58,6 +58,11 @@ public class SeesawRoomSupplies : MonoBehaviour
     private bool wasControllingRoomFan;
     private PossessableBody directionFan;
     private int lastBallDirection;
+    private static bool fanDemonstrationShown;
+    private SeesawFanDemonstration fanDemonstration;
+
+    internal bool FanDemonstrationIsOver => fanDemonstrationShown && fanDemonstration == null;
+    internal static void ClearDemonstrationSession() => fanDemonstrationShown = false;
 
     public bool AnyFanBlowing
     {
@@ -108,6 +113,7 @@ public class SeesawRoomSupplies : MonoBehaviour
 
     private void Update()
     {
+        UpdateFanDemonstration();
         if (IsPuzzleComplete || !IsRoomActive || player == null || player.IsDead || player.IsRestarting || Time.timeScale <= 0f) return;
         SupplyBallOnDirectionChange();
         if (player.CurrentBody != null)
@@ -136,6 +142,34 @@ public class SeesawRoomSupplies : MonoBehaviour
             if (Time.time - ballMissingSince >= respawnDelay) SpawnBall();
         }
     }
+
+    private void UpdateFanDemonstration()
+    {
+        var body = player != null ? player.CurrentBody : null;
+        if (!IsRoomActive || FanSupplyStopped || IsPuzzleComplete || player == null ||
+            player.IsDead || player.IsRestarting || body == null || !IsInsideRoom(body.transform.position))
+        {
+            ClearDemonstration();
+            return;
+        }
+
+        if (Time.timeScale <= 0f) return;
+        if (!fanDemonstrationShown && body.Form == BodyForm.Fan && body.IsControlled)
+        {
+            fanDemonstrationShown = true;
+            fanDemonstration = new SeesawFanDemonstration(transform, ballSpawnPoint.position + Vector3.up * 4f);
+        }
+
+        if (fanDemonstration != null && !fanDemonstration.Advance(Time.deltaTime)) ClearDemonstration();
+    }
+
+    private void ClearDemonstration()
+    {
+        fanDemonstration?.Dispose();
+        fanDemonstration = null;
+    }
+
+    private void OnDisable() => ClearDemonstration();
 
     private void SupplyBallOnDirectionChange()
     {

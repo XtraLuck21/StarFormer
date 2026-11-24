@@ -25,7 +25,7 @@ public sealed class SeesawGearBarrier : MonoBehaviour
                 Physics2D.IgnoreCollision(barrier, other);
         }
         var feedback = gameObject.AddComponent<SeesawGateFeedback>();
-        feedback.Initialize(stage, player, visual, true, hintText: null,
+        feedback.Initialize(stage, player, visual, true,
             collisionReveal: true, energyColor: new Color(.2f, .65f, 1f, .85f));
     }
 

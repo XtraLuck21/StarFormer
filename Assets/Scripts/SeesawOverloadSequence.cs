@@ -42,8 +42,8 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
     private LineRenderer boardCrack;
     private LineRenderer entranceCrack;
 
-    private readonly List<LineRenderer> wind =
-        new List<LineRenderer>();
+    private readonly List<(LineRenderer Edge, LineRenderer Highlight)> wind =
+        new List<(LineRenderer, LineRenderer)>();
 
     private Vector3[] boardCrackPoints;
     // Horizontal offsets along the same top-to-bottom seam used by the two broken faces.
@@ -147,17 +147,18 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         }
 
         AnimateWind();
+        const float purpleRevealSeconds = .8f;
+        if (elapsed - Time.deltaTime < purpleRevealSeconds)
+            stage.RevealPurpleButton(Mathf.Clamp01(elapsed / purpleRevealSeconds));
 
         if (!IsCracked)
             return;
 
-        float previousCrackProgress = crackProgress;
         crackProgress = Mathf.Min(
             1f,
             crackProgress + Time.deltaTime
         );
 
-        if (crackProgress > previousCrackProgress) stage.RevealPurpleButton(crackProgress);
         boardCrack.enabled = !boardBroken;
         boardCrack.widthMultiplier = Mathf.Lerp(.09f, .24f, finaleImpactProgress);
         entranceCrack.enabled = !IsPassageOpen;
@@ -214,17 +215,22 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         );
 
         entranceShatter.SetProgress(breakProgress);
-        exitShatter.SetProgress(breakProgress);
 
         if (breakProgress >= 1f)
         {
             entrance.enabled = false;
-            exit.enabled = false;
             entranceCrack.enabled = false;
             IsPassageOpen = true;
 
             HideEntranceHint();
         }
+    }
+
+    public void RevealTunnelExit(float progress)
+    {
+        if (!exit.enabled) return;
+        exitShatter.SetProgress(progress);
+        if (progress >= 1f) exit.enabled = false;
     }
 
     private void CreateEntranceHint()
@@ -244,7 +250,7 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         entranceHint.outlineWidth = .15f;
         entranceHint.raycastTarget = false;
 
-        ApplyEntranceExclamation();
+        ApplyEntranceArrow();
 
         MeshRenderer hintRenderer =
             hintObject.GetComponent<MeshRenderer>();
@@ -264,9 +270,9 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
         entranceHintAge = 0f;
     }
 
-    private void ApplyEntranceExclamation()
+    private void ApplyEntranceArrow()
     {
-        entranceHint.text = "!";
+        entranceHint.text = "↓";
         entranceHint.color = Color.yellow;
         entranceHint.fontSize = Mathf.Max(16f, entranceHintFontSize);
         entranceHint.alignment = TextAlignmentOptions.Center;
@@ -281,15 +287,13 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
             Transform oldHint = transform.Find("Spider Entrance Reminder");
             if (oldHint != null) entranceHint = oldHint.GetComponent<TextMeshPro>();
         }
-        if (entranceHint != null) ApplyEntranceExclamation();
+        if (entranceHint != null) ApplyEntranceArrow();
     }
 
     private void UpdateEntranceHint()
     {
         if (entranceHint == null)
             return;
-
-        ApplyEntranceExclamation();
 
         if (breaking ||
             IsPassageOpen ||
@@ -412,28 +416,31 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
         CreateEntranceHint();
 
+        var taper = new AnimationCurve(
+            new Keyframe(0f, .2f),
+            new Keyframe(.32f, 1f),
+            new Keyframe(1f, 0f)
+        );
         for (int i = 0; i < 24; i++)
         {
-            wind.Add(
-                Line(
-                    "Leftward Gear Gust",
-                    transform,
-                    new Color(.65f, .87f, 1f, .3f),
-                    .035f,
-                    3
-                )
-            );
+            // A dark edge reads over the sky; the light center stays visible over the beam.
+            var edge = Line("Leftward Gear Gust Edge", transform, new Color(.16f, .36f, .43f, .72f), .13f, 3);
+            var highlight = Line("Leftward Gear Gust Highlight", transform, new Color(.83f, .96f, 1f, .92f), .065f, 3);
+            edge.widthCurve = highlight.widthCurve = taper;
+            highlight.sortingOrder = edge.sortingOrder + 1;
+            wind.Add((edge, highlight));
         }
     }
 
     private void AnimateWind()
     {
+        bool active = IsWindActive;
         for (int i = 0; i < wind.Count; i++)
         {
-            LineRenderer line = wind[i];
-            line.enabled = IsWindActive;
+            var (edge, highlight) = wind[i];
+            edge.enabled = highlight.enabled = active;
 
-            if (!line.enabled)
+            if (!active)
                 continue;
 
             Vector3 point;
@@ -465,18 +472,15 @@ public sealed class SeesawOverloadSequence : MonoBehaviour
 
             for (int j = 0; j < 3; j++)
             {
-                line.SetPosition(
-                    j,
-                    transform.InverseTransformPoint(
-                        point + new Vector3(
-                            j * .45f,
-                            Mathf.Sin(
-                                elapsed * 4f + i + j
-                            ) * .06f,
-                            0f
-                        )
+                Vector3 position = transform.InverseTransformPoint(
+                    point + new Vector3(
+                        j * .45f,
+                        Mathf.Sin(elapsed * 4f + i + j) * .06f,
+                        0f
                     )
                 );
+                edge.SetPosition(j, position);
+                highlight.SetPosition(j, position);
             }
         }
     }

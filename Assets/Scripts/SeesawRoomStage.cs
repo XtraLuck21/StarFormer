@@ -13,6 +13,8 @@ public sealed class SeesawRoomStage : MonoBehaviour
     [SerializeField] private SeesawGateShatter leftGateShatter;
     [SerializeField] private SeesawGear2D blueGear;
     [SerializeField] private SeesawGear2D greenGear;
+    [SerializeField] private SpriteRenderer yellowGearVisual;
+    [SerializeField] private SpriteRenderer purpleGearVisual;
     [SerializeField] private SeesawColorContact blueContact;
     [SerializeField] private SeesawColorContact greenContact;
     [SerializeField] private SeesawCheckpoint checkpoint;
@@ -28,10 +30,15 @@ public sealed class SeesawRoomStage : MonoBehaviour
     public bool IsUnlocked { get; private set; }
     public float RevealProgress { get; private set; }
     public bool IsRevealing { get; private set; }
-    private Vector3 yellowRest, purpleFullScale;
+    private Vector3 yellowRest, yellowFullScale, purpleFullScale, spiderRest;
     private Collider2D yellowSensor, purpleSensor;
     private SpriteRenderer yellowRenderer, purpleRenderer;
-    private int yellowOrder;
+    private PossessableBody spider;
+    private Rigidbody2D spiderBody;
+    private bool spiderWasSimulated;
+    private bool emergenceStarted;
+    private ParticleSystem emergenceDust;
+    private float yellowHeight, ceilingEdge;
     private PossessableBody frozenBody;
     private RigidbodyType2D previousBodyType;
     private RigidbodyConstraints2D previousConstraints;
@@ -39,9 +46,29 @@ public sealed class SeesawRoomStage : MonoBehaviour
     private bool controllerWasEnabled, blowerWasEnabled, controlsLocked;
     private bool gateHintShown;
 
+    internal void BuildPlaygroundDetails(SchoolMorningScenery scenery, float floorY)
+    {
+        Color metal = new Color32(67, 82, 84, 255);
+        Color brass = new Color32(222, 171, 105, 255);
+        var hardware = new SchoolSceneDrawing();
+        float pivotX = seesaw.transform.position.x;
+        float baseWidth = seesaw.Fulcrum.transform.lossyScale.x + .36f;
+        hardware.Rect(pivotX, floorY + .10f, baseWidth, .20f, metal);
+        hardware.Rect(pivotX, floorY + .18f, baseWidth, .048f, brass);
+        scenery.Draw(hardware, "Seesaw floor plinth", 1);
+
+        var hub = new SchoolSceneDrawing();
+        hub.Circle(Vector2.zero, .27f, metal);
+        hub.Circle(Vector2.zero, .192f, brass);
+        hub.Circle(Vector2.zero, .075f, metal);
+        hub.Rect(0f, 0f, .12f, .036f, brass);
+        scenery.Draw(hub, "Seesaw axle", 5, seesaw.transform);
+
+    }
+
     public bool TryClaimGateHint()
     {
-        if (gateHintShown) return false;
+        if (gateHintShown || !supplies.FanDemonstrationIsOver) return false;
         gateHintShown = true;
         return true;
     }
@@ -49,16 +76,30 @@ public sealed class SeesawRoomStage : MonoBehaviour
     private void Awake()
     {
         yellowRest = yellowButton.position;
+        yellowFullScale = yellowButton.localScale;
         purpleFullScale = purpleButton.localScale;
         yellowSensor = yellowButton.GetComponent<Collider2D>();
         purpleSensor = purpleButton.GetComponent<Collider2D>();
         yellowRenderer = yellowButton.GetComponent<SpriteRenderer>();
         purpleRenderer = purpleButton.GetComponent<SpriteRenderer>();
-        yellowOrder = yellowRenderer.sortingOrder;
+        var ceilingButton = yellowButton.GetComponent<SeesawSpiderCeilingButton>();
+        yellowHeight = yellowRenderer.bounds.size.y;
+        ceilingEdge = ceilingButton.Ceiling.bounds.min.y;
+        yellowRest.y = ceilingEdge - yellowHeight * .5f;
+        spider = ceilingButton.TargetSpider;
+        spiderRest = spider.transform.position;
+        spiderBody = spider.GetComponent<Rigidbody2D>();
+        spiderWasSimulated = spiderBody.simulated;
+        spiderBody.simulated = false;
+        spider.gameObject.SetActive(false);
+        yellowGearVisual.enabled = purpleGearVisual.enabled = false;
 
         yellowSensor.enabled = purpleSensor.enabled = false;
+        purpleSensor.isTrigger = false;
         yellowButton.gameObject.SetActive(false);
         purpleButton.gameObject.SetActive(false);
+        if (!purpleButton.TryGetComponent<SeesawButtonSymbol>(out _))
+            purpleButton.gameObject.AddComponent<SeesawButtonSymbol>();
         rightPlatform.SetRevealProgress(0f);
         ConfigureGate(gate);
         ConfigureGate(leftGate);
@@ -130,27 +171,48 @@ public sealed class SeesawRoomStage : MonoBehaviour
         seesaw.HoldNeutral();
         checkpoint.SaveBlueGreenStage();
         LockControls();
-        // The ceiling hides the yellow button until it emerges.
-        yellowRenderer.sortingOrder = -1;
         ApplyReveal(0f);
     }
 
     private void ApplyReveal(float t)
     {
-        yellowButton.position = yellowRest + Vector3.up * (.5f * (1f - t));
-        yellowButton.gameObject.SetActive(true);
-        yellowSensor.enabled = purpleSensor.enabled = false;
         rightPlatform.SetRevealProgress(t);
         rightGateShatter.SetProgress(t);
         leftGateShatter.SetProgress(t);
+
+        float rise = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.15f, .77f, t));
+        float grow = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(.25f, .92f, t));
+        if (rise <= 0f) return;
+
+        Vector3 spiderPosition = spiderRest + Vector3.down * (1.8f * (1f - rise));
+        spider.transform.position = spiderPosition;
+        spiderBody.position = spiderPosition;
+        if (!emergenceStarted)
+        {
+            emergenceStarted = true;
+            spider.gameObject.SetActive(true);
+            yellowGearVisual.enabled = true;
+            if (t < 1f)
+            {
+                BurstDust(spiderRest + Vector3.down * .86f, Vector2.up, new Color32(188, 153, 120, 230));
+                BurstDust(new Vector3(yellowRest.x, ceilingEdge, yellowRest.z), Vector2.down,
+                    new Color32(219, 192, 145, 220));
+            }
+        }
+
+        Vector3 scale = yellowFullScale;
+        scale.y *= Mathf.Max(.001f, grow);
+        yellowButton.localScale = scale;
+        yellowButton.position = yellowRest + Vector3.up * (yellowHeight * .5f * (1f - grow));
+        yellowButton.gameObject.SetActive(grow > 0f);
     }
 
     private void FinishReveal()
     {
         IsRevealing = false;
         RevealProgress = 1f;
+        spiderBody.simulated = spiderWasSimulated;
         yellowButton.position = yellowRest;
-        yellowRenderer.sortingOrder = yellowOrder;
         yellowSensor.enabled = true;
         gate.enabled = false;
         gateVisual.SetActive(false);
@@ -161,6 +223,8 @@ public sealed class SeesawRoomStage : MonoBehaviour
 
     public void RevealPurpleButton(float progress)
     {
+        if (progress <= 0f) return;
+        purpleGearVisual.enabled = true;
         if (!purpleButton.gameObject.activeSelf) purpleButton.gameObject.SetActive(true);
         float t = Mathf.SmoothStep(0f, 1f, progress);
         Bounds floor = rightPlatform.GetComponent<BoxCollider2D>().bounds;
@@ -173,8 +237,50 @@ public sealed class SeesawRoomStage : MonoBehaviour
         position.x += floor.min.x + cap.extents.x - cap.center.x;
         position.y += floor.max.y - cap.min.y;
         purpleButton.position = position;
-        purpleRenderer.sortingOrder = -1;
         purpleSensor.enabled = progress >= 1f;
+    }
+
+    private void BurstDust(Vector3 origin, Vector2 direction, Color32 color)
+    {
+        if (emergenceDust == null)
+        {
+            var dust = new GameObject("Seesaw emergence dust");
+            dust.transform.SetParent(transform, false);
+            emergenceDust = dust.AddComponent<ParticleSystem>();
+            emergenceDust.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            var main = emergenceDust.main;
+            main.playOnAwake = false;
+            main.loop = false;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.gravityModifier = .35f;
+            var emission = emergenceDust.emission;
+            emission.enabled = false;
+            var fade = emergenceDust.colorOverLifetime;
+            fade.enabled = true;
+            var gradient = new Gradient();
+            gradient.SetKeys(
+                new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(Color.white, 1f) },
+                new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(0f, 1f) });
+            fade.color = gradient;
+            var renderer = dust.GetComponent<ParticleSystemRenderer>();
+            renderer.sharedMaterial = yellowRenderer.sharedMaterial;
+            renderer.sortingLayerID = yellowRenderer.sortingLayerID;
+            renderer.sortingOrder = 14;
+        }
+
+        emergenceDust.Play();
+        for (int i = 0; i < 16; i++)
+        {
+            float spread = i / 15f * 2f - 1f;
+            emergenceDust.Emit(new ParticleSystem.EmitParams
+            {
+                position = origin + Vector3.right * (spread * .4f),
+                velocity = Vector2.right * (spread * 2.2f) + direction * (1.35f + (i % 4) * .45f),
+                startLifetime = .38f + (i % 4) * .072f,
+                startSize = .08f + (i % 3) * .035f,
+                startColor = color
+            }, 1);
+        }
     }
 
     private void LockControls()

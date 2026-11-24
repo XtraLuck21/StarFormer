@@ -2602,7 +2602,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5683649565814246983, guid: c27d9699c1e2fde47a541a394fce6918, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.7
+      value: 0.52
       objectReference: {fileID: 0}
     - target: {fileID: 5683649565814246983, guid: c27d9699c1e2fde47a541a394fce6918, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3636,7 +3636,7 @@ Transform:
   m_GameObject: {fileID: 444223498}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.01, y: 1.7338816, z: 0}
+  m_LocalPosition: {x: -10.01, y: 1.683, z: 0}
   m_LocalScale: {x: 2.2447836, y: 0.7112751, z: 0.77903}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3676,7 +3676,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.07153575}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -6822,7 +6822,7 @@ Transform:
   m_GameObject: {fileID: 741508444}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -10.27, y: -0.4561184, z: 0}
+  m_LocalPosition: {x: -10.27, y: -0.299, z: 0}
   m_LocalScale: {x: 2.0155592, y: 0.6386438, z: 0.69948}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6862,7 +6862,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: -0.24601883}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -12740,7 +12740,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -13364,7 +13364,7 @@ Transform:
   m_GameObject: {fileID: 1346034280}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.74, y: -0.12, z: 0}
+  m_LocalPosition: {x: 2.74, y: -0.271, z: 0}
   m_LocalScale: {x: 2.0155592, y: 0.6386438, z: 0.69948}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13404,7 +13404,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.23643853}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -15114,7 +15114,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -15359,11 +15359,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4240325369198079652, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 24.420002
+      value: 23.9
       objectReference: {fileID: 0}
     - target: {fileID: 4240325369198079652, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -22.5
+      value: -22.7678
       objectReference: {fileID: 0}
     - target: {fileID: 4240325369198079652, guid: 467b5630a7ca14485a740128d85cada8, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17982,6 +17982,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1900833164}
   - component: {fileID: 1900833165}
+  - component: {fileID: 1900833166}
   m_Layer: 0
   m_Name: Green Seesaw Beam
   m_TagString: Untagged
@@ -17989,6 +17990,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1900833166
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1900833163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 5
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
+  spritePadding: {x: 9, y: 12}
 --- !u!4 &1900833164
 Transform:
   m_ObjectHideFlags: 0
@@ -26265,7 +26288,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -26399,6 +26422,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawColorContact
   matchingButton: {fileID: 533538330}
+  dissolvePairOnPress: 1
   onPressed:
     m_PersistentCalls:
       m_Calls:
@@ -26439,6 +26463,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawColorContact
   matchingButton: {fileID: 1346034282}
+  dissolvePairOnPress: 1
   onPressed:
     m_PersistentCalls:
       m_Calls:
@@ -27266,6 +27291,7 @@ GameObject:
   - component: {fileID: 2257200001}
   - component: {fileID: 2257200003}
   - component: {fileID: 2257200002}
+  - component: {fileID: 2257200004}
   m_Layer: 0
   m_Name: Seesaw Room Left Wall
   m_TagString: Untagged
@@ -27273,6 +27299,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &2257200004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257200000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 2
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
+  spritePadding: {x: 0, y: 0}
 --- !u!4 &2257200001
 Transform:
   m_ObjectHideFlags: 0
@@ -27404,6 +27452,7 @@ GameObject:
   - component: {fileID: 2257200011}
   - component: {fileID: 2257200013}
   - component: {fileID: 2257200012}
+  - component: {fileID: 2257200014}
   m_Layer: 0
   m_Name: Seesaw Room Right Wall
   m_TagString: Untagged
@@ -27411,6 +27460,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &2257200014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2257200010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87d9a435d1fda384f81dd3af2d15956e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::SchoolSurfaceSkin
+  style: 2
+  surfaceTop: -23.247782
+  backdrop:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 0
+    height: 0
+  backdropOrder: -1
+  spritePadding: {x: 0, y: 0}
 --- !u!4 &2257200011
 Transform:
   m_ObjectHideFlags: 0
@@ -27420,7 +27491,7 @@ Transform:
   m_GameObject: {fileID: 2257200010}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.18, y: 3.23, z: 0}
+  m_LocalPosition: {x: 14.18, y: 3.23, z: 0}
   m_LocalScale: {x: 0.6, y: 10.2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -27559,8 +27630,8 @@ Transform:
   m_GameObject: {fileID: 2257200020}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3, y: 8.02, z: 0}
-  m_LocalScale: {x: 33.56, y: 0.6, z: 1}
+  m_LocalPosition: {x: -1.3, y: 8.02, z: 0}
+  m_LocalScale: {x: 31.56, y: 0.6, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4670582}
@@ -27908,7 +27979,7 @@ Transform:
   m_GameObject: {fileID: 2257700010}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 16.18, y: -1.566712, z: 0}
+  m_LocalPosition: {x: 14.18, y: -1.566712, z: 0}
   m_LocalScale: {x: 0.6, y: 0.5667666, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -28660,6 +28731,8 @@ MonoBehaviour:
   leftGateShatter: {fileID: 2258200014}
   blueGear: {fileID: 2257100204}
   greenGear: {fileID: 2257100214}
+  yellowGearVisual: {fileID: 2257100223}
+  purpleGearVisual: {fileID: 2257100233}
   blueContact: {fileID: 2257000004}
   greenContact: {fileID: 2257000014}
   checkpoint: {fileID: 2257800003}
@@ -28673,7 +28746,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 10
     y: -25
-    width: 35
+    width: 33
     height: 12.8
   revealDuration: 2
 --- !u!1 &2257900010
@@ -28941,7 +29014,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SeesawCliffBridge
   visual: {fileID: 2258000011}
-  fullWidth: 6.7
+  fullWidth: 4.7
   height: 0.35
   extensionDuration: 2
   growRight: 1
@@ -29055,7 +29128,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -29744,7 +29817,7 @@ MonoBehaviour:
   entranceShatter: {fileID: 2258310024}
   exitShatter: {fileID: 2258310034}
   ballInterval: 0.75
-  entranceHintDelay: 5
+  entranceHintDelay: 0.5
   entranceHintOffset: {x: 0, y: 1.5, z: 0}
   entranceHintFontSize: 16
 --- !u!1 &2258310000
@@ -29877,7 +29950,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -30037,7 +30110,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -30198,7 +30271,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -30372,7 +30445,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -30545,7 +30618,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
+  m_Color: {r: 0.63137255, g: 0.45882353, b: 0.3019608, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -30705,7 +30778,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
+  m_Color: {r: 0.63137255, g: 0.45882353, b: 0.3019608, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -30865,7 +30938,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
+  m_Color: {r: 0.63137255, g: 0.45882353, b: 0.3019608, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -31025,7 +31098,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.72156864, g: 0.7137255, b: 0.6745098, a: 1}
+  m_Color: {r: 0.63137255, g: 0.45882353, b: 0.3019608, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -31069,6 +31142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SeesawUnderpassCover
   player: {fileID: 1153900829}
   passage: {fileID: 2258300004}
+  finale: {fileID: 2258400005}
   upperCover: {fileID: 2258420003}
   lowerCover: {fileID: 2258420013}
   revealArea:
@@ -31378,7 +31452,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -31491,7 +31565,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.4862745, g: 0.34509805, b: 0.2509804, a: 1}
+  m_Color: {r: 0.6352941, g: 0.28627452, b: 0.23921569, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -34528,6 +34602,11 @@ MonoBehaviour:
   schoolDoor: {fileID: 2230000051}
   deskRuler: {fileID: 2110414731}
   smileRoom: {fileID: 719791895}
+  seesawStage: {fileID: 2257900004}
+  seesawFloor: {fileID: 2240000022}
+  seesawExit: {fileID: 2258500004}
+  seesawLeftWall: {fileID: 2257200002}
+  seesawRightWall: {fileID: 2257200012}
   showRulerMarkings: 0
 --- !u!114 &2280000002
 MonoBehaviour:

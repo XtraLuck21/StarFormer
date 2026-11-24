@@ -5,6 +5,7 @@ public sealed class SeesawUnderpassCover : MonoBehaviour
 {
     [SerializeField] private PlayerPossessionController player;
     [SerializeField] private SeesawOverloadSequence passage;
+    [SerializeField] private SeesawBouncyFinale finale;
     [SerializeField] private SpriteRenderer upperCover;
     [SerializeField] private SpriteRenderer lowerCover;
     [SerializeField] private Rect revealArea = new Rect(24f, -26.6f, 11.8f, 2.8f);
@@ -21,8 +22,15 @@ public sealed class SeesawUnderpassCover : MonoBehaviour
             if (!HasRevealed && passage.IsPassageOpen && player.CurrentBody != null &&
                 player.CurrentBody.Form == BodyForm.Spider && player.CurrentBody.IsControlled &&
                 revealArea.Contains(player.CurrentBody.Body.position))
+            {
                 HasRevealed = true;
-            if (HasRevealed) Opacity = Mathf.MoveTowards(Opacity, 0f, Time.deltaTime / fadeSeconds);
+                finale.RevealBall();
+            }
+            if (HasRevealed)
+            {
+                Opacity = Mathf.MoveTowards(Opacity, 0f, Time.deltaTime / fadeSeconds);
+                passage.RevealTunnelExit(1f - Opacity);
+            }
         }
         ApplyOpacity();
     }
@@ -31,7 +39,9 @@ public sealed class SeesawUnderpassCover : MonoBehaviour
     {
         Color ground = upperCover.color;
         ground.a = Opacity;
-        upperCover.color = ground;
         lowerCover.color = ground;
+        // Expose the open hatch while keeping the deeper tunnel covered until Spider enters.
+        if (passage.IsPassageOpen) ground.a = 0f;
+        upperCover.color = ground;
     }
 }

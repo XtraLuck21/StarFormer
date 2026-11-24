@@ -7,9 +7,8 @@ using UnityEngine.Rendering;
 
 // Gives Level02's plain black/brown blocks a school look. Safe to run repeatedly; colliders are untouched.
 //
-// Under the seesaw: running track on top, soil with strata and pebbles below (including the tunnel
-// covers and the cracking passages), and a concrete drain-pipe tunnel for the Spider/BouncyBall route.
-// The room ceiling becomes a banner beam and the chase ceiling school roof eaves; the room walls stay plain.
+// The floor and tunnel covers form one running track. The Spider/BouncyBall tunnel uses exposed earth.
+// The playground walls are brick, with a timber seesaw and a school banner across the ceiling.
 public static class Level02SchoolSurfaces
 {
     private const string ScenePath = "Assets/Scenes/Level02.unity";
@@ -23,15 +22,12 @@ public static class Level02SchoolSurfaces
         "Underpass Central Support", "Spider Cracked Entrance", "Bouncy Area Passage Exit",
         "Upper Tunnel Cover", "Lower Tunnel Cover", "Extending Floor Visual"
     };
-    private static readonly string[] Pipe =
+    private static readonly string[] Tunnel =
     {
         "Underpass Floor", "Underpass Left End Wall", "Underpass Right End Wall", "Underpass Bouncy Exit Ramp"
     };
-    // Kept plain on request: earlier builds gave these a brick skin, which is removed and the color restored.
     private static readonly (string name, Color color)[] Plain =
     {
-        ("Seesaw Room Left Wall", new Color(0.43f, 0.29f, 0.17f, 1f)),
-        ("Seesaw Room Right Wall", new Color(0.43f, 0.29f, 0.17f, 1f)),
         ("Original Floor Left Remainder", Color.black),
         ("Original Floor Right Remainder", Color.black),
     };
@@ -68,12 +64,15 @@ public static class Level02SchoolSurfaces
 
         float surfaceTop = Bounds(objects, "Seesaw Room Floor").max.y;
         foreach (string name in Ground) Skin(objects, name, SchoolSurfaceSkin.Style.PlaygroundGround, surfaceTop);
-        foreach (string name in Pipe) Skin(objects, name, SchoolSurfaceSkin.Style.ConcretePipe, surfaceTop);
+        foreach (string name in Tunnel) Skin(objects, name, SchoolSurfaceSkin.Style.EarthenTunnel, surfaceTop);
         foreach (var (name, color) in Plain) RemoveSkin(objects, name, color);
+        Skin(objects, "Seesaw Room Left Wall", SchoolSurfaceSkin.Style.SchoolBrick, surfaceTop);
+        Skin(objects, "Seesaw Room Right Wall", SchoolSurfaceSkin.Style.SchoolBrick, surfaceTop);
+        Skin(objects, "Green Seesaw Beam", SchoolSurfaceSkin.Style.WoodenBeam, surfaceTop);
         Skin(objects, "Seesaw Room Ceiling", SchoolSurfaceSkin.Style.BannerBeam, surfaceTop);
         Skin(objects, "Chase Tunnel Ceiling", SchoolSurfaceSkin.Style.RoofEaves, surfaceTop);
 
-        // Pipe interior behind the underground route, between its end walls and under the covers.
+        // Earthen interior behind the underground route, between its end walls and under the covers.
         Bounds left = Bounds(objects, "Underpass Left End Wall"), right = Bounds(objects, "Underpass Right End Wall");
         Bounds floor = Bounds(objects, "Underpass Floor"), cover = Bounds(objects, "Lower Tunnel Cover");
         var interior = Rect.MinMaxRect(left.max.x, floor.max.y, right.min.x, cover.max.y);
@@ -95,11 +94,14 @@ public static class Level02SchoolSurfaces
         var serialized = new SerializedObject(skin);
         serialized.FindProperty("style").enumValueIndex = (int)style;
         serialized.FindProperty("surfaceTop").floatValue = surfaceTop;
+        serialized.FindProperty("spritePadding").vector2Value =
+            style == SchoolSurfaceSkin.Style.WoodenBeam ? new Vector2(9f, 12f) : Vector2.zero;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         // The source block keeps the matching base color: shatter fragments copy it,
         // and the covers only change its alpha while fading.
         Color color = SchoolSurfaceSkin.BaseColor(style);
         color.a = sprite.color.a;
+        if (style == SchoolSurfaceSkin.Style.WoodenBeam) return;
         var renderer = new SerializedObject(sprite);
         renderer.FindProperty("m_Color").colorValue = color;
         renderer.ApplyModifiedPropertiesWithoutUndo();

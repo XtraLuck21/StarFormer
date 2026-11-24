@@ -72,12 +72,15 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
         ability = ball.GetComponent<BouncyBallAbility>();
         ability.CeilingStruck += OnCeilingStruck;
         Rigidbody2D ballBody = ball.GetComponent<Rigidbody2D>();
+        ball.gameObject.SetActive(false);
         foreach (Collider2D other in FindObjectsByType<Collider2D>(FindObjectsSortMode.None))
         {
             if (other == returnBarrier || other.gameObject.scene != gameObject.scene) continue;
             if (other.attachedRigidbody != ballBody) Physics2D.IgnoreCollision(returnBarrier, other);
         }
     }
+
+    public void RevealBall() => ball.gameObject.SetActive(true);
 
     private bool CanAct => player != null && !player.IsDead && !player.IsRestarting && Time.timeScale > 0f &&
         player.CurrentBody == ball && ball.IsControlled && passage.IsPassageOpen;
@@ -201,6 +204,7 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
         float extent = width * .5f + maxOffset / scaleX;
         var pixels = new Color32[columns * rows];
         Color32 face = ballColor;
+        Color32 grain = Color.Lerp(ballColor, new Color32(66, 45, 98, 255), .2f);
         Color32 edge = Color.Lerp(ballColor, new Color32(74, 49, 126, 255), .7f);
         for (int y = 0; y < rows; y++)
         {
@@ -213,7 +217,10 @@ public sealed class SeesawBouncyFinale : MonoBehaviour
                 float localX = ((x + .5f) / columns * 2f - 1f) * extent;
                 float depth = (localX - seam) * sign;
                 if (depth >= 0f && localX * sign <= width * .5f)
-                    pixels[y * columns + x] = depth * scaleX < .11f ? edge : face;
+                {
+                    float grainLine = Mathf.Repeat((y + .5f) / rows + .022f * Mathf.Sin(localX * scaleX), .23f);
+                    pixels[y * columns + x] = depth * scaleX < .11f ? edge : grainLine < .024f ? grain : face;
+                }
             }
         }
         var texture = new Texture2D(columns, rows, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
